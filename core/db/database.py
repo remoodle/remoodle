@@ -108,3 +108,15 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while checking db with user {user_id}\n{ex}")
             return None
+
+    def has_token(self, user_id):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("select token from tokens where id = %s", [user_id])
+                if cursor.fetchone() is not None:
+                    return True
+                else:
+                    return False
+        except Exception as ex:
+            print(f"[ERROR] Error while checking db with user {user_id}\n{ex}")
+            return None
