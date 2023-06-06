@@ -30,7 +30,6 @@ class Database:
                 database=self.__db_name
             )
             self.connection.autocommit = True
-            print("[SUCCESS] db is active")
         except Exception as ex:
             print(f"[ERROR] Error while connecting to postgresql db\n{ex}")
 
