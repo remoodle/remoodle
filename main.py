@@ -12,12 +12,12 @@ from core.handlers.user_handlers import user_handlers
 db = Database()
 api = Api()
 
+
 async def main():
     dotenv.load_dotenv()
     token = os.getenv("TOKEN")
 
     dp = Dispatcher()
-
 
     bot = Bot(token, parse_mode="HTML")
     print("Bot started!")
@@ -26,7 +26,6 @@ async def main():
 
 
 if __name__ == '__main__':
-
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
