@@ -14,7 +14,7 @@ async def get_moodle_token(message: types.Message, state: FSMContext):
     db = Database()
     user_id = message.from_user.id
 
-    if not db.has_token(user_id) or not db.user_exists(user_id):
+    if not db.has_token(user_id):
         k_button = ReplyKeyboardBuilder()
         k_button.button(text="How to find token?")
         k_button.adjust(1)
