@@ -60,13 +60,13 @@ def grades_menu_all_courses(user_id):
     db = Database()
     api = Api()
     token = db.get_token(user_id)
-    courses = api.get_user_courses(token)
+    courses = api.get_user_all_courses(token)
     inline_keyboard = []
 
     for course in courses:
         inline_keyboard.append([
             InlineKeyboardButton(
-                text=course['shortname'].split("|")[0],
+                text=course['name'].split("|")[0],
                 callback_data=f"course_{course['id']}"
             )
         ])
@@ -92,7 +92,7 @@ def grades_menu_current_courses(user_id):
     for course in courses:
         inline_keyboard.append([
             InlineKeyboardButton(
-                text=course['shortname'].split("|")[0],
+                text=course['name'].split("|")[0],
                 callback_data=f"course_{course['id']}"
             )
         ])
@@ -108,12 +108,12 @@ def grades_menu_current_courses(user_id):
     return kb
 
 
-def back():
+def back(callback_data: str):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
-                text="Back",
-                callback_data="back_to_menu"
+                text="Back ←",
+                callback_data=callback_data
             )
         ]
     ])
