@@ -3,6 +3,8 @@ import logging
 import asyncio
 import dotenv
 import os
+
+from core.db.database import Database
 from core.utils import helpers
 from core.handlers.user_handlers import user_handlers
 
