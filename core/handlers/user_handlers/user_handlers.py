@@ -8,11 +8,11 @@ from core.api.api import Api
 from core.keyboards.user_menu import *
 from core.utils.statesform import StepsForm
 from core.utils.helpers import *
+from main import db, api
 
 
 router = Router()
-api = Api()
-db = Database()
+
 
 
 @router.message(Command("start"))
