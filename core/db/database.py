@@ -1,6 +1,7 @@
 import psycopg2
 import dotenv
 import os
+from core.api.api import Api
 
 dotenv.load_dotenv()
 
@@ -14,6 +15,7 @@ class Database:
             self.__user = os.getenv("DB_USER")
             self.__password = os.getenv("DB_PASSWORD")
             self.__db_name = os.getenv("DB_NAME")
+            self.__api = Api()
             self.connection = None
             self.cursor = None
             self.create_connection()
@@ -51,7 +53,7 @@ class Database:
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute(
-                    "create table tokens (id int primary key, token varchar(80));"
+                    "create table tokens (id int primary key, token varchar(80), full_name varchar(80), barcode int);"
                 )
                 print("[SUCCESS] table tokens created")
         except Exception as ex:
@@ -67,8 +69,12 @@ class Database:
 
     def insert_token(self, user_id, token):
         try:
+            user_info = self.__api.get_user_info(token)
+            barcode = user_info['username'].split('@')[0]
+            full_name = user_info['full_name']
             with self.connection.cursor() as cursor:
-                cursor.execute("insert into tokens (id, token) values (%s, %s)", [user_id, token])
+                cursor.execute("insert into tokens (id, token, full_name, barcode) values (%s, %s, %s, %s)",
+                               [user_id, token, full_name, barcode])
                 print(f"[SUCCESS] User {user_id} has been added to db with token {token}")
         except Exception as ex:
             print(f"[ERROR] Couldn't add user {user_id} to the db\n{ex}")
@@ -97,6 +103,24 @@ class Database:
                 return cursor.fetchone()[0]
         except Exception as ex:
             print(f"[ERROR] Couldn't get user_id from Token {token}\n{ex}")
+            return None
+
+    def get_barcode(self, user_id):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("select barcode from tokens where id = %s", [user_id])
+                return cursor.fetchone()[0]
+        except Exception as ex:
+            print(ex)
+            return None
+
+    def get_full_name(self, user_id):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("select full_name from tokens where id = %s", [user_id])
+                return cursor.fetchone()[0]
+        except Exception as ex:
+            print(ex)
             return None
 
     def user_exists(self, user_id):
