@@ -2,6 +2,9 @@ from aiogram import types, Router
 from aiogram.filters import Text
 from core.api.api import Api
 from core.db.database import Database
+from core.utils.gpa import get_gpa_by_grade
+from datetime import datetime, timezone
+import time
 
 router = Router()
 db = Database()
@@ -38,23 +41,78 @@ def create_grades_string(course_id, user_id):
     #     'end': 0
     # }
 
+    answer2 = ""
+    regmid: float = 0
+    regend: float = 0
+    final: float = 0
+
     for assignment in course_grades:
-        answer += f"*{assignment['name']}*" + " → " + assignment['grade'] + "\n"
-    # if str(assignment['name']).lower().__contains__("endterm"):
-    #         regterm['end'] = assignment['percentageformatted'].split(" ")[0]
-    #     if str(assignment['name']).lower().__contains__("midterm"):
-    #         regterm['mid'] = assignment['percentageformatted'].split(" ")[0]
-    #
-    # Поменять на get из api endpoint
-    # try:
-    #     if float(regterm['mid']) > 0 and float(regterm['end']) > 0:
-    #         term: float = (float(regterm['mid']) + float(regterm['end'])) / 2
-    #         answer += "\n\nREGISTER TERM: " + str(round(term, 2))
-    #         answer += get_final_grade_info(term)
-    # except Exception as ex:
-    #     print(f"[ERROR] Couldn't get regterm grade for User {user_id}\n{ex}")
+        answer2 += f"*{assignment['name']}*" + " → " + assignment['grade'] + "\n"
+
+        try:
+            if str(assignment['name']).lower().__contains__("register midterm"):
+                regmid = float(assignment['grade'])
+            if str(assignment['name']).lower().__contains__("register endterm"):
+                regend = float(assignment['grade'])
+            if str(assignment['name']).lower().__contains__("register final"):
+                final = float(assignment['grade'])
+        except Exception as ex:
+            pass
+
+    total = round((regmid+regend)*0.3 + final*0.4)
+    if regend >= 25 and regmid >= 25 and (regend + regmid)/2 >= 50 and final >= 50:
+        answer += f"*TOTAL* → {total}\n" \
+                  f"*GPA* → {get_gpa_by_grade(total)}\n\n"
+
+    answer += answer2
 
     return answer
+
+
+def create_deadlines_string(user_id) -> str:
+    api = Api()
+    token = db.get_token(user_id)
+    answer: str = "*Upcoming deadlines:*\n\n"
+    deadlines = api.get_deadlines(token)
+
+    for deadline in deadlines:
+        time = get_time_string_by_unix(deadline['remaining'])
+        time_left = time['remaining']
+        date = time['deadline']
+        answer += f"📅 *{deadline['name']}* | Time left → {time_left} | Date → {date}\n"
+
+    return answer
+
+
+def get_time_string_by_unix(unix_time):
+    months = {
+        1: "Jan",
+        2: "Feb",
+        3: "Mar",
+        4: "Apr",
+        5: "May",
+        6: "Jun",
+        7: "Jul",
+        8: "Aug",
+        9: "Sep",
+        10: "Oct",
+        11: "Nov",
+        12: "Dec"
+    }
+
+    deadline = datetime.fromtimestamp(unix_time)
+    remaining = deadline - datetime.utcnow()
+
+    year = deadline.strftime("%y")
+    month = months[int(deadline.strftime("%m"))]
+    day = deadline.strftime("%d")
+    h = deadline.strftime("%H")
+    m = deadline.strftime("%M")
+
+    return {
+        "deadline": f"{int(day)} {month} {2000+int(year)}, {h}:{m}",
+        "remaining": str(remaining).split('.')[0]+""
+    }
 
 
 def get_final_grade_info(term_grade):
