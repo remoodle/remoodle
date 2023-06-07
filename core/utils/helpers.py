@@ -1,10 +1,10 @@
 from aiogram import types, Router
 from aiogram.filters import Text
-
 from core.api.api import Api
 from core.db.database import Database
 
 router = Router()
+db = Database()
 
 
 @router.message(Text("How to find token?", ignore_case=True))
@@ -15,12 +15,17 @@ async def find_moodle_token(message: types.Message):
 
 
 async def define_token(message: types.Message):
-    await message.answer("Your id: " + str(message.from_user.id) +
-                         "\nYour token: " + message.text)
+    full_name = db.get_full_name(message.from_user.id)
+    barcode = db.get_barcode(message.from_user.id)
+    print(str(full_name) + " " + str(barcode))
+    await message.answer(f"ID: <pre>{message.from_user.id}</pre>\n" +
+                         f"\nToken: <pre>{message.text}</pre>\n" +
+                         f"\nBarcode: <pre>{barcode}</pre>\n" +
+                         f"\nName: <pre>{full_name}</pre>\n",
+                         parse_mode="HTML")
 
 
 def create_grades_string(course_id, user_id):
-    db = Database()
     api = Api()
 
     token = db.get_token(user_id)
