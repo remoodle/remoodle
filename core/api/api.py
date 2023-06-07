@@ -136,4 +136,18 @@ class Api:
 
         return data
 
-    # t.b.c. get_updates()
+    def get_deadlines(self, token):
+        response = requests.get(f"{self.moodle_api_link}{token}"
+                                f"&wsfunction=core_calendar_get_calendar_upcoming_view&moodlewsrestformat=json")
+        response = response.json()
+        deadlines = response['events']
+        data = []
+
+        for event in deadlines:
+            data.append({
+                'id': event['id'],
+                'name': event['name'],
+                'remaining': event['timestart']
+            })
+
+        return data
