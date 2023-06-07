@@ -4,10 +4,13 @@ import asyncio
 import dotenv
 import os
 
+from core.api.api import Api
 from core.db.database import Database
 from core.utils import helpers
 from core.handlers.user_handlers import user_handlers
 
+db = Database()
+api = Api()
 
 async def main():
     dotenv.load_dotenv()
@@ -23,6 +26,7 @@ async def main():
 
 
 if __name__ == '__main__':
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
