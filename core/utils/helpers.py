@@ -12,4 +12,5 @@ async def find_moodle_token(message: types.Message):
 
 
 async def define_token(message: types.Message):
-    await message.answer("Your specified token is: " + message.text)
+    await message.answer("Your id: " + str(message.from_user.id) +
+                         "\nYour token: " + message.text)
