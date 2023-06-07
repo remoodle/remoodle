@@ -70,7 +70,7 @@ class Database:
     def insert_token(self, user_id, token):
         try:
             user_info = self.__api.get_user_info(token)
-            barcode = user_info['username'].split('@')[0]
+            barcode = user_info['barcode']
             full_name = user_info['full_name']
             with self.connection.cursor() as cursor:
                 cursor.execute("insert into tokens (id, token, full_name, barcode) values (%s, %s, %s, %s)",
