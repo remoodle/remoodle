@@ -50,7 +50,7 @@ async def save_moodle_token(message: types.Message, state: FSMContext):
 @router.callback_query(Text(text="deadlines"))
 async def deadlines_handler(call: CallbackQuery):
     await call.message.edit_text(text="Your deadlines:",
-                                 reply_markup=back())
+                                 reply_markup=back(callback_data="back_to_menu"))
     await call.answer()
 
 
@@ -78,7 +78,8 @@ async def current_grades_handler(call: CallbackQuery):
 @router.callback_query(Text(contains="course_"))
 async def course_grades_handler(call: CallbackQuery):
     await call.message.edit_text(str(create_grades_string(call.data.split("_")[1], call.message.chat.id)),
-                                 reply_markup=back())
+                                 parse_mode="Markdown",
+                                 reply_markup=back("back_to_grades"))
     await call.answer()
 
 
