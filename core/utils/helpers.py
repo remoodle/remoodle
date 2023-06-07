@@ -29,17 +29,17 @@ def create_grades_string(course_id, user_id):
     api = Api()
 
     token = db.get_token(user_id)
-    course = api.get_course_by_id(token, course_id)
-    course_grades = api.get_course_grade(token, course_id)
+    course = api.get_course(token, course_id)
+    course_grades = api.get_course_grades(token, course_id)
 
-    answer: str = course['displayname'].split('|')[0] + "\nTeacher:" + course['displayname'].split('|')[1] + "\n\n"
+    answer: str = course['name'].split('|')[0] + "\nTeacher:" + course['name'].split('|')[1] + "\n\n"
     # regterm = {
     #     'mid': 0,
     #     'end': 0
     # }
 
     for assignment in course_grades:
-        answer += assignment['name'] + " — " + assignment['percentageformatted'] + "\n"
+        answer += f"*{assignment['name']}*" + " → " + assignment['grade'] + "\n"
     # if str(assignment['name']).lower().__contains__("endterm"):
     #         regterm['end'] = assignment['percentageformatted'].split(" ")[0]
     #     if str(assignment['name']).lower().__contains__("midterm"):
