@@ -11,7 +11,6 @@ from core.handlers.user_handlers import user_handlers
 db = Database()
 api = Api()
 
-
 async def main():
     dotenv.load_dotenv()
     token = os.getenv("TOKEN")

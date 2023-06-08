@@ -47,7 +47,7 @@ class Database:
             print(f"[ERROR] Error while checking if tables exists\n{ex}")
 
     def create_table_tokens(self):
-        if self.table_exists():
+        if self.table_exists("tokens"):
             print("[WARNING] Table tokens already exists")
             return
         try:

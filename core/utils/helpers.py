@@ -41,7 +41,7 @@ def create_grades_string(course_id, user_id):
     #     'end': 0
     # }
 
-    answer2 = ""
+    answer2 = "\n"
     regmid: float = 0
     regend: float = 0
     final: float = 0
@@ -64,8 +64,10 @@ def create_grades_string(course_id, user_id):
         answer += f"*TOTAL* → {total}\n" \
                   f"*GPA* → {get_gpa_by_grade(total)}\n\n"
 
-    answer += answer2
+    if final < 50:
+        answer += get_final_grade_info((regmid + regend) / 2)
 
+    answer += answer2
     return answer
 
 
@@ -77,9 +79,10 @@ def create_deadlines_string(user_id) -> str:
 
     for deadline in deadlines:
         time = get_time_string_by_unix(deadline['remaining'])
-        time_left = time['remaining']
-        date = time['deadline']
-        answer += f"📅 *{deadline['name']}* | Time left → {time_left} | Date → {date}\n"
+        if time is not None:
+            time_left = time['remaining']
+            date = time['deadline']
+            answer += f"📅 *{deadline['name']}* | Time left → {time_left} | Date → {date}\n"
 
     return answer
 
@@ -109,13 +112,19 @@ def get_time_string_by_unix(unix_time):
     h = deadline.strftime("%H")
     m = deadline.strftime("%M")
 
+    if remaining.total_seconds() <= 0:
+        return
+
     return {
-        "deadline": f"{int(day)} {month} {2000+int(year)}, {h}:{m}",
-        "remaining": str(remaining).split('.')[0]+""
+        "deadline": f"{int(day)} {month} {2000 + int(year)}, {h}:{m}",
+        "remaining": str(remaining).split('.')[0] + ""
     }
 
 
 def get_final_grade_info(term_grade):
+    if term_grade < 50:
+        return "RETAKE"
+
     scholarship: float = round(((70 - term_grade * 0.6) / 0.4), 2)
     retake: float = round(((50 - term_grade * 0.6) / 0.4), 2)
 
