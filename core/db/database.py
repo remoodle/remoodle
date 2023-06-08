@@ -36,17 +36,17 @@ class Database:
             print(f"[ERROR] Error while connecting to postgresql db\n{ex}")
 
     # check if table exists
-    def table_exists(self):
+    def table_exists(self, table_name: str):
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute("select exists (select from pg_tables where tablename  = 'tokens');")
+                cursor.execute("select exists (select from pg_tables where tablename  = %s);", table_name)
                 if "True" in cursor.fetchone():
                     return True
                 return False
         except Exception as ex:
             print(f"[ERROR] Error while checking if tables exists\n{ex}")
 
-    def create_tables(self):
+    def create_table_tokens(self):
         if self.table_exists():
             print("[WARNING] Table tokens already exists")
             return
@@ -59,13 +59,29 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while creating table 'tokens'\n{ex}")
 
+    def create_table_notifications(self):
+        if self.table_exists("notifications"):
+            print("[WARNING] Table notifications already exists")
+            return
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(
+                    "create table notifications ("
+                    "id int primary key,"
+                    "grades_notification int not null default 1,"
+                    "deadlines_notification int not null default 1);"
+                )
+                print("[SUCCESS] Table notifications was created")
+        except Exception as ex:
+            print(f"[ERROR] Error while creating table notifications\n{ex}")
+
     def drop_tables(self):
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute("drop table if exists tokens")
-            print("[SUCCESS] table tokens has dropped")
+                cursor.execute("drop table if exists tokens; drop table if exists notifications;")
+            print("[SUCCESS] tables were dropped")
         except Exception as ex:
-            print(f"[ERROR] Error while dropping table 'tokens'\n{ex}")
+            print(f"[ERROR] Error while dropping tables\n{ex}")
 
     def insert_token(self, user_id, token):
         try:
@@ -76,8 +92,37 @@ class Database:
                 cursor.execute("insert into tokens (id, token, full_name, barcode) values (%s, %s, %s, %s)",
                                [user_id, token, full_name, barcode])
                 print(f"[SUCCESS] User {user_id} has been added to db with token {token}")
+                # Запуск сохранения дедлайнов и оценокbarcode])
+                self.add_user_notifications(user_id)
         except Exception as ex:
             print(f"[ERROR] Couldn't add user {user_id} to the db\n{ex}")
+
+    def change_grade_notification(self, user_id, value):
+        try:
+            if value not in [0, 1]:
+                raise ValueError(f"[VALUEERROR] Incorrect value for grades notification for User{user_id}")
+            with self.connection.cursor() as cursor:
+                cursor.execute("update notifications set grades_notification = %s where id = %s", value, user_id)
+        except Exception as ex:
+            return None
+
+    def change_deadlines_notification(self, user_id, value):
+        try:
+            if value not in [1, 2, 3, 6, 12, 24]:
+                raise ValueError(f"[VALUEERROR] Incorrect value for deadlines notification for User{user_id}")
+            with self.connection.cursor() as cursor:
+                cursor.execute("update notifications set deadlines_notification = %s where id = %s", value, user_id)
+        except Exception as ex:
+            return None
+
+    def add_user_notifications(self, user_id):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("insert into notifications (id, grades_notification, deadlines_notification) "
+                               "values (%s, %s, %s)", [user_id, 1, 1])
+        except Exception as ex:
+            print(f"[ERROR] Error while inserting User {user_id} in notifications table\n{ex}")
+            return None
 
     def update_token(self, user_id, token):
         try:
