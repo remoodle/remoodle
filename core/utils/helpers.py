@@ -3,7 +3,7 @@ from aiogram.filters import Text
 from core.api.api import Api
 from core.db.database import Database
 from core.utils.gpa import get_gpa_by_grade
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import time
 
 router = Router()
@@ -101,7 +101,7 @@ def get_time_string_by_unix(unix_time):
     }
 
     deadline = datetime.fromtimestamp(unix_time)
-    remaining = deadline - datetime.utcnow()
+    remaining = deadline - datetime.utcnow() - timedelta(seconds=21600)
 
     year = deadline.strftime("%y")
     month = months[int(deadline.strftime("%m"))]
