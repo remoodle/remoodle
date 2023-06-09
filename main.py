@@ -12,7 +12,6 @@ db = Database()
 api = Api()
 
 
-
 async def main():
     dotenv.load_dotenv()
     token = os.getenv("TOKEN")
@@ -25,8 +24,8 @@ async def main():
     await dp.start_polling(bot)
 
 
-
 if __name__ == '__main__':
+    db.clear_tables()
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
