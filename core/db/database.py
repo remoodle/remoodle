@@ -112,7 +112,6 @@ class Database:
                                                             moodle_grade['assignment_name'],
                                                             grade)
 
-            print(updated_grades)
             return updated_grades
 
         except Exception as ex:

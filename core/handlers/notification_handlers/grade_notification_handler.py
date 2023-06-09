@@ -5,7 +5,7 @@ import asyncio
 async def start_loop(bot):
     while True:
         await iterate_users_grades(bot)
-        await asyncio.sleep(30)
+        await asyncio.sleep(3600)
 
 
 async def iterate_users_grades(bot):
