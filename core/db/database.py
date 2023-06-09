@@ -2,6 +2,7 @@ import psycopg2
 import dotenv
 import os
 from core.api.api import Api
+import timeit
 
 dotenv.load_dotenv()
 
@@ -35,7 +36,33 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while connecting to postgresql db\n{ex}")
 
-    # check if table exists
+    def insert_user_relative_courses_grades(self, user_id):
+        t = timeit.Timer()
+        api = Api()
+        token = self.get_token(user_id)
+        relative_courses = api.get_user_relative_courses(token)
+
+        if len(relative_courses) == 0:
+            return
+
+        try:
+            with self.connection.cursor() as cursor:
+                for course in relative_courses:
+                    assignments = api.get_course_grades(token, course['id'])
+                    for assignment in assignments:
+                        try:
+                            assignment['grade'] = float(assignment['grade'])
+                        except Exception:
+                            assignment['grade'] = -1
+                        print(user_id, assignment['course_id'], assignment['id'], round(assignment['grade'], 2))
+                        cursor.execute("insert into grades (user_id, course_id, assignment_id, grade) "
+                                        "values (%s, %s, %s, %s)",
+                                        (user_id, assignment['course_id'], assignment['id'],
+                                        round(assignment['grade'], 2)))
+            print(t.timeit())
+        except Exception as ex:
+            print(f"[ERROR] Error while inserting grades of User {user_id}\n{ex}")
+
     def table_exists(self, table_name: str):
         try:
             with self.connection.cursor() as cursor:
@@ -46,6 +73,11 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while checking if tables exists\n{ex}")
 
+    def create_tables(self):
+        self.create_table_tokens()
+        self.create_table_notifications()
+        self.create_table_grades()
+
     def create_table_tokens(self):
         if self.table_exists("tokens"):
             print("[WARNING] Table tokens already exists")
@@ -53,7 +85,7 @@ class Database:
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute(
-                    "create table tokens (id int primary key, token varchar(80), full_name varchar(80), barcode int);"
+                    "create table tokens (id bigint primary key, token varchar(80), full_name varchar(80), barcode int);"
                 )
                 print("[SUCCESS] table tokens created")
         except Exception as ex:
@@ -67,7 +99,7 @@ class Database:
             with self.connection.cursor() as cursor:
                 cursor.execute(
                     "create table notifications ("
-                    "id int primary key,"
+                    "id bigint primary key,"
                     "grades_notification int not null default 1,"
                     "deadlines_notification int not null default 1);"
                 )
@@ -75,11 +107,40 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while creating table notifications\n{ex}")
 
+    def create_table_grades(self):
+        if self.table_exists("grades"):
+            print("[WARNING] Table grades already exists")
+            return
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(
+                    "create table grades ("
+                    "user_id bigint references tokens(id),"
+                    "course_id int,"
+                    "assignment_id int,"
+                    "grade numeric(5,2));"
+                )
+                print("[SUCCESS] Table grades was created")
+        except Exception as ex:
+            print(f"[ERROR] Error while creating table grades\n{ex}")
+
     def drop_tables(self):
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute("drop table if exists tokens; drop table if exists notifications;")
+                cursor.execute("drop table if exists tokens; "
+                               "drop table if exists notifications;"
+                               "drop table if exists grades;")
             print("[SUCCESS] tables were dropped")
+        except Exception as ex:
+            print(f"[ERROR] Error while dropping tables\n{ex}")
+
+    def clear_tables(self):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("delete from grades;")
+                cursor.execute("delete from notifications;")
+                cursor.execute("delete from tokens;")
+            print("[SUCCESS] tables were cleared")
         except Exception as ex:
             print(f"[ERROR] Error while dropping tables\n{ex}")
 
@@ -94,6 +155,7 @@ class Database:
                 print(f"[SUCCESS] User {user_id} has been added to db with token {token}")
                 # Запуск сохранения дедлайнов и оценокbarcode])
                 self.add_user_notifications(user_id)
+                self.insert_user_relative_courses_grades(user_id)
         except Exception as ex:
             print(f"[ERROR] Couldn't add user {user_id} to the db\n{ex}")
 
