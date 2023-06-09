@@ -17,12 +17,12 @@ class Database:
             self.__api = Api()
             self.connection = None
             self.cursor = None
-            await self.create_connection()
+            self.create_connection()
         except Exception as ex:
             print(f"[ERROR] Error while reading data from .env file\n{ex}")
 
     # create connection
-    async def create_connection(self):
+    def create_connection(self):
         try:
             self.connection = psycopg2.connect(
                 host=self.__host,
@@ -35,7 +35,7 @@ class Database:
             print(f"[ERROR] Error while connecting to postgresql db\n{ex}")
 
     # check if table exists
-    async def table_exists(self, table_name: str):
+    def table_exists(self, table_name: str):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("select exists (select from pg_tables where tablename  = %s);", table_name)
@@ -45,7 +45,7 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while checking if tables exists\n{ex}")
 
-    async def create_table_tokens(self):
+    def create_table_tokens(self):
         if self.table_exists("tokens"):
             print("[WARNING] Table tokens already exists")
             return
@@ -58,7 +58,7 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while creating table 'tokens'\n{ex}")
 
-    async def create_table_notifications(self):
+    def create_table_notifications(self):
         if self.table_exists("notifications"):
             print("[WARNING] Table notifications already exists")
             return
@@ -74,7 +74,7 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while creating table notifications\n{ex}")
 
-    async def drop_tables(self):
+    def drop_tables(self):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("drop table if exists tokens; drop table if exists notifications;")
@@ -82,7 +82,7 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while dropping tables\n{ex}")
 
-    async def insert_token(self, user_id, token):
+    def insert_token(self, user_id, token):
         try:
             user_info = self.__api.get_user_info(token)
             barcode = user_info['barcode']
@@ -92,11 +92,11 @@ class Database:
                                [user_id, token, full_name, barcode])
                 print(f"[SUCCESS] User {user_id} has been added to db with token {token}")
                 # Запуск сохранения дедлайнов и оценокbarcode])
-                await self.add_user_notifications(user_id)
+                self.add_user_notifications(user_id)
         except Exception as ex:
             print(f"[ERROR] Couldn't add user {user_id} to the db\n{ex}")
 
-    async def delete_token(self, user_id):
+    def delete_token(self, user_id):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("delete from tokens where id = %s", [user_id])
@@ -105,7 +105,7 @@ class Database:
             print(f"[ERROR] Couldn't delete User's {user_id} token\n{ex}")
             return None
 
-    async def get_grade_notification(self, user_id):
+    def get_grade_notification(self, user_id):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute(f"select grades_notification from notifications where id ={user_id}")
@@ -114,7 +114,7 @@ class Database:
             print(f"Couldn't get grade_notification settings from User {user_id}\n{ex}")
             return None
 
-    async def get_deadline_notification(self, user_id):
+    def get_deadline_notification(self, user_id):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute(f"select deadlines_notification from notifications where id ={user_id}")
@@ -123,7 +123,7 @@ class Database:
             print(f"Couldn't get deadline_notification settings from User {user_id}\n{ex}")
             return None
 
-    async def change_grade_notification(self, user_id, value):
+    def change_grade_notification(self, user_id, value):
         try:
             if value not in [0, 1]:
                 raise ValueError(f"[VALUEERROR] Incorrect value for grades notification for User{user_id}")
@@ -143,7 +143,7 @@ class Database:
             print(f"[ERROR] Couldn't change deadlines notification settings for User {user_id}\n{ex}")
             return None
 
-    async def add_user_notifications(self, user_id):
+    def add_user_notifications(self, user_id):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("insert into notifications (id, grades_notification, deadlines_notification) "
@@ -152,7 +152,7 @@ class Database:
             print(f"[ERROR] Error while inserting User {user_id} in notifications table\n{ex}")
             return None
 
-    async def update_token(self, user_id, token):
+    def update_token(self, user_id, token):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("update tokens set token = %s where id = %s", [token, user_id])
@@ -160,7 +160,7 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Couldn't update user {user_id} in the db\n{ex}")
 
-    async def get_token(self, user_id):
+    def get_token(self, user_id):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("select token from tokens where id = %s", [user_id])
@@ -169,7 +169,7 @@ class Database:
             print(f"[ERROR] Couldn't get token from User {user_id}\n{ex}")
             return None
 
-    async def get_user(self, token):
+    def get_user(self, token):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("select id from tokens where token = %s", [token])
@@ -178,7 +178,7 @@ class Database:
             print(f"[ERROR] Couldn't get user_id from Token {token}\n{ex}")
             return None
 
-    async def get_barcode(self, user_id):
+    def get_barcode(self, user_id):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("select barcode from tokens where id = %s", [user_id])
@@ -187,7 +187,7 @@ class Database:
             print(ex)
             return None
 
-    async def get_full_name(self, user_id):
+    def get_full_name(self, user_id):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("select full_name from tokens where id = %s", [user_id])
@@ -196,7 +196,7 @@ class Database:
             print(ex)
             return None
 
-    async def user_exists(self, user_id):
+    def user_exists(self, user_id):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("select * from tokens where id = %s", [user_id])
@@ -205,7 +205,7 @@ class Database:
             print(f"[ERROR] Error while checking db with user {user_id}\n{ex}")
             return None
 
-    async def has_token(self, user_id):
+    def has_token(self, user_id):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("select token from tokens where id = %s", [user_id])
@@ -216,3 +216,4 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while checking db with user {user_id}\n{ex}")
             return None
+        
