@@ -314,7 +314,7 @@ class Database:
             if value not in [0, 1]:
                 raise ValueError(f"[VALUEERROR] Incorrect value for grades notification for User{user_id}")
             with self.connection.cursor() as cursor:
-                cursor.execute("update notaifications set grades_notification = %s where id = %s", (value, user_id))
+                cursor.execute("update notifications set grades_notification = %s where id = %s", (value, user_id))
         except Exception as ex:
             print(f"[ERROR] Couldn't change grades notification settings for User {user_id}\n{ex}")
             return None

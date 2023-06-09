@@ -129,14 +129,14 @@ def get_final_grade_info(term_grade):
     answer: str = ""
 
     if retake <= 50:
-        answer += "To avoid retake: FINAL > 50\n"
+        answer += "🔴 To avoid retake: final exam  > 50\n"
     else:
-        answer += "To avoid retake: FINAL > " + str(retake) + "\n"
+        answer += "🔴 To avoid retake: final exam > " + str(retake) + "\n"
 
     if scholarship <= 50:
-        answer += "To save scholarship: FINAL > 50\n"
+        answer += "🟢 To save scholarship: final exam> 50\n"
     else:
-        answer += "To save scholarship: FINAL > " + str(scholarship) + "\n"
+        answer += "🟢 To save scholarship: final exam> " + str(scholarship) + "\n"
 
     return answer
 
