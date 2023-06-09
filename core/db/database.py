@@ -3,12 +3,13 @@ import dotenv
 import os
 from core.api.api import Api
 
+dotenv.load_dotenv()
+
 
 class Database:
     # constructor takes data from env, creates connection
     def __init__(self):
         try:
-            dotenv.load_dotenv()
             self.__host = os.getenv("DB_HOST")
             self.__port = os.getenv("DB_PORT")
             self.__user = os.getenv("DB_USER")
@@ -108,7 +109,7 @@ class Database:
     def get_grade_notification(self, user_id):
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute(f"select grades_notification from notifications where id ={user_id}")
+                cursor.execute(f"select grades_notification from notifications where id = %s", [user_id])
                 return cursor.fetchone()[0]
         except Exception as ex:
             print(f"Couldn't get grade_notification settings from User {user_id}\n{ex}")
@@ -117,7 +118,7 @@ class Database:
     def get_deadline_notification(self, user_id):
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute(f"select deadlines_notification from notifications where id ={user_id}")
+                cursor.execute("select deadlines_notification from notifications where id = %s", [user_id])
                 return cursor.fetchone()[0]
         except Exception as ex:
             print(f"Couldn't get deadline_notification settings from User {user_id}\n{ex}")
@@ -133,7 +134,7 @@ class Database:
             print(f"[ERROR] Couldn't change grades notification settings for User {user_id}\n{ex}")
             return None
 
-    async def change_deadlines_notification(self, user_id, value):
+    def change_deadlines_notification(self, user_id, value):
         try:
             if value not in [1, 2, 3, 6, 12, 24, 36, 0]:
                 raise ValueError(f"[VALUEERROR] Incorrect value for deadlines notification for User{user_id}")
