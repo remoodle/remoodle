@@ -18,8 +18,9 @@ async def find_moodle_token(message: types.Message):
 
 
 async def define_token(message: types.Message):
-    full_name = db.get_full_name(message.from_user.id)
-    barcode = db.get_barcode(message.from_user.id)
+    await db.create_connection()
+    full_name = await db.get_full_name(message.from_user.id)
+    barcode = await db.get_barcode(message.from_user.id)
     print(str(full_name) + " " + str(barcode))
     await message.answer(f"ID: <pre>{message.from_user.id}</pre>\n" +
                          f"\nToken: <pre>{message.text}</pre>\n" +
@@ -28,18 +29,15 @@ async def define_token(message: types.Message):
                          parse_mode="HTML")
 
 
-def create_grades_string(course_id, user_id):
+async def create_grades_string(course_id, user_id):
     api = Api()
+    await db.create_connection()
 
-    token = db.get_token(user_id)
-    course = api.get_course(token, course_id)
-    course_grades = api.get_course_grades(token, course_id)
+    token = await db.get_token(user_id)
+    course = await api.get_course(token, course_id)
+    course_grades = await api.get_course_grades(token, course_id)
 
     answer: str = course['name'].split('|')[0] + "\nTeacher:" + course['name'].split('|')[1] + "\n\n"
-    # regterm = {
-    #     'mid': 0,
-    #     'end': 0
-    # }
 
     answer2 = "\n"
     regmid: float = 0
@@ -71,11 +69,12 @@ def create_grades_string(course_id, user_id):
     return answer
 
 
-def create_deadlines_string(user_id) -> str:
+async def create_deadlines_string(user_id) -> str:
+    await db.create_connection()
     api = Api()
-    token = db.get_token(user_id)
+    token = await db.get_token(user_id)
     answer: str = "*Upcoming deadlines:*\n\n"
-    deadlines = api.get_deadlines(token)
+    deadlines = await api.get_deadlines(token)
 
     for deadline in deadlines:
         time = get_time_string_by_unix(deadline['remaining'])
@@ -123,11 +122,11 @@ def get_time_string_by_unix(unix_time):
 
 def get_final_grade_info(term_grade):
     if term_grade < 50:
-        return "RETAKE"
+        return "RETAKE" + "\n"
 
     scholarship: float = round(((70 - term_grade * 0.6) / 0.4), 2)
     retake: float = round(((50 - term_grade * 0.6) / 0.4), 2)
-    answer: str = "\n"
+    answer: str = ""
 
     if retake <= 50:
         answer += "To avoid retake: FINAL > 50\n"
@@ -135,24 +134,29 @@ def get_final_grade_info(term_grade):
         answer += "To avoid retake: FINAL > " + str(retake) + "\n"
 
     if scholarship <= 50:
-        answer += "To save scholarship: FINAL > 50"
+        answer += "To save scholarship: FINAL > 50\n"
     else:
-        answer += "To save scholarship: FINAL > " + str(scholarship)
+        answer += "To save scholarship: FINAL > " + str(scholarship) + "\n"
 
     return answer
 
 
-def change_grade_notification_state(user_id):
-    if db.get_grade_notification(user_id) == 0:
-        db.change_grade_notification(user_id, 1)
+async def change_grade_notification_state(user_id):
+    await db.create_connection()
+    grade_notification_state = await db.get_grade_notification(user_id)
+    if grade_notification_state == 0:
+        await db.change_grade_notification(user_id, 1)
     else:
-        db.change_grade_notification(user_id, 0)
+        await db.change_grade_notification(user_id, 0)
 
 
-def change_deadline_notification_state(user_id):
+async def change_deadline_notification_state(user_id):
+    await db.create_connection()
     states = [1, 2, 3, 6, 12, 24, 36, 0]
-    db.change_deadlines_notification(user_id, states[(states.index(db.get_deadline_notification(user_id)) + 1) % len(states)])
+    deadline_notification_state = await db.get_deadline_notification(user_id)
+    await db.change_deadlines_notification(user_id, states[(states.index(deadline_notification_state) + 1) % len(states)])
 
 
-def delete_user(user_id):
-    db.delete_token(user_id)
+async def delete_user(user_id):
+    await db.create_connection()
+    await db.delete_token(user_id)

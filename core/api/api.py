@@ -5,18 +5,20 @@ import time
 class Api:
     moodle_api_link = "https://moodle.astanait.edu.kz/webservice/rest/server.php?wstoken="
 
-    def get_user_info(self, token):
+    async def get_user_info(self, token):
         response = requests.get(f"{self.moodle_api_link}{token}"
                                 f"&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json")
         response = response.json()
+
         return {
             "barcode": response['username'].split('@')[0],
             "full_name": response['fullname'],
             "user_id": response['userid']
         }
 
-    def get_user_all_courses(self, token):
-        user_id = self.get_user_info(token)['user_id']
+    async def get_user_all_courses(self, token):
+        user_info = await self.get_user_info(token)
+        user_id = user_info['user_id']
         response = requests.get(f"{self.moodle_api_link}{token}"
                                 f"&wsfunction=core_enrol_get_users_courses&moodlewsrestformat=json&userid={user_id}")
         response = response.json()
@@ -35,8 +37,8 @@ class Api:
             })
         return data
 
-    def get_user_relative_courses(self, token):
-        courses = self.get_user_all_courses(token)
+    async def get_user_relative_courses(self, token):
+        courses = await self.get_user_all_courses(token)
         current_time = int(time.time())
         data = []
 
@@ -46,7 +48,7 @@ class Api:
 
         return data
 
-    def get_course(self, token, course_id):
+    async def get_course(self, token, course_id):
         response = requests.get(f"{self.moodle_api_link}{token}"
                                 f"&wsfunction=core_course_get_courses_by_field&moodlewsrestformat=json"
                                 f"&field=id&value={course_id}")
@@ -60,7 +62,7 @@ class Api:
             "end_date": response['enddate']
         }
 
-    def get_course_content(self, token, course_id):
+    async def get_course_content(self, token, course_id):
         response = requests.get(f"{self.moodle_api_link}{token}"
                                 f"&wsfunction=core_course_get_contents&moodlewsrestformat=json&courseid={course_id}")
 
@@ -74,8 +76,9 @@ class Api:
 
         return data
 
-    def get_courses_grade(self, token):
-        user_id = self.get_user_info(token)['user_id']
+    async def get_courses_grade(self, token):
+        user_info = await self.get_user_info(token)
+        user_id = user_info['user_id']
         response = requests.get(f"{self.moodle_api_link}{token}"
                                 f"&wsfunction=gradereport_overview_get_course_grades&moodlewsrestformat=json"
                                 f"&userid={user_id}")
@@ -85,7 +88,7 @@ class Api:
         data = []
 
         course_names = {}
-        courses = self.get_user_all_courses(token)
+        courses = await self.get_user_all_courses(token)
         for course in courses:
             course_names[course['id']] = course['name']
 
@@ -98,8 +101,9 @@ class Api:
 
         return data
 
-    def get_course_grades(self, token, course_id):
-        user_id = self.get_user_info(token)['user_id']
+    async def get_course_grades(self, token, course_id):
+        user_info = await self.get_user_info(token)
+        user_id = user_info['user_id']
 
         response = requests.get(f"{self.moodle_api_link}{token}"
                                 f"&wsfunction=gradereport_user_get_grade_items&moodlewsrestformat=json"
@@ -134,7 +138,7 @@ class Api:
 
         return data
 
-    def get_deadlines(self, token):
+    async def get_deadlines(self, token):
         response = requests.get(f"{self.moodle_api_link}{token}"
                                 f"&wsfunction=core_calendar_get_calendar_upcoming_view&moodlewsrestformat=json")
         response = response.json()
