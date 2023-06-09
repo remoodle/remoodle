@@ -109,8 +109,6 @@ class Api:
         data = []
 
         for ass in response:
-            name = ""
-            grade = 0
 
             if ass["itemname"] is None:
                 continue
