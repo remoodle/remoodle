@@ -17,7 +17,8 @@ bot = Bot(token, parse_mode="HTML")
 
 async def main():
     await db.create_connection()
-    await db.clear_tables()
+    await db.create_tables()
+
 
     dp = Dispatcher()
 
