@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from core.api.api import Api
-from core.db.database import Database
+from core.utils.keyboard_utils import *
 
 
 def main_menu():
@@ -57,9 +57,8 @@ def grades_menu():
 
 
 def grades_menu_all_courses(user_id):
-    db = Database()
     api = Api()
-    token = db.get_token(user_id)
+    token = get_user_token(user_id)
     courses = api.get_user_all_courses(token)
     inline_keyboard = []
 
@@ -83,9 +82,8 @@ def grades_menu_all_courses(user_id):
 
 
 def grades_menu_current_courses(user_id):
-    db = Database()
     api = Api()
-    token = db.get_token(user_id)
+    token = get_user_token(user_id)
     courses = api.get_user_relative_courses(token)
     inline_keyboard = []
 
@@ -106,6 +104,51 @@ def grades_menu_current_courses(user_id):
 
     kb = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
     return kb
+
+
+def settings(user_id):
+    grades_state = get_grade_notifications_state(user_id)
+    deadline_state = get_deadline_notifications_state(user_id)
+
+
+
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text=f"Grades notifications: {grades_state}",
+                callback_data="grades_notifications_settings"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text=f"Deadline notifications {deadline_state}",
+                callback_data="deadlines_notifications_settings"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text="Change token",
+                callback_data="token_settings"
+            ),
+            InlineKeyboardButton(
+                text="Contact us",
+                callback_data="contact_us_menu"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text="Back ←",
+                callback_data="back_to_menu"
+            )
+        ]
+    ])
+
+    return kb
+
+
+
+
+
 
 
 def back(callback_data: str):

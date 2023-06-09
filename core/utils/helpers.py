@@ -127,10 +127,6 @@ def get_final_grade_info(term_grade):
 
     scholarship: float = round(((70 - term_grade * 0.6) / 0.4), 2)
     retake: float = round(((50 - term_grade * 0.6) / 0.4), 2)
-
-    print(term_grade)
-    print(str(scholarship) + " " + str(retake))
-
     answer: str = "\n"
 
     if retake <= 50:
@@ -144,3 +140,19 @@ def get_final_grade_info(term_grade):
         answer += "To save scholarship: FINAL > " + str(scholarship)
 
     return answer
+
+
+def change_grade_notification_state(user_id):
+    if db.get_grade_notification(user_id) == 0:
+        db.change_grade_notification(user_id, 1)
+    else:
+        db.change_grade_notification(user_id, 0)
+
+
+def change_deadline_notification_state(user_id):
+    states = [1, 2, 3, 6, 12, 24, 36, 0]
+    db.change_deadlines_notification(user_id, states[(states.index(db.get_deadline_notification(user_id)) + 1) % len(states)])
+
+
+def delete_user(user_id):
+    db.delete_token(user_id)

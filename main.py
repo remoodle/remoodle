@@ -11,6 +11,8 @@ from core.handlers.user_handlers import user_handlers
 db = Database()
 api = Api()
 
+
+
 async def main():
     dotenv.load_dotenv()
     token = os.getenv("TOKEN")
@@ -21,6 +23,7 @@ async def main():
     print("Bot started!")
     dp.include_routers(user_handlers.router)
     await dp.start_polling(bot)
+
 
 
 if __name__ == '__main__':

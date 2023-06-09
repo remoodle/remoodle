@@ -19,7 +19,8 @@ async def start(message: types.Message, state: FSMContext):
         k_button = ReplyKeyboardBuilder()
         k_button.button(text="How to find token?")
         k_button.adjust(1)
-        await message.answer("Enter your token: ", reply_markup=k_button.as_markup(resize_keyboard=True))
+        await message.answer("Enter your token: ", reply_markup=k_button.as_markup(resize_keyboard=True,
+                                                                                   one_time_keyboard=True))
         await state.set_state(StepsForm.GET_MOODLE_TOKEN)
     else:
         full_name = db.get_full_name(user_id)
@@ -41,6 +42,8 @@ async def save_moodle_token(message: types.Message, state: FSMContext):
         if db.user_exists(message.from_user.id):
             db.update_token(user_id=message.from_user.id, token=message.text)
         else:
+            print(message.text)
+            print(message.from_user.id)
             db.insert_token(user_id=message.from_user.id, token=message.text)
         await define_token(message)
         await state.clear()
@@ -62,7 +65,39 @@ async def gpa_handler(call: CallbackQuery):
 
 @router.callback_query(Text(text="settings"))
 async def settings_handler(call: CallbackQuery):
-    await call.answer("Coming soon")
+    await call.message.edit_text("Settings:",
+                                 reply_markup=settings(call.message.chat.id))
+    await call.answer()
+
+
+@router.callback_query(Text(text="grades_notifications_settings"))
+async def grades_settings_handler(call: CallbackQuery):
+    user_id = call.message.chat.id
+    change_grade_notification_state(user_id)
+    await  call.message.edit_reply_markup(reply_markup=settings((user_id)))
+    await call.answer()
+
+
+@router.callback_query(Text(text="deadlines_notifications_settings"))
+async def deadlines_settings_handler(call: CallbackQuery):
+    user_id = call.message.chat.id
+    change_deadline_notification_state(user_id)
+    await  call.message.edit_reply_markup(reply_markup=settings((user_id)))
+    await call.answer()
+
+
+@router.callback_query(Text(text="token_settings"))
+async def token_change_handler(call: CallbackQuery):
+    user_id = call.message.chat.id
+    delete_user(user_id)
+    await call.answer("send /start")
+    await call.message.delete()
+
+
+@router.callback_query(Text(text="contact_us_menu"))
+async def contact_us_handler(call: CallbackQuery):
+    await call.message.edit_text("@y_abdrakhmanov\n@dek_kar",
+                                 reply_markup=back("back_to_menu"))
 
 
 @router.callback_query(Text(text="grades"))

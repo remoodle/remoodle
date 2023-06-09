@@ -97,22 +97,49 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Couldn't add user {user_id} to the db\n{ex}")
 
+    def delete_token(self, user_id):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("delete from tokens where id = %s", [user_id])
+                cursor.execute("delete from notifications where id = %s", [user_id])
+        except Exception as ex:
+            print(ex)
+            return None
+
+    def get_grade_notification(self, user_id):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(f"select grades_notification from notifications where id ={user_id}")
+                return cursor.fetchone()[0]
+        except Exception as ex:
+            return None
+
+    def get_deadline_notification(self, user_id):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(f"select deadlines_notification from notifications where id ={user_id}")
+                return cursor.fetchone()[0]
+        except Exception as ex:
+            return None
+
     def change_grade_notification(self, user_id, value):
         try:
             if value not in [0, 1]:
                 raise ValueError(f"[VALUEERROR] Incorrect value for grades notification for User{user_id}")
             with self.connection.cursor() as cursor:
-                cursor.execute("update notifications set grades_notification = %s where id = %s", value, user_id)
+                cursor.execute("update notifications set grades_notification = %s where id = %s", (value, user_id))
         except Exception as ex:
             return None
 
+
     def change_deadlines_notification(self, user_id, value):
         try:
-            if value not in [1, 2, 3, 6, 12, 24]:
+            if value not in [1, 2, 3, 6, 12, 24, 36, 0]:
                 raise ValueError(f"[VALUEERROR] Incorrect value for deadlines notification for User{user_id}")
             with self.connection.cursor() as cursor:
-                cursor.execute("update notifications set deadlines_notification = %s where id = %s", value, user_id)
+                cursor.execute("update notifications set deadlines_notification = %s where id = %s", (value, user_id))
         except Exception as ex:
+            print(ex)
             return None
 
     def add_user_notifications(self, user_id):
