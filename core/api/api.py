@@ -9,6 +9,11 @@ class Api:
         response = requests.get(f"{self.moodle_api_link}{token}"
                                 f"&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json")
         response = response.json()
+        try:
+            if response['errorcode'] == 'invalidtoken':
+                return None
+        except Exception:
+            pass
 
         return {
             "barcode": response['username'].split('@')[0],
@@ -18,7 +23,7 @@ class Api:
 
     async def validate_user_token(self, token):
         user_info = await self.get_user_info(token)
-        if user_info['barcode'] is None or user_info['full_name'] is None:
+        if user_info is None:
             return False
         return True
 
