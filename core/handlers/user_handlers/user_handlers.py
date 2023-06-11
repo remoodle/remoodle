@@ -41,14 +41,16 @@ async def save_moodle_token(message: types.Message, state: FSMContext):
         await state.clear()
         await state.set_state(StepsForm.GET_MOODLE_TOKEN)
     else:
-        user_exists = await db.user_exists(message.from_user.id)
-        if user_exists:
-            await db.update_token(user_id=message.from_user.id, token=message.text)
-        else:
+        api = Api()
+        if await api.validate_user_token(message.text):
             await db.insert_token(user_id=message.from_user.id, token=message.text)
-        await define_token(message)
-        await state.clear()
-        await start(message, state)
+            await define_token(message)
+            await state.clear()
+            await start(message, state)
+        else:
+            await message.answer("Your token is invalid!\nEnter your token: ")
+            await state.clear()
+            await state.set_state(StepsForm.GET_MOODLE_TOKEN)
 
 
 @router.callback_query(Text(text="deadlines"))
