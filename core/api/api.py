@@ -148,7 +148,8 @@ class Api:
         for event in deadlines:
             data.append({
                 'id': event['id'],
-                'name': event['name'],
+                'course_name': str(event['course']['shortname']).split(' |')[0],
+                'deadline_name': event['name'],
                 'remaining': event['timestart']
             })
 
