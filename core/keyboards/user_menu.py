@@ -125,12 +125,12 @@ async def settings(user_id):
         ],
         [
             InlineKeyboardButton(
-                text="Change token",
-                callback_data="token_settings"
-            ),
-            InlineKeyboardButton(
                 text="Contact us",
                 callback_data="contact_us_menu"
+            ),
+            InlineKeyboardButton(
+                text="Log out",
+                callback_data="token_settings"
             )
         ],
         [
