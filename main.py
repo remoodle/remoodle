@@ -11,7 +11,7 @@ from core.handlers.user_handlers import user_handlers
 db = Database()
 api = Api()
 dotenv.load_dotenv()
-token = os.getenv("TOKEN")
+token = os.getenv("TELEGRAM_BOT_TOKEN")
 bot = Bot(token, parse_mode="HTML")
 
 
