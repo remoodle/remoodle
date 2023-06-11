@@ -81,7 +81,8 @@ async def create_deadlines_string(user_id) -> str:
         if time is not None:
             time_left = time['remaining']
             date = time['deadline']
-            answer += f"📅 *{deadline['name']}* | Time left → {time_left} | Date → {date}\n"
+            answer += f"📅 *{deadline['course_name']}* | *{deadline['deadline_name']}* | Date → {date} | " \
+                      f"Time left → {time_left}\n\n"
 
     return answer
 
@@ -129,14 +130,14 @@ def get_final_grade_info(term_grade):
     answer: str = ""
 
     if retake <= 50:
-        answer += "🔴 To avoid retake: final exam  > 50\n"
+        answer += "🔴 To avoid retake: final exam > 50\n"
     else:
         answer += "🔴 To avoid retake: final exam > " + str(retake) + "\n"
 
     if scholarship <= 50:
-        answer += "🟢 To save scholarship: final exam> 50\n"
+        answer += "🟢 To save scholarship: final exam > 50\n"
     else:
-        answer += "🟢 To save scholarship: final exam> " + str(scholarship) + "\n"
+        answer += "🟢 To save scholarship: final exam > " + str(scholarship) + "\n"
 
     return answer
 
@@ -160,3 +161,7 @@ async def change_deadline_notification_state(user_id):
 async def delete_user(user_id):
     await db.create_connection()
     await db.delete_token(user_id)
+
+
+api = Api()
+asyncio.run(create_deadlines_string())
