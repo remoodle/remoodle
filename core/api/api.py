@@ -16,6 +16,12 @@ class Api:
             "user_id": response['userid']
         }
 
+    async def validate_user_token(self, token):
+        user_info = await self.get_user_info(token)
+        if user_info['barcode'] is None or user_info['full_name'] is None:
+            return False
+        return True
+
     async def get_user_all_courses(self, token):
         user_info = await self.get_user_info(token)
         user_id = user_info['user_id']
