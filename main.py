@@ -19,7 +19,6 @@ async def main():
     await db.create_connection()
     await db.create_tables()
 
-
     dp = Dispatcher()
 
     print("Bot started!")
