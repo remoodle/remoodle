@@ -197,6 +197,7 @@ class Database:
         await self.create_table_tokens()
         await self.create_table_notifications()
         await self.create_table_grades()
+        await self.create_table_openid()
 
     async def create_table_tokens(self):
         if await self.table_exists("tokens"):
@@ -232,7 +233,6 @@ class Database:
             print("[WARNING] Table grades already exists")
             return
         try:
-
             with self.connection.cursor() as cursor:
                 cursor.execute(
                     "create table grades ("
@@ -246,12 +246,29 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while creating table grades\n{ex}")
 
+    async def create_table_openid(self):
+        if await self.table_exists("openid"):
+            print("[WARNING] Table grades already exists")
+            return
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(
+                    "create table openid ("
+                    "user_id bigint primary key,"
+                    "email varchar(80),"
+                    "password varchar(40));"
+                )
+                print("[SUCCESS] Table openid was created")
+        except Exception as ex:
+            print(f"[ERROR] Error while creating table openid\n{ex}")
+
     async def drop_tables(self):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("drop table if exists tokens; "
                                "drop table if exists notifications;"
-                               "drop table if exists grades;")
+                               "drop table if exists grades;"
+                               "drop table if exists openid;")
             print("[SUCCESS] tables were dropped")
         except Exception as ex:
             print(f"[ERROR] Error while dropping tables\n{ex}")
@@ -262,6 +279,7 @@ class Database:
                 cursor.execute("delete from grades;")
                 cursor.execute("delete from notifications;")
                 cursor.execute("delete from tokens;")
+                cursor.execute("delete from openid;")
             print("[SUCCESS] tables were cleared")
         except Exception as ex:
             print(f"[ERROR] Error while dropping tables\n{ex}")
