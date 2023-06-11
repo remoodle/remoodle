@@ -83,7 +83,7 @@ async def create_deadlines_string(user_id) -> str:
         if time is not None:
             time_left = time['remaining']
             date = time['deadline']
-            answer += f"📅 *{deadline['deadline_name']}* | *{deadline['course_name']}* | Date → {date} | " \
+            answer += f"📅  *{deadline['course_name']}* | *{deadline['deadline_name']}* | Date → {date} | " \
                       f"Time left → {time_left}\n\n"
 
     return answer
