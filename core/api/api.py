@@ -1,6 +1,6 @@
 import asyncio
-from moodleapi import MoodleApi
-from openidapi import OpenIdApi
+from core.api.moodleapi import MoodleApi
+from core.api.openidapi import OpenIdApi
 
 
 class Api(MoodleApi, OpenIdApi):
