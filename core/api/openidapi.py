@@ -20,9 +20,14 @@ class OpenIdApi:
         self.openid_api_link += f"{os.getenv('AZURE_TENANT')}/oauth2/v2.0/token"
         self.payload['client_id'] = os.getenv('AZURE_CLIENT_ID')
         self.payload['client_secret'] = os.getenv('AZURE_CLIENT_SECRET')
-        self.payload['scope'] = os.getenv('AZURE_CLIENT_SCOPE')
+        self.payload['scope'] = os.getenv('AZURE_CLIENT_SCOPE') + ' openid offline_access'
 
     async def validate_openid_account(self, login, password):
+        if await self.get_openid_token(login, password) is None:
+            return False
+        return True
+
+    async def get_openid_token(self, login, password):
         payload = self.payload
         payload['username'] = login
         payload['password'] = password
@@ -30,9 +35,10 @@ class OpenIdApi:
         azure_response = requests.post(self.openid_api_link, data=payload).json()
 
         try:
-            if azure_response['error'] == 'invalid_grant' or str(azure_response['error_description']).__contains__('invalid username or password'):
-                return False
+            if azure_response['error'] == 'invalid_grant' or str(azure_response['error_description']).__contains__(
+                    'invalid username or password'):
+                return None
         except Exception:
             pass
 
-        return True
+        return azure_response
