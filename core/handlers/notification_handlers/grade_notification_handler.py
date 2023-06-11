@@ -14,7 +14,6 @@ async def iterate_users_grades(bot):
     await db.create_connection()
     user_ids = await db.get_all_user_ids()
 
-
     if user_ids is None:
         pass
     else:
