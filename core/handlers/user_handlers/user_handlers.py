@@ -42,7 +42,7 @@ async def save_moodle_token(message: types.Message, state: FSMContext):
         await state.set_state(StepsForm.GET_MOODLE_TOKEN)
     else:
         api = Api()
-        if await api.validate_user_token(message.text):
+        if await api.validate_moodle_user_token(message.text):
             await db.insert_token(user_id=message.from_user.id, token=message.text)
             await define_token(message)
             await state.clear()
