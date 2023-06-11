@@ -25,11 +25,16 @@ async def main():
     dp.include_routers(user_handlers.router)
     await dp.start_polling(bot)
 
+
+async def start():
+    asyncio.create_task(main())
+    asyncio.create_task(start_loop(bot))
+    await asyncio.Event().wait()
+
+
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
-    asyncio.ensure_future(main())
-    asyncio.ensure_future(start_loop(bot))
-    asyncio.get_event_loop().run_forever()
+    asyncio.run(start())
