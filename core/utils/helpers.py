@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import types, Router
 from aiogram.filters import Text
 from core.api.api import Api
@@ -81,7 +83,7 @@ async def create_deadlines_string(user_id) -> str:
         if time is not None:
             time_left = time['remaining']
             date = time['deadline']
-            answer += f"📅 *{deadline['course_name']}* | *{deadline['deadline_name']}* | Date → {date} | " \
+            answer += f"📅 *{deadline['deadline_name']}* | *{deadline['course_name']}* | Date → {date} | " \
                       f"Time left → {time_left}\n\n"
 
     return answer
@@ -161,7 +163,3 @@ async def change_deadline_notification_state(user_id):
 async def delete_user(user_id):
     await db.create_connection()
     await db.delete_token(user_id)
-
-
-api = Api()
-asyncio.run(create_deadlines_string())
