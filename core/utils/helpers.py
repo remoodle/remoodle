@@ -48,6 +48,9 @@ async def create_grades_string(course_id, user_id):
 
     for assignment in course_grades:
         answer2 += f"*{assignment['name']}*" + " → " + assignment['grade'] + "\n"
+        
+        if str(assignment['name']).lower().__contains__("attendance"):
+            answer2 += "\n"
 
         try:
             if str(assignment['name']).lower().__contains__("register midterm"):
@@ -75,16 +78,24 @@ async def create_deadlines_string(user_id) -> str:
     await db.create_connection()
     api = Api()
     token = await db.get_token(user_id)
-    answer: str = "*Upcoming deadlines:*\n\n"
+    answer: str = "*Upcoming deadlines* 👉🏻👈🏻\n\n"
     deadlines = await api.get_deadlines(token)
+    
+    if not deadlines:
+        return "*Moodle API is currently unavailable* 😨"
+    
+    if len(deadlines) < 1:
+        return "*You have no active deadlines* 🥰"
 
-    for deadline in deadlines:
+    for i, deadline in enumerate(deadlines):
+        if str(deadline['deadline_name']).lower().__contains__("attendance"):
+            continue
         time = get_time_string_by_unix(deadline['remaining'])
         if time is not None:
             time_left = time['remaining']
             date = time['deadline']
-            answer += f"📅  *{deadline['course_name']}* | *{deadline['deadline_name']}* | Date → {date} | " \
-                      f"Time left → {time_left}\n\n"
+            answer += f"📅  *{deadline['deadline_name']}*  |  {deadline['course_name']}  |  Date → {date}  |  " \
+                      f"Time left → *{time_left}*\n\n"
 
     return answer
 
@@ -106,12 +117,12 @@ def get_time_string_by_unix(unix_time):
     }
 
     deadline = datetime.fromtimestamp(unix_time)
-    remaining = deadline - datetime.utcnow() - timedelta(seconds=21600)
+    remaining = deadline - datetime.utcnow()
 
     year = deadline.strftime("%y")
     month = months[int(deadline.strftime("%m"))]
     day = deadline.strftime("%d")
-    h = deadline.strftime("%H")
+    h = (int(deadline.strftime("%H")) + 6) % 24
     m = deadline.strftime("%M")
 
     if remaining.total_seconds() <= 0:
@@ -132,14 +143,14 @@ def get_final_grade_info(term_grade):
     answer: str = ""
 
     if retake <= 50:
-        answer += "🔴 To avoid retake: final exam > 50\n"
+        answer += "🔴 To avoid retake: *final exam > 50*\n"
     else:
-        answer += "🔴 To avoid retake: final exam > " + str(retake) + "\n"
+        answer += "🔴 To avoid retake: *final exam > " + str(retake) + "*\n"
 
     if scholarship <= 50:
-        answer += "🟢 To save scholarship: final exam > 50\n"
+        answer += "🟢 To save scholarship: *final exam > 50*\n"
     else:
-        answer += "🟢 To save scholarship: final exam > " + str(scholarship) + "\n"
+        answer += "🟢 To save scholarship: *final exam > " + str(scholarship) + "*\n"
 
     return answer
 

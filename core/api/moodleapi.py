@@ -151,7 +151,11 @@ class MoodleApi:
 
     async def get_deadlines(self, token):
         response = requests.get(f"{self.moodle_api_link}{token}"
-                                f"&wsfunction=core_calendar_get_calendar_upcoming_view&moodlewsrestformat=json")
+                                f"&wsfunction=core_calendar_get_calendar_upcoming_view&moodlewsrestformat=json", timeout=10)
+        
+        if not response:
+            return null
+        
         response = response.json()
         deadlines = response['events']
         data = []

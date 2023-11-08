@@ -14,6 +14,9 @@ router = Router()
 async def start(message: types.Message, state: FSMContext):
     await db.create_connection()
     user_id = message.from_user.id
+    
+    if (message.chat.type != "private"):
+        return
 
     has_token = await db.has_token(user_id)
     if not has_token:
@@ -30,6 +33,19 @@ async def start(message: types.Message, state: FSMContext):
             parse_mode='Markdown',
             reply_markup=main_menu()
         )
+
+
+@router.message(Command("deadlines"))
+async def deadlinesCommand(message: types.Message, state: FSMContext):
+    await db.create_connection()
+    user_id = message.from_user.id
+    has_token = await db.has_token(user_id)
+    
+    if not has_token:
+        await message.answer("You are not authorized!")
+    else:
+        deadlines_string = await create_deadlines_string(message.from_user.id)
+        await message.answer(text=deadlines_string, parse_mode="Markdown")
 
 
 @router.message(StepsForm.GET_MOODLE_TOKEN)

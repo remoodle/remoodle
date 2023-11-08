@@ -28,7 +28,7 @@ async def main():
 
 async def start():
     asyncio.create_task(main())
-    asyncio.create_task(start_loop(bot))
+    # asyncio.create_task(start_loop(bot))
     await asyncio.Event().wait()
 
 
