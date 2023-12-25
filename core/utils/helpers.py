@@ -1,6 +1,7 @@
 import asyncio
+import os
 
-from aiogram import types, Router
+from aiogram import types, Router, Bot
 from aiogram.filters import Text
 from core.api.api import Api
 from core.db.database import Database
@@ -11,6 +12,8 @@ import time
 
 router = Router()
 db = Database()
+token = os.getenv("TELEGRAM_BOT_TOKEN")
+bot = Bot(token, parse_mode="HTML")
 
 
 @router.message(Text("How to find token?", ignore_case=True))
@@ -175,6 +178,13 @@ async def change_deadline_notification_state(user_id):
     states = [1, 2, 3, 6, 12, 24, 36, 0]
     deadline_notification_state = await db.get_deadline_notification(user_id)
     await db.change_deadlines_notification(user_id, states[(states.index(deadline_notification_state) + 1) % len(states)])
+
+async def create_telegram_chat_id_username_relation():
+    await db.create_connection()
+    users_ids = await db.get_all_user_ids()
+    for user_id in users_ids:
+        user = await bot.get_chat(user_id)
+        await db.insert_to_telegram_table(user_id, user.username)
 
 
 async def delete_user(user_id):
