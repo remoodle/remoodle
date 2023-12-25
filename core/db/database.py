@@ -141,8 +141,7 @@ class Database:
                 answer = []
                 user_ids = cursor.fetchall()
                 for user in user_ids:
-                    if await self.get_grade_notification(user) == 1:
-                        answer.append(user[0])
+                    answer.append(user[0])
 
                 return answer
         except Exception as ex:
@@ -344,6 +343,8 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Couldn't add user {chat_id} to the db\n{ex}")
 
+
+
     async def get_grade_notification(self, user_id):
         try:
             with self.connection.cursor() as cursor:
@@ -434,6 +435,30 @@ class Database:
         except Exception as ex:
             print(ex)
             return None
+
+    async def telegram_username_to_id(self, username):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("select chat_id from telegram where username = %s", [username])
+                return cursor.fetchone()[0]
+        except Exception as ex:
+            print(ex)
+            return None
+
+    async def get_all_telegrams(self):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("select * from telegram")
+                answer = []
+                user_ids = cursor.fetchall()
+                for user in user_ids:
+                    answer.append(user)
+
+                return answer
+        except Exception as ex:
+            print(ex)
+            return None
+
 
     async def user_exists(self, user_id):
         try:
