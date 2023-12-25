@@ -335,6 +335,15 @@ class Database:
             print(f"[ERROR] Couldn't delete User's {user_id} token\n{ex}")
             return None
 
+    async def insert_to_telegram_table(self, chat_id, username):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("insert into telegram (chat_id, username) values (%s, %s)",
+                               [chat_id, username])
+                print(f"[SUCCESS] User {username} has been added to db with id {chat_id}")
+        except Exception as ex:
+            print(f"[ERROR] Couldn't add user {chat_id} to the db\n{ex}")
+
     async def get_grade_notification(self, user_id):
         try:
             with self.connection.cursor() as cursor:
