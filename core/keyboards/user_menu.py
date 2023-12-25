@@ -20,8 +20,8 @@ def main_menu():
         ],
         [
             InlineKeyboardButton(
-                text="GPA",
-                callback_data="gpa"
+                text="Map",
+                url="https://yuujiso.github.io/aitumap/"
             ),
             InlineKeyboardButton(
                 text="Settings",
@@ -113,13 +113,13 @@ async def settings(user_id):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
-                text=f"Grades notifications: {grades_state}",
+                text="Grades notifications",
                 callback_data="grades_notifications_settings"
             ),
         ],
         [
             InlineKeyboardButton(
-                text=f"Deadline notifications {deadline_state}",
+                text="Deadline notifications",
                 callback_data="deadlines_notifications_settings"
             )
         ],

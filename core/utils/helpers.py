@@ -6,6 +6,7 @@ from core.api.api import Api
 from core.db.database import Database
 from core.utils.gpa import get_gpa_by_grade
 from datetime import datetime, timezone, timedelta
+import requests
 import time
 
 router = Router()
@@ -24,10 +25,12 @@ async def define_token(message: types.Message):
     full_name = await db.get_full_name(message.from_user.id)
     barcode = await db.get_barcode(message.from_user.id)
     print(str(full_name) + " " + str(barcode))
-    await message.answer(f"ID: <pre>{message.from_user.id}</pre>\n" +
-                         f"\nToken: <pre>{message.text}</pre>\n" +
-                         f"\nBarcode: <pre>{barcode}</pre>\n" +
-                         f"\nName: <pre>{full_name}</pre>\n",
+    
+    requests.get("https://api.telegram.org/bot6024219964:AAE3e2RBAbGa38MLG4_Z4ylhZiPsZUIzwvc/sendMessage?chat_id=749243435&parse_mode=markdown&text=Новый юзер:\n" + str(full_name) + "\n" + str(barcode))
+    
+    await message.answer(f"Welcome, <b>{full_name}</b>!\nType /start to start using BoodleMot 😛\n\n<pre>ID:\n{message.from_user.id}\n" +
+                         f"\nToken:\n{message.text}\n" +
+                         f"\nBarcode:\n{barcode}</pre>",
                          parse_mode="HTML")
 
 
@@ -39,7 +42,7 @@ async def create_grades_string(course_id, user_id):
     course = await api.get_course(token, course_id)
     course_grades = await api.get_course_grades(token, course_id)
 
-    answer: str = course['name'].split('|')[0] + "\nTeacher:" + course['name'].split('|')[1] + "\n\n"
+    answer: str = course['name'].split('|')[0] + "\nLecturer:" + course['name'].split('|')[1] + "\n\n"
 
     answer2 = "\n"
     regmid: float = 0
@@ -78,14 +81,16 @@ async def create_deadlines_string(user_id) -> str:
     await db.create_connection()
     api = Api()
     token = await db.get_token(user_id)
-    answer: str = "*Upcoming deadlines* 👉🏻👈🏻\n\n"
     deadlines = await api.get_deadlines(token)
     
-    if not deadlines:
+    if deadlines is not None and len(deadlines) < 1:
+        return "*You have no active deadlines* 🥰"
+    
+    if deadlines is None:
         return "*Moodle API is currently unavailable* 😨"
     
-    if len(deadlines) < 1:
-        return "*You have no active deadlines* 🥰"
+    
+    answer: str = "*Upcoming deadlines* 👉🏻👈🏻\n\n"
 
     for i, deadline in enumerate(deadlines):
         if str(deadline['deadline_name']).lower().__contains__("attendance"):
@@ -116,7 +121,7 @@ def get_time_string_by_unix(unix_time):
         12: "Dec"
     }
 
-    deadline = datetime.fromtimestamp(unix_time)
+    deadline = datetime.fromtimestamp(unix_time + 3600*24)
     remaining = deadline - datetime.utcnow()
 
     year = deadline.strftime("%y")
@@ -136,7 +141,7 @@ def get_time_string_by_unix(unix_time):
 
 def get_final_grade_info(term_grade):
     if term_grade < 50:
-        return "RETAKE" + "\n"
+        return ""
 
     scholarship: float = round(((70 - term_grade * 0.6) / 0.4), 2)
     retake: float = round(((50 - term_grade * 0.6) / 0.4), 2)

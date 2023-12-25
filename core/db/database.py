@@ -147,6 +147,16 @@ class Database:
                 return answer
         except Exception as ex:
             print(f"[ERROR] Error while getting all users from db\n{ex}")
+            
+    async def get_all_users(self):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("select * from tokens")
+                users = cursor.fetchall()
+                
+                return users
+        except Exception as ex:
+            pass
 
     async def insert_user_new_assignment_grade(self, user_id, course_id, assignment_id, new_grade):
         try:
@@ -293,9 +303,8 @@ class Database:
                 cursor.execute("insert into tokens (id, token, full_name, barcode) values (%s, %s, %s, %s)",
                                [user_id, token, full_name, barcode])
                 print(f"[SUCCESS] User {user_id} has been added to db with token {token}")
-                # Запуск сохранения дедлайнов и оценокbarcode])
-                await self.add_user_notifications(user_id)
-                await self.insert_user_relative_courses_grades(user_id)
+                # await self.add_user_notifications(user_id)
+                # await self.insert_user_relative_courses_grades(user_id)
         except Exception as ex:
             print(f"[ERROR] Couldn't add user {user_id} to the db\n{ex}")
 

@@ -16,6 +16,7 @@ async def start(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     
     if (message.chat.type != "private"):
+        await message.answer("This method is not allowed in groups!")
         return
 
     has_token = await db.has_token(user_id)
@@ -23,7 +24,7 @@ async def start(message: types.Message, state: FSMContext):
         k_button = ReplyKeyboardBuilder()
         k_button.button(text="How to find token?")
         k_button.adjust(1)
-        await message.answer("Enter your token: ", reply_markup=k_button.as_markup(resize_keyboard=True,
+        await message.answer("Hi there!\nEnter your token: ", reply_markup=k_button.as_markup(resize_keyboard=True,
                                                                                    one_time_keyboard=True))
         await state.set_state(StepsForm.GET_MOODLE_TOKEN)
     else:
@@ -33,6 +34,30 @@ async def start(message: types.Message, state: FSMContext):
             parse_mode='Markdown',
             reply_markup=main_menu()
         )
+
+
+@router.message(Command("users"))
+async def admin_get_users(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id
+    
+    if user_id not in (749243435, 1055088454):
+        return
+    
+    await db.create_connection()
+    users = await db.get_all_users()
+    answer = ""
+    
+    for user in users:
+        answer += f"{user[2]} - {user[3]} | {user[0]}\n"
+        
+    answer += f"\n\nCOUNT: {len(users)}"
+    
+    await message.answer(answer, parse_mode="HTML")
+
+
+@router.message(Command("pidor"))
+async def pidorCommand(message: types.Message, state: FSMContext):
+    await message.answer("Сам ты пидор)")
 
 
 @router.message(Command("deadlines"))
@@ -62,7 +87,7 @@ async def save_moodle_token(message: types.Message, state: FSMContext):
             await db.insert_token(user_id=message.from_user.id, token=message.text)
             await define_token(message)
             await state.clear()
-            await start(message, state)
+            # await start(message, state)
         else:
             await message.answer("Your token is invalid!\nEnter your token: ")
             await state.clear()
@@ -78,11 +103,6 @@ async def deadlines_handler(call: CallbackQuery):
     await call.answer()
 
 
-@router.callback_query(Text(text="gpa"))
-async def gpa_handler(call: CallbackQuery):
-    await call.answer("Coming soon")
-
-
 @router.callback_query(Text(text="settings"))
 async def settings_handler(call: CallbackQuery):
     settings_markup = await settings(call.message.chat.id)
@@ -93,20 +113,22 @@ async def settings_handler(call: CallbackQuery):
 
 @router.callback_query(Text(text="grades_notifications_settings"))
 async def grades_settings_handler(call: CallbackQuery):
-    user_id = call.message.chat.id
-    await change_grade_notification_state(user_id)
-    settings_markup = await settings(user_id)
-    await call.message.edit_reply_markup(reply_markup=settings_markup)
-    await call.answer()
+    await call.answer("Currently unavailable")
+    # user_id = call.message.chat.id
+    # await change_grade_notification_state(user_id)
+    # settings_markup = await settings(user_id)
+    # await call.message.edit_reply_markup(reply_markup=settings_markup)
+    # await call.answer()
 
 
 @router.callback_query(Text(text="deadlines_notifications_settings"))
 async def deadlines_settings_handler(call: CallbackQuery):
-    user_id = call.message.chat.id
-    await change_deadline_notification_state(user_id)
-    settings_markup = await settings(user_id)
-    await  call.message.edit_reply_markup(reply_markup=settings_markup)
-    await call.answer()
+    await call.answer("Currently unavailable")
+    # user_id = call.message.chat.id
+    # await change_deadline_notification_state(user_id)
+    # settings_markup = await settings(user_id)
+    # await  call.message.edit_reply_markup(reply_markup=settings_markup)
+    # await call.answer()
 
 
 @router.callback_query(Text(text="change_token_yes"))
