@@ -10,6 +10,7 @@ from main import db
 router = Router()
 
 
+
 @router.message(Command("start"))
 async def start(message: types.Message, state: FSMContext):
     await db.create_connection()
@@ -71,9 +72,22 @@ async def admin_get_users(message: types.Message, state: FSMContext):
 
 @router.message(Command("gift"))
 async def gift(message: types.Message, state: FSMContext):
-    await message.answer("Сам ты пидор)")
-    print(message.from_user.username)
-    print(requests.get("https://api.telegram.org/bot6024219964:AAE3e2RBAbGa38MLG4_Z4ylhZiPsZUIzwvc/getUpdates").json())
+    await db.create_connection()
+
+    command_parts = message.text.split()
+
+    if len(command_parts) < 3:
+        await message.reply("Please use the /gift command in the format: /gift <username> <message>")
+        return
+    username = command_parts[1]
+    chat_id = await db.telegram_username_to_id(command_parts[1])
+    gift_message = " ".join(command_parts[2:])
+
+    try:
+        await bot.send_message(chat_id, f"You received a gift: {gift_message}")
+        await message.reply(f"Gift sent to {username} successfully!")
+    except Exception as e:
+        await message.reply(f"Failed to send gift to {username}. Error: {e}")
 
 @router.message(Command("pidor"))
 async def pidorCommand(message: types.Message, state: FSMContext):

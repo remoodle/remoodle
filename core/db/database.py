@@ -338,7 +338,7 @@ class Database:
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute("insert into telegram (chat_id, username) values (%s, %s)",
-                               [chat_id, username])
+                               [chat_id, '@'+username])
                 print(f"[SUCCESS] User {username} has been added to db with id {chat_id}")
         except Exception as ex:
             print(f"[ERROR] Couldn't add user {chat_id} to the db\n{ex}")
