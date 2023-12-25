@@ -24,7 +24,7 @@ async def start(message: types.Message, state: FSMContext):
         k_button = ReplyKeyboardBuilder()
         k_button.button(text="How to find token?")
         k_button.adjust(1)
-        await message.answer("Привет!\nВведите Ваш токен: ", reply_markup=k_button.as_markup(resize_keyboard=True,
+        await message.answer("Hello!\nEnter your Token: ", reply_markup=k_button.as_markup(resize_keyboard=True,
                                                                                    one_time_keyboard=True))
         await state.set_state(StepsForm.GET_MOODLE_TOKEN)
     else:
@@ -69,7 +69,11 @@ async def admin_get_users(message: types.Message, state: FSMContext):
     #     userid = user[0]
     #     requests.get(f"https://api.telegram.org/bot6024219964:AAE3e2RBAbGa38MLG4_Z4ylhZiPsZUIzwvc/sendMessage", params={"chat_id": userid, "parse_mode": "markdown", "text": "Привет, я создал канал где cмогу пообщаться с пользователями про бота и его дальнейших обновлениях: [тык](https://t.me/+ltR0DSdwf6c4MTFi)"})
 
-
+@router.message(Command("gift"))
+async def gift(message: types.Message, state: FSMContext):
+    await message.answer("Сам ты пидор)")
+    print(message.from_user.username)
+    print(requests.get("https://api.telegram.org/bot6024219964:AAE3e2RBAbGa38MLG4_Z4ylhZiPsZUIzwvc/getUpdates").json())
 
 @router.message(Command("pidor"))
 async def pidorCommand(message: types.Message, state: FSMContext):
@@ -101,6 +105,7 @@ async def save_moodle_token(message: types.Message, state: FSMContext):
         api = Api()
         if await api.validate_moodle_user_token(message.text):
             await db.insert_token(user_id=message.from_user.id, token=message.text)
+            await db.insert_to_telegram_table(chat_id=message.from_user.id, username=(await bot.get_chat(message.from_user.id)).username)
             await define_token(message)
             await state.clear()
             # await start(message, state)
