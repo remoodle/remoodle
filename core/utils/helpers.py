@@ -121,12 +121,13 @@ def get_time_string_by_unix(unix_time):
         12: "Dec"
     }
 
-    deadline = datetime.fromtimestamp(unix_time + 3600*24)
+    deadline = datetime.fromtimestamp(unix_time)
+    deadlines_for_day = datetime.fromtimestamp(unix_time + 3600*24)
     remaining = deadline - datetime.utcnow()
 
     year = deadline.strftime("%y")
     month = months[int(deadline.strftime("%m"))]
-    day = deadline.strftime("%d")
+    day = deadlines_for_day.strftime("%d")
     h = (int(deadline.strftime("%H")) + 6) % 24
     m = deadline.strftime("%M")
 

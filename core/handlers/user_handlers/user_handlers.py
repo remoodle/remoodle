@@ -55,6 +55,22 @@ async def admin_get_users(message: types.Message, state: FSMContext):
     await message.answer(answer, parse_mode="HTML")
 
 
+@router.message(Command("send_invites"))
+async def send_invites(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id
+    
+    if user_id != 749243435:
+        return
+    
+    await db.create_connection()
+    users = await db.get_all_users()
+    
+    # for user in users:
+    #     userid = user[0]
+    #     requests.get(f"https://api.telegram.org/bot6024219964:AAE3e2RBAbGa38MLG4_Z4ylhZiPsZUIzwvc/sendMessage", params={"chat_id": userid, "parse_mode": "markdown", "text": "Привет, я создал канал где cмогу пообщаться с пользователями про бота и его дальнейших обновлениях: [тык](https://t.me/+ltR0DSdwf6c4MTFi)"})
+
+
+
 @router.message(Command("pidor"))
 async def pidorCommand(message: types.Message, state: FSMContext):
     await message.answer("Сам ты пидор)")
