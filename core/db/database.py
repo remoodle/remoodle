@@ -208,6 +208,7 @@ class Database:
         await self.create_table_notifications()
         await self.create_table_grades()
         await self.create_table_openid()
+        await self.create_table_telegram()
 
     async def create_table_tokens(self):
         if await self.table_exists("tokens"):
@@ -272,13 +273,29 @@ class Database:
         except Exception as ex:
             print(f"[ERROR] Error while creating table openid\n{ex}")
 
+
+    async def create_table_telegram(self):
+        if await self.table_exists("telegram"):
+            print("[WARNING] Table telegram already exists")
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(
+                    "create table telegram ("
+                    "chat_id bigint primary key,"
+                    "username varchar(40));"
+                )
+                print("[SUCCESS] Table openid was created")
+        except Exception as ex:
+            print(f"[ERROR] Error while creating table telegram\n{ex}")
+
     async def drop_tables(self):
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute("drop table if exists tokens; "
+                cursor.execute("drop table if exists grades; "
                                "drop table if exists notifications;"
-                               "drop table if exists grades;"
-                               "drop table if exists openid;")
+                               "drop table if exists tokens;"
+                               "drop table if exists openid;"
+                               "drop table if exists telegram;")
             print("[SUCCESS] tables were dropped")
         except Exception as ex:
             print(f"[ERROR] Error while dropping tables\n{ex}")
