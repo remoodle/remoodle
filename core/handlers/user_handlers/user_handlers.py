@@ -24,7 +24,7 @@ async def start(message: types.Message, state: FSMContext):
         k_button = ReplyKeyboardBuilder()
         k_button.button(text="How to find token?")
         k_button.adjust(1)
-        await message.answer("Hi there!\nEnter your token: ", reply_markup=k_button.as_markup(resize_keyboard=True,
+        await message.answer("Привет!\nВведите Ваш токен: ", reply_markup=k_button.as_markup(resize_keyboard=True,
                                                                                    one_time_keyboard=True))
         await state.set_state(StepsForm.GET_MOODLE_TOKEN)
     else:
@@ -55,15 +55,15 @@ async def admin_get_users(message: types.Message, state: FSMContext):
     await message.answer(answer, parse_mode="HTML")
 
 
-@router.message(Command("send_invites"))
-async def send_invites(message: types.Message, state: FSMContext):
-    user_id = message.from_user.id
+# @router.message(Command("send_invites"))
+# async def send_invites(message: types.Message, state: FSMContext):
+#     user_id = message.from_user.id
     
-    if user_id != 749243435:
-        return
+#     if user_id != 749243435:
+#         return
     
-    await db.create_connection()
-    users = await db.get_all_users()
+#     await db.create_connection()
+#     users = await db.get_all_users()
     
     # for user in users:
     #     userid = user[0]

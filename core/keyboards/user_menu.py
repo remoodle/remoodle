@@ -113,15 +113,9 @@ async def settings(user_id):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
-                text="Grades notifications",
-                callback_data="grades_notifications_settings"
+                text="User agreement",
+                url="https://docs.google.com/document/d/1Itst8gLUUwoKhBws1h8MW7Ceup5Z1-5FKL4KYFzEQPA/edit?usp=sharing"
             ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Deadline notifications",
-                callback_data="deadlines_notifications_settings"
-            )
         ],
         [
             InlineKeyboardButton(
