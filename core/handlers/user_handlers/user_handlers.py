@@ -1,3 +1,4 @@
+import aiogram.types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
@@ -6,6 +7,8 @@ from core.keyboards.user_menu import *
 from core.utils.statesform import StepsForm
 from core.utils.helpers import *
 from main import db
+from aiogram.types import FSInputFile
+from core.utils.image_creator.creator import create_image_text
 
 router = Router()
 
@@ -82,12 +85,15 @@ async def gift(message: types.Message, state: FSMContext):
     username = command_parts[1]
     chat_id = await db.telegram_username_to_id(command_parts[1])
     gift_message = " ".join(command_parts[2:])
-
     try:
-        await bot.send_message(chat_id, f"You received a gift: {gift_message}")
+        await bot.send_photo(chat_id, photo=f'https://picgen.wsehl.dev/ny-card?moodbot=1&text={gift_message}',
+                             caption='☃️Вам пришла открытка☃️',
+                             has_spoiler=True)
+        await bot.send_sticker(chat_id, sticker='CAACAgQAAxkBAAELEPdljyRqR4WDk8p5pGM43fBSh9HjmQACnxEAAqbxcR57wYUDyflSITQE')
         await message.reply(f"Gift sent to {username} successfully!")
     except Exception as e:
         await message.reply(f"Failed to send gift to {username}. Error: {e}")
+
 
 @router.message(Command("pidor"))
 async def pidorCommand(message: types.Message, state: FSMContext):
