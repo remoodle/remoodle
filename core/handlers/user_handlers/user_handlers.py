@@ -97,7 +97,12 @@ async def gift(message: types.Message, state: FSMContext):
         await bot.send_sticker(chat_id, sticker='CAACAgQAAxkBAAELEPdljyRqR4WDk8p5pGM43fBSh9HjmQACnxEAAqbxcR57wYUDyflSITQE')
         await message.reply(f"Gift sent to {username} successfully!")
     except Exception as e:
-        await message.reply(f"Failed to send gift to {username}. Error: {e}")
+        if not chat_id:
+            reason = 'User is not registered in BoodleMot'
+        await message.reply(f"Failed to send gift to {username} \n{reason}")
+        await bot.send_sticker(chat_id=message.chat.id,
+                               sticker="CAACAgQAAxkBAAELEPtljzcjyMHrntx-movvm0TGMejrsAACWRIAAqbxcR5xRKqTi3F9aTQE")
+        print(e)
 
 
 @router.message(Command("pidor"))
