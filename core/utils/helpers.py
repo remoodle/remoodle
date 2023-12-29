@@ -110,36 +110,22 @@ async def create_deadlines_string(user_id) -> str:
 
 def get_time_string_by_unix(unix_time):
     months = {
-        1: "Jan",
-        2: "Feb",
-        3: "Mar",
-        4: "Apr",
-        5: "May",
-        6: "Jun",
-        7: "Jul",
-        8: "Aug",
-        9: "Sep",
-        10: "Oct",
-        11: "Nov",
-        12: "Dec"
+        1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun",
+        7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"
     }
 
-    deadline = datetime.fromtimestamp(unix_time)
-    deadlines_for_day = datetime.fromtimestamp(unix_time + 3600*24)
-    remaining = deadline - datetime.utcnow()
-
-    year = deadline.strftime("%y")
-    month = months[int(deadline.strftime("%m"))]
-    day = deadlines_for_day.strftime("%d")
-    h = (int(deadline.strftime("%H")) + 6) % 24
-    m = deadline.strftime("%M")
+    unix_time = int(unix_time)
+    deadline = datetime.fromtimestamp(unix_time + 21600)
+    deadline_remaining = datetime.fromtimestamp(unix_time)
+    remaining = deadline_remaining - datetime.utcnow()
 
     if remaining.total_seconds() <= 0:
         return
 
+    deadline_str = deadline.strftime("%d %b %Y")
     return {
-        "deadline": f"{int(day)} {month} {2000 + int(year)}, {h}:{m}",
-        "remaining": str(remaining).split('.')[0] + ""
+        "deadline": f"{deadline_str}, {deadline.strftime('%H:%M')}",
+        "remaining": str(remaining).split('.')[0]
     }
 
 
