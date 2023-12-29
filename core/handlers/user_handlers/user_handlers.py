@@ -8,7 +8,6 @@ from core.utils.statesform import StepsForm
 from core.utils.helpers import *
 from main import db
 from aiogram.types import FSInputFile
-from core.utils.image_creator.creator import create_image_text
 
 router = Router()
 
@@ -80,14 +79,20 @@ async def gift(message: types.Message, state: FSMContext):
     command_parts = message.text.split()
 
     if len(command_parts) < 3:
-        await message.reply("Please use the /gift command in the format: /gift <username> <message>")
+        await message.reply("Используйте команду в этом формате:\n /gift @username [сообщение]")
         return
+    
     username = command_parts[1]
     chat_id = await db.telegram_username_to_id(command_parts[1])
     gift_message = " ".join(command_parts[2:])
+    
+    if len(gift_message) > 110:
+        await message.reply("Максимальное количество символов в одном сообщении 110)")
+        return
+    
     try:
         await bot.send_photo(chat_id, photo=f'https://picgen.wsehl.dev/ny-card?moodbot=1&text={gift_message}',
-                             caption='☃️Вам пришла открытка☃️',
+                             caption='☃️ Вам пришла открытка ☃️',
                              has_spoiler=True)
         await bot.send_sticker(chat_id, sticker='CAACAgQAAxkBAAELEPdljyRqR4WDk8p5pGM43fBSh9HjmQACnxEAAqbxcR57wYUDyflSITQE')
         await message.reply(f"Gift sent to {username} successfully!")
