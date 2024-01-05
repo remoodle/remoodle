@@ -17,6 +17,3 @@ class Enigma:
         key = os.getenv("FERNET_KEY")
         f = Fernet(key)
         return f.decrypt(encrypted_password.encode()).decode()
-
-
-print(Enigma.decrypt(Enigma.encrypt("Sanya loh")))
