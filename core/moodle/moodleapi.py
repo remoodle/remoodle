@@ -20,6 +20,8 @@ class Api:
                 except TypeError:
                     pass
                 
+                session.close()
+                
                 return response_json
     
     @staticmethod
@@ -44,6 +46,8 @@ class Api:
                 except TypeError:
                     pass
                 
+                session.close()
+                
                 return response_json
                     
     @staticmethod
@@ -64,6 +68,8 @@ class Api:
                 except TypeError:
                     pass
                 
+                session.close()
+                
                 return response_json
                 
     @staticmethod
@@ -72,8 +78,6 @@ class Api:
         
         if not user_info:
             return []
-        
-        data = []
         
         async with aiohttp.ClientSession() as session:
             async with session.get( Api.__url, params = { 
@@ -91,6 +95,8 @@ class Api:
                         return False
                 except TypeError:
                     pass
+                
+                session.close()
                 
                 return response_json
                 
@@ -110,6 +116,8 @@ class Api:
                         return False
                 except TypeError:
                     pass
+                
+                session.close()
                 
                 return response_json
             
