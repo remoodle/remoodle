@@ -2,7 +2,7 @@ from aiogram import F
 from aiogram.types import CallbackQuery
 from core.keyboards.user_menu import *
 from core.utils.helpers import *
-from main import db
+from core.db.database import User
 
 router = Router()
 
@@ -75,14 +75,14 @@ async def grades_handler(call: CallbackQuery):
 @router.callback_query(F.data == "grades_menu_all_courses")
 async def all_grades_handler(call: CallbackQuery):
     await call.message.edit_text("Choose course:",
-                                 reply_markup=await grades_menu_all_courses(call.message.chat.id))
+                                 reply_markup=await grades_menu(call.message.chat.id))
     await call.answer()
 
 
 @router.callback_query(F.data == "grades_menu_current_courses")
 async def current_grades_handler(call: CallbackQuery):
     await call.message.edit_text("Choose course:",
-                                 reply_markup=await grades_menu_current_courses(call.message.chat.id))
+                                 reply_markup=await grades_menu(call.message.chat.id))
     await call.answer()
 
 
@@ -96,7 +96,10 @@ async def course_grades_handler(call: CallbackQuery):
 
 @router.callback_query(F.data == "back_to_menu")
 async def back_to_menu_handler(call: CallbackQuery):
-    full_name = await db.get_full_name(call.message.chat.id)
+    user = User.objects(telegram_id=call.message.chat.id)
+    full_name = user.full_name
+    
+    # full_name = await db.get_full_name(call.message.chat.id)
     await call.message.edit_text(text=f"Hello, *{full_name}*\nSelect an option: ",
                                  reply_markup=main_menu(),
                                  parse_mode="Markdown")
@@ -111,7 +114,7 @@ async def back_to_grades_handler(call: CallbackQuery):
 
 
 @router.callback_query(F.data == "back_to_settings")
-async def back_to_grades_handler(call: CallbackQuery):
+async def back_to_settings_handler(call: CallbackQuery):
     settings_markup = await settings(call.message.chat.id)
     await call.message.edit_text("Settings:", reply_markup=settings_markup)
     await call.answer()

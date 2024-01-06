@@ -49,7 +49,7 @@ async def grades_menu(user_id):
     inline_keyboard.append([
         InlineKeyboardButton(
             text="Back ←",
-            callback_data="back_to_grades"
+            callback_data="back_to_menu"
         )
     ])
 
