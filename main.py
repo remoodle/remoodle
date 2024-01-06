@@ -6,7 +6,7 @@ import os
 from core.api.api import Api
 from core.db.database import Database
 from core.handlers.notification_handlers.grade_notification_handler import start_loop
-from core.handlers.user_handlers import user_handlers
+from core.handlers.user_handlers import callback_handlers, command_handlers
 
 db = Database()
 api = Api()
@@ -22,7 +22,7 @@ async def main():
     dp = Dispatcher()
 
     print("Bot started!")
-    dp.include_routers(user_handlers.router)
+    dp.include_routers(callback_handlers.router, command_handlers.router)
     await dp.start_polling(bot)
 
 
