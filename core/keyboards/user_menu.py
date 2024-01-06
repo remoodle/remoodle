@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from core.api.api import Api
+from core.moodle.moodleapi import Api
 from core.utils.keyboard_utils import *
 
 

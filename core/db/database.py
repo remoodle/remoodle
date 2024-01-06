@@ -10,5 +10,6 @@ class User(Document):
     full_name = StringField(required=True)
     barcode = IntField(required=True)
     grades_notification = BooleanField(default=True)
-    deadlines_notification = IntField(default=0)
-
+    deadlines_notification = IntField(default=1)
+    is_admin = BooleanField(default=False)
+    
