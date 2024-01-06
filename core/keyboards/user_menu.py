@@ -32,56 +32,7 @@ def main_menu():
 
     return kb
 
-
-def grades_menu():
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="All courses",
-                callback_data="grades_menu_all_courses"
-            ),
-            InlineKeyboardButton(
-                text="Current courses",
-                callback_data="grades_menu_current_courses"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="Back ←",
-                callback_data="back_to_menu"
-            )
-        ]
-    ])
-
-    return kb
-
-
-async def grades_menu_all_courses(user_id):
-    api = Api()
-    token = await get_user_token(user_id)
-    courses = await api.get_user_all_courses(token)
-    inline_keyboard = []
-
-    for course in courses:
-        inline_keyboard.append([
-            InlineKeyboardButton(
-                text=course['name'].split("|")[0],
-                callback_data=f"course_{course['id']}"
-            )
-        ])
-
-    inline_keyboard.append([
-        InlineKeyboardButton(
-            text="Back ←",
-            callback_data="back_to_grades"
-        )
-    ])
-
-    kb = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
-    return kb
-
-
-async def grades_menu_current_courses(user_id):
+async def grades_menu(user_id):
     api = Api()
     token = await get_user_token(user_id)
     courses = await api.get_user_relative_courses(token)
