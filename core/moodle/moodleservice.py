@@ -1,6 +1,6 @@
 import time
 import asyncio
-from core.api.api import Api
+from core.moodle.moodleapi import Api
 
 class Service:
     
