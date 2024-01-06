@@ -2,23 +2,25 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from core.keyboards.user_menu import *
+from core.utils.db_utils import create_user
 from core.utils.statesform import StepsForm
 from core.utils.helpers import *
-from main import db
+from core.db.database import User
 
 router = Router()
 
 @router.message(Command("start"))
 async def start(message: types.Message, state: FSMContext):
-    await db.create_connection()
     user_id = message.from_user.id
 
     if (message.chat.type != "private"):
         await message.answer("This method is not allowed in groups!")
         return
-
-    has_token = await db.has_token(user_id)
-    if not has_token:
+    try:
+        has_token = User.object(telegram_id=user_id)[0].hashed_token
+    except TypeError:
+        pass
+    if has_token is None:
         k_button = ReplyKeyboardBuilder()
         k_button.button(text="How to find token?")
         k_button.adjust(1)
@@ -26,7 +28,7 @@ async def start(message: types.Message, state: FSMContext):
                                                                                            one_time_keyboard=True))
         await state.set_state(StepsForm.GET_MOODLE_TOKEN)
     else:
-        full_name = await db.get_full_name(user_id)
+        full_name = User.objects(telegram_id=user_id)[0].full_name
         await message.answer(
             text=f"Hello, *{full_name}*\nSelect an option: ",
             parse_mode='Markdown',
@@ -41,12 +43,11 @@ async def admin_get_users(message: types.Message, state: FSMContext):
     if user_id not in (749243435, 1055088454):
         return
 
-    await db.create_connection()
-    users = await db.get_all_users()
+    users = User.objects
     answer = ""
 
     for user in users:
-        answer += f"{user[2]} - {user[3]} | {user[0]}\n"
+        answer += f"{user.full_name} - {user.barcode} | {user.telegram_id}\n"
 
     answer += f"\n\nCOUNT: {len(users)}"
 
@@ -69,7 +70,6 @@ async def admin_get_users(message: types.Message, state: FSMContext):
 
 @router.message(Command("gift"))
 async def gift(message: types.Message, state: FSMContext):
-    await db.create_connection()
 
     command_parts = message.text.split()
 
@@ -78,7 +78,7 @@ async def gift(message: types.Message, state: FSMContext):
         return
 
     username = command_parts[1]
-    chat_id = await db.telegram_username_to_id(command_parts[1])
+    chat_id = User.objects(username=username)[0].telegram_id
     gift_message = " ".join(command_parts[2:])
 
     if len(gift_message) > 110:
@@ -108,11 +108,10 @@ async def pidorCommand(message: types.Message, state: FSMContext):
 
 @router.message(Command("deadlines"))
 async def deadlinesCommand(message: types.Message, state: FSMContext):
-    await db.create_connection()
     user_id = message.from_user.id
-    has_token = await db.has_token(user_id)
+    has_token = User.objects(telegram_id=user_id)[0].hashed_token
 
-    if not has_token:
+    if has_token is None:
         await message.answer("You are not authorized!")
     else:
         deadlines_string = await create_deadlines_string(message.from_user.id)
@@ -129,8 +128,7 @@ async def save_moodle_token(message: types.Message, state: FSMContext):
     else:
         api = Api()
         if await api.validate_moodle_user_token(message.text):
-            await db.insert_token(user_id=message.from_user.id, token=message.text)
-            await db.insert_to_telegram_table(chat_id=message.from_user.id, username=(await bot.get_chat(message.from_user.id)).username)
+            create_user(message.chat.id, message.text)
             await define_token(message)
             await state.clear()
             # await start(message, state)

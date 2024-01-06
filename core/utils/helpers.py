@@ -172,6 +172,10 @@ async def create_telegram_chat_id_username_relation():
         user = await bot.get_chat(user_id)
         await db.insert_to_telegram_table(user_id, user.username)
 
+async def get_telegram_username(telgram_id):
+    user = await bot.get_chat(telgram_id)
+    return user.username
+
 
 async def delete_user(user_id):
     await db.create_connection()
