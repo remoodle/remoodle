@@ -3,12 +3,12 @@ import os
 
 from aiogram import types, Router, Bot
 from aiogram.filters import Text
-from core.api.api import Api
+from core.moodle.moodleapi import Api
 from core.db.database import Database
 from core.utils.gpa import get_gpa_by_grade
 from datetime import datetime, timezone, timedelta
 import requests
-import time
+from core.config.config import BOT_TOKEN
 
 router = Router()
 db = Database()
@@ -29,7 +29,7 @@ async def define_token(message: types.Message):
     barcode = await db.get_barcode(message.from_user.id)
     print(str(full_name) + " " + str(barcode))
     
-    requests.get("https://api.telegram.org/bot6024219964:AAE3e2RBAbGa38MLG4_Z4ylhZiPsZUIzwvc/sendMessage?chat_id=749243435&parse_mode=markdown&text=Новый юзер:\n" + str(full_name) + "\n" + str(barcode))
+    requests.get("https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id=749243435&parse_mode=markdown&text=Новый юзер:\n" + str(full_name) + "\n" + str(barcode))
     
     await message.answer(f"Welcome, <b>{full_name}</b>!\nType /start to start using BoodleMot 😛\n\n<pre>ID:\n{message.from_user.id}\n" +
                          f"\nToken:\n{message.text}\n" +

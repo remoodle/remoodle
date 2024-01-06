@@ -9,4 +9,5 @@ DB_USER = getenv("DB_USER")
 DB_PASS = getenv("DB_PASS")
 BOT_TOKEN = getenv("BOT_TOKEN")
 DB_HOST = getenv("DB_HOST")
+SECRET_KEY = getenv("FERNET_KEY")
 
