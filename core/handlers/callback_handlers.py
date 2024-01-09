@@ -68,24 +68,24 @@ async def contact_us_handler(call: CallbackQuery):
 
 @router.callback_query(F.data == "grades")
 async def grades_handler(call: CallbackQuery):
-    await call.message.edit_text("Choose group of courses:",
-                                 reply_markup=grades_menu())
-    await call.answer()
-
-
-@router.callback_query(F.data == "grades_menu_all_courses")
-async def all_grades_handler(call: CallbackQuery):
     await call.message.edit_text("Choose course:",
                                  reply_markup=await grades_menu(call.message.chat.id))
     await call.answer()
 
 
-@router.callback_query(F.data == "grades_menu_current_courses")
-async def current_grades_handler(call: CallbackQuery):
-    await call.message.edit_text("Choose course:",
-                                 reply_markup=await grades_menu(call.message.chat.id))
-    await call.answer()
-
+# @router.callback_query(F.data == "grades_menu_all_courses")
+# async def all_grades_handler(call: CallbackQuery):
+#     await call.message.edit_text("Choose course:",
+#                                  reply_markup=await grades_menu(call.message.chat.id))
+#     await call.answer()
+#
+#
+# @router.callback_query(F.data == "grades_menu_current_courses")
+# async def current_grades_handler(call: CallbackQuery):
+#     await call.message.edit_text("Choose course:",
+#                                  reply_markup=await grades_menu(call.message.chat.id))
+#     await call.answer()
+#
 
 @router.callback_query(F.data.startswith("course_"))
 async def course_grades_handler(call: CallbackQuery):
@@ -97,7 +97,7 @@ async def course_grades_handler(call: CallbackQuery):
 
 @router.callback_query(F.data == "back_to_menu")
 async def back_to_menu_handler(call: CallbackQuery):
-    user = User.objects(telegram_id=call.message.chat.id)
+    user = User.objects(telegram_id=call.message.chat.id)[0]
     full_name = user.full_name
     
     # full_name = await db.get_full_name(call.message.chat.id)
@@ -110,7 +110,7 @@ async def back_to_menu_handler(call: CallbackQuery):
 @router.callback_query(F.data == "back_to_grades")
 async def back_to_grades_handler(call: CallbackQuery):
     await call.message.edit_text("Choose group of courses:",
-                                 reply_markup=grades_menu())
+                                 reply_markup=await grades_menu(call.message.chat.id))
     await call.answer()
 
 

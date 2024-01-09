@@ -17,7 +17,7 @@ async def start(message: types.Message, state: FSMContext):
         await message.answer("This method is not allowed in groups!")
         return
     try:
-        has_token = User.object(telegram_id=user_id)[0].hashed_token
+        has_token = User.objects(telegram_id=user_id)[0].hashed_token
     except TypeError:
         pass
     if has_token is None:
