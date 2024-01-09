@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from core.encoder.chiper import Enigma
 
-from core.moodle.moodleapi import Api
+from core.moodle.moodleservice import Service
 from core.db.database import User
 
 
@@ -34,10 +34,9 @@ def main_menu():
     return kb
 
 async def grades_menu(user_id):
-    api = Api()
-    user = User.objects(telegram_id=user_id)
+    user = User.objects(telegram_id=user_id)[0]
     token = Enigma.decrypt(user.hashed_token) 
-    courses = await api.get_user_relative_courses(token)
+    courses = await Service.get_relative_courses(token)
     inline_keyboard = []
 
     for course in courses:
@@ -54,7 +53,7 @@ async def grades_menu(user_id):
             callback_data="back_to_menu"
         )
     ])
-
+    print(inline_keyboard)
     kb = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
     return kb
 

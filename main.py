@@ -1,12 +1,10 @@
 from aiogram import *
 import logging
 import asyncio
-from core.moodle.moodleapi import Api
 from core.handlers import callback_handlers
 from core.handlers import command_handlers
 from core.config.config import BOT_TOKEN
 
-api = Api()
 bot = Bot(BOT_TOKEN, parse_mode="HTML")
 
 

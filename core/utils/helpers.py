@@ -5,6 +5,7 @@ from core.moodle.moodleapi import Api
 from core.db.database import User
 from core.moodle.moodleservice import Service
 from core.utils.gpa import get_gpa_by_grade
+from core.encoder.chiper import Enigma
 from datetime import datetime, timezone, timedelta
 import requests
 from core.config.config import BOT_TOKEN
@@ -37,9 +38,9 @@ async def define_token(message: types.Message):
 async def create_grades_string(course_id, user_id):
 
     user = User.objects(telegram_id=user_id)[0]
-    token = user.token
-    course = Service.get_course(token, course_id)
-    course_grades = Service.get_course_grades(token, course_id)
+    token = Enigma.decrypt(user.hashed_token)
+    course = await Service.get_course(token, course_id)
+    course_grades = await Service.get_course_grades(token, course_id)
 
     answer: str = course['name'].split('|')[0] + "\nLecturer:" + course['name'].split('|')[1] + "\n\n"
 
@@ -78,8 +79,9 @@ async def create_grades_string(course_id, user_id):
 
 async def create_deadlines_string(user_id) -> str:
     user = User.objects(telegram_id=user_id)[0]
-    token = user.token
-    deadlines = Service.get_deadlines(token)
+    token = Enigma.decrypt(user.hashed_token)
+    deadlines = await Service.get_deadlines(token)
+    print(deadlines)
     
     if deadlines is not None and len(deadlines) < 1:
         return "*You have no active deadlines* 🥰"
