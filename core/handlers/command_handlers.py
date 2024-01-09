@@ -119,7 +119,6 @@ async def deadlinesCommand(message: types.Message, state: FSMContext):
 
 @router.message(StepsForm.GET_MOODLE_TOKEN)
 async def save_moodle_token(message: types.Message, state: FSMContext):
-    await db.create_connection()
     if message.text.lower().__contains__("how to find token?"):
         await find_moodle_token(message)
         await message.answer("Enter your token: ")
