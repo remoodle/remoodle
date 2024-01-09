@@ -2,6 +2,7 @@ from aiogram import F
 from aiogram.types import CallbackQuery
 from core.keyboards.user_menu import *
 from core.utils.helpers import *
+from core.utils.db_utils import delete_user
 from core.db.database import User
 
 router = Router()
