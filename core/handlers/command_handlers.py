@@ -2,7 +2,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from core.keyboards.user_menu import *
-from core.utils.db_utils import create_user
+from core.utils.db_utils import create_user, is_registered
 from core.utils.statesform import StepsForm
 from core.utils.helpers import *
 from core.db.database import User
@@ -16,11 +16,8 @@ async def start(message: types.Message, state: FSMContext):
     if (message.chat.type != "private"):
         await message.answer("This method is not allowed in groups!")
         return
-    try:
-        has_token = User.objects(telegram_id=user_id)[0].hashed_token
-    except TypeError:
-        pass
-    if has_token is None:
+
+    if await is_registered(user_id):
         k_button = ReplyKeyboardBuilder()
         k_button.button(text="How to find token?")
         k_button.adjust(1)
@@ -101,6 +98,17 @@ async def gift(message: types.Message, state: FSMContext):
         print(e)
 
 
+@router.message(Command("settings"))
+async def settingsCommand(message: types.Message, state: FSMContext):
+    try:
+        user = User.objects(telegram_id=message.chat.id)[0]
+    except Exception as e:
+        print(e)
+        await message.answer(text="You are not registered")
+        return
+    await message.answer(text="Settings:", reply_markup=await settings(user))
+
+
 @router.message(Command("pidor"))
 async def pidorCommand(message: types.Message, state: FSMContext):
     await message.answer("Сам ты пидор)")
@@ -109,9 +117,8 @@ async def pidorCommand(message: types.Message, state: FSMContext):
 @router.message(Command("deadlines"))
 async def deadlinesCommand(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
-    has_token = User.objects(telegram_id=user_id)[0].hashed_token
 
-    if has_token is None:
+    if await is_registered(user_id):
         await message.answer("You are not authorized!")
     else:
         deadlines_string = await create_deadlines_string(message.from_user.id)
@@ -125,9 +132,8 @@ async def save_moodle_token(message: types.Message, state: FSMContext):
         await state.clear()
         await state.set_state(StepsForm.GET_MOODLE_TOKEN)
     else:
-        api = Api()
-        if await api.validate_moodle_user_token(message.text):
-            create_user(message.chat.id, message.text)
+        if await Service.validate_token(message.text):
+            await create_user(message.chat.id, message.text)
             await define_token(message)
             await state.clear()
             # await start(message, state)

@@ -1,3 +1,5 @@
+import asyncio
+
 import aiohttp
 
 
@@ -17,10 +19,10 @@ class Api:
                 try:
                     if response_json['errorcode'] == 'invalidtoken':
                         return False
-                except TypeError:
+                except Exception:
                     pass
                 
-                session.close()
+                await session.close()
                 
                 return response_json
     
@@ -43,10 +45,10 @@ class Api:
                 try:
                     if response_json['errorcode'] == 'invalidtoken':
                         return False
-                except TypeError:
+                except Exception:
                     pass
                 
-                session.close()
+                await session.close()
                 
                 return response_json
                     
@@ -65,12 +67,12 @@ class Api:
                 try:
                     if response_json['errorcode'] == 'invalidtoken':
                         return False
-                except TypeError:
+                except Exception:
                     pass
                 
-                session.close()
-                
-                return response_json
+                await session.close()
+                print(response_json)
+                return response_json['courses'][0]
                 
     @staticmethod
     async def get_course_grades(token, course_id):
@@ -93,10 +95,10 @@ class Api:
                 try:
                     if response_json['errorcode'] == 'invalidtoken':
                         return False
-                except TypeError:
+                except Exception:
                     pass
                 
-                session.close()
+                await session.close()
                 
                 return response_json
                 
@@ -114,10 +116,11 @@ class Api:
                 try:
                     if response_json['errorcode'] == 'invalidtoken':
                         return False
-                except TypeError:
+                except Exception:
                     pass
                 
-                session.close()
+                await session.close()
                 
                 return response_json
-            
+
+#print(asyncio.run(Api.get_user_info("a7db6e0d88d09725818238634829e01c")))

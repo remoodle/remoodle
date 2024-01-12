@@ -22,12 +22,12 @@ async def find_moodle_token(message: types.Message):
 
 
 async def define_token(message: types.Message):
-    user = User.objects(telegram_id=message.from_user.id)[0]
+    user = User.objects(telegram_id=message.chat.id)[0]
     full_name = user.full_name
     barcode = user.barcode
     print(str(full_name) + " " + str(barcode))
     
-    requests.get("https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id=749243435&parse_mode=markdown&text=Новый юзер:\n" + str(full_name) + "\n" + str(barcode))
+    requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id=749243435&parse_mode=markdown&text=Новый юзер:\n" + str(full_name) + "\n" + str(barcode))
     
     await message.answer(f"Welcome, <b>{full_name}</b>!\nType /start to start using BoodleMot 😛\n\n<pre>ID:\n{message.from_user.id}\n" +
                          f"\nToken:\n{message.text}\n" +
@@ -146,25 +146,36 @@ def get_final_grade_info(term_grade):
 
     return answer
 
+async def get_deadline_notifications_state(user):
+    deadline_notification_state = user.deadlines_notification
+    if deadline_notification_state != 0:
+        deadline_notification_state = str(deadline_notification_state)+" hour(-s) before"
+    else:
+        deadline_notification_state = '🔴'
+    return deadline_notification_state
 
-# async def change_grade_notification_state(user_id):
-#     await db.create_connection()
-#     grade_notification_state = await db.get_grade_notification(user_id)
-#     if grade_notification_state == 0:
-#         await db.change_grade_notification(user_id, 1)
-#     else:
-#         await db.change_grade_notification(user_id, 0)
-#
-#
-# async def change_deadline_notification_state(user_id):
-#     await db.create_connection()
-#     states = [1, 2, 3, 6, 12, 24, 36, 0]
-#     deadline_notification_state = await db.get_deadline_notification(user_id)
-#     await db.change_deadlines_notification(user_id, states[(states.index(deadline_notification_state) + 1) % len(states)])
+async def get_grade_notifications_state(user):
+    grade_notification_state = user.grades_notification
+    if grade_notification_state == 1:
+        return "🟢"
+    else:
+        return "🔴"
+
+
+async def change_grade_notification_state(user):
+    grade_notification_state = user.grades_notification
+    user.grades_notification = not grade_notification_state
+    user.save()
+
+
+async def change_deadline_notification_state(user):
+    states = [1, 2, 3, 6, 12, 24, 0]
+    deadline_notification_state = user.deadlines_notification
+    user.deadlines_notification = states[(states.index(deadline_notification_state) + 1) % len(states)]
+    user.save()
 
 
 async def get_telegram_username(telgram_id):
     user = await bot.get_chat(telgram_id)
     return user.username
-
 

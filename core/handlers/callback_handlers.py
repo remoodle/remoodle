@@ -17,32 +17,30 @@ async def deadlines_handler(call: CallbackQuery):
     await call.answer()
 
 
-@router.callback_query(F.data == "settings")
+@router.callback_query(F.data == "other")
 async def settings_handler(call: CallbackQuery):
-    settings_markup = await settings(call.message.chat.id)
+    settings_markup = await other()
     await call.message.edit_text("Settings:",
                                  reply_markup=settings_markup)
     await call.answer()
 
 
-@router.callback_query(F.data == "grades_notifications_settings")
+@router.callback_query(F.data == "grade_notifications")
 async def grades_settings_handler(call: CallbackQuery):
-    await call.answer("Currently unavailable")
-    # user_id = call.message.chat.id
-    # await change_grade_notification_state(user_id)
-    # settings_markup = await settings(user_id)
-    # await call.message.edit_reply_markup(reply_markup=settings_markup)
-    # await call.answer()
+    user = User.objects(telegram_id=call.message.chat.id)[0]
+    await change_grade_notification_state(user)
+    settings_markup = await settings(user)
+    await call.message.edit_reply_markup(reply_markup=settings_markup)
+    await call.answer()
 
 
-@router.callback_query(F.data == "deadlines_notifications_settings")
+@router.callback_query(F.data == "deadline_notifications")
 async def deadlines_settings_handler(call: CallbackQuery):
-    await call.answer("Currently unavailable")
-    # user_id = call.message.chat.id
-    # await change_deadline_notification_state(user_id)
-    # settings_markup = await settings(user_id)
-    # await  call.message.edit_reply_markup(reply_markup=settings_markup)
-    # await call.answer()
+    user = User.objects(telegram_id=call.message.chat.id)[0]
+    await change_deadline_notification_state(user)
+    settings_markup = await settings(user)
+    await call.message.edit_reply_markup(reply_markup=settings_markup)
+    await call.answer()
 
 
 @router.callback_query(F.data == "change_token_yes")
@@ -116,6 +114,6 @@ async def back_to_grades_handler(call: CallbackQuery):
 
 @router.callback_query(F.data == "back_to_settings")
 async def back_to_settings_handler(call: CallbackQuery):
-    settings_markup = await settings(call.message.chat.id)
+    settings_markup = await other(call.message.chat.id)
     await call.message.edit_text("Settings:", reply_markup=settings_markup)
     await call.answer()

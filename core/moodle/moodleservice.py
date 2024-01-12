@@ -19,7 +19,7 @@ class Service:
         
     @staticmethod
     async def validate_token(token):
-        response = await Api.get_user_info(token)
+        response = await Service.get_user_info(token)
         
         if response:
             return True
@@ -52,7 +52,7 @@ class Service:
     @staticmethod
     async def get_relative_courses(token):
         response = await Service.get_courses(token)
-        current_time = int(time.time)
+        current_time = int(time.time())
         
         return [i for i in response if i['end_date'] > current_time]
     
