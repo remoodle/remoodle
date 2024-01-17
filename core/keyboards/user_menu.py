@@ -1,7 +1,8 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
-from core.api.api import Api
-from core.utils.keyboard_utils import *
+from core.encoder.chiper import Enigma
+from core.utils.helpers import get_grade_notifications_state, get_deadline_notifications_state
+from core.moodle.moodleservice import Service
+from core.db.database import User
 
 
 def main_menu():
@@ -18,37 +19,64 @@ def main_menu():
                 callback_data="grades"
             )
         ],
+
         [
-            InlineKeyboardButton(
-                text="Map",
-                url="https://yuujiso.github.io/aitumap/"
-            ),
-            InlineKeyboardButton(
-                text="Settings",
-                callback_data="settings"
-            )
+
+                InlineKeyboardButton(
+                    text="Map",
+                    url="https://yuujiso.github.io/aitumap/"
+                )
+            ,
+                InlineKeyboardButton(
+                    text="Other",
+                    callback_data="other"
+                )
         ]
+
     ])
 
     return kb
 
+async def grades_menu(user_id):
+    user = User.objects(telegram_id=user_id)[0]
+    token = Enigma.decrypt(user.hashed_token)
+    courses = await Service.get_relative_courses(token)
+    inline_keyboard = []
 
-def grades_menu():
+    for course in courses:
+        inline_keyboard.append([
+            InlineKeyboardButton(
+                text=course['name'].split("|")[0],
+                callback_data=f"course_{course['id']}"
+            )
+        ])
+
+    inline_keyboard.append([
+        InlineKeyboardButton(
+            text="Back ←",
+            callback_data="back_to_menu"
+        )
+    ])
+    print(inline_keyboard)
+    kb = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+    return kb
+
+
+async def settings(user):
+    deadline_state = await get_deadline_notifications_state(user)
+    grades_state = await get_grade_notifications_state(user)
+
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
-                text="All courses",
-                callback_data="grades_menu_all_courses"
-            ),
-            InlineKeyboardButton(
-                text="Current courses",
-                callback_data="grades_menu_current_courses"
+                text="Deadline notifications " + deadline_state,
+                callback_data="deadline_notifications"
             )
         ],
         [
             InlineKeyboardButton(
-                text="Back ←",
-                callback_data="back_to_menu"
+                text="Grades notifications " + grades_state,
+                callback_data="grade_notifications"
             )
         ]
     ])
@@ -56,71 +84,20 @@ def grades_menu():
     return kb
 
 
-async def grades_menu_all_courses(user_id):
-    api = Api()
-    token = await get_user_token(user_id)
-    courses = await api.get_user_all_courses(token)
-    inline_keyboard = []
-
-    for course in courses:
-        inline_keyboard.append([
-            InlineKeyboardButton(
-                text=course['name'].split("|")[0],
-                callback_data=f"course_{course['id']}"
-            )
-        ])
-
-    inline_keyboard.append([
-        InlineKeyboardButton(
-            text="Back ←",
-            callback_data="back_to_grades"
-        )
-    ])
-
-    kb = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
-    return kb
-
-
-async def grades_menu_current_courses(user_id):
-    api = Api()
-    token = await get_user_token(user_id)
-    courses = await api.get_user_relative_courses(token)
-    inline_keyboard = []
-
-    for course in courses:
-        inline_keyboard.append([
-            InlineKeyboardButton(
-                text=course['name'].split("|")[0],
-                callback_data=f"course_{course['id']}"
-            )
-        ])
-
-    inline_keyboard.append([
-        InlineKeyboardButton(
-            text="Back ←",
-            callback_data="back_to_grades"
-        )
-    ])
-
-    kb = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
-    return kb
-
-
-async def settings(user_id):
-    grades_state = await get_grade_notifications_state(user_id)
-    deadline_state = await get_deadline_notifications_state(user_id)
+async def other():
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
                 text="User agreement",
                 url="https://docs.google.com/document/d/1Itst8gLUUwoKhBws1h8MW7Ceup5Z1-5FKL4KYFzEQPA/edit?usp=sharing"
-            ),
+            )
+
         ],
         [
             InlineKeyboardButton(
                 text="Contact us",
-                callback_data="contact_us_menu"
+                url="https://t.me/+ltR0DSdwf6c4MTFi"
             ),
             InlineKeyboardButton(
                 text="Log out",
@@ -154,32 +131,6 @@ def change_token_confirmation():
 
     return kb
 
-
-def contacts():
-    # <a href="https://t.me/y_abdrakhmanov">Yelnur Abdrakhmanov</a>
-
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="Yelnur Abdrakhmanov",
-                url="https://t.me/y_abdrakhmanov"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="Karen Ananyan",
-                url="https://t.me/dek_kar"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="Back ←",
-                callback_data="back_to_settings"
-            )
-        ]
-    ])
-
-    return kb
 
 
 def back(callback_data: str):
