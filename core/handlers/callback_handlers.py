@@ -58,12 +58,6 @@ async def token_change_confirmation(call: CallbackQuery):
                                  parse_mode="Markdown")
 
 
-@router.callback_query(F.data == "contact_us_menu")
-async def contact_us_handler(call: CallbackQuery):
-    await call.message.edit_text(text="Contact us for:\n→ Report Bugs\n→ Collaboration\n→ Advertisement",
-                                 reply_markup=contacts())
-
-
 @router.callback_query(F.data == "grades")
 async def grades_handler(call: CallbackQuery):
     await call.message.edit_text("Choose course:",
