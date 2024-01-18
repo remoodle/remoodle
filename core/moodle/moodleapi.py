@@ -71,7 +71,6 @@ class Api:
                     pass
                 
                 await session.close()
-                print(response_json)
                 return response_json['courses'][0]
                 
     @staticmethod

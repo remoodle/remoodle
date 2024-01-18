@@ -81,7 +81,6 @@ async def create_deadlines_string(user_id) -> str:
     user = User.objects(telegram_id=user_id)[0]
     token = Enigma.decrypt(user.hashed_token)
     deadlines = await Service.get_deadlines(token)
-    print(deadlines)
     
     if deadlines is not None and len(deadlines) < 1:
         return "*You have no active deadlines* 🥰"
