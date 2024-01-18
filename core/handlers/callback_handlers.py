@@ -58,6 +58,11 @@ async def token_change_confirmation(call: CallbackQuery):
                                  parse_mode="Markdown")
 
 
+@router.callback_query(F.data == "close_settings")
+async def close_settings(call: CallbackQuery):
+    await call.message.delete()
+
+
 @router.callback_query(F.data == "grades")
 async def grades_handler(call: CallbackQuery):
     await call.message.edit_text("Choose course:",

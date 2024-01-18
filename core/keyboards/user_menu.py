@@ -78,6 +78,12 @@ async def settings(user):
                 text="Grades notifications " + grades_state,
                 callback_data="grade_notifications"
             )
+        ],
+        [
+            InlineKeyboardButton(
+                text="Close",
+                callback_data="close_settings"
+            )
         ]
     ])
 
