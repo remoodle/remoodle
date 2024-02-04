@@ -1,0 +1,62 @@
+version: "3"
+rpc:
+    listen: "tcp://127.0.0.1:6001"
+server:
+    command: "php app.php"
+    relay: pipes
+http:
+    address: "0.0.0.0:8080"
+    middleware:
+        - gzip
+        - static
+    static:
+        dir: public
+        forbid:
+            - .php
+            - .htaccess
+    pool:
+        num_workers: 1
+        supervisor:
+            max_worker_memory: 100
+jobs:
+    num_pollers: 4
+    timeout: 60
+    dispatch:
+        app-job:
+            driver: amqp
+            queue: send-message-to-user
+            exchange: app-exchange
+            exchange_type: direct
+    pipelines:
+        amqp:
+            driver: amqp
+            exchange: user-notifications
+            exchange_type: direct
+            routing_key: app-key
+            priority: 10
+            prefetch_count: 10
+            config:
+                addr: amqp://guest:guest@127.0.0.1:5672
+                queue: user-grades-subscription
+                priority: 10
+                prefetch: 10
+    pool:
+        num_workers: 4
+        max_worker_memory: 100
+        command: "php dispatcher/dispatcher.php"
+    consume: ["amqp"]
+kv:
+    local:
+        driver: memory
+        config:
+            interval: 60
+metrics:
+    address: "127.0.0.1:2112"
+amqp:
+    addr: amqp://admin:password@127.0.0.1:8887
+# service:
+#     jobs-dispatcher:
+#         service_name_in_log: true
+#         remain_after_exit: true
+#         restart_sec: 1
+#         command: "php dispatcher.php"
