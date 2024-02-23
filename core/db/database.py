@@ -8,6 +8,7 @@ class User(Document):
     username = StringField(required=True)
     hashed_token = StringField(required=True)
     full_name = StringField(required=True)
+    moodle_id = IntField(required=True)
     barcode = IntField(required=True)
     grades_notification = BooleanField(default=True)
     deadlines_notification = IntField(default=1)
