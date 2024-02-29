@@ -59,32 +59,32 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
         ?string $email = null, 
         ?string $nameAlias = null
     ): ?MoodleUser{
-        if(!($token || $moodleId || $barcode || $email || $nameAlias)){
+        if (!($token || $moodleId || $barcode || $email || $nameAlias)) {
+            echo "\ntroll\n";
             return null;
         }
-
+    
         $query = MoodleUser::query();
-
-        if($token){
-            $query->where("moodle_token", $token);
-        }
-
-        if($moodleId){
-            $query->where("moodle_id", $moodleId);
-        }
-
-        if($barcode){
-            $query->where("barcode", $barcode);
-        }
-
-        if($email){
-            $query->where("email", $email);
-        }
-
-        if($nameAlias){
-            $query->where("name_alias", $nameAlias);
-        }
-
+    
+        // Group the conditions to apply an "OR" logic between them
+        $query->where(function ($q) use ($token, $moodleId, $barcode, $email, $nameAlias) {
+            if ($token) {
+                $q->orWhere("moodle_token", $token);
+            }
+            if ($moodleId) {
+                $q->orWhere("moodle_id", $moodleId);
+            }
+            if ($barcode) {
+                $q->orWhere("barcode", $barcode);
+            }
+            if ($email) {
+                $q->orWhere("email", $email);
+            }
+            if ($nameAlias) {
+                $q->orWhere("name_alias", $nameAlias);
+            }
+        });
+    
         return $query->first();
     }
 

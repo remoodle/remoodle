@@ -21,6 +21,10 @@ class SettingsController
             'barcode' => $user->barcode,
             'name_alias' => $user->name_alias,
             'has_password' => $user->password_hash ? true : false,
+            'email' => $user->email,
+            'email_verified_at' => $user->email_verified_at,
+            'notify_method' => $user->notify_method,
+            'webhook_secret' => $user->webhook_secret,
         ]));
 
         return $response->withHeader("Content-Type", "application/json")->withStatus(200);

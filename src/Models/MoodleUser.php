@@ -26,11 +26,15 @@ class MoodleUser extends Model
         'password_hash',
         'name_alias',
         'email',
-        'email_verified_at'
+        'email_verified_at',
+        'notify_method',
+        'webhook',
+        'webhook_secret'
     ];  
 
     protected $hidden = [
         'password_hash',
+        'webhook_secret'
     ];
 
     public function verifyPassword(string $password): bool
@@ -86,5 +90,10 @@ class MoodleUser extends Model
             'moodle_id', 
             'course_id'
         );
+    }
+
+    public function courseAssigns(): HasMany
+    {
+        return $this->hasMany(UserCourseAssign::class, "moodle_id", "moodle_id");
     }
 }

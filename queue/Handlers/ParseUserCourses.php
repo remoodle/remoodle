@@ -8,6 +8,9 @@ use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use App\Modules\Moodle\Moodle;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Connection;
+use Spiral\Goridge\RPC\RPC;
+use Spiral\RoadRunner\Jobs\Jobs;
+use Spiral\RoadRunner\Jobs\Task\Task;
 
 class ParseUserCourses extends BaseHandler
 {
@@ -49,6 +52,11 @@ class ParseUserCourses extends BaseHandler
             $this->receivedTask->fail($th);
             throw $th;
         }
+
+        $jobs = new Jobs(RPC::create('tcp://127.0.0.1:6001'));
+        $queue = $jobs->connect('user_parse_grades');
+        $task = $queue->create(Task::class, $user->toJson());
+        $queue->dispatch($task);
 
         $this->receivedTask->complete();
     }

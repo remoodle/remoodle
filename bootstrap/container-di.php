@@ -1,5 +1,6 @@
 <?php
 
+use App\Notification\Providers\Mail\Mailers\Resend;
 use App\Repositories\UserMoodle\ApiUserMoodleRepositoryInterface;
 use App\Repositories\UserMoodle\Concrete\ApiUserMoodleRepository;
 use App\Repositories\UserMoodle\Concrete\DatabaseUserMoodleRepository;
@@ -9,6 +10,7 @@ use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Factory\UploadedFileFactory;
 use DI\ContainerBuilder;
+use Core\Config;
 
 $builder = new ContainerBuilder();
 $builder->useAutowiring(true);
@@ -30,6 +32,9 @@ $builder->addDefinitions([
     },
     ApiUserMoodleRepositoryInterface::class => function(){
         return new ApiUserMoodleRepository();
+    },
+    Resend::class => function(): Resend{
+        return new Resend(Config::get("mail.resend.key"), Config::get("mail.from"));
     }
 ]);
 

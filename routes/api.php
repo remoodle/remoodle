@@ -8,6 +8,8 @@ use App\Controllers\AuthController;
 use App\Controllers\SettingsController;
 use App\Controllers\UserCoursesController;
 use App\Middleware\Auth;
+use App\Middleware\Validation\AuthPassword;
+use App\Middleware\Validation\GetAuthOptions;
 use App\Middleware\Validation\GetCourseGrades;
 use Slim\Routing\RouteCollectorProxy;
 
@@ -28,7 +30,6 @@ return function(App $app){
 
             $user->get("/course/grades", [UserCoursesController::class, "getCourseGrades"])->add(GetCourseGrades::class); //grades 
             $user->get("/courses", [UserCoursesController::class, "getCourses"]); //done
-            // $user->get("/deadlines", [SettingsController::class, "getUserSetiings"]);
 
             $user->group("/offline", function(RouteCollectorProxy $offline){
                 $offline->get("/courses/overall", [OfllineModeController::class, "getUserOverall"]);
@@ -38,9 +39,8 @@ return function(App $app){
 
         $api->group("/auth", function(RouteCollectorProxy $auth){
             $auth->post("/register", [AuthController::class, "register"]);
-            
-            $auth->post("/login-password", [AuthController::class, "authByPassword"]);
-            //changepass/alias
+            $auth->post("/options", [AuthController::class, "getAuthOptions"])->add(GetAuthOptions::class);
+            $auth->post("/password", [AuthController::class, "authPassword"])->add(AuthPassword::class);
         });
     });
 
