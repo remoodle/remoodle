@@ -1,11 +1,15 @@
 <?php
 
+use App\Controllers\OfllineModeController;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\App;
 use App\Controllers\AuthController;
 use App\Controllers\SettingsController;
-use App\Models\MoodleUser;
+use App\Controllers\UserCoursesController;
+use App\Middleware\Auth;
+use App\Middleware\Validation\GetCourseGrades;
+use Slim\Routing\RouteCollectorProxy;
 
 return function(App $app){
     $app->get("/api/healthcheck", function(RequestInterface $request, ResponseInterface $response){
@@ -13,7 +17,36 @@ return function(App $app){
         return $response->withAddedHeader("Content-Type", "application/json");
     });
 
-    $app->post("/api/auth/register", [AuthController::class, "register"]);
+    // $app->post("/api/user/settings", [SettingsController::class, "changeUserSettings"]);
+    // $app->get("/auth/user/providers/notify", [AuthController::class, "getUserNotifyProviders"]);
+    // $app->post("/auth/auth-code", [AuthController::class, "generateAuthCode"]);
+    // $app->post("/auth/code/auth", [AuthController::class, "authByCode"]); //req: {code: string, provider: string} returns moodle token
+
+    $app->group("/api", function(RouteCollectorProxy $api){
+        $api->group("/user", function(RouteCollectorProxy $user){
+            $user->get("/settings", [SettingsController::class, "userSetiings"]); //done
+
+            $user->get("/course/grades", [UserCoursesController::class, "getCourseGrades"])->add(GetCourseGrades::class); //grades 
+            $user->get("/courses", [UserCoursesController::class, "getCourses"]); //done
+            // $user->get("/deadlines", [SettingsController::class, "getUserSetiings"]);
+
+            $user->group("/offline", function(RouteCollectorProxy $offline){
+                $offline->get("/courses/overall", [OfllineModeController::class, "getUserOverall"]);
+            });
+            
+        })->addMiddleware($api->getContainer()->get(Auth::class));
+
+        $api->group("/auth", function(RouteCollectorProxy $auth){
+            $auth->post("/register", [AuthController::class, "register"]);
+            
+            $auth->post("/login-password", [AuthController::class, "authByPassword"]);
+            //changepass/alias
+        });
+    });
+
+
+
+
     
-    $app->get("/api/user/{token}/settings", [SettingsController::class, "getUserSetiings"]);
+
 };

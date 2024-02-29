@@ -54,9 +54,3 @@ metrics:
     address: "127.0.0.1:2112"
 amqp:
     addr: amqp://admin:password@127.0.0.1:8887
-# service:
-#     jobs-dispatcher:
-#         service_name_in_log: true
-#         remain_after_exit: true
-#         restart_sec: 1
-#         command: "php dispatcher.php"

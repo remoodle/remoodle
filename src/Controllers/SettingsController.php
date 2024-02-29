@@ -2,31 +2,28 @@
 
 namespace App\Controllers;
 
-use App\Models\MoodleUser;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 
 class SettingsController
 {
-    public function getUserSetiings(Request $request, Response $response, array $args): ResponseInterface
-    {
-        if(!isset($args["token"])){
-            //error
-        }
-        
-        $token = $args["token"];
-        $user = MoodleUser::where("moodle_token", $token)->first();
+    const TOKEN_HEADER = "Auth-Token";
 
-        if(!$user){
-            //error
-        }
+    public function userSetiings(Request $request, Response $response): ResponseInterface
+    {
+        /**@var \App\Models\MoodleUser */
+        $user = $request->getAttribute("user");
 
         $response->getBody()->write(json_encode([
-            'grades_notification' => $user->grades_notification,
-            'deadlines_notification' => $user->deadlines_notification
+            'moodle_id' => $user->moodle_id,
+            'name' => $user->name,
+            'barcode' => $user->barcode,
+            'name_alias' => $user->name_alias,
+            'has_password' => $user->password_hash ? true : false,
         ]));
 
         return $response->withHeader("Content-Type", "application/json")->withStatus(200);
     }
+
 }
