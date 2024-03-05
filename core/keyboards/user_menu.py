@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from core.encoder.chiper import Enigma
 from core.utils.helpers import get_grade_notifications_state, get_deadline_notifications_state
 from core.moodle.moodleservice import Service
@@ -22,15 +22,14 @@ def main_menu():
 
         [
 
-                InlineKeyboardButton(
-                    text="Map",
-                    url="https://yuujiso.github.io/aitumap/"
-                )
-            ,
-                InlineKeyboardButton(
-                    text="Other",
-                    callback_data="other"
-                )
+            InlineKeyboardButton(
+                text="Map",
+                web_app=WebAppInfo(url="https://yuujiso.github.io/aitumap/")
+            ),
+            InlineKeyboardButton(
+                text="Other",
+                callback_data="other"
+            )
         ]
 
     ])
