@@ -16,6 +16,8 @@ async def create_user(telegram_id: int, token: str):
             hashed_token=Enigma.encrypt(token),
             full_name=user_info['full_name'],
             barcode=user_info['barcode'],
+            moodle_id=user_info['user_id'],
+            grades={}
         )
         new_user.save()
     except Exception as e:

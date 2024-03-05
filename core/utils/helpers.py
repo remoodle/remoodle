@@ -22,6 +22,7 @@ async def find_moodle_token(message: types.Message):
 
 
 async def define_token(message: types.Message):
+    print(message.chat.id)
     user = User.objects(telegram_id=message.chat.id)[0]
     full_name = user.full_name
     barcode = user.barcode
@@ -95,6 +96,7 @@ async def create_deadlines_string(user_id) -> str:
         if str(deadline['deadline_name']).lower().__contains__("attendance"):
             continue
         time = get_time_string_by_unix(deadline['remaining'])
+        
         if time is not None:
             time_left = time['remaining']
             date = time['deadline']
@@ -111,7 +113,7 @@ def get_time_string_by_unix(unix_time):
     }
 
     unix_time = int(unix_time)
-    deadline = datetime.fromtimestamp(unix_time + 21600)
+    deadline = datetime.fromtimestamp(unix_time + 18000)
     deadline_remaining = datetime.fromtimestamp(unix_time)
     remaining = deadline_remaining - datetime.utcnow()
 

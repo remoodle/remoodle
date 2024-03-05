@@ -40,13 +40,8 @@ async def admin_get_users(message: types.Message, state: FSMContext):
     if user_id not in (749243435, 1055088454):
         return
 
-    users = User.objects
-    answer = ""
-
-    for user in users:
-        answer += f"{user.full_name} - {user.barcode} | {user.telegram_id}\n"
-
-    answer += f"\n\nCOUNT: {len(users)}"
+    users = User.objects()
+    answer = f"COUNT: {len(users)}"
 
     await message.answer(answer, parse_mode="HTML")
 
