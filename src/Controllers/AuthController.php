@@ -25,11 +25,6 @@ class AuthController
         } catch (\Throwable $th) {
             throw $th;
         }
-
-        $jobs = new Jobs(RPC::create('tcp://127.0.0.1:6001'));
-        $queue = $jobs->connect('user_registered');
-        $task = $queue->create(Task::class, $user->toJson());
-        $queue->dispatch($task);
         
         $response->getBody()->write(json_encode(
             $user->makeHidden(["password_hash", "moodle_token"])

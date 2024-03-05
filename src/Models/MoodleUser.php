@@ -7,6 +7,9 @@ use Core\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Spiral\Goridge\RPC\RPC;
+use Spiral\RoadRunner\KeyValue\Factory;
+use Spiral\RoadRunner\KeyValue\Serializer\IgbinarySerializer;
 
 class MoodleUser extends Model
 {
@@ -36,6 +39,25 @@ class MoodleUser extends Model
         'password_hash',
         'webhook_secret'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::updated(function ($user) {
+            $rpc = RPC::create('tcp://127.0.0.1:6001');
+            $factory = new Factory($rpc);        
+            $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
+            $storage->set($user->moodle_token, $user);
+        });
+
+        static::created(function($user){
+            $rpc = RPC::create('tcp://127.0.0.1:6001');
+            $factory = new Factory($rpc);        
+            $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
+            $storage->set($user->moodle_token, $user);
+        });
+    }
 
     public function verifyPassword(string $password): bool
     {
@@ -84,6 +106,18 @@ class MoodleUser extends Model
     {
         return $this->hasManyThrough(
             Course::class,
+            UserCourseAssign::class,
+            'moodle_id',
+            'course_id',
+            'moodle_id', 
+            'course_id'
+        );
+    }
+
+    public function events(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Event::class,
             UserCourseAssign::class,
             'moodle_id',
             'course_id',

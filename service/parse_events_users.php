@@ -1,0 +1,34 @@
+<?php
+
+use App\Models\MoodleUser;
+use Core\Config;
+use Dotenv\Dotenv;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Spiral\Goridge\RPC\RPC;
+use Spiral\RoadRunner\Jobs\Jobs;
+use Spiral\RoadRunner\Jobs\Task\Task;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$dotenv = Dotenv::createImmutable(__DIR__ . "/../");
+$dotenv->load();
+
+Config::loadConfigs();
+
+$capsule = new Capsule;
+
+$capsule->addConnection(Config::get('eloquent'));
+$capsule->setAsGlobal();
+$capsule->bootEloquent();
+
+$jobs = new Jobs(RPC::create('tcp://127.0.0.1:6001'));
+$queue = $jobs->connect('user_parse_events');
+
+$users = MoodleUser::all();
+
+foreach($users as $user){
+    $task = $queue->create(Task::class, $user->toJson());
+    $queue->dispatch($task);
+}
+
+

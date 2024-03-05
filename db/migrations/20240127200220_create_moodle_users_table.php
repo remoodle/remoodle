@@ -29,7 +29,7 @@ final class CreateMoodleUsersTable extends AbstractMigration
             ->addColumn('email', 'string', ['null' => true])
             ->addColumn('email_verified_at', 'timestamp', ['null' => true])
             
-            ->addColumn('notify_method', 'enum', ['values' => ['email', 'get_update', 'webhook'], 'null' => true])
+            ->addColumn('notify_method', 'enum', ['values' => ['email', 'get_update', 'webhook'], 'default' => 'get_update'])
             ->addColumn('webhook', 'string', ['null' => true])
             ->addColumn('webhook_secret', 'string', ['null' => true])
             

@@ -56,7 +56,8 @@ final class Moodle
     public function getUserCourses(CourseEnrolledClassification $classification = CourseEnrolledClassification::INPROGRESS): array
     {
         $coursesRaw = $this->moodleWrapper->getEnrolledCoursesByTimelineClassification($classification->value)["courses"];
-        $courses = array_map(function(array $course){
+        
+        return array_map(function(array $course){
             return [
                 "course_id" => (int)$course["id"],
                 "url" => $course["viewurl"],
@@ -66,8 +67,6 @@ final class Moodle
                 "end_date" => $course["enddate"],
             ];
         }, $coursesRaw);
-
-        return $courses;
     }
 
     public function getCourseGrades(int $courseId): array
@@ -94,27 +93,23 @@ final class Moodle
         return $grades;
     }
 
-    public function getCoursesGrade(): array
+    public function getDeadlines(?int $from = null, ?int $to = null): array
     {   
-        $rawGrades = $this->moodleWrapper->getUserCoursesGrade();
-        // $grades = [];
-        
-        // foreach($rawGrades["usergrades"][0]['gradeitems'] as $gradeitem)
-        // {
-        //     if(($gradeitem["gradeformatted"] != "-" or $gradeitem["percentageformatted"] != "-") && array_key_exists("cmid",$gradeitem))
-        //     {
-        //         $grades[] = [
-        //             "id" => $gradeitem["id"],
-        //             "name" => $gradeitem["itemname"],
-        //             "percentage" => (int)$gradeitem["percentageformatted"],
-        //             "feedback" => $gradeitem["feedback"],
-        //             "iteminstance" => $gradeitem["iteminstance"],
-        //             "cmid" => $gradeitem["cmid"] ,
-        //             "course_id" => $courseId
-        //         ];
-        //     }
-        // }
+        $from = $from ?? time();
+        $to ??= time() + (3600 * 24 * 7);
 
-        return $rawGrades;
+        $deadlines = $this->moodleWrapper->getCalendarActionByTimesort($from, $to);
+        
+        return array_map(function($event){
+            return [
+                "event_id" => $event["id"],
+                "name" => $event["name"],
+                "instance" => $event["instance"],
+                "timestart" => $event["timestart"],
+                "visible" => $event["visible"],
+                "course_name" => $event["course"]["shortname"] ?? $event["course"]["fullname"],
+                "course_id" => $event["course"]["id"]
+            ];
+        }, $deadlines["events"]);
     }
 }

@@ -46,4 +46,9 @@ class Course extends Model
             'moodle_id'
         );
     }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(Event::class, "course_id", "course_id");
+    }
 }

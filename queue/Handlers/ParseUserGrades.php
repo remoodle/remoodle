@@ -6,6 +6,9 @@ use App\Models\MoodleUser;
 use App\Modules\Moodle\Moodle;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Connection;
+use Spiral\Goridge\RPC\RPC;
+use Spiral\RoadRunner\Jobs\Jobs;
+use Spiral\RoadRunner\Jobs\Task\Task;
 
 class ParseUserGrades extends BaseHandler
 {
@@ -33,12 +36,19 @@ class ParseUserGrades extends BaseHandler
         try {
             $this->connection->beginTransaction();
             $this->connection->table("course_modules")->upsert($courseModulesUpsert, "cmid");
-            $this->connection->table("grades")->upsert($courseGradesUpsert, ["cmid", "moodle_id"]);
+            $this->connection->table("grades")->upsert($courseGradesUpsert, ["cmid", "moodle_id"], ["percantage"]);
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();
             $this->receivedTask->fail($th);
         }
+        
+        $jobs = new Jobs(RPC::create('tcp://127.0.0.1:6001'));
+        $queue = $jobs->connect('user_parse_events');
+        $task = $queue->create(Task::class, $this->user->toJson());
+        $queue->dispatch($task);
+
+
 
         $this->receivedTask->complete();
     }
@@ -66,5 +76,23 @@ class ParseUserGrades extends BaseHandler
         }
 
         return [$courseModulesUpsertArray, $courseGradesUpsertArray];
+    }
+
+    private function getDifference(array $currentGrades, array $receivedGrades): array
+    {
+        $currentGradesIds = [];
+        $receivedGradesIds = [];
+
+        $currentGrades = array_map(function(&$key, $grade) use (&$currentGradesIds){
+            $key = $grade["grade_id"];
+            $currentGradesIds[] = $grade["grade_id"];
+        }, $currentGrades); 
+
+        $receivedGrades = array_map(function(&$key, $grade) use (&$receivedGradesIds){
+            $key = $grade["grade_id"];
+            $receivedGradesIds[] = $grade["grade_id"];
+        }, $receivedGrades);
+
+        $newGrades = array_diff($currentGrades, $receivedGrades);
     }
 }

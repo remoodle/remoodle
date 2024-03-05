@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Notification\Providers\Mail\Mailers;
+
+use App\Notification\Message;
 use App\Notification\Providers\Mail\MailerInterface;
 use Resend as GlobalResend;
 use Resend\Client;
-use App\Notification\MessageBag;
 
 final class Resend implements MailerInterface
 {
@@ -17,23 +18,18 @@ final class Resend implements MailerInterface
         $this->resendClient = GlobalResend::client($apiKey);
     }
 
-    public function sendMail(MessageBag $messageBag, string $email, string $subject): void
+    public function sendMail(Message $message, string $email, string $subject): void
     {
         $this->resendClient->emails->send([
             'from' => "Acme <{$this->from}>",
             'to' => [$email],
             'subject' => $subject,
-            'html' => $this->getContents($messageBag),
+            'html' => $this->getContents($message),
         ]);
     }
 
-    private function getContents(MessageBag $messageBag): string
+    private function getContents(Message $message): string
     {
-        $html = "";
-        foreach($messageBag as $message){
-            $html .= "<p>" . $message->toArray()["message"] . "</p><br>";
-        }
-
-        return $html;
+        return "<p>" . $message->toArray()["message"] . "</p><br>";
     }
 }

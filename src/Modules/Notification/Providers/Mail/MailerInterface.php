@@ -2,9 +2,9 @@
 
 namespace App\Notification\Providers\Mail;
 
-use App\Notification\MessageBag;
+use App\Notification\Message;
 
 interface MailerInterface
 {
-    public function sendMail(MessageBag $messageBag, string $email, string $subject): void;
+    public function sendMail(Message $message, string $email, string $subject): void;
 }

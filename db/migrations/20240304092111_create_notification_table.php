@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-final class CreateUserCourseAssignTable extends AbstractMigration
+final class CreateNotificationTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -19,19 +19,19 @@ final class CreateUserCourseAssignTable extends AbstractMigration
      */
     public function change(): void
     {
-        $table = $this->table('user_course_assign', ["id" => true]);
+        $table = $this->table('notifications', ["id" => false, "primary_key" => "uuid"]);
 
         $table
-            ->addColumn('moodle_id', 'integer', ['signed' => false, 'null' => false])            
-            ->addColumn('course_id', 'integer', ['signed' => false, 'null' => false])   
-            ->addColumn('classification', 'enum', ['values' => ['inprogress', 'past', 'future'], 'null' => false])   
-            
+            ->addColumn('uuid', 'uuid', ['null' => false])            
+            ->addColumn('moodle_id', 'integer', ['signed' => false, 'null' => false])
+            ->addColumn('force_email', 'boolean', ['default' => false])
+            ->addColumn('title', 'string', ['null' => false])
+            ->addColumn('message', 'string', ['null' => false])
+            ->addColumn('attachments', 'string', ['null' => true])
+
             ->addForeignKey('moodle_id', 'moodle_users', 'moodle_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
-            ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             
-            ->addIndex(['course_id'], ['unique' => false])
             ->addIndex(['moodle_id'], ['unique' => false])
-            ->addIndex(['classification'], ['unique' => false])
             ->create();
     }
 }

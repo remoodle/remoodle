@@ -29,20 +29,29 @@ $routes($app);
 // $app->addErrorMiddleware(true, true, true);
 $app->addMiddleware($app->getContainer()->get(ErrorMiddleware::class));
 
+$capsule->bootEloquent();
 $worker = $container->get(PSR7WorkerInterface::class);
-while ($req = $worker->waitRequest()) {
+while (true) {
+    $req = $worker->waitRequest();
+    if($req === null){
+        continue;
+    }
+
     try {
-        //Booting eloquent
-        $capsule->bootEloquent();
-        
-        //Handling request
+        try {
+            $pdo = $capsule->getConnection()->getPdo();
+            if($pdo === null){
+                throw new PDOException();
+            }
+        } catch (\Throwable $th) {
+            $capsule->getConnection()->reconnect();
+        }
+
         $res = $app->handle($req);
-        
-        //Worker response
         $worker->respond($res);
     } catch (Throwable $e) {
         $worker->getWorker()->error($e->getMessage());
     } finally{
-        $capsule->getConnection()->disconnect();
+        gc_collect_cycles();
     }
 }

@@ -43,6 +43,7 @@ while (true) {
         $handler->handle();
     } catch (\Throwable $th) {
         $task->fail($th);
+        echo "\n" . $th->getMessage();
     }finally{
         $capsule->getConnection()->disconnect();
     }

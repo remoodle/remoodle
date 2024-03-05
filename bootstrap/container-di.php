@@ -11,6 +11,10 @@ use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Factory\UploadedFileFactory;
 use DI\ContainerBuilder;
 use Core\Config;
+use Spiral\Goridge\RPC\RPC;
+use Spiral\RoadRunner\KeyValue\Factory;
+use Spiral\RoadRunner\KeyValue\Serializer\IgbinarySerializer;
+use Spiral\RoadRunner\KeyValue\StorageInterface;
 
 $builder = new ContainerBuilder();
 $builder->useAutowiring(true);
@@ -19,6 +23,9 @@ $responseFactory = new ResponseFactory();
 $serverRequestFactory = new ServerRequestFactory();
 $streamFactory = new StreamFactory();
 $uploadedFileFactory = new UploadedFileFactory();
+$storage = (new Factory(RPC::create('tcp://127.0.0.1:6001')))
+    ->withSerializer(new IgbinarySerializer())
+    ->select('users');
 
 $builder->addDefinitions([
     Psr\Http\Message\ResponseFactoryInterface::class => $responseFactory,
@@ -35,7 +42,8 @@ $builder->addDefinitions([
     },
     Resend::class => function(): Resend{
         return new Resend(Config::get("mail.resend.key"), Config::get("mail.from"));
-    }
+    },
+    StorageInterface::class => $storage
 ]);
 
 return $builder->build();

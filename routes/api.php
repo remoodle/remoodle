@@ -29,7 +29,9 @@ return function(App $app){
             $user->get("/settings", [SettingsController::class, "userSetiings"]); //done
 
             $user->get("/course/grades", [UserCoursesController::class, "getCourseGrades"])->add(GetCourseGrades::class); //grades 
-            $user->get("/courses", [UserCoursesController::class, "getCourses"]); //done
+            $user->get("/courses", [UserCoursesController::class, "getCourses"]); 
+            $user->get("/deadlines", [UserCoursesController::class, "getDeadlines"]); 
+
 
             $user->group("/offline", function(RouteCollectorProxy $offline){
                 $offline->get("/courses/overall", [OfllineModeController::class, "getUserOverall"]);

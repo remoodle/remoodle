@@ -8,11 +8,18 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Spiral\Goridge\RPC\RPC;
+use Spiral\RoadRunner\KeyValue\Factory;
+use Spiral\RoadRunner\KeyValue\StorageInterface;
 
 final class Auth implements MiddlewareInterface
 {
     const TOKEN_HEADER = "Auth-Token";
  
+    public function __construct(
+        private StorageInterface $storage
+    ){}
+
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if(!$this->headerHasToken($request)){
@@ -30,13 +37,13 @@ final class Auth implements MiddlewareInterface
 
     private function headerHasToken(ServerRequestInterface $request): bool
     {
-        return $request->hasHeader(static::TOKEN_HEADER);
+        return array_key_exists(0, $request->getHeader(static::TOKEN_HEADER));
     }
 
     private function headerTokenIsValid(ServerRequestInterface $request): array
     {   
-        $token = $request->getHeader(static::TOKEN_HEADER);
-        $user = User::where("moodle_token", $token)->first();
+        $token = $request->getHeader(static::TOKEN_HEADER)[0];
+        $user = $this->storage->get($token); 
         if(!$user){
             return [false, $request];
         }

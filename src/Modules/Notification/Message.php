@@ -10,6 +10,7 @@ class Message implements Arrayable
         protected string $message,
         protected int $time,
         protected ?AttachmentBag $attachmentBag,
+        protected bool $forceEmail = false
     ){}
 
     public function toArray(): array
@@ -25,5 +26,10 @@ class Message implements Arrayable
     public function getMoodleId(): int
     {
         return $this->moodleId;
+    }
+
+    public function isForceEmail(): bool
+    {
+        return $this->forceEmail;
     }
 }
