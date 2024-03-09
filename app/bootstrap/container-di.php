@@ -1,5 +1,6 @@
 <?php
 
+use App\Middleware\Auth;
 use App\Notification\Providers\Mail\Mailers\Resend;
 use App\Repositories\UserMoodle\ApiUserMoodleRepositoryInterface;
 use App\Repositories\UserMoodle\Concrete\ApiUserMoodleRepository;
@@ -23,9 +24,8 @@ $responseFactory = new ResponseFactory();
 $serverRequestFactory = new ServerRequestFactory();
 $streamFactory = new StreamFactory();
 $uploadedFileFactory = new UploadedFileFactory();
-$storage = (new Factory(RPC::create('tcp://127.0.0.1:6001')))
-    ->withSerializer(new IgbinarySerializer())
-    ->select('users');
+$rpcIgbinaryFactory = (new Factory(RPC::create('tcp://127.0.0.1:6001')))->withSerializer(new IgbinarySerializer());
+// $shmop = \shm_attach((int)$storage->get("shm_add"), 3072, 0o600);
 
 $builder->addDefinitions([
     Psr\Http\Message\ResponseFactoryInterface::class => $responseFactory,
@@ -43,7 +43,9 @@ $builder->addDefinitions([
     Resend::class => function(): Resend{
         return new Resend(Config::get("mail.resend.key"), Config::get("mail.from"));
     },
-    StorageInterface::class => $storage
+    Auth::class => DI\factory(function() use ($rpcIgbinaryFactory){
+        return new Auth($rpcIgbinaryFactory->select('users'));
+    })
 ]);
 
 return $builder->build();

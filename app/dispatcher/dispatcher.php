@@ -47,6 +47,4 @@ while (true) {
     }finally{
         $capsule->getConnection()->disconnect();
     }
-
-    unset($handler);
 }

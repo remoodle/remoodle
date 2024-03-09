@@ -11,13 +11,15 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Spiral\Goridge\RPC\RPC;
 use Spiral\RoadRunner\KeyValue\Factory;
 use Spiral\RoadRunner\KeyValue\StorageInterface;
+use SysvSharedMemory;
 
 final class Auth implements MiddlewareInterface
 {
     const TOKEN_HEADER = "Auth-Token";
  
     public function __construct(
-        private StorageInterface $storage
+        private StorageInterface $storage,
+        // private SysvSharedMemory $shmop
     ){}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -44,8 +46,11 @@ final class Auth implements MiddlewareInterface
     {   
         $token = $request->getHeader(static::TOKEN_HEADER)[0];
         $user = $this->storage->get($token); 
+
+        // $userRaw = shm_get_var($this->shmop, crc32($token));
+
         if(!$user){
-            return [false, $request];
+            // return [false, $request];
         }
 
         return [true, $request->withAttribute("user", $user)];
