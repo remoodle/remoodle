@@ -3,6 +3,7 @@
 return [
     'driver' => $_ENV["DATABASE_DRIVER"] ?? null,
     'host' => $_ENV["DATABASE_HOST"] ?? null,
+    'port' => $_ENV["DATABASE_PORT"] ?? null,
     'database' => $_ENV["DATABASE_NAME"] ?? null,
     'username' => $_ENV["DATABASE_USERNAME"] ?? null,
     'password' => $_ENV["DATABASE_PASSWORD"] ?? null,

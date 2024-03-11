@@ -9,13 +9,15 @@ WORKDIR /app
 ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY --from=composer:2.3 /usr/bin/composer /usr/bin/composer
 
-COPY ./app/composer.* .
+COPY ./composer.* .
 RUN composer install --optimize-autoloader --no-dev
 
 COPY --from=ghcr.io/roadrunner-server/roadrunner:2023.1.1 /usr/bin/rr /app
 
 EXPOSE 8080/tcp
 
-COPY ./app .
+COPY ./ .
 
-CMD ./rr serve -c .rr.yaml
+# RUN 
+
+# CMD 

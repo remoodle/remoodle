@@ -50,7 +50,7 @@ final class Auth implements MiddlewareInterface
         // $userRaw = shm_get_var($this->shmop, crc32($token));
 
         if(!$user){
-            // return [false, $request];
+            return [false, $request];
         }
 
         return [true, $request->withAttribute("user", $user)];
