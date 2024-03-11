@@ -1,4 +1,4 @@
 vendor/*
 .rr.yaml
 .env
-.rr
+rr
