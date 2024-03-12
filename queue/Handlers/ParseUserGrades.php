@@ -36,7 +36,7 @@ class ParseUserGrades extends BaseHandler
         try {
             $this->connection->beginTransaction();
             $this->connection->table("course_modules")->upsert($courseModulesUpsert, "cmid");
-            $this->connection->table("grades")->upsert($courseGradesUpsert, ["cmid", "moodle_id"], ["percantage"]);
+            $this->connection->table("grades")->upsert($courseGradesUpsert, ["cmid", "moodle_id"], ["percentage"]);
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();
@@ -82,17 +82,32 @@ class ParseUserGrades extends BaseHandler
     {
         $currentGradesIds = [];
         $receivedGradesIds = [];
-
-        $currentGrades = array_map(function(&$key, $grade) use (&$currentGradesIds){
-            $key = $grade["grade_id"];
-            $currentGradesIds[] = $grade["grade_id"];
-        }, $currentGrades); 
-
-        $receivedGrades = array_map(function(&$key, $grade) use (&$receivedGradesIds){
-            $key = $grade["grade_id"];
-            $receivedGradesIds[] = $grade["grade_id"];
-        }, $receivedGrades);
-
-        $newGrades = array_diff($currentGrades, $receivedGrades);
+        $updatedGrades = [];
+        $newGrades = [];
+        $tempCurrentGrades = [];
+        foreach($currentGrades as $currentGrade){
+            $tempCurrentGrades[$currentGrade["grade_id"]] = $currentGrade;
+            $currentGradesIds[] = $currentGrade["grade_id"];
+        }
+        $currentGrades = $tempCurrentGrades;
+        unset($tempCurrentGrades);
+        $tempreceivedGrades = [];
+        foreach($receivedGrades as $receivedGrade){
+            $tempreceivedGrades[$receivedGrade["grade_id"]] = $receivedGrade;
+            $receivedGradesIds[] = $receivedGrade["grade_id"];
+            if(isset($currentGrades[$receivedGrade["grade_id"]]) && $currentGrades[$receivedGrade["grade_id"]]["percentage"] !== $receivedGrade["percentage"]){
+                $updatedGrades[] = [
+                    "grade_id" => $receivedGrade["grade_id"],
+                    "old" => $currentGrades[$receivedGrade["grade_id"]]["percentage"],
+                    "new" => $receivedGrade["percentage"]
+                ];
+            }elseif(!isset($currentGrades[$receivedGrade["grade_id"]])){
+                $newGrades[] = [
+                    "grade_id" => $receivedGrade["grade_id"],
+                    "new" => $receivedGrade["percentage"]
+                ];
+            }
+        }
+        return [$updatedGrades, $newGrades];
     }
 }

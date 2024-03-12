@@ -12,6 +12,8 @@ use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Factory\UploadedFileFactory;
 use DI\ContainerBuilder;
 use Core\Config;
+use Phlib\Encrypt\Encryptor\OpenSsl;
+use Phlib\Encrypt\EncryptorInterface;
 use Spiral\Goridge\RPC\RPC;
 use Spiral\RoadRunner\KeyValue\Factory;
 use Spiral\RoadRunner\KeyValue\Serializer\IgbinarySerializer;
@@ -24,8 +26,8 @@ $responseFactory = new ResponseFactory();
 $serverRequestFactory = new ServerRequestFactory();
 $streamFactory = new StreamFactory();
 $uploadedFileFactory = new UploadedFileFactory();
+$encryptor = new OpenSsl(base64_decode(Config::get("crypt.key")));
 $rpcIgbinaryFactory = (new Factory(RPC::create('tcp://127.0.0.1:6001')))->withSerializer(new IgbinarySerializer());
-// $shmop = \shm_attach((int)$storage->get("shm_add"), 3072, 0o600);
 
 $builder->addDefinitions([
     Psr\Http\Message\ResponseFactoryInterface::class => $responseFactory,
@@ -45,7 +47,8 @@ $builder->addDefinitions([
     },
     Auth::class => DI\factory(function() use ($rpcIgbinaryFactory){
         return new Auth($rpcIgbinaryFactory->select('users'));
-    })
+    }),
+    EncryptorInterface::class => $encryptor
 ]);
 
 return $builder->build();

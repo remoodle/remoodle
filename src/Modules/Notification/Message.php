@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Notification;
+namespace App\Modules\Notification;
 use Core\CommonContracts\Arrayable;
 
 class Message implements Arrayable
 {
     public function __construct(
-        protected int $moodleId,
-        protected string $message,
-        protected int $time,
-        protected ?AttachmentBag $attachmentBag,
-        protected bool $forceEmail = false
+        public readonly int $moodleId,
+        public readonly string $message,
+        public readonly int $time,
+        public readonly ?AttachmentBag $attachmentBag = null,
+        public readonly bool $forceEmail = false
     ){}
 
     public function toArray(): array

@@ -75,7 +75,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
                 $q->orWhere("barcode", $barcode);
             }
             if ($email) {
-                $q->orWhere("email", $email);
+                $q->orWhere("email", $email)->where("email_verified_at", "!=", null);
             }
             if ($nameAlias) {
                 $q->orWhere("name_alias", $nameAlias);

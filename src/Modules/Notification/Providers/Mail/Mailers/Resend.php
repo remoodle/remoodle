@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Notification\Providers\Mail\Mailers;
+namespace App\Modules\Notification\Providers\Mail\Mailers;
 
-use App\Notification\Message;
-use App\Notification\Providers\Mail\MailerInterface;
+use App\Modules\Notification\Message;
+use App\Modules\Notification\Providers\Mail\MailerInterface;
 use Resend as GlobalResend;
 use Resend\Client;
 
@@ -21,7 +21,7 @@ final class Resend implements MailerInterface
     public function sendMail(Message $message, string $email, string $subject): void
     {
         $this->resendClient->emails->send([
-            'from' => "Acme <{$this->from}>",
+            'from' => "Remoodle<{$this->from}>",
             'to' => [$email],
             'subject' => $subject,
             'html' => $this->getContents($message),

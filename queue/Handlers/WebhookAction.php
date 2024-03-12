@@ -3,8 +3,8 @@
 namespace Queue\Handlers;
 
 use App\Models\MoodleUser;
-use App\Notification\MessageBag;
-use App\Notification\Providers\Webhook;
+use App\Modules\Notification\MessageBag;
+use App\Modules\Notification\Providers\Webhook;
 
 class WebhookAction extends BaseHandler
 {

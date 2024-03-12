@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Notification;
+namespace App\Modules\Notification;
 use Core\CommonContracts\Arrayable;
 use Iterator;
 

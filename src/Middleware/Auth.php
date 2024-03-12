@@ -2,16 +2,12 @@
 
 namespace App\Middleware;
 
-use App\Models\MoodleUser as User;
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Spiral\Goridge\RPC\RPC;
-use Spiral\RoadRunner\KeyValue\Factory;
 use Spiral\RoadRunner\KeyValue\StorageInterface;
-use SysvSharedMemory;
 
 final class Auth implements MiddlewareInterface
 {
@@ -19,7 +15,6 @@ final class Auth implements MiddlewareInterface
  
     public function __construct(
         private StorageInterface $storage,
-        // private SysvSharedMemory $shmop
     ){}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -45,9 +40,7 @@ final class Auth implements MiddlewareInterface
     private function headerTokenIsValid(ServerRequestInterface $request): array
     {   
         $token = $request->getHeader(static::TOKEN_HEADER)[0];
-        $user = $this->storage->get($token); 
-
-        // $userRaw = shm_get_var($this->shmop, crc32($token));
+        $user = $this->storage->get($token);
 
         if(!$user){
             return [false, $request];

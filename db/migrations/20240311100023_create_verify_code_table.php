@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-final class CreateNotificationTable extends AbstractMigration
+final class CreateVerifyCodeTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -19,15 +19,15 @@ final class CreateNotificationTable extends AbstractMigration
      */
     public function change(): void
     {
-        $table = $this->table('notifications', ["id" => false, "primary_key" => "uuid"]);
+        $table = $this->table('verify_codes', ["id" => false, "primary_key" => "uuid"]);
 
         $table
             ->addColumn('uuid', 'uuid', ['null' => false])            
             ->addColumn('moodle_id', 'integer', ['signed' => false, 'null' => false])
-            ->addColumn('title', 'string', ['null' => false])
-            ->addColumn('message', 'string', ['null' => false])
-            ->addColumn('attachments', 'string', ['null' => true])
-
+            ->addColumn('code', 'integer', ['null' => false, 'signed' => false])
+            ->addColumn('type', 'enum', ['null' => false, 'values' => ['email_verify', 'login', 'password_reset']])
+            ->addColumn('created_at', 'timestamp', ['null' => false])
+            ->addColumn('expires_at', 'timestamp', ['null' => false])
             ->addForeignKey('moodle_id', 'moodle_users', 'moodle_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             
             ->addIndex(['moodle_id'], ['unique' => false])

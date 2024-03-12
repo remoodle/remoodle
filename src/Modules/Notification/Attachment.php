@@ -1,6 +1,7 @@
 <?php 
 
-namespace App\Notification;
+namespace App\Modules\Notification;
+
 use Core\CommonContracts\Arrayable;
 
 class Attachment implements Arrayable

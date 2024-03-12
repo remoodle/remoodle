@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Notification\Providers;
+namespace App\Modules\Notification\Providers;
 
-use App\Notification\MessageBag;
+use App\Modules\Notification\MessageBag;
 
 final class GetUpdate
 {

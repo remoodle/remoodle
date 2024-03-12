@@ -3,9 +3,9 @@
 namespace Queue\Handlers;
 
 use App\Models\MoodleUser;
-use App\Notification\Message;
-use App\Notification\Providers\Mail\Mail;
-use App\Notification\Providers\Mail\Mailers\Resend;
+use App\Modules\Notification\Message;
+use App\Modules\Notification\Providers\Mail\Mail;
+use App\Modules\Notification\Providers\Mail\Mailers\Resend;
 use Core\Config;
 
 class SendEmail extends BaseHandler

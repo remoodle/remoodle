@@ -3,19 +3,24 @@
 namespace App\Modules\Auth;
 
 use App\Models\MoodleUser;
+use App\Models\VerifyCode;
 use App\Modules\Auth\Enums\AuthOptions;
+use App\Modules\Notification\Bridge;
+use App\Modules\Notification\Message;
 use App\Repositories\UserMoodle\ApiUserMoodleRepositoryInterface;
 use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
+use Carbon\Carbon;
 use Fig\Http\Message\StatusCodeInterface;
-use Spiral\Goridge\RPC\RPC;
-use Spiral\RoadRunner\Jobs\Jobs;
-use Spiral\RoadRunner\Jobs\Task\Task;
+use Illuminate\Database\Connection;
+use Illuminate\Support\Facades\DB;
 
 class Auth
 {
     public function __construct(
         private DatabaseUserMoodleRepositoryInterface $databaseUserRepository,
         private ApiUserMoodleRepositoryInterface $apiUserRepository,
+        private Bridge $notificationBridge,
+        private Connection $connection
     ){}
 
     const IDENTIFIER_BARCODE = "barcode";
@@ -63,13 +68,33 @@ class Auth
             throw new \Exception("Given token is invalid or Moodle webservice is down.", StatusCodeInterface::STATUS_BAD_REQUEST);
         }
 
-        
-        return  MoodleUser::createFromBaseMoodleUser(
-            $baseMoodleUser, 
-            isset($data["password"]) ? MoodleUser::hashPassword($data["password"]) : null,
-            $data[static::IDENTIFIER_ALIAS] ?? null,
-            $data[static::IDENTIFIER_EMAIL] ?? null,
-        );
+        $this->connection->beginTransaction();
+        try {
+            $user = MoodleUser::createFromBaseMoodleUser(
+                $baseMoodleUser, 
+                isset($data["password"]) ? MoodleUser::hashPassword($data["password"]) : null,
+                $data[static::IDENTIFIER_ALIAS] ?? null,
+                $data[static::IDENTIFIER_EMAIL] ?? null,
+            );
+    
+            if(array_key_exists(static::IDENTIFIER_EMAIL, $data)){
+                $verifyCode = VerifyCode::create([
+                    'moodle_id' => $user->moodle_id,
+                    'code' => random_int(100000,999999), 
+                    'type' => 'email_verify', //TODO: enums 
+                    'expires_at' => Carbon::now()->addHours(6)
+                ]);
+    
+                $message = new Message($user->moodle_id, "Ваш код потверждения почты в remoodle: " . $verifyCode->code, time(), null, true); 
+                $this->notificationBridge->notify($message, $user);
+            }
+        } catch (\Throwable $th) {
+            $this->connection->rollBack();
+            throw $th;
+        }
+
+        $this->connection->commit();
+        return $user;
     }
 
     public function getAuthOptions(array $data): array 

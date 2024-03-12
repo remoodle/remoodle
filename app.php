@@ -6,6 +6,7 @@ use Dotenv\Dotenv;
 use Slim\Factory\AppFactory;
 use Spiral\RoadRunner\Http\PSR7WorkerInterface;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\Connection;
 
 require_once __DIR__ . "/vendor/autoload.php";
 
@@ -30,13 +31,15 @@ $routes($app);
 $app->addMiddleware($app->getContainer()->get(ErrorMiddleware::class));
 
 $capsule->bootEloquent();
+$container->set(Connection::class, function() use ($capsule){
+    return $capsule->getConnection();
+});
 $worker = $container->get(PSR7WorkerInterface::class);
 while (true) {
     $req = $worker->waitRequest();
     if($req === null){
         continue;
     }
-
     try {
         try {
             $pdo = $capsule->getConnection()->getPdo();

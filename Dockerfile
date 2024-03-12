@@ -18,6 +18,4 @@ EXPOSE 8080/tcp
 
 COPY ./ .
 
-# RUN 
-
-# CMD 
+CMD php righthand.php key:generate

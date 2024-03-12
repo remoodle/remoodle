@@ -1,8 +1,8 @@
 <?php 
 
-namespace App\Notification\Providers\Mail;
+namespace App\Modules\Notification\Providers\Mail;
 
-use App\Notification\Message;
+use App\Modules\Notification\Message;
 
 interface MailerInterface
 {

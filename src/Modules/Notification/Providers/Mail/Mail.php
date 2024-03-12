@@ -1,9 +1,9 @@
 <?php 
 
-namespace App\Notification\Providers\Mail;
+namespace App\Modules\Notification\Providers\Mail;
 
-use App\Notification\Message;
-use App\Notification\MessageBag;
+use App\Modules\Notification\Message;
+use App\Modules\Notification\MessageBag;
 
 final class Mail
 {
@@ -12,8 +12,6 @@ final class Mail
         private string $email,
         private MailerInterface $mailer
     ){}
-
-
 
     public function send(string $subject)
     {

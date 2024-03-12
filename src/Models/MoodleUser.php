@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Modules\Moodle\BaseMoodleUser;
+use Carbon\Carbon;
 use Core\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -130,4 +131,16 @@ class MoodleUser extends Model
     {
         return $this->hasMany(UserCourseAssign::class, "moodle_id", "moodle_id");
     }
+
+    public function isEmailVerified(): bool
+    {
+        return $this->email_verified_at !== null;
+    }
+
+    public function verifyEmail(): void
+    {
+        $this->update([
+            'email_verified_at' => Carbon::now()
+        ]);
+    } 
 }
