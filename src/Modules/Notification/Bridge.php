@@ -5,8 +5,7 @@ namespace App\Modules\Notification;
 use App\Models\MoodleUser;
 use App\Models\Notification;
 use App\Modules\Jobs\Factory;
-use App\Modules\Jobs\JobsEnum as JobsJobsEnum;
-use JobsEnum;
+use App\Modules\Jobs\JobsEnum;
 use Spiral\RoadRunner\Jobs\Task\Task;
 use Illuminate\Support\Str;
 
@@ -19,7 +18,7 @@ class Bridge
     public function notify(MessageBag|Message $message, MoodleUser $moodleUser): true
     {
         if($message instanceof Message && $message->isForceEmail()){
-            $queue = $this->factory->createQueue(JobsJobsEnum::NOTIFICATION_EMAIL->value);
+            $queue = $this->factory->createQueue(JobsEnum::NOTIFICATION_EMAIL->value);
             $queue->dispatch($queue->create(Task::class, igbinary_serialize($message)));
 
             return true;

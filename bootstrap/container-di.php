@@ -1,7 +1,7 @@
 <?php
 
 use App\Middleware\Auth;
-use App\Notification\Providers\Mail\Mailers\Resend;
+use App\Modules\Notification\Providers\Mail\Mailers\Resend;
 use App\Repositories\UserMoodle\ApiUserMoodleRepositoryInterface;
 use App\Repositories\UserMoodle\Concrete\ApiUserMoodleRepository;
 use App\Repositories\UserMoodle\Concrete\DatabaseUserMoodleRepository;
