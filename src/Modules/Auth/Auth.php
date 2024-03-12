@@ -79,11 +79,6 @@ class Auth
                 $data[static::IDENTIFIER_ALIAS] ?? null,
                 $data[static::IDENTIFIER_EMAIL] ?? null,
             );
-
-            $rpc = RPC::create('tcp://127.0.0.1:6001');
-            $factory = new Factory($rpc);        
-            $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
-            $storage->set($user->moodle_token, $user);
     
             if(array_key_exists(static::IDENTIFIER_EMAIL, $data)){
                 $verifyCode = VerifyCode::create([
@@ -102,6 +97,12 @@ class Auth
         }
 
         $this->connection->commit();
+
+        $rpc = RPC::create('tcp://127.0.0.1:6001');
+        $factory = new Factory($rpc);        
+        $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
+        $storage->set($user->moodle_token, $user);
+        
         return $user;
     }
 
