@@ -26,7 +26,7 @@ return function(App $app){
             $user->get("/settings", [SettingsController::class, "userSetiings"]); //done
             $user->get("/email-verifications", [SettingsController::class, "getUserEmailVerifications"]);
             $user->post("/email-verification", [SettingsController::class, "verifyUserEmail"])->add(VerifyUserEmail::class);
-            $user->post("/email-change", [SettingsController::class, "changeUserEmail"])->add(ChangeEmail::class);
+            // $user->post("/email-change", [SettingsController::class, "changeUserEmail"])->add(ChangeEmail::class);
 
             $user->get("/course/grades", [UserCoursesController::class, "getCourseGrades"])->add(GetCourseGrades::class); //grades 
             $user->get("/courses", [UserCoursesController::class, "getCourses"]); 
