@@ -27,8 +27,8 @@ $capsule->setAsGlobal();
 $app = AppFactory::createFromContainer($container);
 $app->addBodyParsingMiddleware();
 $routes($app);
-$app->addErrorMiddleware(true, true, true);
-// $app->addMiddleware($app->getContainer()->get(ErrorMiddleware::class));
+// $app->addErrorMiddleware(true, true, true);
+$app->addMiddleware($app->getContainer()->get(ErrorMiddleware::class));
 
 $capsule->bootEloquent();
 $container->bind(Connection::class, function() use ($capsule){

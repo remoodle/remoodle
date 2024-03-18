@@ -132,6 +132,11 @@ class MoodleUser extends Model
         return $this->hasMany(UserCourseAssign::class, "moodle_id", "moodle_id");
     }
 
+    public function verifyCodes(): HasMany
+    {
+        return $this->hasMany(VerifyCode::class,"moodle_id","moodle_id");
+    }
+
     public function isEmailVerified(): bool
     {
         return $this->email_verified_at !== null;

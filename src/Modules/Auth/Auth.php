@@ -15,7 +15,6 @@ use Carbon\Carbon;
 use Core\Config;
 use Fig\Http\Message\StatusCodeInterface;
 use Illuminate\Database\Connection;
-use Illuminate\Support\Facades\DB;
 use Spiral\Goridge\RPC\RPC;
 use Spiral\RoadRunner\Jobs\Task\Task;
 use Spiral\RoadRunner\KeyValue\Factory;
