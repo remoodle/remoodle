@@ -15,11 +15,11 @@ $dotenv->load();
 
 Config::loadConfigs();
 
-/**@var DI\Container */
-$container = require __DIR__ . "/bootstrap/container-di.php";
+/**@var Core\Container */
+$container = require __DIR__ . "/bootstrap/container-laravel.php";
 $routes = require __DIR__ . "/routes/api.php";
 
-$capsule = new Capsule;
+$capsule = new Capsule($container);
 $capsule->addConnection(Config::get('eloquent'));
 $capsule->setAsGlobal();
 
@@ -27,11 +27,11 @@ $capsule->setAsGlobal();
 $app = AppFactory::createFromContainer($container);
 $app->addBodyParsingMiddleware();
 $routes($app);
-// $app->addErrorMiddleware(true, true, true);
-$app->addMiddleware($app->getContainer()->get(ErrorMiddleware::class));
+$app->addErrorMiddleware(true, true, true);
+// $app->addMiddleware($app->getContainer()->get(ErrorMiddleware::class));
 
 $capsule->bootEloquent();
-$container->set(Connection::class, function() use ($capsule){
+$container->bind(Connection::class, function() use ($capsule){
     return $capsule->getConnection();
 });
 $worker = $container->get(PSR7WorkerInterface::class);
@@ -54,7 +54,5 @@ while (true) {
         $worker->respond($res);
     } catch (Throwable $e) {
         $worker->getWorker()->error($e->getMessage());
-    } finally{
-        gc_collect_cycles();
     }
 }

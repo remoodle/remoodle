@@ -17,7 +17,6 @@ use Phlib\Encrypt\EncryptorInterface;
 use Spiral\Goridge\RPC\RPC;
 use Spiral\RoadRunner\KeyValue\Factory;
 use Spiral\RoadRunner\KeyValue\Serializer\IgbinarySerializer;
-use Spiral\RoadRunner\KeyValue\StorageInterface;
 
 $builder = new ContainerBuilder();
 $builder->useAutowiring(true);
@@ -26,6 +25,7 @@ $responseFactory = new ResponseFactory();
 $serverRequestFactory = new ServerRequestFactory();
 $streamFactory = new StreamFactory();
 $uploadedFileFactory = new UploadedFileFactory();
+
 $encryptor = new OpenSsl(base64_decode(Config::get("crypt.key")));
 $rpcIgbinaryFactory = (new Factory(RPC::create(Config::get("rpc.connection"))))->withSerializer(new IgbinarySerializer());
 
