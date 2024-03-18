@@ -93,9 +93,10 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
             }])
             ->where("moodle_id", $moodleId)
             ->first()
-            ->grades
+            ->events
+            ->makeHidden('laravel_through_key')
             ->toArray()
         );    
-    }    
+    }       
 
 }

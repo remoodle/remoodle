@@ -62,7 +62,7 @@ class UserCoursesController
     public function getDeadlines(Request $request, Response $response): Response
     {
         $user = $request->getAttribute("user");
-        $response->getBody()->write(json_encode(Moodle::createFromToken($user->moodle_token, $user->moodle_id)->getDeadlines()));
+        $response->getBody()->write(json_encode($this->userMoodleRepository->getDeadlines($user->moodle_id, $user->moodle_token)));
 
         return $response->withHeader("Content-Type", "application/json");
     }

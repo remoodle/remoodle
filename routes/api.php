@@ -1,7 +1,7 @@
 <?php
 
 use App\Controllers\OfllineModeController;
-use App\Middleware\Validation\ChangeEmail;
+use App\Controllers\UserNotificationController;
 use App\Middleware\Validation\VerifyUserEmail;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -36,12 +36,17 @@ return function(App $app){
                 $offline->get("/courses/overall", [OfllineModeController::class, "getUserOverall"]);
             });
             
+            $user->get("/updates", [UserNotificationController::class,"getUpdates"]);
         })->addMiddleware($api->getContainer()->get(Auth::class));
 
         $api->group("/auth", function(RouteCollectorProxy $auth){
             $auth->post("/register", [AuthController::class, "register"]);
             $auth->post("/options", [AuthController::class, "getAuthOptions"])->add(GetAuthOptions::class);
             $auth->post("/password", [AuthController::class, "authPassword"])->add(AuthPassword::class);
+            // $auth->post("/code/webhook", [AuthController::class, "authPassword"])->add(AuthPassword::class);
+            // $auth->post("/code/email", [AuthController::class, "authPassword"])->add(AuthPassword::class);
+            // $auth->post("/code/custom", [AuthController::class, "authPassword"])->add(AuthPassword::class);
+
         });
     });
 

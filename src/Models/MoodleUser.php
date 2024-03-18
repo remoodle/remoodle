@@ -142,6 +142,11 @@ class MoodleUser extends Model
         return $this->email_verified_at !== null;
     }
 
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class,"moodle_id","moodle_id");
+    }
+
     public function verifyEmail(): void
     {
         $this->update([

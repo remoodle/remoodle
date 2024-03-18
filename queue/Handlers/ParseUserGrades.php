@@ -49,8 +49,6 @@ class ParseUserGrades extends BaseHandler
         $task = $queue->create(Task::class, $this->user->toJson());
         $queue->dispatch($task);
 
-
-
         $this->receivedTask->complete();
     }
 
