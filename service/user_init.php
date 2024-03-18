@@ -28,7 +28,7 @@ $capsule->addConnection(Config::get('eloquent'));
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
 
-$rpc = RPC::create('tcp://127.0.0.1:6001');
+$rpc = RPC::create(Config::get("rpc.connection"));
 $factory = new Factory($rpc);
 
 $users = MoodleUser::all()->keyBy('moodle_id');

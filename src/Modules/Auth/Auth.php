@@ -5,15 +5,19 @@ namespace App\Modules\Auth;
 use App\Models\MoodleUser;
 use App\Models\VerifyCode;
 use App\Modules\Auth\Enums\AuthOptions;
+use App\Modules\Jobs\Factory as JobsFactory;
+use App\Modules\Jobs\JobsEnum;
 use App\Modules\Notification\Bridge;
 use App\Modules\Notification\Message;
 use App\Repositories\UserMoodle\ApiUserMoodleRepositoryInterface;
 use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
 use Carbon\Carbon;
+use Core\Config;
 use Fig\Http\Message\StatusCodeInterface;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
 use Spiral\Goridge\RPC\RPC;
+use Spiral\RoadRunner\Jobs\Task\Task;
 use Spiral\RoadRunner\KeyValue\Factory;
 use Spiral\RoadRunner\KeyValue\Serializer\IgbinarySerializer;
 
@@ -23,7 +27,8 @@ class Auth
         private DatabaseUserMoodleRepositoryInterface $databaseUserRepository,
         private ApiUserMoodleRepositoryInterface $apiUserRepository,
         private Bridge $notificationBridge,
-        private Connection $connection
+        private Connection $connection,
+        private JobsFactory $jobsFactory,
     ){}
 
     const IDENTIFIER_BARCODE = "barcode";
@@ -96,13 +101,15 @@ class Auth
             throw $th;
         }
 
-        $this->connection->commit();
-
-        $rpc = RPC::create('tcp://127.0.0.1:6001');
+        $rpc = RPC::create(Config::get("rpc.connection"));
         $factory = new Factory($rpc);        
         $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
         $storage->set($user->moodle_token, $user);
         
+        $queue = $this->jobsFactory->createQueue(JobsEnum::PARSE_TOTAL->value);
+        $queue->dispatch($queue->create(Task::class, $user->toJson()));
+
+        $this->connection->commit();
         return $user;
     }
 

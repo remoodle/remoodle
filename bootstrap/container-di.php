@@ -27,7 +27,7 @@ $serverRequestFactory = new ServerRequestFactory();
 $streamFactory = new StreamFactory();
 $uploadedFileFactory = new UploadedFileFactory();
 $encryptor = new OpenSsl(base64_decode(Config::get("crypt.key")));
-$rpcIgbinaryFactory = (new Factory(RPC::create('tcp://127.0.0.1:6001')))->withSerializer(new IgbinarySerializer());
+$rpcIgbinaryFactory = (new Factory(RPC::create(Config::get("rpc.connection"))))->withSerializer(new IgbinarySerializer());
 
 $builder->addDefinitions([
     Psr\Http\Message\ResponseFactoryInterface::class => $responseFactory,

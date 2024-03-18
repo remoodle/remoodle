@@ -21,7 +21,7 @@ $capsule->addConnection(Config::get('eloquent'));
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
 
-$jobs = new Jobs(RPC::create('tcp://127.0.0.1:6001'));
+$jobs = new Jobs(RPC::create(Config::get("rpc.connection")));
 $queue = $jobs->connect('user_parse_events');
 
 $users = MoodleUser::all();

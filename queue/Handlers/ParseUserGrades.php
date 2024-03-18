@@ -4,6 +4,7 @@ namespace Queue\Handlers;
 
 use App\Models\MoodleUser;
 use App\Modules\Moodle\Moodle;
+use Core\Config;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Connection;
 use Spiral\Goridge\RPC\RPC;
@@ -43,7 +44,7 @@ class ParseUserGrades extends BaseHandler
             $this->receivedTask->fail($th);
         }
         
-        $jobs = new Jobs(RPC::create('tcp://127.0.0.1:6001'));
+        $jobs = new Jobs(RPC::create(Config::get("rpc.connection")));
         $queue = $jobs->connect('user_parse_events');
         $task = $queue->create(Task::class, $this->user->toJson());
         $queue->dispatch($task);

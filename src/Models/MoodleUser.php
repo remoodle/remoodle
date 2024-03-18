@@ -46,14 +46,14 @@ class MoodleUser extends Model
         parent::boot();
 
         static::updated(function ($user) {
-            $rpc = RPC::create('tcp://127.0.0.1:6001');
+            $rpc = RPC::create(Config::get("rpc.connection"));
             $factory = new Factory($rpc);        
             $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
             $storage->set($user->moodle_token, $user);
         });
 
         static::created(function($user){
-            $rpc = RPC::create('tcp://127.0.0.1:6001');
+            $rpc = RPC::create(Config::get("rpc.connection"));
             $factory = new Factory($rpc);        
             $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
             $storage->set($user->moodle_token, $user);

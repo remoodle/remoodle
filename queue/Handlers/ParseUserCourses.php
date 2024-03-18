@@ -6,6 +6,7 @@ use App\Models\MoodleUser;
 use App\Models\UserCourseAssign;
 use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use App\Modules\Moodle\Moodle;
+use Core\Config;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Connection;
 use Spiral\Goridge\RPC\RPC;
@@ -53,7 +54,7 @@ class ParseUserCourses extends BaseHandler
             throw $th;
         }
 
-        $jobs = new Jobs(RPC::create('tcp://127.0.0.1:6001'));
+        $jobs = new Jobs(RPC::create(Config::get("rpc.connection")));
         $queue = $jobs->connect('user_parse_grades');
         $task = $queue->create(Task::class, $user->toJson());
         $queue->dispatch($task);
