@@ -2,3 +2,4 @@ vendor/*
 .rr.yaml
 .env
 rr
+composer.lock
