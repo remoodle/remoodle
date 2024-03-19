@@ -10,6 +10,5 @@ interface UserMoodleRepositoryInterface
     public function getActiveCourses(int $moodleId, string $moodleToken): Collection;
     public function getCourseGrades(int $moodleId, string $moodleToken, int $courseId): Collection;
     public function getUserInfo(string $moodleToken): ?BaseMoodleUser;
-
     public function getDeadlines(int $moodleId, string $moodleToken): Collection;
 }

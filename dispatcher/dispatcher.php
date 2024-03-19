@@ -13,7 +13,7 @@ $dotenv = Dotenv::createImmutable(__DIR__ . "/../");
 $dotenv->load();
 
 Config::loadConfigs();
-$container = require __DIR__ . "/../bootstrap/container-di.php";
+$container = require __DIR__ . "/../bootstrap/container-laravel.php";
 
 $capsule = new Capsule;
 $capsule->addConnection(Config::get('eloquent'));

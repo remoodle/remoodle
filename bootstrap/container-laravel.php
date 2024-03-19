@@ -11,10 +11,8 @@ use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Factory\UploadedFileFactory;
-use DI\ContainerBuilder;
 use Core\Config;
 use Phlib\Encrypt\Encryptor\OpenSsl;
-use Phlib\Encrypt\EncryptorInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
@@ -56,7 +54,7 @@ $container->bind(PSR7WorkerInterface::class, function(Container $container){
     return $container->make(PSR7Worker::class);
 });
 
-$container->bind(\App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface::class, function(Container $cont){
+$container->bind(DatabaseUserMoodleRepositoryInterface::class, function(Container $cont){
     return $cont->make(DatabaseUserMoodleRepository::class);
 });
 $container->bind(ApiUserMoodleRepositoryInterface::class, ApiUserMoodleRepository::class);
@@ -68,5 +66,3 @@ $container->bind(Auth::class, function() use ($rpcIgbinaryFactory){
 });
 
 return $container;
-
-// return $container;

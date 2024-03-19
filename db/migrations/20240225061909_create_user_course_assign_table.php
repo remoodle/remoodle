@@ -19,7 +19,7 @@ final class CreateUserCourseAssignTable extends AbstractMigration
      */
     public function change(): void
     {
-        $table = $this->table('user_course_assign', ["id" => true]);
+        $table = $this->table('user_course_assign', ["id" => false, 'primary_key' => ['moodle_id', 'course_id']]);
 
         $table
             ->addColumn('moodle_id', 'integer', ['signed' => false, 'null' => false])            
