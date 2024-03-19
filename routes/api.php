@@ -32,10 +32,7 @@ return function(App $app){
             $user->get("/course/{course}/grades", [UserCoursesController::class, "getCourseGrades"]); //grades 
             $user->get("/courses", [UserCoursesController::class, "getCourses"]); 
             $user->get("/deadlines", [UserCoursesController::class, "getDeadlines"]); 
-
-            $user->group("/offline", function(RouteCollectorProxy $offline){
-                $offline->get("/courses/overall", [OfllineModeController::class, "getUserOverall"]);
-            });
+            $user->get("/courses/overall", [OfllineModeController::class, "getUserOverall"]);
             
             $user->get("/updates", [UserNotificationController::class,"getUpdates"]);
         })->addMiddleware($api->getContainer()->get(Auth::class));
