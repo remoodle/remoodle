@@ -3,3 +3,4 @@ vendor/*
 .env
 rr
 composer.lock
+composer.lock
