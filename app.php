@@ -1,5 +1,6 @@
 <?php
 
+use App\Middleware\Cors;
 use App\Middleware\ErrorMiddleware;
 use Core\Config;
 use Dotenv\Dotenv;
@@ -25,10 +26,11 @@ $capsule->setAsGlobal();
 
 /**@var Slim\App */
 $app = AppFactory::createFromContainer($container);
+$app->addMiddleware($container->get(Cors::class));
 $app->addBodyParsingMiddleware();
 $routes($app);
 // $app->addErrorMiddleware(true, true, true);
-$app->addMiddleware($app->getContainer()->get(ErrorMiddleware::class));
+$app->addMiddleware($container->get(ErrorMiddleware::class));
 
 $capsule->bootEloquent();
 $container->bind(Connection::class, function() use ($capsule){
