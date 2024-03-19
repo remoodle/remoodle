@@ -25,5 +25,6 @@ docker compose up -d
 ```bash
 php righthand.php key:generate
 ./vendor/bin/phinx migrate
+./vendor/bin/rr get-binary
 ./rr serve
 ```
