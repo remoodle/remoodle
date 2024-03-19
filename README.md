@@ -4,7 +4,7 @@ ReMoodle API Service
 
 ## Getting Started
 
-### Copy template env files
+### Copy template env files and configure them
 
 ```bash
 cp .env.example .env
@@ -18,4 +18,12 @@ cp .rr.yaml.example .rr.yaml
 
 ```bash
 docker compose up -d
+```
+
+### Run (manually)
+
+```bash
+php righthand.php key:generate
+./vendor/bin/phinx migrate
+./rr serve
 ```
