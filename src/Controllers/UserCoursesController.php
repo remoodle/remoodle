@@ -43,16 +43,16 @@ class UserCoursesController
         return $response->withHeader("Content-Type", "application/json");
     }
 
-    public function getCourseGrades(Request $request, Response $response): Response
+    public function getCourseGrades(Request $request, Response $response, array $args): Response
     {
-        $queryParams = $request->getQueryParams();
+        $courseId = (int)$args['course'];
         $user = $request->getAttribute("user");
 
         $response->getBody()->write(json_encode(
             $this->userMoodleRepository->getCourseGrades(
                 $user->moodle_id, 
                 $user->moodle_token, 
-                (int)$queryParams["course_id"]
+                $courseId
             )
         ));
 
@@ -63,6 +63,23 @@ class UserCoursesController
     {
         $user = $request->getAttribute("user");
         $response->getBody()->write(json_encode($this->userMoodleRepository->getDeadlines($user->moodle_id, $user->moodle_token)));
+
+        return $response->withHeader("Content-Type", "application/json");
+    }
+
+    //TODO: REFACTOR
+    public function getCourseContents(Request $request, Response $response, array $args): Response
+    {
+        $courseId = (int)$args['course'];
+        $user = $request->getAttribute('user');
+        $response
+            ->getBody()
+            ->write(json_encode(Moodle::createFromToken(
+                $user->moodle_token, 
+                $user->moodle_id
+                )->getWrapper()
+                ->getCoursesInfo($courseId)
+            ));
 
         return $response->withHeader("Content-Type", "application/json");
     }
