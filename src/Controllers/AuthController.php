@@ -27,7 +27,7 @@ class AuthController
         }
         
         $response->getBody()->write(json_encode(
-            $user->makeHidden(["password_hash", "moodle_token"])
+            $user->makeHidden(["password_hash", "moodle_token"])->toArray()
         ));
 
         return $response
@@ -56,15 +56,15 @@ class AuthController
     public function authPassword(Request $request, Response $response): Response
     {
         $requestBody = $request->getParsedBody();
-        $token = $this->auth->authPassword($requestBody);
+        $user = $this->auth->authPassword($requestBody);
 
-        if($token === null){
+        if($user === null){
             throw new \Exception("Invalid credentials.", StatusCodeInterface::STATUS_UNAUTHORIZED);
         }
 
-        $response->getBody()->write(json_encode([
-            "token" => $token
-        ]));
+        $response->getBody()->write(json_encode(
+            $user->makeHidden(["password_hash"])->toArray()
+        ));
 
         return $response
             ->withHeader("Content-Type", "application/json")

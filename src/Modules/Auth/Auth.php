@@ -127,7 +127,7 @@ class Auth
         return $this->getUserAuthOptions($user);
     }
 
-    public function authPassword(array $data): ?string
+    public function authPassword(array $data): ?MoodleUser
     {
         $user = $this->databaseUserRepository->findByIdentifiers(
             email: $data['identifier'] ?? null,
@@ -143,7 +143,7 @@ class Auth
             return null;
         }
 
-        return $user->moodle_token;
+        return $user;
     }
 
 }
