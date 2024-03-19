@@ -37,8 +37,7 @@ $container->bind(Connection::class, function() use ($capsule){
     return $capsule->getConnection();
 });
 $worker = $container->get(PSR7WorkerInterface::class);
-while (true) {
-    $req = $worker->waitRequest();
+while ($req = $worker->waitRequest()) {
     if($req === null){
         continue;
     }
