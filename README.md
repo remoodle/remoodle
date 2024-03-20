@@ -10,10 +10,6 @@ ReMoodle API Service
 cp .env.example .env
 ```
 
-```bash
-cp .rr.yaml.example .rr.yaml
-```
-
 ### Run (with Docker)
 
 ```bash

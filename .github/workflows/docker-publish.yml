@@ -1,0 +1,62 @@
+name: Docker
+
+on:
+  push:
+    branches: [main]
+
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: api
+  REGISTRY: ghcr.io
+
+permissions: write-all
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+
+      - name: Get the latest tag
+        id: latest_tag
+        uses: actions/github-script@v3
+        with:
+          result-encoding: string
+          script: |
+            const { data: tags } = await github.repos.listTags({
+              ...context.repo,
+              per_page: 1,
+              page: 1,
+            });
+
+            const latestTag = tags[0] && tags[0].name;
+
+            return latestTag || "";
+
+      - name: Build image
+        run: |
+          IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+          VERSION=$(echo $VERSION | sed -e 's/refs_heads_//g')
+
+          LATEST_TAG=${{ steps.latest_tag.outputs.result }}
+          SHA=${{ github.sha }}
+          VERSION_TAG=${LATEST_TAG}.${SHA::8}
+
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          echo VERSION_TAG=$VERSION_TAG
+
+          docker build . --file Dockerfile --tag $IMAGE_ID:$VERSION_TAG
+
+          docker push $IMAGE_ID:$VERSION_TAG

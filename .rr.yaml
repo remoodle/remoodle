@@ -1,0 +1,85 @@
+version: "3"
+rpc:
+  enable: true
+  listen: "tcp://127.0.0.1:6001"
+server:
+  command: "php app.php"
+  relay: pipes
+http:
+  address: "0.0.0.0:8080"
+  middleware:
+    - gzip
+    - static
+  pool:
+    num_workers: 16
+    supervisor:
+      max_worker_memory: 100
+logs:
+  mode: development
+  # Logging level can be "panic", "error", "warn", "info", "debug".
+  level: debug
+  # Encoding format can be "console" or "json" (last is preferred for production usage).
+  encoding: console
+jobs:
+  num_pollers: 32
+  timeout: 60
+  pool:
+    num_workers: 16
+    max_worker_memory: 100
+    command: "php dispatcher/dispatcher.php"
+  pipelines:
+    user_parse_events:
+      driver: memory
+      config:
+        priority: 10
+        prefetch: 10
+    user_registered:
+      driver: memory
+      config:
+        priority: 10
+        prefetch: 10
+    user_parse_grades:
+      driver: memory
+      config:
+        priority: 10
+        prefetch: 10
+    notification_email:
+      driver: memory
+      config:
+        priority: 10
+        prefetch: 10
+    notification_webhook:
+      driver: memory
+      config:
+        priority: 10
+        prefetch: 10
+  consume:
+    [
+      "user_parse_events",
+      "user_registered",
+      "user_parse_grades",
+      "notification_email",
+      "notification_webhook",
+    ]
+kv:
+  users:
+    driver: memory
+    config: {}
+service:
+  kv_users_init:
+    command: "php service/user_init.php"
+  parse_total_users:
+    command: "php service/parse_total_users.php"
+    remain_after_exit: true
+    restart_sec: 3600
+  parse_events_users:
+    command: "php service/parse_eventts_users.php"
+    remain_after_exit: true
+    restart_sec: 1800
+  # parse_grades_users:
+  #     command: "php service/parse_grades_users.php"
+  #     remain_after_exit: true
+  #     restart_sec: 300
+# metrics:
+#     address: "127.0.0.1:2112"
+
