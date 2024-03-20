@@ -3,7 +3,7 @@
 return [
     'mail' => [
         'resend' => [
-            'api_key' => $_ENV["RESEND_API_KEY"],
+            'api_key' => getEnvVar("RESEND_API_KEY"),
             'from' => 'info@mail.remoodle.app'
         ]
     ]

@@ -3,16 +3,12 @@
 use App\Middleware\Cors;
 use App\Middleware\ErrorMiddleware;
 use Core\Config;
-use Dotenv\Dotenv;
 use Slim\Factory\AppFactory;
 use Spiral\RoadRunner\Http\PSR7WorkerInterface;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Connection;
 
 require_once __DIR__ . "/vendor/autoload.php";
-
-$dotenv = Dotenv::createImmutable(__DIR__ . "/");
-$dotenv->load();
 
 Config::loadConfigs();
 
@@ -28,6 +24,7 @@ $capsule->setAsGlobal();
 $app = AppFactory::createFromContainer($container);
 $app->addMiddleware($container->get(Cors::class));
 $app->addBodyParsingMiddleware();
+
 $routes($app);
 // $app->addErrorMiddleware(true, true, true);
 $app->addMiddleware($container->get(ErrorMiddleware::class));

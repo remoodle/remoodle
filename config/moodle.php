@@ -1,5 +1,5 @@
 <?php
 
 return [
-    "webservice_url" => $_ENV["MOODLE_WEBSERVICE_URL"]
+    "webservice_url" => getEnvVar("MOODLE_WEBSERVICE_URL")
 ];

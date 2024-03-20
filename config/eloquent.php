@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'driver' => $_ENV["DATABASE_DRIVER"] ?? null,
-    'host' => $_ENV["DATABASE_HOST"] ?? null,
-    'port' => $_ENV["DATABASE_PORT"] ?? null,
-    'database' => $_ENV["DATABASE_NAME"] ?? null,
-    'username' => $_ENV["DATABASE_USERNAME"] ?? null,
-    'password' => $_ENV["DATABASE_PASSWORD"] ?? null,
+    'driver' => getEnvVar("DATABASE_DRIVER") ?? null,
+    'host' => getEnvVar("DATABASE_HOST") ?? null,
+    'port' => getEnvVar("DATABASE_PORT") ?? null,
+    'database' => getEnvVar("DATABASE_NAME") ?? null,
+    'username' => getEnvVar("DATABASE_USERNAME") ?? null,
+    'password' => getEnvVar("DATABASE_PASSWORD") ?? null,
     'charset' => 'utf8',
     'collation' => 'utf8_unicode_ci',
     'prefix' => '',

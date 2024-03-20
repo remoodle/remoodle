@@ -5,7 +5,6 @@
         "spiral/roadrunner-http": "^3.3",
         "slim/psr7": "^1.6",
         "illuminate/database": "^10.42",
-        "vlucas/phpdotenv": "^5.6",
         "spiral/roadrunner-jobs": "^4.3",
         "robmorgan/phinx": "^0.16.0",
         "fugikzl/moodle-wrapper": "^1.1",
@@ -18,14 +17,18 @@
         "ext-igbinary" : "*",
         "phlib/encrypt": "^1.0",
         "moontoast/math": "^1.2",
-        "thiagoprz/eloquent-composite-key": "^1.0"
+        "thiagoprz/eloquent-composite-key": "^1.0",
+        "vlucas/phpdotenv": "^5.6"
     },
     "autoload": {
         "psr-4": {
             "App\\": "src/",
             "Core\\": "core/",
             "Queue\\": "queue/"
-        }
+        },
+        "files": [
+            "helpers.php"
+        ]
     },
     "optimize-autoloader": true
 }

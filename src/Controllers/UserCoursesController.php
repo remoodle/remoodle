@@ -67,6 +67,17 @@ class UserCoursesController
         return $response->withHeader("Content-Type", "application/json");
     }
 
+    public function getUserOverall(Request $request, Response $response): Response
+    {
+        $user = $request->getAttribute("user", null);
+        $response->getBody()->write(json_encode(
+            $user?->load(["courses", "courses.grades" => function($query) use ($user){
+                $query->where("moodle_id", $user->moodle_id);
+            }])
+        ));
+        return $response->withHeader("Content-Type", "application/json")->withStatus(200);
+    }
+
     //TODO: REFACTOR
     public function getCourseContents(Request $request, Response $response, array $args): Response
     {

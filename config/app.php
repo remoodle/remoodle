@@ -1,5 +1,5 @@
 <?php 
 
 return [
-    "password_salt" => env("PASSWORD_SALT")
+    "password_salt" => getEnvVar("PASSWORD_SALT")
 ];

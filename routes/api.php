@@ -30,10 +30,10 @@ return function(App $app){
 
             $user->get("/course/{course}/contents", [UserCoursesController::class, "getCourseContents"]); 
             $user->get("/course/{course}/grades", [UserCoursesController::class, "getCourseGrades"]); //grades 
-            $user->get("/courses", [UserCoursesController::class, "getCourses"]); 
+            $user->get("/course", [UserCoursesController::class, "getCourses"]); 
+            $user->get("/course/overall", [UserCoursesController::class, "getUserOverall"]);
+
             $user->get("/deadlines", [UserCoursesController::class, "getDeadlines"]); 
-            $user->get("/courses/overall", [OfllineModeController::class, "getUserOverall"]);
-            
             $user->get("/updates", [UserNotificationController::class,"getUpdates"]);
         })->addMiddleware($api->getContainer()->get(Auth::class));
 

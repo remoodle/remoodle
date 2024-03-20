@@ -1,16 +1,11 @@
 <?php
 
 use Core\Config;
-use Dotenv\Dotenv;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Queue\HandlerFactory\Factory;
 use Spiral\RoadRunner\Jobs\Consumer;
 
 require_once __DIR__ . "/../vendor/autoload.php";
-
-
-$dotenv = Dotenv::createImmutable(__DIR__ . "/../");
-$dotenv->load();
 
 Config::loadConfigs();
 $container = require __DIR__ . "/../bootstrap/container-laravel.php";
