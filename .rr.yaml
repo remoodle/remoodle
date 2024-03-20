@@ -6,7 +6,7 @@ server:
   command: "php app.php"
   relay: pipes
 http:
-  address: "0.0.0.0:8080"
+  address: ${SERVER_HOST:-0.0.0.0}:${SERVER_PORT:-8080}
   middleware:
     - gzip
     - static

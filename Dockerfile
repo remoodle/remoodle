@@ -14,8 +14,6 @@ RUN composer install --optimize-autoloader --no-dev
 
 COPY --from=ghcr.io/roadrunner-server/roadrunner:2023.1.1 /usr/bin/rr /app
 
-EXPOSE 8080/tcp
-
 COPY ./ .
 
 COPY entrypoint.sh /app/entrypoint.sh
