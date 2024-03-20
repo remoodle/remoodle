@@ -16,6 +16,9 @@ COPY --from=ghcr.io/roadrunner-server/roadrunner:2023.1.1 /usr/bin/rr /app
 
 COPY ./ .
 
+ARG VERSION_TAG
+ENV VERSION_TAG=$VERSION_TAG
+
 COPY entrypoint.sh /app/entrypoint.sh
 
 RUN chmod +x /app/entrypoint.sh

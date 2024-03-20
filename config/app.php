@@ -1,5 +1,6 @@
 <?php 
 
 return [
-    "password_salt" => getEnvVar("PASSWORD_SALT")
+    "password_salt" => getEnvVar("PASSWORD_SALT"),
+    "version" => getEnvVar("VERSION_TAG", "~"),
 ];

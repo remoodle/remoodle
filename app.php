@@ -1,6 +1,7 @@
 <?php
 
 use App\Middleware\Cors;
+use App\Middleware\Version;
 use App\Middleware\ErrorMiddleware;
 use Core\Config;
 use Slim\Factory\AppFactory;
@@ -23,6 +24,7 @@ $capsule->setAsGlobal();
 /**@var Slim\App */
 $app = AppFactory::createFromContainer($container);
 $app->addMiddleware($container->get(Cors::class));
+$app->addMiddleware($container->get(Version::class));
 $app->addBodyParsingMiddleware();
 
 $routes($app);

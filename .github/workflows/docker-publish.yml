@@ -47,16 +47,16 @@ jobs:
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
-          VERSION=$(echo $VERSION | sed -e 's/refs_heads_//g')
 
+          # Create server version tag
           LATEST_TAG=${{ steps.latest_tag.outputs.result }}
-          SHA=${{ github.sha }}
-          VERSION_TAG=${LATEST_TAG}.${SHA::8}
+          SHA=${{ github.workflow_sha }}
+          VERSION_TAG=${LATEST_TAG}.${SHA::8}::${VERSION}
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           echo VERSION_TAG=$VERSION_TAG
 
-          docker build . --file Dockerfile --tag $IMAGE_ID:$VERSION_TAG
+          docker build . --file Dockerfile --tag $IMAGE_ID:$VERSION --build-arg VERSION_TAG=$VERSION_TAG
 
-          docker push $IMAGE_ID:$VERSION_TAG
+          docker push $IMAGE_ID:$VERSION
