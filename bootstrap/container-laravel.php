@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\AuthController;
 use Core\Container;
 use App\Middleware\Auth;
 use App\Modules\Notification\Providers\Mail\Mailers\Resend;
@@ -21,6 +22,7 @@ use Spiral\RoadRunner\Http\PSR7Worker;
 use Spiral\RoadRunner\Http\PSR7WorkerInterface;
 use Spiral\RoadRunner\KeyValue\Factory;
 use Spiral\RoadRunner\KeyValue\Serializer\IgbinarySerializer;
+use Spiral\RoadRunner\KeyValue\StorageInterface;
 use Spiral\RoadRunner\Worker;
 use Spiral\RoadRunner\WorkerInterface;
 
@@ -49,11 +51,9 @@ $container->singleton(UploadedFileFactoryInterface::class, function() use ($uplo
 $container->bind(WorkerInterface::class, function(){
     return Worker::create();
 });
-
 $container->bind(PSR7WorkerInterface::class, function(Container $container){
     return $container->make(PSR7Worker::class);
 });
-
 $container->bind(DatabaseUserMoodleRepositoryInterface::class, function(Container $cont){
     return $cont->make(DatabaseUserMoodleRepository::class);
 });
@@ -63,6 +63,12 @@ $container->bind(Resend::class, function(){
 });
 $container->bind(Auth::class, function() use ($rpcIgbinaryFactory){
     return new Auth($rpcIgbinaryFactory->select('users'));
+});
+$container
+    ->when(AuthController::class)
+    ->needs(StorageInterface::class)
+    ->give(function() use ($rpcIgbinaryFactory){
+        return $rpcIgbinaryFactory->select('users');
 });
 
 return $container;

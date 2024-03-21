@@ -21,7 +21,7 @@ return function(App $app){
         return $response->withAddedHeader("Content-Type", "application/json");
     });
 
-    $app->group("/api", function(RouteCollectorProxy $api){
+    $app->group("/v1", function(RouteCollectorProxy $api){
         $api->group("/user", function(RouteCollectorProxy $user){
             $user->get("/settings", [SettingsController::class, "userSetiings"]); //done
             $user->get("/email-verifications", [SettingsController::class, "getUserEmailVerifications"]);
@@ -41,6 +41,7 @@ return function(App $app){
             $auth->post("/register", [AuthController::class, "register"]);
             $auth->post("/options", [AuthController::class, "getAuthOptions"])->add(GetAuthOptions::class);
             $auth->post("/password", [AuthController::class, "authPassword"])->add(AuthPassword::class);
+            $auth->get("/token/{token}", [AuthController::class, "registerOrShow"]);
             // $auth->post("/code/webhook", [AuthController::class, "authPassword"])->add(AuthPassword::class);
             // $auth->post("/code/email", [AuthController::class, "authPassword"])->add(AuthPassword::class);
             // $auth->post("/code/custom", [AuthController::class, "authPassword"])->add(AuthPassword::class);
