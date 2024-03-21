@@ -16,22 +16,22 @@ use App\Middleware\Validation\GetCourseGrades;
 use Slim\Routing\RouteCollectorProxy;
 
 return function(App $app){
-    $app->get("/api/healthcheck", function(RequestInterface $request, ResponseInterface $response){
+    $app->get("/health", function(RequestInterface $request, ResponseInterface $response){
         $response->getBody()->write(json_encode(["status" => "ok", "message" => "pong"]));
         return $response->withAddedHeader("Content-Type", "application/json");
     });
 
-    $app->group("/api", function(RouteCollectorProxy $api){
+    $app->group("/rest", function(RouteCollectorProxy $api){
         $api->group("/user", function(RouteCollectorProxy $user){
             $user->get("/settings", [SettingsController::class, "userSetiings"]); //done
             $user->get("/email-verifications", [SettingsController::class, "getUserEmailVerifications"]);
             $user->post("/email-verification", [SettingsController::class, "verifyUserEmail"])->add(VerifyUserEmail::class);
             // $user->post("/email-change", [SettingsController::class, "changeUserEmail"])->add(ChangeEmail::class);
 
-            $user->get("/course/{course}/contents", [UserCoursesController::class, "getCourseContents"]); 
+            $user->get("/course/{course}/content", [UserCoursesController::class, "getCourseContents"]); 
             $user->get("/course/{course}/grades", [UserCoursesController::class, "getCourseGrades"]); //grades 
-            $user->get("/course", [UserCoursesController::class, "getCourses"]); 
-            $user->get("/course/overall", [UserCoursesController::class, "getUserOverall"]);
+            $user->get("/courses", [UserCoursesController::class, "getCourses"]); 
+            $user->get("/courses/overall", [UserCoursesController::class, "getUserOverall"]);
 
             $user->get("/deadlines", [UserCoursesController::class, "getDeadlines"]); 
             $user->get("/updates", [UserNotificationController::class,"getUpdates"]);
