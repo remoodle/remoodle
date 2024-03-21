@@ -21,7 +21,7 @@ return function(App $app){
         return $response->withAddedHeader("Content-Type", "application/json");
     });
 
-    $app->group("/rest", function(RouteCollectorProxy $api){
+    $app->group("/api", function(RouteCollectorProxy $api){
         $api->group("/user", function(RouteCollectorProxy $user){
             $user->get("/settings", [SettingsController::class, "userSetiings"]); //done
             $user->get("/email-verifications", [SettingsController::class, "getUserEmailVerifications"]);
