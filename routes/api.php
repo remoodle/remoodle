@@ -28,8 +28,8 @@ return function(App $app){
             $user->post("/email-verification", [SettingsController::class, "verifyUserEmail"])->add(VerifyUserEmail::class);
             // $user->post("/email-change", [SettingsController::class, "changeUserEmail"])->add(ChangeEmail::class);
 
-            $user->get("/course/{course}/content", [UserCoursesController::class, "getCourseContents"]); 
-            $user->get("/course/{course}/grades", [UserCoursesController::class, "getCourseGrades"]); //grades 
+            $user->get("/courses/{course}/content", [UserCoursesController::class, "getCourseContents"]); 
+            $user->get("/courses/{course}/grades", [UserCoursesController::class, "getCourseGrades"]); //grades 
             $user->get("/courses", [UserCoursesController::class, "getCourses"]); 
             $user->get("/courses/overall", [UserCoursesController::class, "getUserOverall"]);
 
