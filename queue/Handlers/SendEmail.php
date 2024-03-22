@@ -36,7 +36,7 @@ class SendEmail extends BaseHandler
             Config::get("notification.mail.resend.from")
         ));
 
-        $mail->send('Remooodle Info');
+        $mail->send('ReMoodle');
         $this->receivedTask->complete();
     }
 

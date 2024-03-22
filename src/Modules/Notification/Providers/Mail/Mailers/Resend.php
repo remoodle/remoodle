@@ -21,7 +21,7 @@ final class Resend implements MailerInterface
     public function sendMail(Message $message, string $email, string $subject): void
     {
         $this->resendClient->emails->send([
-            'from' => "Remoodle<{$this->from}>",
+            'from' => "ReMoodle<{$this->from}>",
             'to' => [$email],
             'subject' => $subject,
             'html' => $this->getContents($message),

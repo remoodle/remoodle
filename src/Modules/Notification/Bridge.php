@@ -60,7 +60,7 @@ class Bridge
         return [
             'uuid' => Str::orderedUuid(),
             'moodle_id' => $moodleId,
-            'title' => $title ?? 'ReMoodle info',
+            'title' => $title ?? 'ReMoodle',
             'message' => $message->message,
             'attachments' => json_encode($message->attachmentBag->toArray())
         ];

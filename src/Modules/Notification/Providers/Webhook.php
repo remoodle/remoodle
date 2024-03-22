@@ -7,8 +7,8 @@ use GuzzleHttp\Client;
 
 final class Webhook
 {
-    const USER_AGENT = "RemoodleBot (like TwitterBot)";
-    const AUTH_HEADER = "X-Remoodle-Bot-Api-Secret-Token";
+    const USER_AGENT = "ReMoodleBot (like TwitterBot)";
+    const AUTH_HEADER = "X-ReMoodle-Bot-Api-Secret-Token";
 
     public function __construct(
         private string $id,

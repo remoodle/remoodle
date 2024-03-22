@@ -92,7 +92,7 @@ class Auth
                     'expires_at' => Carbon::now()->addHours(6)
                 ]);
     
-                $message = new Message($user->moodle_id, "Ваш код потверждения почты в remoodle: " . $verifyCode->code, time(), null, true); 
+                $message = new Message($user->moodle_id, "Ваш код подтверждения: " . $verifyCode->code, time(), null, true); 
                 $this->notificationBridge->notify($message, $user);
             }
         } catch (\Throwable $th) {
