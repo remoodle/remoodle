@@ -41,7 +41,7 @@ return function(App $app){
             $auth->post("/register", [AuthController::class, "register"]);
             $auth->post("/options", [AuthController::class, "getAuthOptions"])->add(GetAuthOptions::class);
             $auth->post("/password", [AuthController::class, "authPassword"])->add(AuthPassword::class);
-            $auth->get("/token/{token}", [AuthController::class, "registerOrShow"]);
+            $auth->post("/token", [AuthController::class, "registerOrShow"]);
             // $auth->post("/code/webhook", [AuthController::class, "authPassword"])->add(AuthPassword::class);
             // $auth->post("/code/email", [AuthController::class, "authPassword"])->add(AuthPassword::class);
             // $auth->post("/code/custom", [AuthController::class, "authPassword"])->add(AuthPassword::class);

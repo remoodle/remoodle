@@ -72,7 +72,13 @@ class AuthController
 
     public function registerOrShow(Request $request, Response $response, array $args): Response
     {
-        $token = $args['token'];
+        $requestBody = $request->getParsedBody();
+
+        if (!isset($requestBody['token'])) {
+            throw new \Exception("No token provided", StatusCodeInterface::STATUS_BAD_REQUEST);
+        }
+
+        $token = $requestBody['token'];
 
         $user = $this->storage->get($token);
         if(!$user){
@@ -80,7 +86,7 @@ class AuthController
         }
 
         $response->getBody()->write(json_encode(
-            $user->makeHidden(["password_hash", "moodle_token"])->toArray()
+            $user->makeHidden(["password_hash"])->toArray()
         ));
 
         return $response
