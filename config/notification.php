@@ -4,7 +4,7 @@ return [
     'mail' => [
         'resend' => [
             'api_key' => getEnvVar("RESEND_API_KEY"),
-            'from' => 'info@mail.remoodle.app'
+            'from' => getEnvVar("MAIL_NOTIFY_ADDRESS")
         ]
     ]
 ];
