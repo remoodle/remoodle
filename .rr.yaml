@@ -17,6 +17,7 @@ http:
   headers:
     response:
       Version: ${VERSION_TAG:-dev}
+      Connection: "keep-alive"
     cors:
       allowed_origin: "*"
       allowed_headers: "*"

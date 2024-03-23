@@ -7,7 +7,7 @@ use Illuminate\Database\Connection;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class UserNotificationController
+class UserNotificationController extends BaseController
 {
     public function __construct(
         private Connection $connection
@@ -21,7 +21,7 @@ class UserNotificationController
 
         $this->connection->beginTransaction();
         try {
-            $response->getBody()->write(json_encode([$user->notifications]));
+            $notifications = $user->notifications;
             Notification::where("moodle_id", $user->moodle_id)->delete();
         } catch (\Throwable $th) {
             $this->connection->rollBack();
@@ -29,6 +29,9 @@ class UserNotificationController
         }
 
         $this->connection->commit();
-        return $response->withHeader("Content-Type","application/json");
+        return $this->jsonResponse(
+            response: $response,
+            body: $notifications
+        );
     }
 }

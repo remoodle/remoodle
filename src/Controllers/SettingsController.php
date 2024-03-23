@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Illuminate\Database\Connection;
 
-class SettingsController
+class SettingsController extends BaseController
 {
     public function __construct(
         private Connection $connection,
@@ -20,21 +20,13 @@ class SettingsController
         /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute("user");
 
-        $response->getBody()->write(json_encode([
-            'moodle_id' => $user->moodle_id,
-            'name' => $user->name,
-            'barcode' => $user->barcode,
-            'name_alias' => $user->name_alias,
-            'has_password' => $user->password_hash ? true : false,
-            'email' => $user->email,
-            'email_verified_at' => $user->email_verified_at,
-            'notify_method' => $user->notify_method,
-            'webhook_secret' => $user->webhook_secret,
-        ]));
-
-        return $response->withHeader("Content-Type", "application/json")->withStatus(200);
+        return $this->jsonResponse(
+            response: $response,
+            body: $user->makeHidden(['password_hash', 'webhook_secret'])
+        );
     }
 
+    //TODO: REFACTOR
     public function getUserEmailVerifications(Request $request, Response $response): Response
     {
         /**@var \App\Models\MoodleUser */
@@ -56,6 +48,7 @@ class SettingsController
         return $response->withHeader("Content-Type", "application/json")->withStatus(200);
     }
 
+    //TODO: REFACTOR
     public function verifyUserEmail(Request $request, Response $response): Response
     {
         /**@var \App\Models\MoodleUser */

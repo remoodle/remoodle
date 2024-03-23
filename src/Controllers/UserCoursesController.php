@@ -7,7 +7,7 @@ use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
-class UserCoursesController
+class UserCoursesController extends BaseController
 {
     public function __construct(
         private DatabaseUserMoodleRepositoryInterface $userMoodleRepository
@@ -15,84 +15,66 @@ class UserCoursesController
 
     public function getCourses(Request $request, Response $response): Response
     {
+        /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute("user");
-        
-        $response->getBody()->write(json_encode(
-            $this->userMoodleRepository->getActiveCourses(
-                $user->moodle_id, 
-                $user->moodle_token
+
+        return $this->jsonResponse(
+            response: $response,
+            body: $this->userMoodleRepository->getActiveCourses(
+                moodleId: $user->moodle_id, 
+                moodleToken: $user->moodle_token
             )->toArray()
-        ));
-
-        return $response->withHeader("Content-Type", "application/json");
-    }
-
-    public function getCoursesGrades(Request $request, Response $response): Response
-    {
-        $queryParams = $request->getQueryParams();
-        $user = $request->getAttribute("user");
-
-        $response->getBody()->write(json_encode(
-            $this->userMoodleRepository->getCourseGrades(
-                $user->moodle_id, 
-                $user->moodle_token, 
-                (int)$queryParams["course_id"]
-            )
-        ));
-
-        return $response->withHeader("Content-Type", "application/json");
+        );  
     }
 
     public function getCourseGrades(Request $request, Response $response, array $args): Response
     {
-        $courseId = (int)$args['course'];
+        /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute("user");
 
-        $response->getBody()->write(json_encode(
-            $this->userMoodleRepository->getCourseGrades(
-                $user->moodle_id, 
-                $user->moodle_token, 
-                $courseId
+        return $this->jsonResponse(
+            response: $response,
+            body: $this->userMoodleRepository->getCourseGrades(
+                moodleId: $user->moodle_id, 
+                moodleToken: $user->moodle_token, 
+                courseId: (int)$args['course']
             )
-        ));
-
-        return $response->withHeader("Content-Type", "application/json");
+        );
     }
 
     public function getDeadlines(Request $request, Response $response): Response
     {
+        /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute("user");
-        $response->getBody()->write(json_encode($this->userMoodleRepository->getDeadlines($user->moodle_id, $user->moodle_token)));
 
-        return $response->withHeader("Content-Type", "application/json");
+        return $this->jsonResponse(
+            response: $response,
+            body: $this->userMoodleRepository->getDeadlines(
+                moodleId: $user->moodle_id, 
+                moodleToken: $user->moodle_token
+            )
+        );
     }
 
     public function getUserOverall(Request $request, Response $response): Response
     {
-        $user = $request->getAttribute("user", null);
-        $response->getBody()->write(json_encode(
-            $user?->load(["courses", "courses.grades" => function($query) use ($user){
+        /**@var \App\Models\MoodleUser */
+        $user = $request->getAttribute("user");
+        $user->load([
+            "courses", 
+            "courses.grades" => function($query) use ($user){
                 $query->where("moodle_id", $user->moodle_id);
-            }])
-        ));
-        return $response->withHeader("Content-Type", "application/json")->withStatus(200);
-    }
+            }
+        ]);
 
-    //TODO: REFACTOR
-    public function getCourseContents(Request $request, Response $response, array $args): Response
-    {
-        $courseId = (int)$args['course'];
-        $user = $request->getAttribute('user');
-        $response
-            ->getBody()
-            ->write(json_encode(Moodle::createFromToken(
-                $user->moodle_token, 
-                $user->moodle_id
-                )->getWrapper()
-                ->getCoursesInfo($courseId)
-            ));
+        foreach($user->courses as $userCourse){
+            $userCourse->grades->makeHidden(['laravel_through_key', 'moodle_id']);
+        }
 
-        return $response->withHeader("Content-Type", "application/json");
+        return $this->jsonResponse(
+            response: $response,
+            body: $user->courses
+        );
     }
 
 }

@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Spiral\RoadRunner\KeyValue\StorageInterface;
 
-class AuthController
+class AuthController extends BaseController
 {
     public function __construct(
         private Auth $auth,
@@ -17,80 +17,51 @@ class AuthController
 
     public function register(Request $request, Response $response): Response
     {
-        $requestBody = $request->getParsedBody();
-        
-        try {
-            $user = $this->auth->register($requestBody);
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-        
-        $response->getBody()->write(json_encode(
-            $user->makeHidden(["password_hash", "moodle_token"])->toArray()
-        ));
-
-        return $response
-            ->withHeader("Content-Type", "application/json")
-            ->withStatus(StatusCodeInterface::STATUS_CREATED);
+        return $this->jsonResponse(
+            response: $response,
+            status: StatusCodeInterface::STATUS_CREATED,
+            body: $this
+                ->auth
+                ->register(
+                    $request->getParsedBody()
+                )->makeHidden(["password_hash", "moodle_token"])
+                ->toArray()
+        );
     }
 
     public function getAuthOptions(Request $request, Response $response): Response
     {
-        $requestBody = $request->getParsedBody();
-        
-        try {
-            $response->getBody()->write(json_encode($this
-                ->auth
-                ->getAuthOptions($requestBody)
-            ));
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-
-        return $response
-            ->withHeader("Content-Type", "application/json")
-            ->withStatus(StatusCodeInterface::STATUS_OK);
+        return $this->jsonResponse(
+            response: $response,
+            body: $this->auth->getAuthOptions($request->getParsedBody())
+        );
     }
 
     public function authPassword(Request $request, Response $response): Response
     {
-        $requestBody = $request->getParsedBody();
-        $user = $this->auth->authPassword($requestBody);
+        $user = $this->auth->authPassword($request->getParsedBody());
 
         if($user === null){
             throw new \Exception("Invalid credentials.", StatusCodeInterface::STATUS_UNAUTHORIZED);
         }
 
-        $response->getBody()->write(json_encode(
-            $user->makeHidden(["password_hash"])->toArray()
-        ));
-
-        return $response
-            ->withHeader("Content-Type", "application/json")
-            ->withStatus(StatusCodeInterface::STATUS_OK);
+        return $this->jsonResponse(
+            response: $response,
+            body: $user->makeHidden(["password_hash"])->toArray()
+        );
     }
 
-    public function registerOrShow(Request $request, Response $response, array $args): Response
+    public function registerOrShow(Request $request, Response $response): Response
     {
-        $requestBody = $request->getParsedBody();
-
-        if (!isset($requestBody['token'])) {
-            throw new \Exception("No token provided", StatusCodeInterface::STATUS_BAD_REQUEST);
-        }
-
-        $token = $requestBody['token'];
-
-        $user = $this->storage->get($token);
-        if(!$user){
+        $token = $request->getParsedBody()["token"];
+        
+        if(!($user = $this->storage->get($token))){
             $user = $this->auth->register(['token' => $token]);
         }
-
-        $response->getBody()->write(json_encode(
-            $user->makeHidden(["password_hash"])->toArray()
-        ));
-
-        return $response
-            ->withHeader("Content-Type", "application/json")
-            ->withStatus(StatusCodeInterface::STATUS_OK);
+        
+        return $this->jsonResponse(
+            response: $response, 
+            body: $user->makeHidden(["password_hash"])->toArray()
+        );
     }
 }
