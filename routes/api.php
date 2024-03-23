@@ -29,12 +29,13 @@ return function(App $app){
             $user->post("/email-verification", [SettingsController::class, "verifyUserEmail"])->add(VerifyUserEmail::class);
             // $user->post("/email-change", [SettingsController::class, "changeUserEmail"])->add(ChangeEmail::class);
 
-            $user->get("/courses/{course}/grades", [UserCoursesController::class, "getCourseGrades"]); //grades 
+            $user->get("/deadlines", [UserCoursesController::class, "getDeadlines"]); 
+            $user->get("/updates", [UserNotificationController::class,"getUpdates"]);
+
             $user->get("/courses", [UserCoursesController::class, "getCourses"]); 
             $user->get("/courses/overall", [UserCoursesController::class, "getUserOverall"]);
 
-            $user->get("/deadlines", [UserCoursesController::class, "getDeadlines"]); 
-            $user->get("/updates", [UserNotificationController::class,"getUpdates"]);
+            $user->get("/course/{course}/grades", [UserCoursesController::class, "getCourseGrades"]); //grades 
         })->addMiddleware($api->getContainer()->get(Auth::class));
 
         $api->group("/course", function(RouteCollectorProxy $course){
