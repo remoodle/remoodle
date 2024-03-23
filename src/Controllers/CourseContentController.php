@@ -19,19 +19,18 @@ class CourseContentController extends BaseController
     {
         /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute('user');
-        $response
-            ->getBody()
-            ->write(json_encode([
-                'course' => $this->userMoodleRepository->getActiveCourses(
-                    $user->moodle_id, 
-                    $user->moodle_token
-                )->keyBy('course_id')[$args['id']],
-                'content' => Moodle::createFromToken(
-                    $user->moodle_token, 
-                    $user->moodle_id
-                )->getWrapper()
-                ->getCoursesInfo((int)$args['id']),
-            ]));
+        
+        $course = $this->userMoodleRepository->getActiveCourses(
+            $user->moodle_id, 
+            $user->moodle_token
+        )->keyBy('course_id')[$args['id']];
+        
+        $course->content = Moodle::createFromToken(
+            $user->moodle_token, 
+            $user->moodle_id
+        )->getWrapper();
+
+        $response->getBody()->write(json_encode($course));
 
         return $response->withHeader("Content-Type", "application/json");
     }
