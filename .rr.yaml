@@ -26,7 +26,7 @@ http:
       exposed_headers: "Cache-Control,Content-Language,Content-Type,Expires,Last-Modified,Pragma,Version"
       max_age: 600
   pool:
-    num_workers: ${NUM_WORKERS:-16}
+    num_workers: ${HTTP_NUM_WORKERS:-16}
     supervisor:
       max_worker_memory: 100
 
@@ -38,10 +38,10 @@ logs:
   encoding: ${LOGS_ENCODING:-console}
 
 jobs:
-  num_pollers: ${NUM_POLLERS:-32}
+  num_pollers: ${JOBS_NUM_POLLERS:-32}
   timeout: 60
   pool:
-    num_workers: ${NUM_WORKERS:-16}
+    num_workers: ${JOBS_NUM_WORKERS:-16}
     max_worker_memory: 100
     command: "php dispatcher/dispatcher.php"
   pipelines:
