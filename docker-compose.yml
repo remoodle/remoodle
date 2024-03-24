@@ -4,16 +4,8 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    environment:
-      CRYPT_KEY: ${CRYPT_KEY} #Application secure key
-      DATABASE_NAME: ${DATABASE_NAME}
-      DATABASE_USERNAME: ${DATABASE_USERNAME}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE_DRIVER: "mysql"
-      DATABASE_HOST: "db"
-      PASSWORD_SALT: ${PASSWORD_SALT} #Password salt
-      RESEND_API_KEY: ${RESEND_API_KEY}
-      MOODLE_WEBSERVICE_URL: ${MOODLE_WEBSERVICE_URL}
+    env_file:
+      - .env
     command: sh -c "./vendor/bin/phinx migrate && ./rr serve -c .rr.yaml"
     depends_on:
       db:

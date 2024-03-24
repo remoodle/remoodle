@@ -19,14 +19,6 @@ $capsule = new Capsule($container);
 $capsule->addConnection(Config::get('eloquent'));
 $capsule->setAsGlobal();
 
-/**@var Slim\App */
-$app = AppFactory::createFromContainer($container);
-$app->addBodyParsingMiddleware();
-
-$routes($app);
-// $app->addErrorMiddleware(true, true, true);
-$app->addMiddleware($container->get(ErrorMiddleware::class));
-
 $capsule->bootEloquent();
 $container->bind(Connection::class, function() use ($capsule){
     return $capsule->getConnection();
@@ -36,6 +28,19 @@ while ($req = $worker->waitRequest()) {
     if($req === null){
         continue;
     }
+
+    /**@var Slim\App */
+    $app = AppFactory::createFromContainer($container);
+    $app->addBodyParsingMiddleware();
+    
+    $routes($app);
+    
+    if(Config::get('app.mode') !== 'production'){
+        $app->addErrorMiddleware(true, true, true);
+    }else{
+        $app->addMiddleware($container->get('error-middleware'));        
+    }
+
     try {
         try {
             $pdo = $capsule->getConnection()->getPdo();
@@ -50,5 +55,7 @@ while ($req = $worker->waitRequest()) {
         $worker->respond($res);
     } catch (Throwable $e) {
         $worker->getWorker()->error($e->getMessage());
+    } finally{
+        gc_collect_cycles();
     }
 }
