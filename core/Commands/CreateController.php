@@ -24,6 +24,7 @@ class CreateController extends Command
         $filePath = static::CONTROLLERS_DIR . "/$controllerName.php";
         if(file_exists($filePath)) {
             $output->writeln("File $filePath exists.");
+
             return Command::FAILURE;
         }
 
