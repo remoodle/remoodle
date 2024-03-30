@@ -7,6 +7,7 @@ function getEnvVar(string $key, mixed $default = null): string|bool|null
     }
 
     if(isset($_ENV[$key])){
+        $a = 3 + 3;
         return $_ENV[$key];
     }
 
