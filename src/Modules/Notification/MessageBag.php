@@ -1,6 +1,7 @@
-<?php 
+<?php
 
 namespace App\Modules\Notification;
+
 use Core\CommonContracts\Arrayable;
 use Iterator;
 
@@ -8,27 +9,27 @@ class MessageBag implements Arrayable, Iterator
 {
     protected array $messages = [];
     private int $position = 0;
-    
+
     private ?int $moodleId = null;
 
     public function __construct(
-        protected bool $strictUser = true, 
-        protected bool $forceEmail, 
+        protected bool $forceEmail,
+        protected bool $strictUser = true,
         ...$messages
-    ){
-        foreach($messages as $message){
-            if($message instanceof Message){
-                if($strictUser && $this->moodleId === null){
+    ) {
+        foreach($messages as $message) {
+            if($message instanceof Message) {
+                if($strictUser && $this->moodleId === null) {
                     $this->moodleId = $message->getMoodleId();
                 }
 
                 $this->messages[] = $message;
-            }else{
+            } else {
                 throw new \Exception("Message should be instance of " . Message::class . ".");
             }
         }
 
-        if($strictUser){
+        if($strictUser) {
             $this->moodleId = $messages[0]->getMoodleId();
         }
     }
@@ -61,7 +62,7 @@ class MessageBag implements Arrayable, Iterator
     public function toArray(): array
     {
         $messagesBagArray = [];
-        foreach($this as $message){
+        foreach($this as $message) {
             $messagesBagArray[] = $message->toArray();
         }
 

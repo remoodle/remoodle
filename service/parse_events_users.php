@@ -11,7 +11,7 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 Config::loadConfigs();
 
-$capsule = new Capsule;
+$capsule = new Capsule();
 
 $capsule->addConnection(Config::get('eloquent'));
 $capsule->setAsGlobal();
@@ -22,9 +22,7 @@ $queue = $jobs->connect('user_parse_events');
 
 $users = MoodleUser::all();
 
-foreach($users as $user){
+foreach($users as $user) {
     $task = $queue->create(Task::class, $user->toJson());
     $queue->dispatch($task);
 }
-
-

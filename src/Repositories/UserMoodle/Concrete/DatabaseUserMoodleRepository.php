@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Repositories\UserMoodle\Concrete;
 
@@ -13,8 +13,9 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
 {
     public function getActiveCourses(int $moodleId, string $moodleToken): Collection
     {
-        return new Collection(MoodleUser::query()
-            ->with(["courses" => function($query){
+        return new Collection(
+            MoodleUser::query()
+            ->with(["courses" => function ($query) {
                 $query->orderBy("course_id", "desc");
             }])
             ->where("moodle_id", $moodleId)
@@ -26,13 +27,14 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
 
     public function getCoursesGrades(int $moodleId, string $moodleToken): Collection
     {
-        return new Collection(MoodleUser::query()
+        return new Collection(
+            MoodleUser::query()
             ->with(["grades"])
             ->where("moodle_id", $moodleId)
             ->first()
             ->grades
             ->toArray()
-        );    
+        );
     }
 
     public function getCourseGrades(int $moodleId, string $moodleToken, int $courseId): Collection
@@ -52,18 +54,18 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
     }
 
     public function findByIdentifiers(
-        ?string $token = null, 
-        ?int $moodleId = null, 
-        ?string $barcode = null, 
-        ?string $email = null, 
+        ?string $token = null,
+        ?int $moodleId = null,
+        ?string $barcode = null,
+        ?string $email = null,
         ?string $nameAlias = null
-    ): ?MoodleUser{
+    ): ?MoodleUser {
         if (!($token || $moodleId || $barcode || $email || $nameAlias)) {
             return null;
         }
-    
+
         $query = MoodleUser::query();
-    
+
         $query->where(function ($q) use ($token, $moodleId, $barcode, $email, $nameAlias) {
             if ($token) {
                 $q->orWhere("moodle_token", $token);
@@ -81,14 +83,15 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
                 $q->orWhere("name_alias", $nameAlias);
             }
         });
-    
+
         return $query->first();
     }
 
     public function getDeadlines(int $moodleId, string $moodleToken): Collection
     {
-        return new Collection(MoodleUser::query()
-            ->with(["events" => function($query){
+        return new Collection(
+            MoodleUser::query()
+            ->with(["events" => function ($query) {
                 $query->where("timestart", ">", time());
             }])
             ->where("moodle_id", $moodleId)
@@ -96,7 +99,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
             ->events
             ->makeHidden('laravel_through_key')
             ->toArray()
-        );    
-    }       
+        );
+    }
 
 }

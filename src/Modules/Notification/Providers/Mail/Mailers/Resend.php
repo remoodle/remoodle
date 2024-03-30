@@ -14,7 +14,7 @@ final class Resend implements MailerInterface
     public function __construct(
         private string $apiKey,
         private string $from
-    ){
+    ) {
         $this->resendClient = GlobalResend::client($apiKey);
     }
 

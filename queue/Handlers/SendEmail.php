@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Queue\Handlers;
 
@@ -15,24 +15,24 @@ class SendEmail extends BaseHandler
         /**@var \App\Notification\Message */
         $message = igbinary_unserialize($this->receivedTask->getPayload());
 
-        if(! $message instanceof Message){
+        if(! $message instanceof Message) {
             $this->receivedTask->fail('Not correct object after serialization. Expected ' . Message::class . " found " . $message::class);
             return;
         }
 
         $user = MoodleUser::find($message->getMoodleId());
-        if($user === null){
+        if($user === null) {
             $this->receivedTask->fail("User not found.");
             return;
         }
 
-        if($user->email === null){
+        if($user->email === null) {
             $this->receivedTask->fail("User has no email set.");
             return;
         }
 
         $mail = new Mail($message, $user->email, new Resend(
-            Config::get("notification.mail.resend.api_key"), 
+            Config::get("notification.mail.resend.api_key"),
             Config::get("notification.mail.resend.from")
         ));
 

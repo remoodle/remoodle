@@ -7,7 +7,7 @@
         "illuminate/database": "^10.42",
         "spiral/roadrunner-jobs": "^4.3",
         "robmorgan/phinx": "^0.16.0",
-        "fugikzl/moodle-wrapper": "^1.1",
+        "fugikzl/moodle-wrapper": "^1",
         "php-amqplib/php-amqplib": "^3.6",
         "phpmailer/phpmailer": "^6.9",
         "madesimple/php-form-validator": "^2.9",
@@ -30,5 +30,8 @@
             "helpers.php"
         ]
     },
-    "optimize-autoloader": true
+    "optimize-autoloader": true,
+    "require-dev": {
+        "phpstan/phpstan": "^1.10"
+    }
 }

@@ -11,38 +11,39 @@ use App\Controllers\SettingsController;
 use App\Controllers\UserCoursesController;
 use App\Middleware\Auth;
 use App\Middleware\Validation\AuthPassword;
+use App\Middleware\Validation\ChangeUserSettings;
 use App\Middleware\Validation\GetAuthOptions;
-use App\Middleware\Validation\GetCourseGrades;
 use App\Middleware\Validation\RegisterOrShow;
 use Slim\Routing\RouteCollectorProxy;
 
-return function(App $app){
-    $app->get("/health", function(RequestInterface $request, ResponseInterface $response){
+return function (App $app) {
+    $app->get("/health", function (RequestInterface $request, ResponseInterface $response) {
         $response->getBody()->write(json_encode(["status" => "ok", "message" => "pong"]));
         return $response->withAddedHeader("Content-Type", "application/json");
     });
 
-    $app->group("/v1", function(RouteCollectorProxy $api){
-        $api->group("/user", function(RouteCollectorProxy $user){
-            $user->get("/settings", [SettingsController::class, "userSetiings"]); //done
+    $app->group("/v1", function (RouteCollectorProxy $api) {
+        $api->group("/user", function (RouteCollectorProxy $user) {
+            $user->get("/settings", [SettingsController::class, "getSettings"]);
+            $user->post("/settings", [SettingsController::class, "changeSettings"])->add(ChangeUserSettings::class);
             $user->get("/email-verifications", [SettingsController::class, "getUserEmailVerifications"]);
             $user->post("/email-verification", [SettingsController::class, "verifyUserEmail"])->add(VerifyUserEmail::class);
             // $user->post("/email-change", [SettingsController::class, "changeUserEmail"])->add(ChangeEmail::class);
 
-            $user->get("/deadlines", [UserCoursesController::class, "getDeadlines"]); 
+            $user->get("/deadlines", [UserCoursesController::class, "getDeadlines"]);
             $user->get("/updates", [UserNotificationController::class,"getUpdates"]);
 
-            $user->get("/courses", [UserCoursesController::class, "getCourses"]); 
+            $user->get("/courses", [UserCoursesController::class, "getCourses"]);
             $user->get("/courses/overall", [UserCoursesController::class, "getUserOverall"]);
 
-            $user->get("/course/{course}/grades", [UserCoursesController::class, "getCourseGrades"]); //grades 
-        })->addMiddleware($api->getContainer()->get(Auth::class));
+            $user->get("/course/{course}/grades", [UserCoursesController::class, "getCourseGrades"]); //grades
+        })->add(Auth::class);
 
-        $api->group("/course", function(RouteCollectorProxy $course){
-            $course->get("/{id}", [CourseContentController::class, "getCourse"]); 
-        })->addMiddleware($api->getContainer()->get(Auth::class));
+        $api->group("/course", function (RouteCollectorProxy $course) {
+            $course->get("/{id}", [CourseContentController::class, "getCourse"]);
+        })->add(Auth::class);
 
-        $api->group("/auth", function(RouteCollectorProxy $auth){
+        $api->group("/auth", function (RouteCollectorProxy $auth) {
             $auth->post("/register", [AuthController::class, "register"]);
             $auth->post("/options", [AuthController::class, "getAuthOptions"])->add(GetAuthOptions::class);
             $auth->post("/password", [AuthController::class, "authPassword"])->add(AuthPassword::class);

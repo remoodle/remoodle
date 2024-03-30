@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Thiagoprz\CompositeKey\HasCompositeKey;
 
 class UserCourseAssign extends Model
-{        
+{
     use HasCompositeKey;
 
     protected $fillable = ['moodle_id', 'course_id', 'classification'];
-    public $timestamps  = false;  
+    public $timestamps  = false;
     protected $table = 'user_course_assign';
     protected $primaryKey = ['moodle_id', 'course_id'];
 

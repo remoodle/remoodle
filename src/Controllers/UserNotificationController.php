@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Controllers;
 
@@ -11,7 +11,8 @@ class UserNotificationController extends BaseController
 {
     public function __construct(
         private Connection $connection
-    ){}
+    ) {
+    }
 
     public function getUpdates(Request $request, Response $response): Response
     {

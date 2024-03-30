@@ -1,6 +1,7 @@
-<?php 
+<?php
 
 namespace App\Modules\Notification;
+
 use Core\CommonContracts\Arrayable;
 use Iterator;
 
@@ -8,13 +9,13 @@ class AttachmentBag implements Arrayable, Iterator
 {
     protected array $attachments = [];
     private int $position = 0;
-    
+
     public function __construct(...$attachments)
     {
-        foreach($attachments as $attachment){
-            if($attachment instanceof Attachment){
+        foreach($attachments as $attachment) {
+            if($attachment instanceof Attachment) {
                 $this->attachments[] = $attachment;
-            }else{
+            } else {
                 throw new \Exception("Attachment should be instance of " . Attachment::class . ".");
             }
         }
@@ -33,7 +34,7 @@ class AttachmentBag implements Arrayable, Iterator
     public function toArray(): array
     {
         $attachmentsBagArray = [];
-        foreach($this as $attachment){
+        foreach($this as $attachment) {
             $attachmentsBagArray[] = $attachment->toArray();
         }
 

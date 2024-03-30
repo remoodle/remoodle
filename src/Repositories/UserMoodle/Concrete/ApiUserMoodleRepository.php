@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Repositories\UserMoodle\Concrete;
 
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 class ApiUserMoodleRepository implements ApiUserMoodleRepositoryInterface
 {
     public function getActiveCourses(int $moodleId, string $moodleToken): Collection
-    {        
+    {
         return new Collection(Moodle::createFromToken($moodleToken, $moodleId)->getUserCourses());
     }
 

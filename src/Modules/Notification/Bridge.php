@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Modules\Notification;
 
@@ -13,11 +13,12 @@ class Bridge
 {
     public function __construct(
         protected Factory $factory
-    ){}
+    ) {
+    }
 
     public function notify(MessageBag|Message $message, MoodleUser $moodleUser): true
     {
-        if($message instanceof Message && $message->isForceEmail()){
+        if($message instanceof Message && $message->isForceEmail()) {
             $queue = $this->factory->createQueue(JobsEnum::NOTIFICATION_EMAIL->value);
             $queue->dispatch($queue->create(Task::class, igbinary_serialize($message)));
 
@@ -26,11 +27,11 @@ class Bridge
 
         //TODO: ENUM notify methods
         //TODO: support messageBag email
-        if($moodleUser->notify_method === 'email' && $message instanceof MessageBag){
+        if($moodleUser->notify_method === 'email' && $message instanceof MessageBag) {
             throw new \Exception('Currently not supporting');
         }
 
-        if($moodleUser->notify_method === 'get_update'){
+        if($moodleUser->notify_method === 'get_update') {
             $this->storeUserNotificationsToDatabase($message, $moodleUser);
             return true;
         }
@@ -44,10 +45,10 @@ class Bridge
     protected function storeUserNotificationsToDatabase(Message|MessageBag $message, MoodleUser $moodleUser): void
     {
         $messageBagArray = [];
-        if($message instanceof Message){
+        if($message instanceof Message) {
             $messageBagArray[] = $this->prepareMessageToInsert($message, $moodleUser->moodle_id);
-        }else{
-            foreach($message as $messageInstance){
+        } else {
+            foreach($message as $messageInstance) {
                 $messageBagArray[] = $this->prepareMessageToInsert($messageInstance, $moodleUser->moodle_id);
             }
         }

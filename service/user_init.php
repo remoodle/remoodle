@@ -11,7 +11,7 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 Config::loadConfigs();
 
-$capsule = new Capsule;
+$capsule = new Capsule();
 $capsule->addConnection(Config::get('eloquent'));
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
@@ -21,6 +21,6 @@ $factory = new Factory($rpc);
 $users = MoodleUser::all()->keyBy('moodle_id');
 $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
 
-foreach($users as $user){
+foreach($users as $user) {
     $storage->set($user->moodle_token, $user);
 }

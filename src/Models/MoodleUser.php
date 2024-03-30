@@ -34,7 +34,7 @@ class MoodleUser extends Model
         'notify_method',
         'webhook',
         'webhook_secret'
-    ];  
+    ];
 
     protected $hidden = [
         'password_hash',
@@ -47,14 +47,14 @@ class MoodleUser extends Model
 
         static::updated(function ($user) {
             $rpc = RPC::create(Config::get("rpc.connection"));
-            $factory = new Factory($rpc);        
+            $factory = new Factory($rpc);
             $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
             $storage->set($user->moodle_token, $user);
         });
 
-        static::created(function($user){
+        static::created(function ($user) {
             $rpc = RPC::create(Config::get("rpc.connection"));
-            $factory = new Factory($rpc);        
+            $factory = new Factory($rpc);
             $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
             $storage->set($user->moodle_token, $user);
         });
@@ -62,7 +62,7 @@ class MoodleUser extends Model
 
     public function verifyPassword(string $password): bool
     {
-        return $this->password_hash === static::hashPassword($password);
+        return password_verify($password, $this->password_hash);
     }
 
     public static function createFromBaseMoodleUser(BaseMoodleUser $moodleUser, ?string $hashedPassword = null, ?string $nameAlias = null, ?string $email = null): static
@@ -80,7 +80,7 @@ class MoodleUser extends Model
 
     public static function hashPassword(string $password): string
     {
-        return hash("sha256", $password . Config::get("app.password_salt"));
+        return password_hash($password, PASSWORD_DEFAULT);
     }
 
     public static function findByBarcode(string $barcode): ?static
@@ -110,7 +110,7 @@ class MoodleUser extends Model
             UserCourseAssign::class,
             'moodle_id',
             'course_id',
-            'moodle_id', 
+            'moodle_id',
             'course_id'
         );
     }
@@ -122,7 +122,7 @@ class MoodleUser extends Model
             UserCourseAssign::class,
             'moodle_id',
             'course_id',
-            'moodle_id', 
+            'moodle_id',
             'course_id'
         );
     }
@@ -134,7 +134,7 @@ class MoodleUser extends Model
 
     public function verifyCodes(): HasMany
     {
-        return $this->hasMany(VerifyCode::class,"moodle_id","moodle_id");
+        return $this->hasMany(VerifyCode::class, "moodle_id", "moodle_id");
     }
 
     public function isEmailVerified(): bool
@@ -144,7 +144,7 @@ class MoodleUser extends Model
 
     public function notifications(): HasMany
     {
-        return $this->hasMany(Notification::class,"moodle_id","moodle_id");
+        return $this->hasMany(Notification::class, "moodle_id", "moodle_id");
     }
 
     public function verifyEmail(): void
@@ -152,5 +152,5 @@ class MoodleUser extends Model
         $this->update([
             'email_verified_at' => Carbon::now()
         ]);
-    } 
+    }
 }

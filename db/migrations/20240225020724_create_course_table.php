@@ -21,14 +21,14 @@ final class CreateCourseTable extends AbstractMigration
     {
         $table = $this->table('courses', ["id" => false, 'primary_key' => 'course_id']);
         $table
-            ->addColumn('course_id', 'integer', ['signed' => false, 'null' => false])            
+            ->addColumn('course_id', 'integer', ['signed' => false, 'null' => false])
 
             ->addColumn('name', 'string', ['null' => false])
             ->addColumn('coursecategory', 'string', ['null' => false])
             ->addColumn('url', 'string', ['null' => false])
             ->addColumn('start_date', 'integer', ['null' => true])
             ->addColumn('end_date', 'integer', ['null' => true])
-            
+
             ->addIndex(['coursecategory'], ['unique' => false])
             ->addIndex(['name'], ['unique' => false])
             ->create();

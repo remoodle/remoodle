@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Modules\Notification;
 
@@ -24,7 +24,8 @@ class Attachment implements Arrayable
         protected string $url,
         protected string $title,
         protected string $fileType
-    ){}
+    ) {
+    }
 
     public function toArray(): array
     {

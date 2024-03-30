@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Middleware;
 
@@ -14,7 +14,8 @@ class ErrorMiddleware implements MiddlewareInterface
 {
     public function __construct(
         protected ResponseFactoryInterface $responseFactory
-    ){}
+    ) {
+    }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -35,8 +36,8 @@ class ErrorMiddleware implements MiddlewareInterface
 
         $response->getBody()->write(json_encode([
             "code" => $exception->getCode(),
-            "error" => $response->getStatusCode() === 500 
-                ? "Internal server error." 
+            "error" => $response->getStatusCode() === 500
+                ? "Internal server error."
                 : $exception->getMessage()
         ]));
 

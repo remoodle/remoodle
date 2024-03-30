@@ -9,5 +9,6 @@ class BaseMoodleUser
         public readonly string $barcode,
         public readonly string $name,
         public readonly int $moodleId
-    ){}
+    ) {
+    }
 }

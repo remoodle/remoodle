@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Modules\Notification;
+
 use Core\CommonContracts\Arrayable;
 
 class Message implements Arrayable
@@ -11,7 +12,8 @@ class Message implements Arrayable
         public readonly int $time,
         public readonly ?AttachmentBag $attachmentBag = null,
         public readonly bool $forceEmail = false
-    ){}
+    ) {
+    }
 
     public function toArray(): array
     {

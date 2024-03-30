@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Queue\Handlers;
 
@@ -12,6 +12,7 @@ use Illuminate\Database\Connection;
 use Spiral\Goridge\RPC\RPC;
 use Spiral\RoadRunner\Jobs\Jobs;
 use Spiral\RoadRunner\Jobs\Task\Task;
+use App\Modules\Moodle\Entities\Course as Course;
 
 class ParseUserCourses extends BaseHandler
 {
@@ -27,7 +28,7 @@ class ParseUserCourses extends BaseHandler
         $this->connection = Manager::connection();
 
         [$courses, $coursesAssign] = $this->getUserCoursesAndAssigns($user->moodle_id);
-        
+
         try {
             $this->connection->beginTransaction();
             UserCourseAssign::where("moodle_id", $user->moodle_id)->update([
@@ -38,15 +39,16 @@ class ParseUserCourses extends BaseHandler
                 ->upsert($courses, "course_id");
             $this->connection
                 ->table("user_course_assign")
-                ->upsert($coursesAssign, 
+                ->upsert(
+                    $coursesAssign,
                     [
-                        "course_id", 
+                        "course_id",
                         "moodle_id"
                     ],
                     [
                         "classification"
                     ]
-                );   
+                );
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();
@@ -65,17 +67,20 @@ class ParseUserCourses extends BaseHandler
     private function getUserCoursesAndAssigns(int $moodleId): array
     {
         $courses = $this->getUserActiveCourses();
-        $courseAssign = array_map(function($course) use ($moodleId){
+        $courseAssign = array_map(function (Course $course) use ($moodleId) {
             return [
-                "course_id" => $course["course_id"],
+                "course_id" => $course->course_id,
                 "moodle_id" => $moodleId,
                 "classification" => CourseEnrolledClassification::INPROGRESS->value
             ];
         }, $courses);
 
-        return [$courses, $courseAssign];
+        return [array_map(fn (Course $course) => (array)$course, $courses), $courseAssign];
     }
 
+    /**
+     * @return \App\Modules\Moodle\Entities\Course[]
+     */
     private function getUserActiveCourses(): array
     {
         return $this->moodle->getUserCourses();

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VerifyCode extends Model
-{        
+{
     use HasUuids;
 
     protected $table = 'verify_codes';
@@ -15,15 +15,15 @@ class VerifyCode extends Model
     protected $keyType = 'string';
     protected $primaryKey = 'uuid';
     public $timestamps = true;
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = null;
+    public const CREATED_AT = 'created_at';
+    public const UPDATED_AT = null;
 
     protected $fillable = [
-        'uuid', 
-        'moodle_id', 
-        'code', 
-        'type', 
-        'created_at', 
+        'uuid',
+        'moodle_id',
+        'code',
+        'type',
+        'created_at',
         'expires_at'
     ];
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Queue\Handlers;
 
@@ -13,22 +13,22 @@ class WebhookAction extends BaseHandler
         /**@var \App\Notification\MessageBag */
         $messageBag = igbinary_unserialize($this->receivedTask->getPayload());
 
-        if(! $messageBag instanceof MessageBag){
+        if(! $messageBag instanceof MessageBag) {
             $this->receivedTask->fail('Not correct object');
             return;
         }
 
-        if(! $messageBag->isStrictUser()){
+        if(! $messageBag->isStrictUser()) {
             $this->receivedTask->fail("Message Bag is not strict");
         }
 
         $user = MoodleUser::find($messageBag->getMoodleId());
-        if($user === null){
+        if($user === null) {
             $this->receivedTask->fail("User not found.");
             return;
         }
 
-        if($user->webhook === null){
+        if($user->webhook === null) {
             $this->receivedTask->fail("User has no webhook set.");
             return;
         }

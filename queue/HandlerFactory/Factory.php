@@ -11,12 +11,12 @@ class Factory
     public function createHandler(ReceivedTaskInterface $receivedTask): ?HandlerInterface
     {
         $class = Config::get("queue.handlers.".$receivedTask->getPipeline(), null);
-        
-        if($class === null){
+
+        if($class === null) {
             return null;
         }
 
-        if(class_exists($class)){
+        if(class_exists($class)) {
             return new $class($receivedTask);
         }
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Modules\Auth\Enums;
 

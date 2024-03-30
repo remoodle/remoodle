@@ -1,6 +1,7 @@
-<?php 
+<?php
 
 namespace Core\Commands;
+
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -8,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateValidationMiddleware extends Command
 {
-    const MIDDLEWARE_DIR = BASE_DIR . "/src/Middleware/Validation";
+    public const MIDDLEWARE_DIR = BASE_DIR . "/src/Middleware/Validation";
 
     protected function configure(): void
     {
@@ -21,12 +22,12 @@ class CreateValidationMiddleware extends Command
     {
         $filename = $input->getArgument("name");
         $filePath = static::MIDDLEWARE_DIR . "/$filename.php";
-        if(file_exists($filePath)){
+        if(file_exists($filePath)) {
             $output->writeln("File $filePath exists.");
             return Command::FAILURE;
         }
 
-        if(file_put_contents($filePath, $this->getPattern($filename))){
+        if(file_put_contents($filePath, $this->getPattern($filename))) {
             $output->writeln("$filePath created.");
             return Command::SUCCESS;
         }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Modules\Notification\Providers\Mail;
 
@@ -11,7 +11,8 @@ final class Mail
         private Message $message,
         private string $email,
         private MailerInterface $mailer
-    ){}
+    ) {
+    }
 
     public function send(string $subject)
     {

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Course extends Model
-{        
+{
     public $incrementing = false;
     protected $primaryKey = 'course_id';
     public $timestamps = false;
@@ -30,7 +30,7 @@ class Course extends Model
             CourseModule::class,
             'course_id',
             'cmid',
-            'course_id', 
+            'course_id',
             'cmid'
         );
     }
@@ -42,7 +42,7 @@ class Course extends Model
             UserCourseAssign::class,
             'course_id',
             'moodle_id',
-            'course_id', 
+            'course_id',
             'moodle_id'
         );
     }

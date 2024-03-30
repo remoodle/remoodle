@@ -1,6 +1,7 @@
-<?php 
+<?php
 
 namespace Core\Commands;
+
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -10,8 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateModel extends Command
 {
-    const MODELS_DIR =  BASE_DIR . "/src/Models";
-    const CREATE_MIGRATION_COMMAND = "make:migration";
+    public const MODELS_DIR =  BASE_DIR . "/src/Models";
+    public const CREATE_MIGRATION_COMMAND = "make:migration";
 
     protected function configure()
     {
@@ -24,8 +25,8 @@ class CreateModel extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $modelName = $input->getArgument("name");
-     
-        if($input->getOption('migration')){
+
+        if($input->getOption('migration')) {
             $migrationName = "Create{$modelName}Table";
             $createMigrationCommand = $this->getApplication()->find(static::CREATE_MIGRATION_COMMAND);
             $arguments = [
@@ -37,7 +38,7 @@ class CreateModel extends Command
             $childInput->setInteractive(false);
             $returnCode = $createMigrationCommand->run($childInput, $output);
 
-            if($returnCode !== Command::SUCCESS){
+            if($returnCode !== Command::SUCCESS) {
                 $output->writeln("Error on attemp to create migration.");
                 return $returnCode;
             }
@@ -46,12 +47,12 @@ class CreateModel extends Command
         }
 
         $filePath = static::MODELS_DIR . "/$modelName.php";
-        if(file_exists($filePath)){
+        if(file_exists($filePath)) {
             $output->writeln("File $filePath exists.");
             return Command::FAILURE;
         }
 
-        if(file_put_contents($filePath, $this->getPattern($modelName))){
+        if(file_put_contents($filePath, $this->getPattern($modelName))) {
             $output->writeln("$filePath created.");
             return Command::SUCCESS;
         }

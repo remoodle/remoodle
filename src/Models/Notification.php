@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Notification extends Model
 {
     use HasUuids;
-            
+
     public $incrementing = false;
     protected $keyType = 'string';
     protected $primaryKey = 'uuid';

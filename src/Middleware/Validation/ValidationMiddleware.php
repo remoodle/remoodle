@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Middleware\Validation;
 
@@ -19,10 +19,10 @@ abstract class ValidationMiddleware implements MiddlewareInterface
     protected string $look = "";
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {   
+    {
         [$validationStatus, $validationMessage] = $this->validate($request);
-        
-        if($validationStatus){
+
+        if($validationStatus) {
             return $handler->handle($request);
         }
 
@@ -34,7 +34,7 @@ abstract class ValidationMiddleware implements MiddlewareInterface
         [$bodyValidationStatus, $bodyValidationError] = $this->validateBody ? $this->validateRequestBody($request) : [true, null];
         [$queryValidationStatus, $queryValidationError] = $this->validateQuery ? $this->validateRequestQuery($request) : [true, null];
 
-        if($bodyValidationStatus && $queryValidationStatus){
+        if($bodyValidationStatus && $queryValidationStatus) {
             return [true, null];
         }
 
@@ -56,21 +56,21 @@ abstract class ValidationMiddleware implements MiddlewareInterface
         $requestParamsArray = $request->getQueryParams();
         $validator = new Validator();
         $validator->validate($requestParamsArray, $this->queryRules);
-        
+
         return [!$validator->hasErrors(), $this->concateErrors($validator->getProcessedErrors())];
     }
 
     protected function concateErrors(array $validationErrors): ?string
     {
-        if($validationErrors === []){
+        if($validationErrors === []) {
             return null;
         }
 
         $errorString = "";
 
-        foreach($validationErrors["errors"] as $field=>$validationError){
+        foreach($validationErrors["errors"] as $field => $validationError) {
             $errorString .= "$field:";
-            foreach($validationError as $error){
+            foreach($validationError as $error) {
                 $errorString .= " $error. ";
             }
         }

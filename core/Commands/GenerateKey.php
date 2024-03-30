@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Core\Commands;
 
@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GenerateKey extends Command
 {
-    const ENV_PATH = BASE_DIR . "/.env";
+    public const ENV_PATH = BASE_DIR . "/.env";
 
     protected function configure(): void
     {

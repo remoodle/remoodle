@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Controllers;
 
@@ -11,7 +11,8 @@ class UserCoursesController extends BaseController
 {
     public function __construct(
         private DatabaseUserMoodleRepositoryInterface $userMoodleRepository
-    ){}
+    ) {
+    }
 
     public function getCourses(Request $request, Response $response): Response
     {
@@ -21,10 +22,10 @@ class UserCoursesController extends BaseController
         return $this->jsonResponse(
             response: $response,
             body: $this->userMoodleRepository->getActiveCourses(
-                moodleId: $user->moodle_id, 
+                moodleId: $user->moodle_id,
                 moodleToken: $user->moodle_token
             )->toArray()
-        );  
+        );
     }
 
     public function getCourseGrades(Request $request, Response $response, array $args): Response
@@ -35,8 +36,8 @@ class UserCoursesController extends BaseController
         return $this->jsonResponse(
             response: $response,
             body: $this->userMoodleRepository->getCourseGrades(
-                moodleId: $user->moodle_id, 
-                moodleToken: $user->moodle_token, 
+                moodleId: $user->moodle_id,
+                moodleToken: $user->moodle_token,
                 courseId: (int)$args['course']
             )
         );
@@ -50,7 +51,7 @@ class UserCoursesController extends BaseController
         return $this->jsonResponse(
             response: $response,
             body: $this->userMoodleRepository->getDeadlines(
-                moodleId: $user->moodle_id, 
+                moodleId: $user->moodle_id,
                 moodleToken: $user->moodle_token
             )
         );
@@ -61,13 +62,13 @@ class UserCoursesController extends BaseController
         /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute("user");
         $user->load([
-            "courses", 
-            "courses.grades" => function($query) use ($user){
+            "courses",
+            "courses.grades" => function ($query) use ($user) {
                 $query->where("moodle_id", $user->moodle_id);
             }
         ]);
 
-        foreach($user->courses as $userCourse){
+        foreach($user->courses as $userCourse) {
             $userCourse->grades->makeHidden(['laravel_through_key', 'moodle_id']);
         }
 

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CourseModule extends Model
-{        
+{
     public $incrementing = false;
     protected $primaryKey = 'cmid';
     public $timestamps = false;

@@ -13,7 +13,8 @@ class AuthController extends BaseController
     public function __construct(
         private Auth $auth,
         private StorageInterface $storage,
-    ){}
+    ) {
+    }
 
     public function register(Request $request, Response $response): Response
     {
@@ -23,7 +24,7 @@ class AuthController extends BaseController
             body: $this
                 ->auth
                 ->register(
-                    $request->getParsedBody()
+                    (array)$request->getParsedBody()
                 )->makeHidden(["password_hash", "moodle_token"])
                 ->toArray()
         );
@@ -33,15 +34,15 @@ class AuthController extends BaseController
     {
         return $this->jsonResponse(
             response: $response,
-            body: $this->auth->getAuthOptions($request->getParsedBody())
+            body: $this->auth->getAuthOptions((array)$request->getParsedBody())
         );
     }
 
     public function authPassword(Request $request, Response $response): Response
     {
-        $user = $this->auth->authPassword($request->getParsedBody());
+        $user = $this->auth->authPassword((array)$request->getParsedBody());
 
-        if($user === null){
+        if($user === null) {
             throw new \Exception("Invalid credentials.", StatusCodeInterface::STATUS_UNAUTHORIZED);
         }
 
@@ -53,14 +54,14 @@ class AuthController extends BaseController
 
     public function registerOrShow(Request $request, Response $response): Response
     {
-        $token = $request->getParsedBody()["token"];
-        
-        if(!($user = $this->storage->get($token))){
+        $token = ((array)$request->getParsedBody())["token"];
+
+        if(!($user = $this->storage->get($token))) {
             $user = $this->auth->register(['token' => $token]);
         }
-        
+
         return $this->jsonResponse(
-            response: $response, 
+            response: $response,
             body: $user->makeHidden(["password_hash"])->toArray()
         );
     }

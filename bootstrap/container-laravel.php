@@ -1,6 +1,7 @@
 <?php
 
 use App\Controllers\AuthController;
+use App\Controllers\SettingsController;
 use Core\Container;
 use App\Middleware\Auth;
 use App\Modules\Notification\Providers\Mail\Mailers\Resend;
@@ -36,39 +37,46 @@ $rpcIgbinaryFactory = (new Factory(RPC::create(Config::get("rpc.connection"))))-
 
 $container = new Container();
 
-$container->singleton(Psr\Http\Message\ResponseFactoryInterface::class, function() use ($responseFactory){
+$container->singleton(Psr\Http\Message\ResponseFactoryInterface::class, function () use ($responseFactory) {
     return $responseFactory;
 });
-$container->singleton(ServerRequestFactoryInterface::class, function() use ($serverRequestFactory) {
+$container->singleton(ServerRequestFactoryInterface::class, function () use ($serverRequestFactory) {
     return $serverRequestFactory;
 });
-$container->singleton(StreamFactoryInterface::class, function() use ($streamFactory) {
+$container->singleton(StreamFactoryInterface::class, function () use ($streamFactory) {
     return $streamFactory;
 });
-$container->singleton(UploadedFileFactoryInterface::class, function() use ($uploadedFileFactory) {
+$container->singleton(UploadedFileFactoryInterface::class, function () use ($uploadedFileFactory) {
     return $uploadedFileFactory;
 });
-$container->bind(WorkerInterface::class, function(){
+$container->bind(WorkerInterface::class, function () {
     return Worker::create();
 });
-$container->bind(PSR7WorkerInterface::class, function(Container $container){
+$container->bind(PSR7WorkerInterface::class, function (Container $container) {
     return $container->make(PSR7Worker::class);
 });
-$container->bind(DatabaseUserMoodleRepositoryInterface::class, function(Container $cont){
+$container->bind(DatabaseUserMoodleRepositoryInterface::class, function (Container $cont) {
     return $cont->make(DatabaseUserMoodleRepository::class);
 });
 $container->bind(ApiUserMoodleRepositoryInterface::class, ApiUserMoodleRepository::class);
-$container->bind(Resend::class, function(){
+$container->bind(Resend::class, function () {
     return new Resend(Config::get("mail.resend.key"), Config::get("mail.from"));
 });
-$container->bind(Auth::class, function() use ($rpcIgbinaryFactory){
+$container->bind(Auth::class, function () use ($rpcIgbinaryFactory) {
     return new Auth($rpcIgbinaryFactory->select('users'));
 });
 $container
     ->when(AuthController::class)
     ->needs(StorageInterface::class)
-    ->give(function() use ($rpcIgbinaryFactory){
+    ->give(function () use ($rpcIgbinaryFactory) {
         return $rpcIgbinaryFactory->select('users');
-});
+    });
+
+$container
+    ->when(SettingsController::class)
+    ->needs(StorageInterface::class)
+    ->give(function () use ($rpcIgbinaryFactory) {
+        return $rpcIgbinaryFactory->select('users');
+    });
 
 return $container;

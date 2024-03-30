@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Grade extends Model
-{        
+{
     public $incrementing = false;
     protected $primaryKey = 'grade_id';
     public $timestamps = false;
@@ -24,6 +24,6 @@ class Grade extends Model
 
     public function course(): HasOneThrough
     {
-        return $this->hasOneThrough(Course::class,CourseModule::class, 'cmid', 'course_id', 'cmid', 'course_id');
+        return $this->hasOneThrough(Course::class, CourseModule::class, 'cmid', 'course_id', 'cmid', 'course_id');
     }
 }

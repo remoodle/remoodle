@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Core;
 
@@ -8,7 +8,7 @@ class Container extends LaravelContainer
 {
     public function has(string $id): bool
     {
-        if(!$this->bound($id)){
+        if(!$this->bound($id)) {
             try {
                 $this->resolve($id);
             } catch (\Throwable $th) {

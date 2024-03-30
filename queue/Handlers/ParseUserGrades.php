@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Queue\Handlers;
 
@@ -28,7 +28,7 @@ class ParseUserGrades extends BaseHandler
         $courseModulesUpsert = [];
         $courseGradesUpsert = [];
 
-        foreach($this->user->courseAssigns as $courseAssign){
+        foreach($this->user->courseAssigns as $courseAssign) {
             [$courseModules, $courseGrades] = $this->getCourseModulesAndGrades($courseAssign->course_id, $courseAssign->moodle_id);
             $courseModulesUpsert = array_merge($courseModulesUpsert, $courseModules);
             $courseGradesUpsert = array_merge($courseGradesUpsert, $courseGrades);
@@ -43,7 +43,7 @@ class ParseUserGrades extends BaseHandler
             $this->connection->rollBack();
             $this->receivedTask->fail($th);
         }
-        
+
         $jobs = new Jobs(RPC::create(Config::get("rpc.connection")));
         $queue = $jobs->connect('user_parse_events');
         $task = $queue->create(Task::class, $this->user->toJson());
@@ -59,18 +59,18 @@ class ParseUserGrades extends BaseHandler
         $courseModulesUpsertArray = [];
         $courseGradesUpsertArray = [];
 
-        foreach($courseGrades as $courseGrade){
+        foreach($courseGrades as $courseGrade) {
             $courseModulesUpsertArray[] = [
-                "cmid" => $courseGrade["cmid"],
-                "course_id" => (int)$courseGrade["course_id"],
+                "cmid" => $courseGrade->cmid,
+                "course_id" => $courseGrade->course_id,
             ];
             $courseGradesUpsertArray[] = [
-                "grade_id" => $courseGrade["id"],
+                "grade_id" => $courseGrade->grade_id,
                 "moodle_id" => $moodleId,
-                "cmid" => $courseGrade["cmid"],
-                "course_id" => $courseGrade["course_id"],
-                "name" => $courseGrade["name"],
-                "percentage" => $courseGrade["percentage"],
+                "cmid" => $courseGrade->cmid,
+                "course_id" => $courseGrade->course_id,
+                "name" => $courseGrade->name,
+                "percentage" => $courseGrade->percentage,
             ];
         }
 
@@ -84,23 +84,23 @@ class ParseUserGrades extends BaseHandler
         $updatedGrades = [];
         $newGrades = [];
         $tempCurrentGrades = [];
-        foreach($currentGrades as $currentGrade){
+        foreach($currentGrades as $currentGrade) {
             $tempCurrentGrades[$currentGrade["grade_id"]] = $currentGrade;
             $currentGradesIds[] = $currentGrade["grade_id"];
         }
         $currentGrades = $tempCurrentGrades;
         unset($tempCurrentGrades);
         $tempreceivedGrades = [];
-        foreach($receivedGrades as $receivedGrade){
+        foreach($receivedGrades as $receivedGrade) {
             $tempreceivedGrades[$receivedGrade["grade_id"]] = $receivedGrade;
             $receivedGradesIds[] = $receivedGrade["grade_id"];
-            if(isset($currentGrades[$receivedGrade["grade_id"]]) && $currentGrades[$receivedGrade["grade_id"]]["percentage"] !== $receivedGrade["percentage"]){
+            if(isset($currentGrades[$receivedGrade["grade_id"]]) && $currentGrades[$receivedGrade["grade_id"]]["percentage"] !== $receivedGrade["percentage"]) {
                 $updatedGrades[] = [
                     "grade_id" => $receivedGrade["grade_id"],
                     "old" => $currentGrades[$receivedGrade["grade_id"]]["percentage"],
                     "new" => $receivedGrade["percentage"]
                 ];
-            }elseif(!isset($currentGrades[$receivedGrade["grade_id"]])){
+            } elseif(!isset($currentGrades[$receivedGrade["grade_id"]])) {
                 $newGrades[] = [
                     "grade_id" => $receivedGrade["grade_id"],
                     "new" => $receivedGrade["percentage"]

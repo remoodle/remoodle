@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Repositories\UserMoodle;
 
@@ -10,10 +10,10 @@ interface DatabaseUserMoodleRepositoryInterface extends UserMoodleRepositoryInte
     public function findByEmail(string $email): ?MoodleUser;
 
     public function findByIdentifiers(
-        ?string $token = null, 
-        ?int $moodleId = null, 
-        ?string $barcode = null, 
-        ?string $email = null, 
+        ?string $token = null,
+        ?int $moodleId = null,
+        ?string $barcode = null,
+        ?string $email = null,
         ?string $nameAlias = null
     ): ?MoodleUser;
 }

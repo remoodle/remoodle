@@ -8,7 +8,8 @@ final class GetUpdate
 {
     public function __construct(
         private MessageBag $messageBag
-    ){}
+    ) {
+    }
 
     public function getUpdates(): array
     {

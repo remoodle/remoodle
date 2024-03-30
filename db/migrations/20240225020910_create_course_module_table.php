@@ -21,13 +21,13 @@ final class CreateCourseModuleTable extends AbstractMigration
     {
         $table = $this->table('course_modules', ["id" => false, 'primary_key' => 'cmid']);
         $table
-            ->addColumn('cmid', 'integer', ['signed' => false, 'null' => false])            
+            ->addColumn('cmid', 'integer', ['signed' => false, 'null' => false])
 
-            ->addColumn('course_id', 'integer', ['signed' => false, 'null' => false])            
+            ->addColumn('course_id', 'integer', ['signed' => false, 'null' => false])
 
             ->addIndex(['course_id'], ['unique' => false])
             ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->create();
     }
-    
+
 }

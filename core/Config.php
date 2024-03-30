@@ -7,7 +7,9 @@ class Config
     private static array $configs = [];
     private static bool $isLoaded = false;
 
-    private function __construct(){}
+    private function __construct()
+    {
+    }
 
     public static function loadConfigs(): void
     {
@@ -26,7 +28,7 @@ class Config
         self::$isLoaded = true;
     }
 
-    public static function get(string $key, mixed $default = null) : mixed
+    public static function get(string $key, mixed $default = null): mixed
     {
         $keyParts = explode(".", $key);
         $file = array_shift($keyParts);

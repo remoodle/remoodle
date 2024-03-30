@@ -1,6 +1,7 @@
-<?php 
+<?php
 
 namespace App\Repositories\UserMoodle;
+
 use App\Repositories\UserMoodle\Concrete\ApiUserMoodleRepository;
 use App\Repositories\UserMoodle\Concrete\DatabaseUserMoodleRepository;
 
@@ -8,10 +9,10 @@ class UserMoodleRepositoryFactory
 {
     public function create(bool $offline = false): UserMoodleRepositoryInterface
     {
-        if($offline){
+        if($offline) {
             return new DatabaseUserMoodleRepository();
         }
-        
+
         return new ApiUserMoodleRepository();
     }
 }

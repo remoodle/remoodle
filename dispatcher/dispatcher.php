@@ -10,7 +10,7 @@ require_once __DIR__ . "/../vendor/autoload.php";
 Config::loadConfigs();
 $container = require __DIR__ . "/../bootstrap/container-laravel.php";
 
-$capsule = new Capsule;
+$capsule = new Capsule();
 $capsule->addConnection(Config::get('eloquent'));
 $capsule->setAsGlobal();
 
@@ -21,13 +21,13 @@ $consumer = new Consumer();
 while (true) {
     $task = $consumer->waitTask();
 
-    if($task === null){
+    if($task === null) {
         continue;
     }
 
     $handler = $factory->createHandler($task);
-    
-    if($handler === null){
+
+    if($handler === null) {
         $task->fail("Unable to locate handler.");
         continue;
     }
@@ -39,7 +39,7 @@ while (true) {
     } catch (\Throwable $th) {
         $task->fail($th);
         echo "\n" . $th->getMessage();
-    }finally{
+    } finally {
         $capsule->getConnection()->disconnect();
     }
 }

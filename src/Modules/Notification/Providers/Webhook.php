@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Modules\Notification\Providers;
 
@@ -7,15 +7,16 @@ use GuzzleHttp\Client;
 
 final class Webhook
 {
-    const USER_AGENT = "ReMoodleBot (like TwitterBot)";
-    const AUTH_HEADER = "X-ReMoodle-Bot-Api-Secret-Token";
+    public const USER_AGENT = "ReMoodleBot (like TwitterBot)";
+    public const AUTH_HEADER = "X-ReMoodle-Bot-Api-Secret-Token";
 
     public function __construct(
         private string $id,
         private string $url,
         private MessageBag $messageBag,
-        private ?string $secret = null 
-    ){}
+        private ?string $secret = null
+    ) {
+    }
 
     public function sendRequest(): void
     {
@@ -36,7 +37,7 @@ final class Webhook
             "User-Agent" => static::USER_AGENT
         ];
 
-        if($this->secret){
+        if($this->secret) {
             $headers[static::AUTH_HEADER] = $this->secret;
         }
 

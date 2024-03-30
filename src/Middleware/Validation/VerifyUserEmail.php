@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Middleware\Validation;
 
@@ -9,6 +9,6 @@ class VerifyUserEmail extends ValidationMiddleware
 
     protected array $queryRules = [];
     protected array $bodyRules = [
-        "code"=> "required|is:numeric",
+        "code" => "required|is:numeric",
     ];
 }
