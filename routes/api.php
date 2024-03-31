@@ -9,9 +9,11 @@ use App\Controllers\AuthController;
 use App\Controllers\CourseContentController;
 use App\Controllers\SettingsController;
 use App\Controllers\UserCoursesController;
+use App\Controllers\UtilityController;
 use App\Middleware\Auth;
 use App\Middleware\Validation\AuthPassword;
 use App\Middleware\Validation\ChangeUserSettings;
+use App\Middleware\Validation\GenerateToken;
 use App\Middleware\Validation\GetAuthOptions;
 use App\Middleware\Validation\RegisterOrShow;
 use Slim\Routing\RouteCollectorProxy;
@@ -52,6 +54,10 @@ return function (App $app) {
             // $auth->post("/code/email", [AuthController::class, "authPassword"])->add(AuthPassword::class);
             // $auth->post("/code/custom", [AuthController::class, "authPassword"])->add(AuthPassword::class);
 
+        });
+
+        $api->group("/utility", function (RouteCollectorProxy $utility) {
+            $utility->post("/generate-token", [UtilityController::class, "generateToken"])->add(GenerateToken::class);
         });
     });
 

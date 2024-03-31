@@ -38,7 +38,7 @@ while ($req = $worker->waitRequest()) {
     if(Config::get('app.mode') !== 'production') {
         $app->addErrorMiddleware(true, true, true);
     } else {
-        $app->addMiddleware($container->get('error-middleware'));
+        $app->addMiddleware($container->get(ErrorMiddleware::class));
     }
 
     try {

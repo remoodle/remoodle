@@ -8,6 +8,7 @@ use App\Modules\Moodle\Entities\Grade;
 use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use Core\Config;
 use Fugikzl\MoodleWrapper\Moodle as MoodleWrapperMoodle;
+use GuzzleHttp\Client;
 
 final class Moodle
 {
@@ -19,6 +20,25 @@ final class Moodle
     public static function createFromToken(string $token, ?int $moodleId = null)
     {
         return new static(static::constructMoodleWrapper($token, $moodleId), $token);
+    }
+
+    public static function generateToken(string $username, string $password): string
+    {
+        $client = new Client(['verify' => false]);
+
+        $res = json_decode($client->get(Config::get("moodle.generate_token_url"), [
+            'query' => [
+                'username' => $username,
+                'password' => $password,
+                'service' => 'moodle_mobile_app'
+            ]
+        ])->getBody()->getContents(), 1);
+
+        if(array_key_exists('error', $res)) {
+            throw new \Exception($res['error'], 400);
+        }
+
+        return $res['token'];
     }
 
     public static function getBarcodeFromUsername(string $username)
