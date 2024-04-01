@@ -43,6 +43,8 @@ return function (App $app) {
 
         $api->group("/course", function (RouteCollectorProxy $course) {
             $course->get("/{id}", [CourseContentController::class, "getCourse"])->add(GetCourseContent::class);
+            $course->get("/{id}/assignments", [CourseContentController::class, "getCourseAssignments"]);
+
         })->add(Auth::class);
 
         $api->group("/auth", function (RouteCollectorProxy $auth) {

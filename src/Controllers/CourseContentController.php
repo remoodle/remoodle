@@ -39,4 +39,19 @@ class CourseContentController extends BaseController
 
         return $response->withHeader("Content-Type", "application/json");
     }
+
+    public function getCourseAssignments(Request $request, Response $response, array $args): Response
+    {
+        /**@var \App\Models\MoodleUser */
+        $user = $request->getAttribute('user');
+        $courseId = (int) $args['id'];
+
+        return $this->jsonResponse(
+            response: $response,
+            body: Moodle::createFromToken(
+                $user->moodle_token,
+                $user->moodle_id
+            )->getWrapper()->getAssignments([$courseId])['courses'][0]['assignments']
+        );
+    }
 }
