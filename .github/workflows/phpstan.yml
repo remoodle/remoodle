@@ -18,5 +18,7 @@ jobs:
 
     - name: PHPStan
       uses: docker://oskarstark/phpstan-ga
+      env:
+        CHECK_PLATFORM_REQUIREMENTS: false
       with:
         args: analyse --level=9 src queue bootstrap dispatcher service
