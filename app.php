@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 use App\Middleware\ErrorMiddleware;
 use Core\Config;
 use Slim\Factory\AppFactory;

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
@@ -25,7 +26,7 @@ final class CreateVerifyCodeTable extends AbstractMigration
             ->addColumn('uuid', 'uuid', ['null' => false])
             ->addColumn('moodle_id', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('code', 'integer', ['null' => false, 'signed' => false])
-            ->addColumn('type', 'enum', ['null' => false, 'values' => ['email_verify', 'login', 'password_reset']])
+            ->addColumn('type', 'enum', ['null' => false, 'values' => ['login', 'password_reset']])
             ->addColumn('created_at', 'timestamp', ['null' => false])
             ->addColumn('expires_at', 'timestamp', ['null' => false])
             ->addForeignKey('moodle_id', 'moodle_users', 'moodle_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])

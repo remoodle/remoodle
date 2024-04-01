@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 function getEnvVar(string $key, mixed $default = null): string|bool|null
 {
     if($val = getenv($key)) {

@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 require __DIR__.'/vendor/autoload.php';
 
 use Core\Commands\CreateController;
@@ -10,7 +11,7 @@ use Core\Commands\GenerateKey;
 use Core\Config;
 use Symfony\Component\Console\Application;
 
-const BASE_DIR = __DIR__; 
+const BASE_DIR = __DIR__;
 
 Config::loadConfigs();
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Modules\Moodle\BaseMoodleUser;
@@ -23,14 +25,12 @@ class MoodleUser extends Model
     protected $fillable = [
         'moodle_id',
         'name',
-        'barcode',
+        'username',
         'moodle_token',
         'grades_notification',
         'deadlines_notification',
         'password_hash',
         'name_alias',
-        'email',
-        'email_verified_at',
         'notify_method',
         'webhook',
         'webhook_secret'
@@ -65,16 +65,15 @@ class MoodleUser extends Model
         return password_verify($password, $this->password_hash);
     }
 
-    public static function createFromBaseMoodleUser(BaseMoodleUser $moodleUser, ?string $hashedPassword = null, ?string $nameAlias = null, ?string $email = null): static
+    public static function createFromBaseMoodleUser(BaseMoodleUser $moodleUser, ?string $hashedPassword = null, ?string $nameAlias = null): static
     {
         return static::create([
             'moodle_id' => $moodleUser->moodleId,
             "name" => $moodleUser->name,
-            "barcode" => $moodleUser->barcode,
+            "username" => $moodleUser->username,
             "moodle_token" => $moodleUser->token,
             'password_hash' => $hashedPassword,
             'name_alias' => $nameAlias,
-            'email' => $email
         ]);
     }
 
@@ -137,20 +136,8 @@ class MoodleUser extends Model
         return $this->hasMany(VerifyCode::class, "moodle_id", "moodle_id");
     }
 
-    public function isEmailVerified(): bool
-    {
-        return $this->email_verified_at !== null;
-    }
-
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class, "moodle_id", "moodle_id");
-    }
-
-    public function verifyEmail(): void
-    {
-        $this->update([
-            'email_verified_at' => Carbon::now()
-        ]);
     }
 }

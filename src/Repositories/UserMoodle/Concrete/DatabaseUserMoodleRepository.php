@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\UserMoodle\Concrete;
 
 use App\Models\Course;
@@ -48,25 +50,19 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
         return $moodleUser ? new BaseMoodleUser($moodleToken, $moodleUser->barcode, $moodleUser->name, $moodleUser->moodle_id) : null;
     }
 
-    public function findByEmail(string $email): ?MoodleUser
-    {
-        return MoodleUser::where("email", $email)->where("email_verified_at", "!=", null)->first();
-    }
-
     public function findByIdentifiers(
         ?string $token = null,
         ?int $moodleId = null,
         ?string $barcode = null,
-        ?string $email = null,
         ?string $nameAlias = null
     ): ?MoodleUser {
-        if (!($token || $moodleId || $barcode || $email || $nameAlias)) {
+        if (!($token || $moodleId || $barcode || $nameAlias)) {
             return null;
         }
 
         $query = MoodleUser::query();
 
-        $query->where(function ($q) use ($token, $moodleId, $barcode, $email, $nameAlias) {
+        $query->where(function ($q) use ($token, $moodleId, $barcode, $nameAlias) {
             if ($token) {
                 $q->orWhere("moodle_token", $token);
             }
@@ -75,9 +71,6 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
             }
             if ($barcode) {
                 $q->orWhere("barcode", $barcode);
-            }
-            if ($email) {
-                $q->orWhere("email", $email)->where("email_verified_at", "!=", null);
             }
             if ($nameAlias) {
                 $q->orWhere("name_alias", $nameAlias);

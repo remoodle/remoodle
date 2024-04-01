@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 use App\Models\MoodleUser;
 use Core\Config;
 use Illuminate\Database\Capsule\Manager as Capsule;

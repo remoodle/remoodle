@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use App\Modules\Moodle\Moodle;
@@ -25,11 +27,13 @@ class CourseContentController extends BaseController
             moodleToken: $user->moodle_token
         )->keyBy('course_id')[$args['id']];
 
-        $course['content'] = Moodle::createFromToken(
-            moodleId: $user->moodle_id,
-            token: $user->moodle_token
-        )->getWrapper()
-        ->getCoursesInfo((int)$args['id']);
+        if((bool)$request->getQueryParams()['content']) {
+            $course['content'] = Moodle::createFromToken(
+                moodleId: $user->moodle_id,
+                token: $user->moodle_token
+            )->getWrapper()
+            ->getCoursesInfo((int)$args['id']);
+        }
 
         $response->getBody()->write(json_encode($course));
 

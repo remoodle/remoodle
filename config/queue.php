@@ -1,9 +1,9 @@
 <?php
 
+declare(strict_types=1);
 use Queue\Handlers\ParseUserCourses;
 use Queue\Handlers\ParseUserEvents;
 use Queue\Handlers\ParseUserGrades;
-use Queue\Handlers\SendEmail;
 use Queue\Handlers\WebhookAction;
 
 return [
@@ -12,6 +12,5 @@ return [
         'user_parse_grades' => ParseUserGrades::class,
         'user_parse_events' => ParseUserEvents::class,
         'notification_webhook' => WebhookAction::class,
-        'notification_email' => SendEmail::class
     ]
 ];

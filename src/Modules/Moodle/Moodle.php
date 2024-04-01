@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Moodle;
 
 use App\Modules\Moodle\Entities\Course;
@@ -12,12 +14,12 @@ use GuzzleHttp\Client;
 
 final class Moodle
 {
-    public static function constructMoodleWrapper(string $token, ?int $moodleUserId = null)
+    public static function constructMoodleWrapper(string $token, ?int $moodleUserId = null): MoodleWrapperMoodle
     {
         return new MoodleWrapperMoodle(Config::get("moodle.webservice_url"), $token, $moodleUserId);
     }
 
-    public static function createFromToken(string $token, ?int $moodleId = null)
+    public static function createFromToken(string $token, ?int $moodleId = null): static
     {
         return new static(static::constructMoodleWrapper($token, $moodleId), $token);
     }
@@ -32,18 +34,13 @@ final class Moodle
                 'password' => $password,
                 'service' => 'moodle_mobile_app'
             ]
-        ])->getBody()->getContents(), 1);
+        ])->getBody()->getContents(), true);
 
         if(array_key_exists('error', $res)) {
             throw new \Exception($res['error'], 400);
         }
 
         return $res['token'];
-    }
-
-    public static function getBarcodeFromUsername(string $username)
-    {
-        return explode("@", $username)[0];
     }
 
     public function __construct(
@@ -60,10 +57,10 @@ final class Moodle
         $res = $this->moodleWrapper->getUserInfo();
 
         return new BaseMoodleUser(
-            $this->token,
-            static::getBarcodeFromUsername($res["username"]),
-            $res["fullname"],
-            $res["userid"]
+            token: $this->token,
+            username: $res["username"],
+            name: $res["fullname"],
+            moodleId: $res["userid"]
         );
     }
 

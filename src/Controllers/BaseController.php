@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use Psr\Http\Message\ResponseInterface;
@@ -38,7 +40,7 @@ abstract class BaseController
     protected function jsonResponse(
         ResponseInterface $response,
         int $status = 200,
-        object|array|string $body = ''
+        object|array|string $body = '{}'
     ): ResponseInterface {
         $body = is_string($body) ? $body : json_encode($body);
 

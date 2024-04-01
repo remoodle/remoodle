@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
@@ -23,13 +24,11 @@ final class CreateMoodleUsersTable extends AbstractMigration
         $table
             ->addColumn('moodle_id', 'integer', ['signed' => false, 'null' => false])
 
-            ->addColumn('barcode', 'string', ['null' => false])
+            ->addColumn('username', 'string', ['null' => false])
             ->addColumn('name', 'string', ['null' => false])
             ->addColumn('moodle_token', 'string', ['null' => false])
-            ->addColumn('email', 'string', ['null' => true])
-            ->addColumn('email_verified_at', 'timestamp', ['null' => true])
 
-            ->addColumn('notify_method', 'enum', ['values' => ['email', 'get_update', 'webhook'], 'default' => 'get_update'])
+            ->addColumn('notify_method', 'enum', ['values' => ['get_update', 'webhook'], 'default' => 'get_update'])
             ->addColumn('webhook', 'string', ['null' => true])
             ->addColumn('webhook_secret', 'string', ['null' => true])
 
@@ -39,9 +38,8 @@ final class CreateMoodleUsersTable extends AbstractMigration
             ->addColumn('password_hash', 'string', ['null' => true])
             ->addColumn('name_alias', 'string', ['null' => true])
 
-            ->addIndex(['email'], ['unique' => true])
             ->addIndex(['name_alias'], ['unique' => true])
-            ->addIndex(['barcode'], ['unique' => true])
+            ->addIndex(['username'], ['unique' => true])
             ->addIndex(['moodle_token'], ['unique' => true])
             ->create();
     }

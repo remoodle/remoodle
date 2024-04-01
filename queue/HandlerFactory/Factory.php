@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Queue\HandlerFactory;
 
 use Core\Config;

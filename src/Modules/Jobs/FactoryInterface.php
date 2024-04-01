@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Jobs;
 
 use Spiral\RoadRunner\Jobs\JobsInterface;

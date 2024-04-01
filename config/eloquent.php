@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 return [
     'driver' => getEnvVar("DATABASE_DRIVER") ?? null,
     'host' => getEnvVar("DATABASE_HOST") ?? null,

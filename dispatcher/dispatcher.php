@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 use Core\Config;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Queue\HandlerFactory\Factory;

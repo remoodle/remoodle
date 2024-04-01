@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Queue\Handlers;
 
 use App\Models\MoodleUser;
@@ -20,7 +22,7 @@ class ParseUserGrades extends BaseHandler
     public function handle(): void
     {
         /**@var \App\Models\MoodleUser */
-        $this->user = new MoodleUser(json_decode($this->receivedTask->getPayload(), 1));
+        $this->user = new MoodleUser(json_decode($this->receivedTask->getPayload(), true));
 
         $this->moodle = Moodle::createFromToken($this->user->moodle_token, $this->user->moodle_id);
         $this->connection = Manager::connection();

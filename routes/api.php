@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 use App\Controllers\UserNotificationController;
 use App\Middleware\Validation\VerifyUserEmail;
 use Psr\Http\Message\RequestInterface;
@@ -15,6 +16,7 @@ use App\Middleware\Validation\AuthPassword;
 use App\Middleware\Validation\ChangeUserSettings;
 use App\Middleware\Validation\GenerateToken;
 use App\Middleware\Validation\GetAuthOptions;
+use App\Middleware\Validation\GetCourseContent;
 use App\Middleware\Validation\RegisterOrShow;
 use Slim\Routing\RouteCollectorProxy;
 
@@ -28,9 +30,7 @@ return function (App $app) {
         $api->group("/user", function (RouteCollectorProxy $user) {
             $user->get("/settings", [SettingsController::class, "getSettings"]);
             $user->post("/settings", [SettingsController::class, "changeSettings"])->add(ChangeUserSettings::class);
-            $user->get("/email-verifications", [SettingsController::class, "getUserEmailVerifications"]);
-            $user->post("/email-verification", [SettingsController::class, "verifyUserEmail"])->add(VerifyUserEmail::class);
-            // $user->post("/email-change", [SettingsController::class, "changeUserEmail"])->add(ChangeEmail::class);
+            $user->delete("", [SettingsController::class, "deleteUser"]);
 
             $user->get("/deadlines", [UserCoursesController::class, "getDeadlines"]);
             $user->get("/updates", [UserNotificationController::class,"getUpdates"]);
@@ -42,7 +42,7 @@ return function (App $app) {
         })->add(Auth::class);
 
         $api->group("/course", function (RouteCollectorProxy $course) {
-            $course->get("/{id}", [CourseContentController::class, "getCourse"]);
+            $course->get("/{id}", [CourseContentController::class, "getCourse"])->add(GetCourseContent::class);
         })->add(Auth::class);
 
         $api->group("/auth", function (RouteCollectorProxy $auth) {
@@ -51,7 +51,6 @@ return function (App $app) {
             $auth->post("/password", [AuthController::class, "authPassword"])->add(AuthPassword::class);
             $auth->post("/token", [AuthController::class, "registerOrShow"])->add(RegisterOrShow::class);
             // $auth->post("/code/webhook", [AuthController::class, "authPassword"])->add(AuthPassword::class);
-            // $auth->post("/code/email", [AuthController::class, "authPassword"])->add(AuthPassword::class);
             // $auth->post("/code/custom", [AuthController::class, "authPassword"])->add(AuthPassword::class);
 
         });

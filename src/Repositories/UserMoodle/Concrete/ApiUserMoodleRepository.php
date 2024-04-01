@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\UserMoodle\Concrete;
 
 use App\Modules\Moodle\BaseMoodleUser;

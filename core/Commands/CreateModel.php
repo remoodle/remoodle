@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Core\Commands;
 
 use Symfony\Component\Console\Command\Command;
@@ -65,7 +67,9 @@ class CreateModel extends Command
     {
         return <<<PHP
         <?php
-
+        
+        declare(strict_types=1);
+        
         namespace App\Models;
         
         use Illuminate\Database\Eloquent\Model;
