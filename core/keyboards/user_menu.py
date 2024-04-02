@@ -56,7 +56,6 @@ async def grades_menu(user_id):
             callback_data="back_to_menu"
         )
     ])
-    print(inline_keyboard)
     kb = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
     return kb
 
