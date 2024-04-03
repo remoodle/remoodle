@@ -148,3 +148,19 @@ def back(callback_data: str):
     ])
 
     return kb
+
+def refresh_deadlines_menu():
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="Refresh",
+                callback_data="refresh_deadlines_menu"
+            ),
+            InlineKeyboardButton(
+                text="Back ←",
+                callback_data="back_to_menu"
+            )
+        ]
+    ])
+
+    return kb

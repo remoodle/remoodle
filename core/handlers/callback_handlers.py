@@ -13,7 +13,7 @@ async def deadlines_handler(call: CallbackQuery):
     deadlines_string = await create_deadlines_string(call.message.chat.id)
     await call.message.edit_text(text=deadlines_string,
                                  parse_mode="Markdown",
-                                 reply_markup=back(callback_data="back_to_menu"))
+                                 reply_markup=refresh_deadlines_menu())
     await call.answer()
 
 
@@ -101,6 +101,14 @@ async def back_to_menu_handler(call: CallbackQuery):
     await call.message.edit_text(text=f"Hello, *{full_name}*\nSelect an option: ",
                                  reply_markup=main_menu(),
                                  parse_mode="Markdown")
+    await call.answer()
+
+@router.callback_query(F.data == "refresh_deadlines_menu")
+async def refresh_deadlines_menu_handler(call: CallbackQuery):
+    deadlines_string = await create_deadlines_string(call.message.chat.id)
+    await call.message.edit_text(text=deadlines_string,
+                                 parse_mode="Markdown",
+                                 reply_markup=refresh_deadlines_menu())
     await call.answer()
 
 
