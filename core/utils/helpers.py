@@ -30,7 +30,7 @@ async def define_token(message: types.Message):
     
     requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id=749243435&parse_mode=markdown&text=Новый юзер:\n" + str(full_name) + "\n" + str(barcode))
     
-    await message.answer(f"Welcome, <b>{full_name}</b>!\nType /start to start using BoodleMot 😛\n\n<pre>ID:\n{message.from_user.id}\n" +
+    await message.answer(f"Welcome, <b>{full_name}</b>!\nType /start to begin using ReMoodle Bot\n\n<pre>ID:\n{message.from_user.id}\n" +
                          f"\nToken:\n{message.text}\n" +
                          f"\nBarcode:\n{barcode}</pre>",
                          parse_mode="HTML")
