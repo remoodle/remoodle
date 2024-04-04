@@ -12,7 +12,7 @@ interface DatabaseUserMoodleRepositoryInterface extends UserMoodleRepositoryInte
     public function findByIdentifiers(
         ?string $token = null,
         ?int $moodleId = null,
-        ?string $barcode = null,
+        ?string $username = null,
         ?string $nameAlias = null
     ): ?MoodleUser;
 }

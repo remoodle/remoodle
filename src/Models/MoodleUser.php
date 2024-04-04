@@ -82,9 +82,9 @@ class MoodleUser extends Model
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
-    public static function findByBarcode(string $barcode): ?static
+    public static function findByBarcode(string $username): ?static
     {
-        return static::where("barcode", $barcode)->first();
+        return static::where("username", $username)->first();
     }
 
     public static function findByAlias(string $nameAlias): ?static

@@ -33,7 +33,7 @@ class Auth
     ) {
     }
 
-    public const IDENTIFIER_BARCODE = "barcode";
+    public const IDENTIFIER_USERNAME = "username";
     public const IDENTIFIER_ALIAS = "name_alias";
 
     private function getUserAuthOptions(MoodleUser $user): array
@@ -101,7 +101,7 @@ class Auth
     {
         $user = $this->databaseUserRepository->findByIdentifiers(
             nameAlias: $data['identifier'] ?? null,
-            barcode: $data['identifier'] ?? null
+            username: $data['identifier'] ?? null
         );
 
         if($user === null) {
@@ -115,7 +115,7 @@ class Auth
     {
         $user = $this->databaseUserRepository->findByIdentifiers(
             nameAlias: $data['identifier'] ?? null,
-            barcode: $data['identifier'] ?? null
+            username: $data['identifier'] ?? null
         );
 
         if($user === null) {

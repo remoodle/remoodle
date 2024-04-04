@@ -47,30 +47,30 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
     public function getUserInfo(string $moodleToken): ?BaseMoodleUser
     {
         $moodleUser = MoodleUser::findByToken($moodleToken);
-        return $moodleUser ? new BaseMoodleUser($moodleToken, $moodleUser->barcode, $moodleUser->name, $moodleUser->moodle_id) : null;
+        return $moodleUser ? new BaseMoodleUser($moodleToken, $moodleUser->username, $moodleUser->name, $moodleUser->moodle_id) : null;
     }
 
     public function findByIdentifiers(
         ?string $token = null,
         ?int $moodleId = null,
-        ?string $barcode = null,
+        ?string $username = null,
         ?string $nameAlias = null
     ): ?MoodleUser {
-        if (!($token || $moodleId || $barcode || $nameAlias)) {
+        if (!($token || $moodleId || $username || $nameAlias)) {
             return null;
         }
 
         $query = MoodleUser::query();
 
-        $query->where(function ($q) use ($token, $moodleId, $barcode, $nameAlias) {
+        $query->where(function ($q) use ($token, $moodleId, $username, $nameAlias) {
             if ($token) {
                 $q->orWhere("moodle_token", $token);
             }
             if ($moodleId) {
                 $q->orWhere("moodle_id", $moodleId);
             }
-            if ($barcode) {
-                $q->orWhere("barcode", $barcode);
+            if ($username) {
+                $q->orWhere("username", $username);
             }
             if ($nameAlias) {
                 $q->orWhere("name_alias", $nameAlias);
