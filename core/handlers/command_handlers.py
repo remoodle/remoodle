@@ -117,7 +117,10 @@ async def deadlinesCommand(message: types.Message, state: FSMContext):
         await message.answer("You are not authorized!")
     else:
         deadlines_string = await create_deadlines_string(message.from_user.id)
-        await message.answer(text=deadlines_string, parse_mode="Markdown")
+        if message.chat.type == "private":
+            await message.answer(text=deadlines_string, parse_mode="Markdown", reply_markup=refresh_deadlines_message())
+        else:
+            await message.answer(text=deadlines_string, parse_mode="Markdown")
 
 @router.message(StepsForm.GET_MOODLE_TOKEN)
 async def save_moodle_token(message: types.Message, state: FSMContext):

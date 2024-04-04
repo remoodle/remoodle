@@ -16,6 +16,15 @@ async def deadlines_handler(call: CallbackQuery):
                                  reply_markup=refresh_deadlines_menu())
     await call.answer()
 
+@router.callback_query(F.data == "deadlines_message_refresh")
+async def deadlines_refresh_handler(call: CallbackQuery):
+    deadlines_string = await create_deadlines_string(call.message.chat.id)
+    await call.message.edit_text(text=deadlines_string,
+                                 parse_mode="Markdown",
+                                 reply_markup=refresh_deadlines_message())
+    await call.answer()
+
+
 
 @router.callback_query(F.data == "other")
 async def settings_handler(call: CallbackQuery):
@@ -86,10 +95,13 @@ async def grades_handler(call: CallbackQuery):
 
 @router.callback_query(F.data.startswith("course_"))
 async def course_grades_handler(call: CallbackQuery):
-    await call.message.edit_text(str(await create_grades_string(call.data.split("_")[1], call.message.chat.id)),
-                                 parse_mode="Markdown",
-                                 reply_markup=back("back_to_grades"))
-    await call.answer()
+    try:
+        await call.message.edit_text(str(await create_grades_string(call.data.split("_")[1], call.message.chat.id)),
+                                    parse_mode="Markdown",
+                                    reply_markup=refresh_grades_menu(call.data))
+        
+    except Exception as e:
+        await call.answer()
 
 
 @router.callback_query(F.data == "back_to_menu")

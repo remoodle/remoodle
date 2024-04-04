@@ -36,6 +36,7 @@ def main_menu():
 
     return kb
 
+
 async def grades_menu(user_id):
     user = User.objects(telegram_id=user_id)[0]
     token = Enigma.decrypt(user.hashed_token)
@@ -136,7 +137,6 @@ def change_token_confirmation():
     return kb
 
 
-
 def back(callback_data: str):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
@@ -149,6 +149,7 @@ def back(callback_data: str):
 
     return kb
 
+
 def refresh_deadlines_menu():
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
@@ -159,6 +160,36 @@ def refresh_deadlines_menu():
             InlineKeyboardButton(
                 text="Back ←",
                 callback_data="back_to_menu"
+            )
+        ]
+    ])
+
+    return kb
+
+
+def refresh_grades_menu(callback_data: str):
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="Refresh",
+                callback_data=callback_data
+            ),
+            InlineKeyboardButton(
+                text="Back ←",
+                callback_data="back_to_menu"
+            )
+        ]
+    ])
+
+    return kb
+
+
+def refresh_deadlines_message():
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="Refresh",
+                callback_data="deadlines_message_refresh"
             )
         ]
     ])
