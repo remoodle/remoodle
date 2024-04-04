@@ -108,17 +108,20 @@ final class Moodle
         $grades = [];
 
         foreach($rawGrades["usergrades"][0]['gradeitems'] as $gradeitem) {
-            if(($gradeitem["gradeformatted"] != "-" or $gradeitem["percentageformatted"] != "-") && array_key_exists("cmid", $gradeitem)) {
-                $grades[] = new Grade(
-                    grade_id: $gradeitem['id'],
-                    cmid: $gradeitem['cmid'],
-                    name: $gradeitem['itemname'],
-                    percentage: (int)$gradeitem['percentageformatted'],
-                    moodle_id: $this->moodleWrapper->getUserId(),
-                    course_id: $courseId
-                    // feedback: $gradeitem["feedback"],
-                );
-            }
+            $gradeitem['percentageformatted'] = str_replace([' ', '%'], '', $gradeitem['percentageformatted']);
+            $grade = is_numeric($gradeitem['percentageformatted'])
+                ? (int) $gradeitem['percentageformatted']
+                : null;
+
+            $grades[] = new Grade(
+                grade_id: $gradeitem['id'],
+                cmid: $gradeitem['cmid'] ?? null,
+                name: $gradeitem['itemname'] ?? "",
+                percentage: $grade,
+                moodle_id: $this->moodleWrapper->getUserId(),
+                course_id: $courseId,
+                itemtype: $gradeitem['itemtype']
+            );
         }
 
         return $grades;

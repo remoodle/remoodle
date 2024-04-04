@@ -62,18 +62,15 @@ class ParseUserGrades extends BaseHandler
         $courseGradesUpsertArray = [];
 
         foreach($courseGrades as $courseGrade) {
+            if($courseGrade->cmid === null) {
+                continue;
+            }
+
             $courseModulesUpsertArray[] = [
                 "cmid" => $courseGrade->cmid,
                 "course_id" => $courseGrade->course_id,
             ];
-            $courseGradesUpsertArray[] = [
-                "grade_id" => $courseGrade->grade_id,
-                "moodle_id" => $moodleId,
-                "cmid" => $courseGrade->cmid,
-                "course_id" => $courseGrade->course_id,
-                "name" => $courseGrade->name,
-                "percentage" => $courseGrade->percentage,
-            ];
+            $courseGradesUpsertArray[] = (array) $courseGrade;
         }
 
         return [$courseModulesUpsertArray, $courseGradesUpsertArray];

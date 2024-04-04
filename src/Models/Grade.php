@@ -16,7 +16,7 @@ class Grade extends Model
     protected $table = 'grades';
 
     protected $fillable = [
-        'grade_id', 'cmid', 'name', 'percentage', 'moodle_id'
+        'grade_id', 'cmid', 'name', 'percentage', 'moodle_id', 'itemtype'
     ];
 
     public function courseModule(): BelongsTo
