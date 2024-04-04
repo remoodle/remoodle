@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\Moodle;
 
+use App\Modules\Moodle\Entities\Assignment;
 use App\Modules\Moodle\Entities\Course;
 use App\Modules\Moodle\Entities\Event;
 use App\Modules\Moodle\Entities\Grade;
+use App\Modules\Moodle\Entities\IntroAttachment;
 use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use Core\Config;
 use Fugikzl\MoodleWrapper\Moodle as MoodleWrapperMoodle;
@@ -154,5 +156,41 @@ final class Moodle
         }
 
         return $events;
+    }
+
+    /**
+     * @param int $courseId
+     * @return \App\Modules\Moodle\Entities\Assignment[]
+     */
+    public function getCourseAssignments(int $courseId): array
+    {
+        /**
+         * @var \App\Modules\Moodle\Entities\Assignment[]
+         */
+        $assignments = [];
+        foreach($this->moodleWrapper->getAssignments([$courseId])['courses'][0]['assignments'] as $assignment) {
+            $assignments[] = new Assignment(
+                assignment_id: $assignment['id'],
+                course_id: $courseId,
+                name: $assignment['name'],
+                nosubmissions: (bool) $assignment['nosubmissions'],
+                allowsubmissionsfromdate: (int) $assignment['allowsubmissionsfromdate'],
+                duedate: (int) $assignment['duedate'],
+                grade: (int) $assignment['grade'],
+                introattachments: array_map(function ($introattachment): IntroAttachment {
+                    return new IntroAttachment(
+                        filename: $introattachment['filename'],
+                        filepath: $introattachment['filepath'],
+                        filesize: $introattachment['filesize'],
+                        fileurl: $introattachment['fileurl'],
+                        timemodified: $introattachment['timemodified'],
+                        mimetype: $introattachment['mimetype'],
+                        isexternalfile: $introattachment['isexternalfile']
+                    );
+                }, $assignment['introattachments'])
+            );
+        }
+
+        return $assignments;
     }
 }

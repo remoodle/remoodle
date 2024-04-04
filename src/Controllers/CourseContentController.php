@@ -51,7 +51,7 @@ class CourseContentController extends BaseController
             body: Moodle::createFromToken(
                 $user->moodle_token,
                 $user->moodle_id
-            )->getWrapper()->getAssignments([$courseId])['courses'][0]['assignments']
+            )->getCourseAssignments($courseId)
         );
     }
 }
