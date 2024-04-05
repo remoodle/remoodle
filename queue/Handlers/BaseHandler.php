@@ -14,14 +14,25 @@ abstract class BaseHandler implements HandlerInterface
         return $this->container;
     }
 
+    /**
+    * @template T
+    * @param class-string<T> $id
+    * @throws \Psr\Container\NotFoundExceptionInterface
+    * @throws \Psr\Container\ContainerExceptionInterface
+    * @return T
+    */
     protected function get(string $id): mixed
     {
         return $this->container->get($id);
     }
 
-    public function __construct(
+    /**
+     * @param \Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface $receivedTask
+     * @param \Psr\Container\ContainerInterface $container
+     */
+    protected function __construct(
         protected ReceivedTaskInterface $receivedTask,
-        protected ContainerInterface $container
+        protected ContainerInterface $container,
     ) {
         $this->setup();
     }
@@ -34,5 +45,10 @@ abstract class BaseHandler implements HandlerInterface
     public function handle(): void
     {
         //job hanlde code here
+    }
+
+    public static function create(ReceivedTaskInterface $receivedTask, ContainerInterface $container): static
+    {
+        return new static($receivedTask, $container);
     }
 }

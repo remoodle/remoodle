@@ -3,6 +3,7 @@
 declare(strict_types=1);
 use Core\Config;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\Connection;
 use Queue\HandlerFactory\Factory;
 use Spiral\RoadRunner\Jobs\Consumer;
 
@@ -15,6 +16,10 @@ $capsule = new Capsule();
 $capsule->addConnection(Config::get('eloquent'));
 $capsule->setAsGlobal();
 
+$container->bind(Connection::class, function () use ($capsule) {
+    return $capsule->getConnection();
+});
+
 /**@var Factory */
 $factory = $container->get(Factory::class);
 $consumer = new Consumer();
@@ -26,7 +31,7 @@ while (true) {
         continue;
     }
 
-    $handler = $factory->createHandler($task);
+    $handler = $factory->createHandler($task, $container);
 
     if($handler === null) {
         $task->fail("Unable to locate handler.");

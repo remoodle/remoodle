@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Queue\HandlerFactory;
 
 use Core\Config;
+use Psr\Container\ContainerInterface;
 use Queue\Handlers\HandlerInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 
 class Factory
 {
-    public function createHandler(ReceivedTaskInterface $receivedTask): ?HandlerInterface
+    public function createHandler(ReceivedTaskInterface $receivedTask, ContainerInterface $container): ?HandlerInterface
     {
+        /**var class-string<\Queue\Handlers\HandlerInterface> */
         $class = Config::get("queue.handlers.".$receivedTask->getPipeline(), null);
 
         if($class === null) {
@@ -19,7 +21,10 @@ class Factory
         }
 
         if(class_exists($class)) {
-            return new $class($receivedTask);
+            return call_user_func_array(array($class, "create"), [
+                'container' => $container,
+                'receivedTask' => $receivedTask
+            ]);
         }
 
         return null;
