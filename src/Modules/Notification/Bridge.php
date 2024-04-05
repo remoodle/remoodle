@@ -20,19 +20,6 @@ class Bridge
 
     public function notify(MessageBag|Message $message, MoodleUser $moodleUser): true
     {
-        if($message instanceof Message && $message->isForceEmail()) {
-            $queue = $this->factory->createQueue(JobsEnum::NOTIFICATION_EMAIL->value);
-            $queue->dispatch($queue->create(Task::class, igbinary_serialize($message)));
-
-            return true;
-        }
-
-        //TODO: ENUM notify methods
-        //TODO: support messageBag email
-        if($moodleUser->notify_method === 'email' && $message instanceof MessageBag) {
-            throw new \Exception('Currently not supporting');
-        }
-
         if($moodleUser->notify_method === 'get_update') {
             $this->storeUserNotificationsToDatabase($message, $moodleUser);
             return true;

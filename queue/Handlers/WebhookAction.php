@@ -10,6 +10,11 @@ use App\Modules\Notification\Providers\Webhook;
 
 class WebhookAction extends BaseHandler
 {
+    protected function setup(): void
+    {
+
+    }
+
     public function handle(): void
     {
         /**@var \App\Notification\MessageBag */

@@ -12,17 +12,20 @@ use Illuminate\Database\Connection;
 
 class ParseUserEvents extends BaseHandler
 {
-    private Moodle $moodle;
     private Connection $connection;
-    private MoodleUser $user;
+
+    protected function setup(): void
+    {
+        $this->connection = $this->get(Connection::class);
+    }
 
     public function handle(): void
     {
         /**@var \App\Models\MoodleUser */
-        $this->user = new MoodleUser(json_decode($this->receivedTask->getPayload(), true));
-        $this->moodle = Moodle::createFromToken($this->user->moodle_token, $this->user->moodle_id);
-        $this->connection = Manager::connection();
-        $userApiEvents = array_map(fn (Event $event) => (array)$event, $this->moodle->getDeadlines());
+        $user = new MoodleUser(json_decode($this->receivedTask->getPayload(), true));
+        $moodle = Moodle::createFromToken($user->moodle_token, $user->moodle_id);
+        $userApiEvents = array_map(fn (Event $event) => (array)$event, $moodle->getDeadlines());
+
         $this->connection->table("events")->upsert($userApiEvents, ["event_id"]);
         $this->receivedTask->complete();
     }

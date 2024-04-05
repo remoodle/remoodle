@@ -5,6 +5,8 @@ use App\Controllers\AuthController;
 use App\Controllers\SettingsController;
 use Core\Container;
 use App\Middleware\Auth;
+use App\Modules\Jobs\Factory as JobsFactory;
+use App\Modules\Jobs\FactoryInterface;
 use App\Modules\Notification\Providers\Mail\Mailers\Resend;
 use App\Repositories\UserMoodle\ApiUserMoodleRepositoryInterface;
 use App\Repositories\UserMoodle\Concrete\ApiUserMoodleRepository;
@@ -59,6 +61,7 @@ $container->bind(PSR7WorkerInterface::class, function (Container $container) {
 $container->bind(DatabaseUserMoodleRepositoryInterface::class, function (Container $cont) {
     return $cont->make(DatabaseUserMoodleRepository::class);
 });
+$container->bind(FactoryInterface::class, JobsFactory::class);
 $container->bind(ApiUserMoodleRepositoryInterface::class, ApiUserMoodleRepository::class);
 $container->bind(Resend::class, function () {
     return new Resend(Config::get("mail.resend.key"), Config::get("mail.from"));

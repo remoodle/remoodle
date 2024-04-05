@@ -5,58 +5,68 @@ declare(strict_types=1);
 namespace Queue\Handlers;
 
 use App\Models\MoodleUser;
+use App\Modules\Jobs\FactoryInterface;
+use App\Modules\Jobs\JobsEnum;
 use App\Modules\Moodle\Moodle;
-use Core\Config;
-use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Connection;
-use Spiral\Goridge\RPC\RPC;
-use Spiral\RoadRunner\Jobs\Jobs;
 use Spiral\RoadRunner\Jobs\Task\Task;
 
 class ParseUserGrades extends BaseHandler
 {
-    private Moodle $moodle;
     private Connection $connection;
-    private MoodleUser $user;
+    private FactoryInterface $jobsFactory;
+
+    protected function setup(): void
+    {
+        $this->connection = $this->get(Connection::class);
+        $this->jobsFactory = $this->get(FactoryInterface::class);
+    }
 
     public function handle(): void
     {
         /**@var \App\Models\MoodleUser */
-        $this->user = new MoodleUser(json_decode($this->receivedTask->getPayload(), true));
-
-        $this->moodle = Moodle::createFromToken($this->user->moodle_token, $this->user->moodle_id);
-        $this->connection = Manager::connection();
+        $user = new MoodleUser(json_decode($this->receivedTask->getPayload(), true));
+        $moodle = Moodle::createFromToken($user->moodle_token, $user->moodle_id);
 
         $courseModulesUpsert = [];
         $courseGradesUpsert = [];
 
-        foreach($this->user->courseAssigns as $courseAssign) {
-            [$courseModules, $courseGrades] = $this->getCourseModulesAndGrades($courseAssign->course_id, $courseAssign->moodle_id);
+        foreach($user->courseAssigns as $courseAssign) {
+            [$courseModules, $courseGrades] = $this->getCourseModulesAndGrades($courseAssign->course_id, $moodle);
             $courseModulesUpsert = array_merge($courseModulesUpsert, $courseModules);
             $courseGradesUpsert = array_merge($courseGradesUpsert, $courseGrades);
         }
 
+        $this->connection->beginTransaction();
+
         try {
-            $this->connection->beginTransaction();
-            $this->connection->table("course_modules")->upsert($courseModulesUpsert, "cmid");
-            $this->connection->table("grades")->upsert($courseGradesUpsert, ["cmid", "moodle_id"], ["percentage"]);
+            $this->connection
+                ->table("course_modules")
+                ->upsert($courseModulesUpsert, "cmid");
+            $this->connection
+                ->table("grades")
+                ->upsert($courseGradesUpsert, ["cmid", "moodle_id"], ["percentage"]);
+
+            $queue = $this->jobsFactory->createQueue(JobsEnum::PARSE_EVENTS->value);
+            $task = $queue->create(Task::class, $user->toJson());
+            $queue->dispatch($task);
+
             $this->connection->commit();
+            $this->receivedTask->complete();
         } catch (\Throwable $th) {
             $this->connection->rollBack();
             $this->receivedTask->fail($th);
         }
-
-        $jobs = new Jobs(RPC::create(Config::get("rpc.connection")));
-        $queue = $jobs->connect('user_parse_events');
-        $task = $queue->create(Task::class, $this->user->toJson());
-        $queue->dispatch($task);
-
-        $this->receivedTask->complete();
     }
 
-    private function getCourseModulesAndGrades(int $courseId, int $moodleId): array
+    /**
+     * @param int $courseId
+     * @param \App\Modules\Moodle\Moodle $moodle
+     * @return array<int, array>
+     */
+    private function getCourseModulesAndGrades(int $courseId, Moodle $moodle): array
     {
-        $courseGrades = $this->moodle->getCourseGrades($courseId);
+        $courseGrades = $moodle->getCourseGrades($courseId);
 
         $courseModulesUpsertArray = [];
         $courseGradesUpsertArray = [];
@@ -76,6 +86,11 @@ class ParseUserGrades extends BaseHandler
         return [$courseModulesUpsertArray, $courseGradesUpsertArray];
     }
 
+    /**
+     * @param array $currentGrades
+     * @param array $receivedGrades
+     * @return array<int, array>
+     */
     private function getDifference(array $currentGrades, array $receivedGrades): array
     {
         $currentGradesIds = [];
