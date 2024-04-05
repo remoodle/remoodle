@@ -15,7 +15,7 @@ class WebhookAction extends BaseHandler
 
     }
 
-    public function handle(): void
+    protected function dispatch(): void
     {
         /**@var \App\Notification\MessageBag */
         $messageBag = igbinary_unserialize($this->receivedTask->getPayload());
@@ -44,9 +44,7 @@ class WebhookAction extends BaseHandler
         try {
             $webhook->sendRequest();
         } catch (\Throwable $th) {
-            //throw $th;
-            $this->receivedTask->fail($th);
+            throw $th;
         }
-        $this->receivedTask->complete();
     }
 }

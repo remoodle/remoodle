@@ -49,7 +49,7 @@ jobs:
             config:
                 priority: 10
                 prefetch: 10
-        user_registered:
+        user_parse_courses:
             driver: memory
             config:
                 priority: 10
@@ -67,7 +67,7 @@ jobs:
     consume:
         [
             "user_parse_events",
-            "user_registered",
+            "user_parse_courses",
             "user_parse_grades",
             "notification_webhook",
         ]

@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace Queue\Handlers;
 
-use App\Models\MoodleUser;
 use App\Modules\Jobs\FactoryInterface;
-use App\Modules\Jobs\JobsEnum;
 use App\Modules\Moodle\Moodle;
 use Illuminate\Database\Connection;
-use Spiral\RoadRunner\Jobs\Task\Task;
 
 class ParseUserGrades extends BaseHandler
 {
     private Connection $connection;
-    private FactoryInterface $jobsFactory;
 
     protected function setup(): void
     {
@@ -22,10 +18,10 @@ class ParseUserGrades extends BaseHandler
         $this->jobsFactory = $this->get(FactoryInterface::class);
     }
 
-    public function handle(): void
+    protected function dispatch(): void
     {
         /**@var \App\Models\MoodleUser */
-        $user = new MoodleUser(json_decode($this->receivedTask->getPayload(), true));
+        $user = $this->getPayload()->payload();
         $moodle = Moodle::createFromToken($user->moodle_token, $user->moodle_id);
 
         $courseModulesUpsert = [];
@@ -47,15 +43,10 @@ class ParseUserGrades extends BaseHandler
                 ->table("grades")
                 ->upsert($courseGradesUpsert, ["cmid", "moodle_id"], ["percentage"]);
 
-            $queue = $this->jobsFactory->createQueue(JobsEnum::PARSE_EVENTS->value);
-            $task = $queue->create(Task::class, $user->toJson());
-            $queue->dispatch($task);
-
             $this->connection->commit();
-            $this->receivedTask->complete();
         } catch (\Throwable $th) {
             $this->connection->rollBack();
-            $this->receivedTask->fail($th);
+            throw $th;
         }
     }
 

@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Core\Config;
 use Fig\Http\Message\StatusCodeInterface;
 use Illuminate\Database\Connection;
+use Queue\Payload\Payload;
 use Spiral\Goridge\RPC\RPC;
 use Spiral\RoadRunner\Jobs\Task\Task;
 use Spiral\RoadRunner\KeyValue\Factory;
@@ -90,8 +91,15 @@ class Auth
         $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
         $storage->set($user->moodle_token, $user);
 
-        $queue = $this->jobsFactory->createQueue(JobsEnum::PARSE_TOTAL->value);
-        $queue->dispatch($queue->create(Task::class, $user->toJson()));
+        $queue = $this->jobsFactory->createQueue(JobsEnum::PARSE_COURSES->value);
+        $queue->dispatch(
+            $queue->create(
+                name: Task::class,
+                payload: (new Payload(JobsEnum::PARSE_COURSES->value, $user))
+                    ->add(new Payload(JobsEnum::PARSE_GRADES->value, $user))
+                    ->add(new Payload(JobsEnum::PARSE_EVENTS->value, $user))
+            )
+        );
 
         $this->connection->commit();
         return $user;

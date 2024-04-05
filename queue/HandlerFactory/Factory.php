@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Queue\HandlerFactory;
 
+use App\Modules\Jobs\FactoryInterface;
 use Core\Config;
 use Psr\Container\ContainerInterface;
 use Queue\Handlers\HandlerInterface;
@@ -23,7 +24,8 @@ class Factory
         if(class_exists($class)) {
             return call_user_func_array(array($class, "create"), [
                 'container' => $container,
-                'receivedTask' => $receivedTask
+                'receivedTask' => $receivedTask,
+                'jobsFactory' => $container->get(FactoryInterface::class)
             ]);
         }
 

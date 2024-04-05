@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Models\MoodleUser;
 use Core\Config;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Queue\Payload\Payload;
 use Spiral\Goridge\RPC\RPC;
 use Spiral\RoadRunner\Jobs\Jobs;
 use Spiral\RoadRunner\Jobs\Task\Task;
@@ -24,6 +25,6 @@ $queue = $jobs->connect('user_parse_events');
 $users = MoodleUser::all();
 
 foreach($users as $user) {
-    $task = $queue->create(Task::class, $user->toJson());
+    $task = $queue->create(Task::class, (new Payload($queue->getName(), $user)));
     $queue->dispatch($task);
 }

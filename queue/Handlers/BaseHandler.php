@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Queue\Handlers;
 
+use App\Modules\Jobs\Factory;
+use App\Modules\Jobs\FactoryInterface;
 use Psr\Container\ContainerInterface;
+use Queue\Payload\PayloadInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
+use Spiral\RoadRunner\Jobs\Task\Task;
 
 abstract class BaseHandler implements HandlerInterface
 {
@@ -26,6 +30,8 @@ abstract class BaseHandler implements HandlerInterface
         return $this->container->get($id);
     }
 
+    protected PayloadInterface $payload;
+
     /**
      * @param \Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface $receivedTask
      * @param \Psr\Container\ContainerInterface $container
@@ -33,7 +39,9 @@ abstract class BaseHandler implements HandlerInterface
     protected function __construct(
         protected ReceivedTaskInterface $receivedTask,
         protected ContainerInterface $container,
+        protected FactoryInterface $jobsFactory
     ) {
+        $this->payload = igbinary_unserialize($this->receivedTask->getPayload());
         $this->setup();
     }
 
@@ -42,13 +50,53 @@ abstract class BaseHandler implements HandlerInterface
         //setup class
     }
 
-    public function handle(): void
+    protected function getPayload(): PayloadInterface
     {
-        //job hanlde code here
+        return $this->payload;
     }
 
-    public static function create(ReceivedTaskInterface $receivedTask, ContainerInterface $container): static
+    protected function dispatch(): void
     {
-        return new static($receivedTask, $container);
+
+    }
+
+    protected function handleBus(): void
+    {
+        $payload = $this->getPayload();
+        $next = $payload->next();
+
+        if($next === null) {
+            return;
+        }
+
+        $bus = $payload->bus();
+        $headPayload = array_shift($bus);
+        foreach($bus as $busPayload) {
+            $headPayload->add($busPayload);
+        }
+
+        $queue = $this->jobsFactory->createQueue($headPayload->queue());
+        $queue->dispatch(
+            $queue->create(
+                name: Task::class,
+                payload: $headPayload
+            )
+        );
+    }
+
+    public function handle(): void
+    {
+        try {
+            $this->dispatch();
+            $this->handleBus();
+            $this->receivedTask->complete();
+        } catch (\Throwable $th) {
+            $this->receivedTask->fail($th);
+        }
+    }
+
+    public static function create(ReceivedTaskInterface $receivedTask, ContainerInterface $container, FactoryInterface $jobsFactory): static
+    {
+        return new static($receivedTask, $container, $jobsFactory);
     }
 }
