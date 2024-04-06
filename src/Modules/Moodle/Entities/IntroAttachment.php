@@ -25,4 +25,13 @@ class IntroAttachment
         public readonly bool $isexternalfile,
     ) {
     }
+
+    /**
+     * @param int $assignment_id
+     * @return string
+     */
+    public function hash(int $assignment_id): string
+    {
+        return hash('sha256', $assignment_id."|".$this->filename.$this->fileurl.$this->timemodified);
+    }
 }
