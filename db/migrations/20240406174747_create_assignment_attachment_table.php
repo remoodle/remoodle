@@ -33,7 +33,7 @@ final class CreateAssignmentAttachmentTable extends AbstractMigration
             ->addColumn('isexternalfile', 'boolean', ['null' => false])
 
             ->addColumn('assignment_id', 'integer', ['signed' => false, 'null' => false])
-            ->addForeignKey('assignment_id', 'assignments', 'assignment_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
+            ->addForeignKey('assignment_id', 'assignments', 'assignment_id', ['delete' => 'CASCADE'])
             ->create();
     }
 }

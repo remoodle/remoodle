@@ -30,7 +30,16 @@ class SettingsController extends BaseController
 
         return $this->jsonResponse(
             response: $response,
-            body: $user->makeHidden(['password_hash', 'webhook_secret'])
+            body: [
+                'moodle_id' => $user->moodle_id,
+                'name' => $user->name,
+                'username' => $user->username,
+                'grades_notification' => $user->grades_notification,
+                'deadlines_notification' => $user->deadlines_notification,
+                'name_alias' => $user->name_alias,
+                'notify_method' => $user->notify_method,
+                'webhook' => $user->webhook
+            ]
         );
     }
 
@@ -71,7 +80,7 @@ class SettingsController extends BaseController
         } catch (\Throwable $th) {
             $this->kvStorage->set($user->moodle_token, $user);
             $this->connection->rollBack();
-            
+
             throw $th;
         }
 

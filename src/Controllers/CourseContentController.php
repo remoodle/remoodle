@@ -6,13 +6,16 @@ namespace App\Controllers;
 
 use App\Modules\Moodle\Moodle;
 use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
+use App\Repositories\UserMoodle\RepositoryTypes;
+use App\Repositories\UserMoodle\UserMoodleRepositoryFactory;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 class CourseContentController extends BaseController
 {
     public function __construct(
-        private DatabaseUserMoodleRepositoryInterface $userMoodleRepository
+        private DatabaseUserMoodleRepositoryInterface $userMoodleRepository,
+        private UserMoodleRepositoryFactory $userMoodleRepositoryFactory
     ) {
     }
 
@@ -22,10 +25,17 @@ class CourseContentController extends BaseController
         /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute('user');
 
-        $course = $this->userMoodleRepository->getActiveCourses(
+        $courses = $this->userMoodleRepository->getActiveCourses(
             moodleId: $user->moodle_id,
             moodleToken: $user->moodle_token
-        )->keyBy('course_id')[$args['id']];
+        );
+
+        foreach($courses as $cours) { // - govno
+            if($cours->course_id === (int)$args['id']) {
+                $course = (array)$cours;
+                break;
+            }
+        }
 
         if((bool)$request->getQueryParams()['content']) {
             $course['content'] = Moodle::createFromToken(
@@ -44,14 +54,16 @@ class CourseContentController extends BaseController
     {
         /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute('user');
-        $courseId = (int) $args['id'];
 
         return $this->jsonResponse(
             response: $response,
-            body: Moodle::createFromToken(
-                $user->moodle_token,
-                $user->moodle_id
-            )->getCourseAssignments($courseId)
+            body: $this->userMoodleRepositoryFactory->create(
+                $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
+            )->getCourseAssigments(
+                moodleId: $user->moodle_id,
+                moodleToken: $user->moodle_token,
+                courseId: (int) $args['id']
+            )
         );
     }
 }

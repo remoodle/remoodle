@@ -193,4 +193,41 @@ final class Moodle
 
         return $assignments;
     }
+
+    /**
+     * @return \App\Modules\Moodle\Entities\Assignment[]
+     */
+    public function getCoursesAssignments(int ...$courseIds): array
+    {
+        /**
+         * @var \App\Modules\Moodle\Entities\Assignment[]
+         */
+        $assignments = [];
+        foreach($this->moodleWrapper->getAssignments($courseIds)['courses'] as $course) {
+            foreach($course['assignments'] as $assignment) {
+                $assignments[] = new Assignment(
+                    assignment_id: $assignment['id'],
+                    course_id: $course['id'],
+                    name: $assignment['name'],
+                    nosubmissions: (bool) $assignment['nosubmissions'],
+                    allowsubmissionsfromdate: (int) $assignment['allowsubmissionsfromdate'],
+                    duedate: (int) $assignment['duedate'],
+                    grade: (int) $assignment['grade'],
+                    introattachments: array_map(function ($introattachment): IntroAttachment {
+                        return new IntroAttachment(
+                            filename: $introattachment['filename'],
+                            filepath: $introattachment['filepath'],
+                            filesize: $introattachment['filesize'],
+                            fileurl: urldecode($introattachment['fileurl']),
+                            timemodified: $introattachment['timemodified'],
+                            mimetype: $introattachment['mimetype'],
+                            isexternalfile: $introattachment['isexternalfile']
+                        );
+                    }, $assignment['introattachments'])
+                );
+            }
+        }
+
+        return $assignments;
+    }
 }

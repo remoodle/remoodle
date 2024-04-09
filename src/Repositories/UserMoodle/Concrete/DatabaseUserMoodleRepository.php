@@ -7,13 +7,54 @@ namespace App\Repositories\UserMoodle\Concrete;
 use App\Modules\Moodle\Entities\Event as EventEntity;
 use App\Modules\Moodle\Entities\Course as CourseEntity;
 use App\Modules\Moodle\Entities\Grade as GradeEntity;
-use App\Models\{Course, Event, Grade, MoodleUser};
+use App\Modules\Moodle\Entities\Assignment as AssignmentEntity;
+use App\Models\{Assignment, AssignmentAttachment, Course, Event, Grade, MoodleUser};
 use App\Modules\Moodle\BaseMoodleUser;
+use App\Modules\Moodle\Entities\IntroAttachment;
 use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
 
 class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterface
 {
+    // public function __construct(
+    // private Connection $connection
+    // ){}
+
+    /**
+     * @inheritDoc
+     */
+    public function getCourseAssigments(int $moodleId, string $moodleToken, int $courseId): array
+    {
+        return Assignment::where("course_id", $courseId)
+            ->with(['attachments'])
+            ->get()
+            ->map(function (Assignment $assignment): AssignmentEntity {
+                return new AssignmentEntity(
+                    assignment_id: $assignment->assignment_id,
+                    course_id: $assignment->course_id,
+                    name: $assignment->name,
+                    nosubmissions: (bool)$assignment->nosubmissions,
+                    duedate: $assignment->duedate,
+                    allowsubmissionsfromdate: $assignment->allowsubmissionsfromdate,
+                    grade: $assignment->grade,
+                    introattachments: $assignment
+                        ->attachments
+                        ->map(function (AssignmentAttachment $attachment): IntroAttachment {
+                            return new IntroAttachment(
+                                filename: $attachment->filename,
+                                filepath: $attachment->filepath,
+                                filesize: $attachment->filesize,
+                                fileurl: $attachment->fileurl,
+                                timemodified: $attachment->timemodified,
+                                mimetype: $attachment->mimetype,
+                                isexternalfile: (bool)$attachment->isexternalfile,
+                            );
+                        })
+                        ->all()
+                );
+            })
+            ->all();
+    }
+
     /**
      * @inheritDoc
      */
@@ -119,7 +160,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
                     timestart: $event->timestart,
                     instance: $event->instance,
                     name: $event->name,
-                    visible: $event->visible,
+                    visible: (bool)$event->visible,
                     course_id: $event->course_id,
                     course_name: $event->course_name
                 );

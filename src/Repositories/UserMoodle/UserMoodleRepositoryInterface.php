@@ -36,4 +36,13 @@ interface UserMoodleRepositoryInterface
      * @return \App\Modules\Moodle\Entities\Event[]
      */
     public function getDeadlines(int $moodleId, string $moodleToken): array;
+
+    /**
+     * @param int $moodleId
+     * @param string $moodleToken
+     * @param int $courseId
+     * @return \App\Modules\Moodle\Entities\Assignment[]
+     */
+    public function getCourseAssigments(int $moodleId, string $moodleToken, int $courseId): array;
+
 }
