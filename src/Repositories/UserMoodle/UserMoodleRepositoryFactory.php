@@ -4,17 +4,31 @@ declare(strict_types=1);
 
 namespace App\Repositories\UserMoodle;
 
-use App\Repositories\UserMoodle\Concrete\ApiUserMoodleRepository;
-use App\Repositories\UserMoodle\Concrete\DatabaseUserMoodleRepository;
+use Psr\Container\ContainerInterface;
 
 class UserMoodleRepositoryFactory
 {
-    public function create(bool $offline = false): UserMoodleRepositoryInterface
-    {
-        if($offline) {
-            return new DatabaseUserMoodleRepository();
-        }
+    public function __construct(
+        protected ContainerInterface $container
+    ) {
+    }
 
-        return new ApiUserMoodleRepository();
+    /**
+     * @param \App\Repositories\UserMoodle\RepositoryTypes $repositoryType
+     * @return \App\Repositories\UserMoodle\UserMoodleRepositoryInterface
+     */
+    public function create(RepositoryTypes $repositoryType): UserMoodleRepositoryInterface
+    {
+        return $this->get($repositoryType->value);
+    }
+
+    /**
+     * @template T
+     * @param class-string<T> $id
+     * @return T
+     */
+    protected function get(string $id): mixed
+    {
+        return $this->container->get($id);
     }
 }

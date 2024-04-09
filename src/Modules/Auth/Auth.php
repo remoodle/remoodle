@@ -98,6 +98,7 @@ class Auth
                 payload: (new Payload(JobsEnum::PARSE_COURSES->value, $user))
                     ->add(new Payload(JobsEnum::PARSE_GRADES->value, $user))
                     ->add(new Payload(JobsEnum::PARSE_EVENTS->value, $user))
+                    ->add(new Payload(JobsEnum::SET_INITIALIZED->value, $user))
             )
         );
 

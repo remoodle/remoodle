@@ -9,8 +9,31 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface UserMoodleRepositoryInterface
 {
-    public function getActiveCourses(int $moodleId, string $moodleToken): Collection;
-    public function getCourseGrades(int $moodleId, string $moodleToken, int $courseId): Collection;
+    /**
+     * @param int $moodleId
+     * @param string $moodleToken
+     * @return \App\Modules\Moodle\Entities\Course[]
+     */
+    public function getActiveCourses(int $moodleId, string $moodleToken): array;
+
+    /**
+     * @param int $moodleId
+     * @param string $moodleToken
+     * @param int $courseId
+     * @return \App\Modules\Moodle\Entities\Grade[]
+     */
+    public function getCourseGrades(int $moodleId, string $moodleToken, int $courseId): array;
+
+    /**
+     * @param string $moodleToken
+     * @return null|BaseMoodleUser
+     */
     public function getUserInfo(string $moodleToken): ?BaseMoodleUser;
-    public function getDeadlines(int $moodleId, string $moodleToken): Collection;
+
+    /**
+     * @param int $moodleId
+     * @param string $moodleToken
+     * @return \App\Modules\Moodle\Entities\Event[]
+     */
+    public function getDeadlines(int $moodleId, string $moodleToken): array;
 }

@@ -64,12 +64,18 @@ jobs:
             config:
                 priority: 10
                 prefetch: 10
+        user_set_initialized:
+            driver: memory
+            config:
+                priority: 10
+                prefetch: 10
     consume:
         [
             "user_parse_events",
             "user_parse_courses",
             "user_parse_grades",
             "notification_webhook",
+            "user_set_initialized"
         ]
 
 kv: 

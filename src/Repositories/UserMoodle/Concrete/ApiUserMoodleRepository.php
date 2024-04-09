@@ -7,28 +7,38 @@ namespace App\Repositories\UserMoodle\Concrete;
 use App\Modules\Moodle\BaseMoodleUser;
 use App\Modules\Moodle\Moodle;
 use App\Repositories\UserMoodle\ApiUserMoodleRepositoryInterface;
-use Illuminate\Database\Capsule\Manager;
-use Illuminate\Database\Eloquent\Collection;
 
 class ApiUserMoodleRepository implements ApiUserMoodleRepositoryInterface
 {
-    public function getActiveCourses(int $moodleId, string $moodleToken): Collection
+    /**
+     * @inheritDoc
+     */
+    public function getActiveCourses(int $moodleId, string $moodleToken): array
     {
-        return new Collection(Moodle::createFromToken($moodleToken, $moodleId)->getUserCourses());
+        return Moodle::createFromToken($moodleToken, $moodleId)->getUserCourses();
     }
 
-    public function getCourseGrades(int $moodleId, string $moodleToken, int $courseId): Collection
+    /**
+     * @inheritDoc
+     */
+    public function getCourseGrades(int $moodleId, string $moodleToken, int $courseId): array
     {
-        return new Collection(Moodle::createFromToken($moodleToken, $moodleId)->getCourseGrades($courseId));
+        return Moodle::createFromToken($moodleToken, $moodleId)->getCourseGrades($courseId);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getUserInfo(string $moodleToken): ?BaseMoodleUser
     {
         return Moodle::createFromToken($moodleToken)->getUser();
     }
 
-    public function getDeadlines(int $moodleId, string $moodleToken): Collection
+    /**
+     * @inheritDoc
+     */
+    public function getDeadlines(int $moodleId, string $moodleToken): array
     {
-        return new Collection(Moodle::createFromToken($moodleToken, $moodleId)->getDeadlines());
+        return Moodle::createFromToken($moodleToken, $moodleId)->getDeadlines();
     }
 }

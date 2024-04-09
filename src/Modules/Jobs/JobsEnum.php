@@ -11,4 +11,5 @@ enum JobsEnum: string
     case PARSE_GRADES = 'user_parse_grades';
     case PARSE_EVENTS = 'user_parse_events';
     case PARSE_COURSE_ASSIGNMENTS = 'user_parse_course_assignments';
+    case SET_INITIALIZED = 'user_set_initialized';
 }

@@ -8,27 +8,20 @@ use App\Middleware\Auth;
 use App\Modules\Jobs\Factory as JobsFactory;
 use App\Modules\Jobs\FactoryInterface;
 use App\Modules\Notification\Providers\Mail\Mailers\Resend;
-use App\Repositories\UserMoodle\ApiUserMoodleRepositoryInterface;
-use App\Repositories\UserMoodle\Concrete\ApiUserMoodleRepository;
-use App\Repositories\UserMoodle\Concrete\DatabaseUserMoodleRepository;
-use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
-use Slim\Psr7\Factory\ServerRequestFactory;
-use Slim\Psr7\Factory\ResponseFactory;
-use Slim\Psr7\Factory\StreamFactory;
-use Slim\Psr7\Factory\UploadedFileFactory;
 use Core\Config;
 use Phlib\Encrypt\Encryptor\OpenSsl;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Spiral\Goridge\RPC\RPC;
-use Spiral\RoadRunner\Http\PSR7Worker;
-use Spiral\RoadRunner\Http\PSR7WorkerInterface;
-use Spiral\RoadRunner\KeyValue\Factory;
 use Spiral\RoadRunner\KeyValue\Serializer\IgbinarySerializer;
-use Spiral\RoadRunner\KeyValue\StorageInterface;
-use Spiral\RoadRunner\Worker;
-use Spiral\RoadRunner\WorkerInterface;
+use Spiral\RoadRunner\{Worker, WorkerInterface};
+use App\Repositories\UserMoodle\{ApiUserMoodleRepositoryInterface,DatabaseUserMoodleRepositoryInterface};
+use Slim\Psr7\Factory\{ResponseFactory,ServerRequestFactory,StreamFactory,UploadedFileFactory};
+use App\Repositories\UserMoodle\Concrete\{ApiUserMoodleRepository,DatabaseUserMoodleRepository};
+use Spiral\RoadRunner\Http\{PSR7Worker,PSR7WorkerInterface};
+use Spiral\RoadRunner\KeyValue\{Factory,StorageInterface};
 
 $responseFactory = new ResponseFactory();
 $serverRequestFactory = new ServerRequestFactory();
@@ -39,6 +32,10 @@ $encryptor = new OpenSsl(base64_decode(Config::get("crypt.key")));
 $rpcIgbinaryFactory = (new Factory(RPC::create(Config::get("rpc.connection"))))->withSerializer(new IgbinarySerializer());
 
 $container = new Container();
+
+$container->singleton(Factory::class, function () use ($rpcIgbinaryFactory) {
+    return $rpcIgbinaryFactory;
+});
 
 $container->singleton(Psr\Http\Message\ResponseFactoryInterface::class, function () use ($responseFactory) {
     return $responseFactory;
@@ -82,5 +79,8 @@ $container
     ->give(function () use ($rpcIgbinaryFactory) {
         return $rpcIgbinaryFactory->select('users');
     });
+$container->bind(ContainerInterface::class, function () use ($container) {
+    return $container;
+});
 
 return $container;

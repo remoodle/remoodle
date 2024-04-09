@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Modules\Moodle\BaseMoodleUser;
-use Carbon\Carbon;
 use Core\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -33,7 +32,8 @@ class MoodleUser extends Model
         'name_alias',
         'notify_method',
         'webhook',
-        'webhook_secret'
+        'webhook_secret',
+        'initialized'
     ];
 
     protected $hidden = [

@@ -4,44 +4,61 @@ declare(strict_types=1);
 
 namespace App\Repositories\UserMoodle\Concrete;
 
-use App\Models\Course;
-use App\Models\Grade;
-use App\Models\MoodleUser;
+use App\Modules\Moodle\Entities\Event as EventEntity;
+use App\Modules\Moodle\Entities\Course as CourseEntity;
+use App\Modules\Moodle\Entities\Grade as GradeEntity;
+use App\Models\{Course, Event, Grade, MoodleUser};
 use App\Modules\Moodle\BaseMoodleUser;
 use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
 class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterface
 {
-    public function getActiveCourses(int $moodleId, string $moodleToken): Collection
+    /**
+     * @inheritDoc
+     */
+    public function getActiveCourses(int $moodleId, string $moodleToken): array
     {
-        return new Collection(
-            MoodleUser::query()
-            ->with(["courses" => function ($query) {
-                $query->orderBy("course_id", "desc");
-            }])
+        return MoodleUser::query()
+            ->with([
+                "courses" => function ($query) {
+                    $query->orderBy("course_id", "desc");
+                }
+            ])
             ->where("moodle_id", $moodleId)
             ->first()
             ->courses
-            ->toArray()
-        );
+            ->map(function (Course $course) {
+                return new CourseEntity(
+                    course_id: $course->course_id,
+                    name: $course->name,
+                    coursecategory: $course->coursecategory,
+                    start_date: $course->start_date,
+                    end_date: $course->end_date,
+                    url: $course->url
+                );
+            })
+            ->all();
+
     }
 
-    public function getCoursesGrades(int $moodleId, string $moodleToken): Collection
+    public function getCourseGrades(int $moodleId, string $moodleToken, int $courseId): array
     {
-        return new Collection(
-            MoodleUser::query()
-            ->with(["grades"])
-            ->where("moodle_id", $moodleId)
-            ->first()
-            ->grades
-            ->toArray()
-        );
-    }
-
-    public function getCourseGrades(int $moodleId, string $moodleToken, int $courseId): Collection
-    {
-        return new Collection(Grade::where("moodle_id", $moodleId)->where("course_id", $courseId)->get());
+        return Grade::where("moodle_id", $moodleId)
+            ->where("course_id", $courseId)
+            ->get()
+            ->map(function (Grade $elem) use ($courseId) {
+                return new GradeEntity(
+                    grade_id: $elem->grade_id,
+                    course_id: $courseId,
+                    cmid: $elem->cmid,
+                    percentage: $elem->percentage,
+                    moodle_id: $elem->moodle_id,
+                    itemtype: $elem->itemtype,
+                    name: $elem->name
+                );
+            })
+            ->all();
     }
 
     public function getUserInfo(string $moodleToken): ?BaseMoodleUser
@@ -50,6 +67,8 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
         return $moodleUser ? new BaseMoodleUser($moodleToken, $moodleUser->username, $moodleUser->name, $moodleUser->moodle_id) : null;
     }
 
+    //SHIT
+    //TODO: REFACTOR
     public function findByIdentifiers(
         ?string $token = null,
         ?int $moodleId = null,
@@ -80,19 +99,32 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
         return $query->first();
     }
 
-    public function getDeadlines(int $moodleId, string $moodleToken): Collection
+    /**
+     * @inheritDoc
+     */
+    public function getDeadlines(int $moodleId, string $moodleToken): array
     {
-        return new Collection(
-            MoodleUser::query()
-            ->with(["events" => function ($query) {
-                $query->where("timestart", ">", time());
-            }])
+        return MoodleUser::query()
+            ->with([
+                "events" => function ($query) {
+                    $query->where("timestart", ">", time());
+                }
+            ])
             ->where("moodle_id", $moodleId)
             ->first()
             ->events
-            ->makeHidden('laravel_through_key')
-            ->toArray()
-        );
+            ->map(function (Event $event) {
+                return new EventEntity(
+                    event_id: $event->event_id,
+                    timestart: $event->timestart,
+                    instance: $event->instance,
+                    name: $event->name,
+                    visible: $event->visible,
+                    course_id: $event->course_id,
+                    course_name: $event->course_name
+                );
+            })
+            ->all();
     }
 
 }

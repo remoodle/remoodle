@@ -6,13 +6,15 @@ namespace App\Controllers;
 
 use App\Modules\Moodle\Moodle;
 use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
+use App\Repositories\UserMoodle\RepositoryTypes;
+use App\Repositories\UserMoodle\UserMoodleRepositoryFactory;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 class UserCoursesController extends BaseController
 {
     public function __construct(
-        private DatabaseUserMoodleRepositoryInterface $userMoodleRepository
+        private UserMoodleRepositoryFactory $userMoodleRepositoryFactory
     ) {
     }
 
@@ -23,10 +25,9 @@ class UserCoursesController extends BaseController
 
         return $this->jsonResponse(
             response: $response,
-            body: $this->userMoodleRepository->getActiveCourses(
-                moodleId: $user->moodle_id,
-                moodleToken: $user->moodle_token
-            )->toArray()
+            body: $this->userMoodleRepositoryFactory->create(
+                $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
+            )->getActiveCourses($user->moodle_id, $user->moodle_token)
         );
     }
 
@@ -37,7 +38,9 @@ class UserCoursesController extends BaseController
 
         return $this->jsonResponse(
             response: $response,
-            body: $this->userMoodleRepository->getCourseGrades(
+            body: $this->userMoodleRepositoryFactory->create(
+                $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
+            )->getCourseGrades(
                 moodleId: $user->moodle_id,
                 moodleToken: $user->moodle_token,
                 courseId: (int)$args['course']
@@ -52,13 +55,16 @@ class UserCoursesController extends BaseController
 
         return $this->jsonResponse(
             response: $response,
-            body: $this->userMoodleRepository->getDeadlines(
+            body: $this->userMoodleRepositoryFactory->create(
+                $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
+            )->getDeadlines(
                 moodleId: $user->moodle_id,
-                moodleToken: $user->moodle_token
+                moodleToken: $user->moodle_token,
             )
         );
     }
 
+    //Will be removed
     public function getUserOverall(Request $request, Response $response): Response
     {
         /**@var \App\Models\MoodleUser */
