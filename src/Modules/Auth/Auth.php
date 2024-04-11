@@ -73,6 +73,9 @@ class Auth
             throw new \Exception("Given token is invalid or Moodle webservice is down.", StatusCodeInterface::STATUS_BAD_REQUEST);
         }
 
+        $rpc = RPC::create(Config::get("rpc.connection"));
+        $factory = new Factory($rpc);
+        $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
         $this->connection->beginTransaction();
         try {
             $user = MoodleUser::createFromBaseMoodleUser(
@@ -80,28 +83,26 @@ class Auth
                 isset($data["password"]) ? MoodleUser::hashPassword($data["password"]) : null,
                 $data[static::IDENTIFIER_ALIAS] ?? null,
             );
+            $storage->set($user->moodle_token, $user);
 
+            $queue = $this->jobsFactory->createQueue(JobsEnum::PARSE_COURSES->value);
+            $queue->dispatch(
+                $queue->create(
+                    name: Task::class,
+                    payload: (new Payload(JobsEnum::PARSE_COURSES->value, $user))
+                        ->add(new Payload(JobsEnum::PARSE_GRADES->value, $user))
+                        ->add(new Payload(JobsEnum::PARSE_EVENTS->value, $user))
+                        ->add(new Payload(JobsEnum::PARSE_ASSIGNMENTS->value, $user))
+                        ->add(new Payload(JobsEnum::SET_INITIALIZED->value, $user))
+                )
+            );
         } catch (\Throwable $th) {
+            if(isset($user)) {
+                $storage->delete($user->moodle_token);
+            }
             $this->connection->rollBack();
             throw $th;
         }
-
-        $rpc = RPC::create(Config::get("rpc.connection"));
-        $factory = new Factory($rpc);
-        $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
-        $storage->set($user->moodle_token, $user);
-
-        $queue = $this->jobsFactory->createQueue(JobsEnum::PARSE_COURSES->value);
-        $queue->dispatch(
-            $queue->create(
-                name: Task::class,
-                payload: (new Payload(JobsEnum::PARSE_COURSES->value, $user))
-                    ->add(new Payload(JobsEnum::PARSE_GRADES->value, $user))
-                    ->add(new Payload(JobsEnum::PARSE_EVENTS->value, $user))
-                    ->add(new Payload(JobsEnum::PARSE_ASSIGNMENTS->value, $user))
-                    ->add(new Payload(JobsEnum::SET_INITIALIZED->value, $user))
-            )
-        );
 
         $this->connection->commit();
         return $user;
