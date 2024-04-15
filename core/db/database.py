@@ -1,7 +1,7 @@
-from core.config.config import DB_NAME, DB_USER, DB_PASS, DB_HOST
+from core.config.config import DB_URL
 from mongoengine import *
-print(DB_HOST)
-connect(host=f'mongodb+srv://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}')
+
+connect(host=DB_URL)
 
 class User(Document):
     telegram_id = IntField(required=True)
