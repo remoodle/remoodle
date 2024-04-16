@@ -61,13 +61,18 @@ def save_schedule_to_json(schedule, json_file):
         json.dump(schedule, f, indent=4)
 
 def process_pdf_directory(directory):
+    all_schedule = {}
+
     for filename in os.listdir(directory):
         if filename.endswith(".pdf"):
             pdf_path = os.path.join(directory, filename)
             schedule = extract_schedule_from_pdf(pdf_path)
-            json_file = os.path.splitext(pdf_path)[0] + ".json"
-            save_schedule_to_json(schedule, json_file)
-            print("Schedule data from", filename, "has been saved to", json_file)
+            all_schedule.update(schedule)
 
+    json_file = os.path.join("./", "all_course_schedule.json")
+    save_schedule_to_json(all_schedule, json_file)
+    print("All schedule data has been saved to", json_file)
+
+# Directory containing PDF files
 pdf_directory = "./pdf_files"
 process_pdf_directory(pdf_directory)
