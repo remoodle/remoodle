@@ -121,5 +121,3 @@ class Api:
                 await session.close()
                 
                 return response_json
-
-#print(asyncio.run(Api.get_user_info("a7db6e0d88d09725818238634829e01c")))

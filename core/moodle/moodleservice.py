@@ -121,12 +121,14 @@ class Service:
         data = []
         
         for event in deadlines:
-            data.append({
-                'id': event['id'],
-                'course_name': str(event['course']['shortname']).split(' |')[0],
-                'deadline_name': event['name'],
-                'remaining': event['timestart']
-            })
-            
+            try:
+                data.append({
+                    'id': event['id'],
+                    'course_name': str(event['course']['shortname']).split(' |')[0],
+                    'deadline_name': event['name'],
+                    'remaining': event['timestart']
+                })
+            except KeyError:
+                print(f"[ERROR] Key Error in Moodle Deadline, id: " + str(event['id']))
         return data
             
