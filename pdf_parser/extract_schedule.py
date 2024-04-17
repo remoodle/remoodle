@@ -2,6 +2,7 @@ import os
 import pdfplumber
 import json
 
+
 def get_schedule_page(page):
     schedule = {}
     current_day = None
@@ -26,7 +27,15 @@ def get_schedule_page(page):
         }
 
         if current_day in schedule:
-            schedule[current_day].append(entry)
+            # Check if the current entry can be merged with the previous entry
+            if schedule[current_day] and schedule[current_day][-1]["title"] == entry["title"] \
+                    and schedule[current_day][-1]["type"] == entry["type"] \
+                    and schedule[current_day][-1]["classroom"] == entry["classroom"] \
+                    and schedule[current_day][-1]["teacher"] == entry["teacher"]:
+                # Merge by updating the end time of the previous entry
+                schedule[current_day][-1]["end"] = entry["end"]
+            else:
+                schedule[current_day].append(entry)
         else:
             schedule[current_day] = [entry]
 
