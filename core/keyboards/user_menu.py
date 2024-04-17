@@ -176,7 +176,7 @@ def refresh_grades_menu(callback_data: str):
             ),
             InlineKeyboardButton(
                 text="Back ←",
-                callback_data="back_to_menu"
+                callback_data="back_to_grades"
             )
         ]
     ])
