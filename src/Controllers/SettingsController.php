@@ -38,7 +38,8 @@ class SettingsController extends BaseController
                 'deadlines_notification' => $user->deadlines_notification,
                 'name_alias' => $user->name_alias,
                 'notify_method' => $user->notify_method,
-                'webhook' => $user->webhook
+                'webhook' => $user->webhook,
+                'has_password' => (bool)$user->password_hash
             ]
         );
     }
