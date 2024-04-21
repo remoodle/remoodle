@@ -12,7 +12,7 @@ COPY --from=composer:2.3 /usr/bin/composer /usr/bin/composer
 COPY ./composer.* .
 RUN composer install --optimize-autoloader --no-dev
 
-COPY --from=ghcr.io/roadrunner-server/roadrunner:2023.1.1 /usr/bin/rr /app
+COPY --from=ghcr.io/roadrunner-server/roadrunner:2024.1.0 /usr/bin/rr /app
 
 COPY ./ .
 
