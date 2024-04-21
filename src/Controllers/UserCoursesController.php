@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Modules\Moodle\Moodle;
 use App\Repositories\UserMoodle\RepositoryTypes;
 use App\Repositories\UserMoodle\UserMoodleRepositoryFactory;
 use Illuminate\Database\Connection;

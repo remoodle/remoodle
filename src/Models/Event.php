@@ -46,7 +46,7 @@ class Event extends Model
             instance: $this->instance,
             timestart: $this->timestart,
             visible: (bool)$this->visible,
-            course_name: $this->name,
+            course_name: $this->course_name,
             course_id: $this->course_id,
             assignment: $this->assignment()?->toEntity()
         );
