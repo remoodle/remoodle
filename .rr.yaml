@@ -99,4 +99,4 @@ service:
 #       remain_after_exit: true
 #       restart_sec: 10
 metrics:
-    address: "127.0.0.1:2112"
+    address: "${SERVER_HOST:-0.0.0.0}:2112"
