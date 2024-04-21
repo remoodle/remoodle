@@ -39,14 +39,13 @@ class UserCoursesController extends BaseController
 
         return $this->jsonResponse(
             response: $response,
-            // body: $this->userMoodleRepositoryFactory->create(
-            //     $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
-            // )->getCourseGrades(
-            //     moodleId: $user->moodle_id,
-            //     moodleToken: $user->moodle_token,
-            //     courseId: (int)$args['course']
-            // )
-            body: Moodle::createFromToken($user->moodle_token, $user->moodle_id)->getWrapper()->getCourseGrades((int)$args['course'])
+            body: $this->userMoodleRepositoryFactory->create(
+                $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
+            )->getCourseGrades(
+                moodleId: $user->moodle_id,
+                moodleToken: $user->moodle_token,
+                courseId: (int)$args['course']
+            )
         );
     }
 
