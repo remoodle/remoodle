@@ -6,15 +6,18 @@ namespace Queue\Handlers;
 
 use App\Modules\Moodle\Entities\Event;
 use App\Modules\Moodle\Moodle;
+use App\Modules\Search\SearchEngineInterface;
 use Illuminate\Database\Connection;
 
 class ParseUserEvents extends BaseHandler
 {
     private Connection $connection;
+    private SearchEngineInterface $searchEngine;
 
     protected function setup(): void
     {
         $this->connection = $this->get(Connection::class);
+        $this->searchEngine = $this->get(SearchEngineInterface::class);
     }
 
     protected function dispatch(): void
@@ -22,8 +25,18 @@ class ParseUserEvents extends BaseHandler
         /**@var \App\Models\MoodleUser */
         $user = $this->getPayload()->payload();
         $moodle = Moodle::createFromToken($user->moodle_token, $user->moodle_id);
-        $userApiEvents = array_map(fn (Event $event) => (array)$event, $moodle->getDeadlines());
+        $userApiEvents = $moodle->getDeadlines();
 
-        $this->connection->table("events")->upsert($userApiEvents, ["event_id"]);
+        $this->connection->beginTransaction();
+
+        try {
+            $this->connection->table("events")->upsert(array_map(fn (Event $event) => (array)$event, $userApiEvents), ["event_id"]);
+            $this->connection->commit();
+        } catch (\Throwable $th) {
+            $this->connection->rollBack();
+            throw $th;
+        }
+
+        $this->searchEngine->putMany($userApiEvents);
     }
 }

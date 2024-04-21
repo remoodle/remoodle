@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Modules\Moodle\Moodle;
-use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
 use App\Repositories\UserMoodle\RepositoryTypes;
 use App\Repositories\UserMoodle\UserMoodleRepositoryFactory;
+use Illuminate\Database\Connection;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 class UserCoursesController extends BaseController
 {
     public function __construct(
-        private UserMoodleRepositoryFactory $userMoodleRepositoryFactory
+        private UserMoodleRepositoryFactory $userMoodleRepositoryFactory,
+        private Connection $connection
     ) {
     }
 
@@ -26,7 +27,7 @@ class UserCoursesController extends BaseController
         return $this->jsonResponse(
             response: $response,
             body: $this->userMoodleRepositoryFactory->create(
-                $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
+                false ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
             )->getActiveCourses($user->moodle_id, $user->moodle_token)
         );
     }
@@ -38,13 +39,14 @@ class UserCoursesController extends BaseController
 
         return $this->jsonResponse(
             response: $response,
-            body: $this->userMoodleRepositoryFactory->create(
-                $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
-            )->getCourseGrades(
-                moodleId: $user->moodle_id,
-                moodleToken: $user->moodle_token,
-                courseId: (int)$args['course']
-            )
+            // body: $this->userMoodleRepositoryFactory->create(
+            //     $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
+            // )->getCourseGrades(
+            //     moodleId: $user->moodle_id,
+            //     moodleToken: $user->moodle_token,
+            //     courseId: (int)$args['course']
+            // )
+            body: Moodle::createFromToken($user->moodle_token, $user->moodle_id)->getWrapper()->getCourseGrades((int)$args['course'])
         );
     }
 

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Moodle\Entities;
 
-class Event
+use App\Modules\Moodle\Entities\Search\SearchTypeEnum;
+use App\Modules\Search\SearchableInterface;
+
+class Event implements SearchableInterface
 {
     /**
      * @param int $event_id
@@ -24,5 +27,55 @@ class Event
         public readonly int $course_id,
         public readonly string $course_name
     ) {
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getWords(): array
+    {
+        return explode(" ", 'event deadline '.trim($this->name . " " . $this->course_name));
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdColumn(): string
+    {
+        return "event_id";
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdValue(): string
+    {
+        return (string)$this->event_id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUniqueIdentifier(): string
+    {
+        return "event_id" . " | " . $this->event_id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return SearchTypeEnum::EVENT->value;
+    }
+
+    public function getCourseId(): ?int
+    {
+        return $this->course_id;
+    }
+
+    public function getMoodleId(): ?int
+    {
+        return null;
     }
 }

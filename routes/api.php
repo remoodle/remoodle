@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 use App\Controllers\UserNotificationController;
+use App\Middleware\SearchQueryReplace;
 use App\Middleware\Validation\VerifyUserEmail;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\App;
 use App\Controllers\AuthController;
 use App\Controllers\CourseContentController;
+use App\Controllers\SearchController;
 use App\Controllers\SettingsController;
 use App\Controllers\UserCoursesController;
 use App\Controllers\UtilityController;
@@ -18,6 +20,7 @@ use App\Middleware\Validation\GenerateToken;
 use App\Middleware\Validation\GetAuthOptions;
 use App\Middleware\Validation\GetCourseContent;
 use App\Middleware\Validation\RegisterOrShow;
+use App\Middleware\Validation\ValidateSearch;
 use Slim\Routing\RouteCollectorProxy;
 
 return function (App $app) {
@@ -60,6 +63,11 @@ return function (App $app) {
         $api->group("/utility", function (RouteCollectorProxy $utility) {
             $utility->post("/generate-token", [UtilityController::class, "generateToken"])->add(GenerateToken::class);
         });
+
+        $api->post("/search", [SearchController::class, "search"])
+            ->add(Auth::class)
+            ->add(ValidateSearch::class)
+            ->add(SearchQueryReplace::class);
     });
 
 };

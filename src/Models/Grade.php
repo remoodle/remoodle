@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use App\Modules\Moodle\Entities\Grade as GradeEntity;
 
 class Grade extends Model
 {
@@ -27,5 +28,17 @@ class Grade extends Model
     public function course(): HasOneThrough
     {
         return $this->hasOneThrough(Course::class, CourseModule::class, 'cmid', 'course_id', 'cmid', 'course_id');
+    }
+
+    public function toEntity()
+    {
+        return new GradeEntity(
+            grade_id: $this->grade_id,
+            cmid: $this->cmid,
+            percentage: $this->percentage,
+            moodle_id: $this->moodle_id,
+            itemtype: $this->itemtype,
+            name: $this->name
+        );
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\Moodle\Entities\Event as EventEntity;
 
 class Event extends Model
 {
@@ -29,5 +30,18 @@ class Event extends Model
     public function course()
     {
         return $this->belongsTo(Course::class, 'course_id', 'course_id');
+    }
+
+    public function toEntity(): EventEntity
+    {
+        return new EventEntity(
+            event_id: $this->event_id,
+            name: $this->name,
+            instance: $this->instance,
+            timestart: $this->timestart,
+            visible: (bool)$this->visible,
+            course_name: $this->name,
+            course_id: $this->course_id
+        );
     }
 }

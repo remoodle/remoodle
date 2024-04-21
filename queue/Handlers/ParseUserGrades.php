@@ -4,31 +4,33 @@ declare(strict_types=1);
 
 namespace Queue\Handlers;
 
-use App\Modules\Jobs\FactoryInterface;
 use App\Modules\Moodle\Moodle;
+use App\Modules\Search\SearchEngineInterface;
 use Illuminate\Database\Connection;
 
 class ParseUserGrades extends BaseHandler
 {
     private Connection $connection;
+    private SearchEngineInterface $searchEngine;
 
     protected function setup(): void
     {
         $this->connection = $this->get(Connection::class);
-        $this->jobsFactory = $this->get(FactoryInterface::class);
+        $this->searchEngine = $this->get(SearchEngineInterface::class);
     }
 
     protected function dispatch(): void
     {
         /**@var \App\Models\MoodleUser */
         $user = $this->getPayload()->payload();
+        echo "\n\n\nStarted grades " . $user->name . "\n\n\n";
         $moodle = Moodle::createFromToken($user->moodle_token, $user->moodle_id);
 
         $courseModulesUpsert = [];
         $courseGradesUpsert = [];
 
         foreach($user->courseAssigns as $courseAssign) {
-            [$courseModules, $courseGrades] = $this->getCourseModulesAndGrades($courseAssign->course_id, $moodle);
+            [$courseModules, $courseGrades, $gradeEntities] = $this->getCourseModulesAndGrades($courseAssign->course_id, $moodle);
             $courseModulesUpsert = array_merge($courseModulesUpsert, $courseModules);
             $courseGradesUpsert = array_merge($courseGradesUpsert, $courseGrades);
         }
@@ -41,40 +43,43 @@ class ParseUserGrades extends BaseHandler
                 ->upsert($courseModulesUpsert, "cmid");
             $this->connection
                 ->table("grades")
-                ->upsert($courseGradesUpsert, ["cmid", "moodle_id"], ["percentage"]);
-
+                ->upsert($courseGradesUpsert, ["moodle_id", "grade_id"], ["percentage"]);
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();
             throw $th;
         }
+
+        $this->searchEngine->putMany($gradeEntities);
     }
 
     /**
      * @param int $courseId
      * @param \App\Modules\Moodle\Moodle $moodle
-     * @return array<int, array>
+     * @return array{array, array, \App\Modules\Moodle\Entities\Grade[]}
      */
     private function getCourseModulesAndGrades(int $courseId, Moodle $moodle): array
     {
         $courseGrades = $moodle->getCourseGrades($courseId);
+        $courseGradesFiltered = [];
 
         $courseModulesUpsertArray = [];
         $courseGradesUpsertArray = [];
 
         foreach($courseGrades as $courseGrade) {
+            $courseGradesFiltered[] = $courseGrade;
+            $courseGradesUpsertArray[] = (array) $courseGrade;
             if($courseGrade->cmid === null) {
                 continue;
             }
 
             $courseModulesUpsertArray[] = [
                 "cmid" => $courseGrade->cmid,
-                "course_id" => $courseGrade->course_id,
+                "course_id" => $courseId,
             ];
-            $courseGradesUpsertArray[] = (array) $courseGrade;
         }
 
-        return [$courseModulesUpsertArray, $courseGradesUpsertArray];
+        return [$courseModulesUpsertArray, $courseGradesUpsertArray, $courseGradesFiltered];
     }
 
     /**

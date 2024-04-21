@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\Moodle\Entities\Course as CourseEntity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
@@ -52,5 +53,17 @@ class Course extends Model
     public function events(): HasMany
     {
         return $this->hasMany(Event::class, "course_id", "course_id");
+    }
+
+    public function toEntity(): CourseEntity
+    {
+        return new CourseEntity(
+            course_id: $this->course_id,
+            name: $this->name,
+            coursecategory: $this->coursecategory,
+            start_date: $this->start_date,
+            end_date: $this->end_date,
+            url: $this->url
+        );
     }
 }

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 use App\Middleware\ErrorMiddleware;
+use App\Modules\Search\Lemmetizations\KeyValueLemmetization;
 use Core\Config;
 use Slim\Factory\AppFactory;
 use Spiral\RoadRunner\Http\PSR7WorkerInterface;
@@ -24,6 +25,12 @@ $capsule->bootEloquent();
 $container->bind(Connection::class, function () use ($capsule) {
     return $capsule->getConnection();
 });
+
+while($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map") === null) {
+    sleep(1);
+}
+KeyValueLemmetization::bootstrap($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map"));
+
 $worker = $container->get(PSR7WorkerInterface::class);
 while ($req = $worker->waitRequest()) {
     if($req === null) {

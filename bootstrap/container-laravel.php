@@ -8,6 +8,10 @@ use App\Middleware\Auth;
 use App\Modules\Jobs\Factory as JobsFactory;
 use App\Modules\Jobs\FactoryInterface;
 use App\Modules\Notification\Providers\Mail\Mailers\Resend;
+use App\Modules\Search\Engines\EloquentSearch;
+use App\Modules\Search\LemmetizationInterface;
+use App\Modules\Search\Lemmetizations\KeyValueLemmetization;
+use App\Modules\Search\SearchEngineInterface;
 use Core\Config;
 use Phlib\Encrypt\Encryptor\OpenSsl;
 use Psr\Container\ContainerInterface;
@@ -20,6 +24,7 @@ use Spiral\RoadRunner\{Worker, WorkerInterface};
 use App\Repositories\UserMoodle\{ApiUserMoodleRepositoryInterface,DatabaseUserMoodleRepositoryInterface};
 use Slim\Psr7\Factory\{ResponseFactory,ServerRequestFactory,StreamFactory,UploadedFileFactory};
 use App\Repositories\UserMoodle\Concrete\{ApiUserMoodleRepository,DatabaseUserMoodleRepository};
+use Illuminate\Database\Connection;
 use Spiral\RoadRunner\Http\{PSR7Worker,PSR7WorkerInterface};
 use Spiral\RoadRunner\KeyValue\{Factory,StorageInterface};
 
@@ -82,5 +87,10 @@ $container
 $container->bind(ContainerInterface::class, function () use ($container) {
     return $container;
 });
+
+$container->bind(EloquentSearch::class, function (Container $container) {
+    return new EloquentSearch($container->get(Connection::class), $container->get(KeyValueLemmetization::class));
+});
+$container->bind(SearchEngineInterface::class, EloquentSearch::class);
 
 return $container;

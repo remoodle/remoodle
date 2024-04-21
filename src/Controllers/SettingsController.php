@@ -9,7 +9,6 @@ use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Illuminate\Database\Connection;
-use Illuminate\Support\Facades\DB;
 use Spiral\RoadRunner\KeyValue\StorageInterface;
 
 class SettingsController extends BaseController
@@ -78,6 +77,7 @@ class SettingsController extends BaseController
             $this->connection->beginTransaction();
             $this->kvStorage->delete($user->moodle_token);
             $user->delete();
+            $this->connection->commit();
         } catch (\Throwable $th) {
             $this->kvStorage->set($user->moodle_token, $user);
             $this->connection->rollBack();
@@ -85,7 +85,6 @@ class SettingsController extends BaseController
             throw $th;
         }
 
-        $this->connection->commit();
         return $this->jsonResponse($response);
     }
 }

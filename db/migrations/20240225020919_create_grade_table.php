@@ -20,23 +20,23 @@ final class CreateGradeTable extends AbstractMigration
      */
     public function change(): void
     {
-        $table = $this->table('grades', ["id" => false, 'primary_key' => 'grade_id']);
+        $table = $this->table('grades', ["id" => false, 'primary_key' => ['moodle_id', 'grade_id']]);
         $table
             ->addColumn('grade_id', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('moodle_id', 'integer', ['signed' => false, 'null' => false])
 
             ->addColumn('cmid', 'integer', ['signed' => false, 'null' => true])
-            ->addColumn('course_id', 'integer', ['signed' => false, 'null' => false])
+            // ->addColumn('course_id', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('name', 'string', ['null' => false])
             ->addColumn('percentage', 'integer', ['signed' => false, 'null' => true])
             ->addColumn('itemtype', 'string')
 
             ->addForeignKey('moodle_id', 'moodle_users', 'moodle_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addForeignKey('cmid', 'course_modules', 'cmid', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
-            ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
+            // ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addIndex(['moodle_id'], ['unique' => false])
             ->addIndex(['cmid'], ['unique' => false])
-            ->addIndex(['course_id'], ['unique' => false])
+            ->addIndex(['cmid', 'moodle_id'], ['unique' => true])
             ->create();
     }
 }

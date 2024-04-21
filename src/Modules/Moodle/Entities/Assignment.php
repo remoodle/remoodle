@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Moodle\Entities;
 
-class Assignment
+use App\Modules\Moodle\Entities\Search\SearchTypeEnum;
+use App\Modules\Search\SearchableInterface;
+
+class Assignment implements SearchableInterface
 {
     /**
      * @param int $assignment_id
@@ -26,5 +29,54 @@ class Assignment
         public readonly int $grade,
         public readonly array $introattachments
     ) {
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getWords(): array
+    {
+        return  explode(" ", trim('assignment ' . $this->name . " " . implode(" ", array_map(function (IntroAttachment $introAttachment) {
+            return $introAttachment->filename;
+        }, $this->introattachments))));
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdColumn(): string
+    {
+        return "assignment_id";
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdValue(): string
+    {
+        return (string)$this->assignment_id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUniqueIdentifier(): string
+    {
+        return "assignment_id" . " | " . $this->assignment_id;
+    }
+
+    public function getType(): string
+    {
+        return SearchTypeEnum::ASSIGNMENT->value;
+    }
+
+    public function getCourseId(): ?int
+    {
+        return $this->course_id;
+    }
+
+    public function getMoodleId(): ?int
+    {
+        return null;
     }
 }

@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace Queue\Handlers;
 
 use App\Modules\Moodle\Moodle;
+use App\Modules\Search\SearchEngineInterface;
+use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
 use Illuminate\Database\Connection;
 
 class ParseUserAssignments extends BaseHandler
 {
     private Connection $connection;
+    private SearchEngineInterface $searchEngine;
 
     protected function setup(): void
     {
         $this->connection = $this->get(Connection::class);
+        $this->searchEngine = $this->get(SearchEngineInterface::class);
     }
 
     protected function dispatch(): void
@@ -62,11 +66,12 @@ class ParseUserAssignments extends BaseHandler
         try {
             $this->connection->table('assignments')->upsert($upsertAssignmentsArray, ['assignment_id']);
             $this->connection->table('assignment_attachments')->upsert($upsertAssignmentContentsArray, ['hash']);
+            $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();
             throw $th;
         }
 
-        $this->connection->commit();
+        $this->searchEngine->putMany($assisgnments);
     }
 }

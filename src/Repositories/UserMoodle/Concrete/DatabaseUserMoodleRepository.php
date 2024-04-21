@@ -88,10 +88,9 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
         return Grade::where("moodle_id", $moodleId)
             ->where("course_id", $courseId)
             ->get()
-            ->map(function (Grade $elem) use ($courseId) {
+            ->map(function (Grade $elem) {
                 return new GradeEntity(
                     grade_id: $elem->grade_id,
-                    course_id: $courseId,
                     cmid: $elem->cmid,
                     percentage: $elem->percentage,
                     moodle_id: $elem->moodle_id,

@@ -88,6 +88,11 @@ abstract class BaseHandler implements HandlerInterface
     {
         try {
             $this->dispatch();
+        } catch (\Throwable $th) {
+            $this->receivedTask->fail($th);
+        }
+
+        try {
             $this->handleBus();
             $this->receivedTask->complete();
         } catch (\Throwable $th) {

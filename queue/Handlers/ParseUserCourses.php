@@ -10,16 +10,17 @@ use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use App\Modules\Moodle\Moodle;
 use Illuminate\Database\Connection;
 use App\Modules\Moodle\Entities\Course;
+use App\Modules\Search\SearchEngineInterface;
 
 class ParseUserCourses extends BaseHandler
 {
     private Connection $connection;
-    private FactoryInterface $queueFactory;
+    private SearchEngineInterface $searchEngine;
 
     protected function setup(): void
     {
         $this->connection = $this->get(Connection::class);
-        $this->queueFactory = $this->get(FactoryInterface::class);
+        $this->searchEngine = $this->get(SearchEngineInterface::class);
     }
 
     protected function dispatch(): void
@@ -38,23 +39,24 @@ class ParseUserCourses extends BaseHandler
             ]);
             $this->connection
                 ->table("courses")
-                ->upsert($courses, "course_id");
+                ->upsert(array_map(fn (Course $course) => (array)$course, $courses), "course_id");
 
             $this->connection
                 ->table("user_course_assign")
                 ->upsert($coursesAssign, [ "course_id", "moodle_id"], ["classification"]);
-
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();
             throw $th;
         }
+
+        $this->searchEngine->putMany($courses);
     }
 
     /**
      * @param int $moodleId
      * @param \App\Modules\Moodle\Moodle $moodle
-     * @return array<int, array>
+     * @return array{Course[], array}
      */
     private function getUserCoursesAndAssigns(int $moodleId, Moodle $moodle): array
     {
@@ -67,6 +69,6 @@ class ParseUserCourses extends BaseHandler
             ];
         }, $courses);
 
-        return [array_map(fn (Course $course) => (array)$course, $courses), $courseAssign];
+        return [$courses, $courseAssign];
     }
 }

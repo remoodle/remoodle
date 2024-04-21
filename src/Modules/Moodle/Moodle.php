@@ -121,7 +121,6 @@ final class Moodle
                 name: $gradeitem['itemname'] ?? "",
                 percentage: $grade,
                 moodle_id: $this->moodleWrapper->getUserId(),
-                course_id: $courseId,
                 itemtype: $gradeitem['itemtype']
             );
         }

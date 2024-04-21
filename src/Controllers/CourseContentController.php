@@ -15,7 +15,7 @@ class CourseContentController extends BaseController
 {
     public function __construct(
         private DatabaseUserMoodleRepositoryInterface $userMoodleRepository,
-        private UserMoodleRepositoryFactory $userMoodleRepositoryFactory
+        private UserMoodleRepositoryFactory $userMoodleRepositoryFactory,
     ) {
     }
 

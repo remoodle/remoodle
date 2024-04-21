@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+
+use App\Modules\Search\Lemmetizations\KeyValueLemmetization;
 use Core\Config;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Connection;
@@ -19,6 +21,11 @@ $capsule->setAsGlobal();
 $container->bind(Connection::class, function () use ($capsule) {
     return $capsule->getConnection();
 });
+
+while($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map") === null) {
+    sleep(1);
+}
+KeyValueLemmetization::bootstrap($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map"));
 
 /**@var Factory */
 $factory = $container->get(Factory::class);

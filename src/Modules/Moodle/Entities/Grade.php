@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Moodle\Entities;
 
-class Grade
+use App\Modules\Moodle\Entities\Search\SearchTypeEnum;
+use App\Modules\Search\SearchableInterface;
+
+class Grade implements SearchableInterface
 {
     public function __construct(
-        public readonly int $course_id,
         public readonly int $grade_id,
         public readonly ?int $cmid,
         public readonly string $name,
@@ -15,5 +17,55 @@ class Grade
         public readonly int $moodle_id,
         public readonly string $itemtype
     ) {
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getWords(): array
+    {
+        return explode(" ", 'grade ' . trim($this->name));
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdColumn(): string
+    {
+        return "moodle_id-grade_id";
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdValue(): string
+    {
+        return (string)$this->moodle_id."-".(string)$this->grade_id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUniqueIdentifier(): string
+    {
+        return "grade_id" . " | " . $this->grade_id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return SearchTypeEnum::GRADE->value;
+    }
+
+    public function getCourseId(): ?int
+    {
+        return null;
+    }
+
+    public function getMoodleId(): ?int
+    {
+        return $this->moodle_id;
     }
 }
