@@ -27,7 +27,7 @@ class UserCoursesController extends BaseController
         return $this->jsonResponse(
             response: $response,
             body: $this->userMoodleRepositoryFactory->create(
-                false ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
+                $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
             )->getActiveCourses($user->moodle_id, $user->moodle_token)
         );
     }
