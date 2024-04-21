@@ -30,7 +30,11 @@ class ParseUserEvents extends BaseHandler
         $this->connection->beginTransaction();
 
         try {
-            $this->connection->table("events")->upsert(array_map(fn (Event $event) => (array)$event, $userApiEvents), ["event_id"]);
+            $this->connection->table("events")->upsert(array_map(function (Event $event) {
+                $event = (array)$event;
+                unset($event['assignment']);
+                return $event;
+            }, $userApiEvents), ["event_id"]);
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();

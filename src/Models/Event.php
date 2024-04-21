@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\Moodle\Entities\Event as EventEntity;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Event extends Model
 {
@@ -27,9 +28,14 @@ class Event extends Model
         'course_name'
     ];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id', 'course_id');
+    }
+
+    public function assignment(): ?Assignment
+    {
+        return Assignment::where("cmid", $this->instance)->first();
     }
 
     public function toEntity(): EventEntity
@@ -41,7 +47,8 @@ class Event extends Model
             timestart: $this->timestart,
             visible: (bool)$this->visible,
             course_name: $this->name,
-            course_id: $this->course_id
+            course_id: $this->course_id,
+            assignment: $this->assignment()?->toEntity()
         );
     }
 }

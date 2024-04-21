@@ -23,7 +23,6 @@ class ParseUserGrades extends BaseHandler
     {
         /**@var \App\Models\MoodleUser */
         $user = $this->getPayload()->payload();
-        echo "\n\n\nStarted grades " . $user->name . "\n\n\n";
         $moodle = Moodle::createFromToken($user->moodle_token, $user->moodle_id);
 
         $courseModulesUpsert = [];

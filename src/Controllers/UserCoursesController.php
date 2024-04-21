@@ -88,4 +88,9 @@ class UserCoursesController extends BaseController
         );
     }
 
+    // public function getEventByInstance(Request $request, Response $response): Response
+    // {
+
+    // }
+
 }

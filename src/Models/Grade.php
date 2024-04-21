@@ -12,7 +12,7 @@ use App\Modules\Moodle\Entities\Grade as GradeEntity;
 class Grade extends Model
 {
     public $incrementing = false;
-    protected $primaryKey = 'grade_id';
+    protected $primaryKey = 'id';
     public $timestamps = false;
     protected $table = 'grades';
 
@@ -40,5 +40,10 @@ class Grade extends Model
             itemtype: $this->itemtype,
             name: $this->name
         );
+    }
+
+    public static function findFromEntity(int|string $moodle_id, int|string $grade_id): ?static
+    {
+        return static::where("moodle_id", (int) $moodle_id)->where('grade_id', (int) $grade_id)->first();
     }
 }

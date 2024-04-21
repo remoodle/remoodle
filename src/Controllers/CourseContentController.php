@@ -31,7 +31,7 @@ class CourseContentController extends BaseController
         );
 
         foreach($courses as $cours) { // - govno
-            if($cours->course_id === (int)$args['id']) {
+            if($cours->course_id === (int)$args['course']) {
                 $course = (array)$cours;
                 break;
             }
@@ -42,7 +42,7 @@ class CourseContentController extends BaseController
                 moodleId: $user->moodle_id,
                 token: $user->moodle_token
             )->getWrapper()
-            ->getCoursesInfo((int)$args['id']);
+            ->getCoursesInfo((int)$args['course']);
         }
 
         $response->getBody()->write(json_encode($course));
@@ -62,7 +62,7 @@ class CourseContentController extends BaseController
             )->getCourseAssigments(
                 moodleId: $user->moodle_id,
                 moodleToken: $user->moodle_token,
-                courseId: (int) $args['id']
+                courseId: (int) $args['course']
             )
         );
     }

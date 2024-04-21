@@ -14,6 +14,7 @@ use App\Controllers\SettingsController;
 use App\Controllers\UserCoursesController;
 use App\Controllers\UtilityController;
 use App\Middleware\Auth;
+use App\Middleware\CourseAssign;
 use App\Middleware\Validation\AuthPassword;
 use App\Middleware\Validation\ChangeUserSettings;
 use App\Middleware\Validation\GenerateToken;
@@ -42,12 +43,16 @@ return function (App $app) {
             $user->get("/courses/overall", [UserCoursesController::class, "getUserOverall"]);
 
             $user->get("/course/{course}/grades", [UserCoursesController::class, "getCourseGrades"]); //grades
+
+            // $user->get("event/{instance}", [UserCoursesController::class, "getEventByInstance"]);
+            // $user->get("assignment/{cmid}", [UserCoursesController::class, "getAssignmentByCmid"]);
+            // $user->get("grade/{cmid}", [UserCoursesController::class, "getGradeByCmid"]);
+
         })->add(Auth::class);
 
         $api->group("/course", function (RouteCollectorProxy $course) {
-            $course->get("/{id}", [CourseContentController::class, "getCourse"])->add(GetCourseContent::class);
-            $course->get("/{id}/assignments", [CourseContentController::class, "getCourseAssignments"]);
-
+            $course->get("/{course}", [CourseContentController::class, "getCourse"])->add(GetCourseContent::class)->add(CourseAssign::class);
+            $course->get("/{course}/assignments", [CourseContentController::class, "getCourseAssignments"])->add(CourseAssign::class);
         })->add(Auth::class);
 
         $api->group("/auth", function (RouteCollectorProxy $auth) {

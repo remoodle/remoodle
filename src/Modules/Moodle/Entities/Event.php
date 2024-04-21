@@ -25,8 +25,27 @@ class Event implements SearchableInterface
         public readonly string $name,
         public readonly bool $visible,
         public readonly int $course_id,
-        public readonly string $course_name
+        public readonly string $course_name,
+        public readonly ?Assignment $assignment = null
     ) {
+    }
+
+    /**
+     * @param null|Assignment $assignment
+     * @return Event
+     */
+    public function withAssignment(?Assignment $assignment): static
+    {
+        return new static(
+            event_id: $this->event_id,
+            timestart: $this->timestart,
+            instance: $this->instance,
+            name: $this->name,
+            visible: $this->visible,
+            course_id: $this->course_id,
+            course_name: $this->course_name,
+            assignment: $assignment
+        );
     }
 
     /**

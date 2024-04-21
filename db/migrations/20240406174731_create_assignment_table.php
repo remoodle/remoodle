@@ -24,12 +24,16 @@ final class CreateAssignmentTable extends AbstractMigration
         $table
             ->addColumn('assignment_id', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('course_id', 'integer', ['signed' => false, 'null' => false])
+            ->addColumn('cmid', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('name', 'string', ['null' => false])
             ->addColumn('nosubmissions', 'boolean', ['null' => false])
             ->addColumn('duedate', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('allowsubmissionsfromdate', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('grade', 'integer', ['signed' => false, 'null' => false])
             ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
+            ->addIndex('cmid', [
+                'unique' => true
+            ])
             ->create();
     }
 }

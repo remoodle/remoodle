@@ -40,6 +40,7 @@ class ParseUserAssignments extends BaseHandler
             $upsertAssignmentsArray[] = [
                 'assignment_id' => $assisgnment->assignment_id,
                 'course_id' => $assisgnment->course_id,
+                'cmid' => $assisgnment->cmid,
                 'name' => $assisgnment->name,
                 'nosubmissions' => $assisgnment->nosubmissions,
                 'duedate' => $assisgnment->duedate,

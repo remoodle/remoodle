@@ -35,7 +35,7 @@ class SearchController extends BaseController
             $res->related = match ($res->type) {
                 SearchTypeEnum::ASSIGNMENT->value => Assignment::find($res->idValue)->toEntity(),
                 SearchTypeEnum::COURSE->value => Course::find($res->idValue)->toEntity(),
-                SearchTypeEnum::GRADE->value => Grade::find($res->idValue)->toEntity(),
+                SearchTypeEnum::GRADE->value => Grade::findFromEntity(...explode("-", $res->idValue))->toEntity(),
                 SearchTypeEnum::EVENT->value => Event::find($res->idValue)->toEntity(),
                 default => null
             };

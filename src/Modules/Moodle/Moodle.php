@@ -134,13 +134,14 @@ final class Moodle
      * @param null|int $to - time due
      * @return \App\Modules\Moodle\Entities\Event[]
      */
-    public function getDeadlines(?int $from = null, ?int $to = null): array
+    public function getDeadlines(?int $from = null, ?int $to = null, bool $withAssignments = true): array
     {
         $from = $from ?? time();
         $to ??= time() + (3600 * 24 * 7);
 
         $deadlines = $this->moodleWrapper->getCalendarActionByTimesort($from, $to);
         $events = [];
+        $courses = [];
 
         foreach($deadlines["events"] as $event) {
             $events[] = new Event(
@@ -152,8 +153,22 @@ final class Moodle
                 course_name: $event["course"]["shortname"] ?? $event["course"]["fullname"],
                 course_id: $event['course']['id']
             );
+            $courses[$event['course']['id']] = true;
         }
 
+        if($withAssignments) {
+            $assignments = $this->getCoursesAssignments(...array_keys($courses));
+            $assignmentsByCmid = [];
+            foreach($assignments as $assignment) {
+                $assignmentsByCmid[$assignment->cmid] = $assignment;
+            }
+
+            foreach($events as &$event) {
+                if(isset($assignmentsByCmid[$event->instance])) {
+                    $event = $event->withAssignment($assignmentsByCmid[$event->instance]);
+                }
+            }
+        }
         return $events;
     }
 
@@ -161,7 +176,7 @@ final class Moodle
      * @param int $courseId
      * @return \App\Modules\Moodle\Entities\Assignment[]
      */
-    public function getCourseAssignments(int $courseId): array
+    public function getCourseAssignments(int $courseId, bool $withGrades = true): array
     {
         /**
          * @var \App\Modules\Moodle\Entities\Assignment[]
@@ -171,6 +186,7 @@ final class Moodle
             $assignments[] = new Assignment(
                 assignment_id: $assignment['id'],
                 course_id: $courseId,
+                cmid: $assignment['cmid'],
                 name: $assignment['name'],
                 nosubmissions: (bool) $assignment['nosubmissions'],
                 allowsubmissionsfromdate: (int) $assignment['allowsubmissionsfromdate'],
@@ -190,6 +206,20 @@ final class Moodle
             );
         }
 
+        if($withGrades) {
+            $grades = $this->getCourseGrades($courseId);
+            $gradesByCmid = [];
+            foreach($grades as $grade) {
+                $gradesByCmid[$grade->cmid] = $grade;
+            }
+
+            foreach($assignments as &$assignment) {
+                if(isset($gradesByCmid[$assignment->cmid])) {
+                    $assignment = $assignment->withGrade($gradesByCmid[$assignment->cmid]);
+                }
+            }
+        }
+
         return $assignments;
     }
 
@@ -207,6 +237,7 @@ final class Moodle
                 $assignments[] = new Assignment(
                     assignment_id: $assignment['id'],
                     course_id: $course['id'],
+                    cmid: $assignment['cmid'],
                     name: $assignment['name'],
                     nosubmissions: (bool) $assignment['nosubmissions'],
                     allowsubmissionsfromdate: (int) $assignment['allowsubmissionsfromdate'],

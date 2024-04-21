@@ -20,7 +20,7 @@ final class CreateGradeTable extends AbstractMigration
      */
     public function change(): void
     {
-        $table = $this->table('grades', ["id" => false, 'primary_key' => ['moodle_id', 'grade_id']]);
+        $table = $this->table('grades', ["id" => true]);
         $table
             ->addColumn('grade_id', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('moodle_id', 'integer', ['signed' => false, 'null' => false])

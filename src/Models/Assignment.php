@@ -9,6 +9,7 @@ use App\Modules\Moodle\Entities\IntroAttachment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Assignment extends Model
 {
@@ -34,6 +35,7 @@ class Assignment extends Model
         'duedate',
         'allowsubmissionsfromdate',
         'grade',
+        'cmid'
     ];
 
     /**
@@ -49,11 +51,17 @@ class Assignment extends Model
         return $this->hasMany(AssignmentAttachment::class, "assignment_id", "assignment_id");
     }
 
+    public function grade(): ?Grade
+    {
+        return Grade::where("cmid", $this->cmid)->first();
+    }
+
     public function toEntity(): EntitiesAssignment
     {
         return new EntitiesAssignment(
             assignment_id: $this->assignment_id,
             course_id: $this->course_id,
+            cmid: $this->cmid,
             name: $this->name,
             nosubmissions: (bool)$this->nosubmissions,
             duedate: $this->duedate,
@@ -72,7 +80,8 @@ class Assignment extends Model
                         isexternalfile: (bool)$attachment->isexternalfile,
                     );
                 })
-                ->all()
+                ->all(),
+            gradeEntity: $this->grade()?->toEntity()
         );
     }
 }

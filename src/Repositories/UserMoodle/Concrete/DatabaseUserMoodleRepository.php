@@ -12,12 +12,14 @@ use App\Models\{Assignment, AssignmentAttachment, Course, Event, Grade, MoodleUs
 use App\Modules\Moodle\BaseMoodleUser;
 use App\Modules\Moodle\Entities\IntroAttachment;
 use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
+use Illuminate\Database\Connection;
 
 class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterface
 {
-    // public function __construct(
-    // private Connection $connection
-    // ){}
+    public function __construct(
+        private Connection $db
+    ) {
+    }
 
     /**
      * @inheritDoc
@@ -28,29 +30,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
             ->with(['attachments'])
             ->get()
             ->map(function (Assignment $assignment): AssignmentEntity {
-                return new AssignmentEntity(
-                    assignment_id: $assignment->assignment_id,
-                    course_id: $assignment->course_id,
-                    name: $assignment->name,
-                    nosubmissions: (bool)$assignment->nosubmissions,
-                    duedate: $assignment->duedate,
-                    allowsubmissionsfromdate: $assignment->allowsubmissionsfromdate,
-                    grade: $assignment->grade,
-                    introattachments: $assignment
-                        ->attachments
-                        ->map(function (AssignmentAttachment $attachment): IntroAttachment {
-                            return new IntroAttachment(
-                                filename: $attachment->filename,
-                                filepath: $attachment->filepath,
-                                filesize: $attachment->filesize,
-                                fileurl: $attachment->fileurl,
-                                timemodified: $attachment->timemodified,
-                                mimetype: $attachment->mimetype,
-                                isexternalfile: (bool)$attachment->isexternalfile,
-                            );
-                        })
-                        ->all()
-                );
+                return $assignment->toEntity();
             })
             ->all();
     }
@@ -154,17 +134,32 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
             ->first()
             ->events
             ->map(function (Event $event) {
-                return new EventEntity(
-                    event_id: $event->event_id,
-                    timestart: $event->timestart,
-                    instance: $event->instance,
-                    name: $event->name,
-                    visible: (bool)$event->visible,
-                    course_id: $event->course_id,
-                    course_name: $event->course_name
-                );
+                return $event->toEntity();
             })
             ->all();
     }
 
+    public function getAssignmentByCmid(int $moodleId, string $moodleToken, int $cmid): AssignmentEntity
+    {
+        return Assignment::where("cmid", $cmid)->first()->toEntity();
+    }
+    public function getGradeByCmid(int $moodleId, string $moodleToken, int $cmid): GradeEntity
+    {
+        return Grade::where("cmid", $cmid)->first()->toEntity();
+    }
+
+    public function getEventByInstance(int $moodleId, string $moodleToken, int $instance): EventEntity
+    {
+        return Event::where("instance", $instance)->first()->toEntity();
+    }
+
+    public function isUserAssignedToCourse(int $moodleId, int $courseId): bool
+    {
+        return $this
+            ->db
+            ->table("user_course_assign")
+            ->where("moodle_id", $moodleId)
+            ->where("course_id", $courseId)
+            ->exists();
+    }
 }

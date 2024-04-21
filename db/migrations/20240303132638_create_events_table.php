@@ -34,6 +34,7 @@ final class CreateEventsTable extends AbstractMigration
             ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
 
             ->addIndex(['course_id'], ['unique' => false])
+            ->addIndex(['instance'], ['unique' => true])
             ->create();
     }
 }
