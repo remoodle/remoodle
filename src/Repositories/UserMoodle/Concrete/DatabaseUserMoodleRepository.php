@@ -27,7 +27,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
     public function getCourseAssigments(int $moodleId, string $moodleToken, int $courseId): array
     {
         return Assignment::where("course_id", $courseId)
-            ->with(['attachments'])
+            ->with(['attachments', 'relatedGrade'])
             ->get()
             ->map(function (Assignment $assignment): AssignmentEntity {
                 return $assignment->toEntity();
@@ -130,7 +130,9 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
             ->with([
                 "events" => function ($query) {
                     $query->where("timestart", ">", time());
-                }
+                },
+                "events.assignment",
+                "events.assignment.relatedGrade",
             ])
             ->where("moodle_id", $moodleId)
             ->first()

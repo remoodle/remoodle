@@ -51,9 +51,14 @@ class Assignment extends Model
         return $this->hasMany(AssignmentAttachment::class, "assignment_id", "assignment_id");
     }
 
-    public function grade(): ?Grade
+    // public function grade(): ?Grade
+    // {
+    //     return Grade::where("cmid", $this->cmid)->first();
+    // }
+
+    public function relatedGrade(): HasOne
     {
-        return Grade::where("cmid", $this->cmid)->first();
+        return $this->hasOne(Grade::class, "cmid", "cmid");
     }
 
     public function toEntity(): EntitiesAssignment
@@ -81,7 +86,7 @@ class Assignment extends Model
                     );
                 })
                 ->all(),
-            gradeEntity: $this->grade()?->toEntity()
+            gradeEntity: $this->relatedGrade?->toEntity()
         );
     }
 }

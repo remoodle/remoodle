@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\Moodle\Entities\Event as EventEntity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Event extends Model
 {
@@ -33,10 +34,17 @@ class Event extends Model
         return $this->belongsTo(Course::class, 'course_id', 'course_id');
     }
 
-    public function assignment(): ?Assignment
+    // public function assignment(): ?Assignment
+    // {
+    //     return Assignment::where("cmid", $this->instance)->first();
+    // }
+
+    public function assignment(): HasOne
     {
-        return Assignment::where("cmid", $this->instance)->first();
+        return $this->hasOne(Assignment::class, "cmid", "instance");
+        // return Assignment::where("cmid", $this->instance)->first();
     }
+
 
     public function toEntity(): EventEntity
     {
@@ -48,7 +56,7 @@ class Event extends Model
             visible: (bool)$this->visible,
             course_name: $this->course_name,
             course_id: $this->course_id,
-            assignment: $this->assignment()?->toEntity()
+            assignment: $this->assignment?->toEntity()
         );
     }
 }
