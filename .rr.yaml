@@ -15,6 +15,7 @@ http:
         - gzip
         - static
         - headers
+        - http_metrics
     headers:
         response:
             Version: ${VERSION_TAG:-dev}
