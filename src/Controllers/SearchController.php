@@ -68,7 +68,7 @@ class SearchController extends BaseController
                         return $course->toEntity();
                     }),
                 SearchTypeEnum::EVENT->value => Event::whereIn("event_id", $searchables->pluck('idValue'))
-                    ->with(["assignment". "assignment.gradeEntity"])
+                    ->with(["assignment", "assignment.relatedGrade"])
                     ->get()
                     ->map(function (Event $event): EventEntity {
                         return $event->toEntity();
