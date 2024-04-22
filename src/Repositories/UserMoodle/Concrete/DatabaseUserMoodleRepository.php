@@ -65,8 +65,10 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
 
     public function getCourseGrades(int $moodleId, string $moodleToken, int $courseId): array
     {
-        return Grade::where("moodle_id", $moodleId)
-            ->where("course_id", $courseId)
+        return Course::where("course_id", $courseId)
+            ->first()
+            ?->grades()
+            ->where("moodle_id", $moodleId)
             ->get()
             ->map(function (Grade $elem) {
                 return new GradeEntity(

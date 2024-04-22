@@ -25,6 +25,7 @@ final class CreateGradeTable extends AbstractMigration
             ->addColumn('grade_id', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('moodle_id', 'integer', ['signed' => false, 'null' => false])
 
+
             ->addColumn('cmid', 'integer', ['signed' => false, 'null' => true])
             // ->addColumn('course_id', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('name', 'string', ['null' => false])
