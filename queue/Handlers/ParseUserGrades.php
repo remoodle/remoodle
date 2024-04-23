@@ -42,7 +42,11 @@ class ParseUserGrades extends BaseHandler
                 ->upsert($courseModulesUpsert, "cmid");
             $this->connection
                 ->table("grades")
-                ->upsert($courseGradesUpsert, ["moodle_id", "grade_id"], ["percentage"]);
+                ->upsert(
+                    $courseGradesUpsert,
+                    ["moodle_id", "grade_id"],
+                    ["percentage", "graderaw", "feedbackformat", "feedback"]
+                );
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();

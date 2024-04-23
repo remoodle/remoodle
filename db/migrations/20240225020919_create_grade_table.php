@@ -31,6 +31,13 @@ final class CreateGradeTable extends AbstractMigration
             ->addColumn('name', 'string', ['null' => false])
             ->addColumn('percentage', 'integer', ['signed' => false, 'null' => true])
             ->addColumn('itemtype', 'string')
+            ->addColumn('itemmodule', 'string', ['null' => true])
+            ->addColumn('iteminstance', 'integer', ['signed' => false, 'null' => true])
+            ->addColumn('grademin', 'integer', ['signed' => false, 'null' => false])
+            ->addColumn('grademax', 'integer', ['signed' => false, 'null' => false])
+            ->addColumn('feedbackformat', 'integer', ['signed' => false, 'null' => false])
+            ->addColumn('graderaw', 'float', ['null' => true])
+            ->addColumn('feedback', 'text', ['null' => true])
 
             ->addForeignKey('moodle_id', 'moodle_users', 'moodle_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addForeignKey('cmid', 'course_modules', 'cmid', ['delete' => 'CASCADE', 'update' => 'CASCADE'])

@@ -121,7 +121,14 @@ final class Moodle
                 name: $gradeitem['itemname'] ?? "",
                 percentage: $grade,
                 moodle_id: $this->moodleWrapper->getUserId(),
-                itemtype: $gradeitem['itemtype']
+                itemtype: $gradeitem['itemtype'],
+                itemmodule: $gradeitem['itemmodule'],
+                iteminstance: $gradeitem['iteminstance'],
+                grademin: $gradeitem['grademin'],
+                grademax: $gradeitem['grademax'],
+                feedbackformat: $gradeitem['feedbackformat'],
+                graderaw: $gradeitem['graderaw'],
+                feedback: $gradeitem['feedback'],
             );
         }
 

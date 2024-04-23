@@ -17,7 +17,19 @@ class Grade extends Model
     protected $table = 'grades';
 
     protected $fillable = [
-        'grade_id', 'cmid', 'name', 'percentage', 'moodle_id', 'itemtype'
+        'grade_id',
+        'cmid',
+        'name',
+        'percentage',
+        'moodle_id',
+        'itemtype',
+        'itemmodule',
+        'iteminstance',
+        'grademin',
+        'grademax',
+        'feedbackformat',
+        'graderaw',
+        'feedback'
     ];
 
     public function courseModule(): BelongsTo
@@ -38,7 +50,14 @@ class Grade extends Model
             percentage: $this->percentage,
             moodle_id: $this->moodle_id,
             itemtype: $this->itemtype,
-            name: $this->name
+            name: $this->name,
+            grademax: $this->grademax,
+            grademin: $this->grademin,
+            feedbackformat: $this->feedbackformat,
+            itemmodule: $this->itemmodule,
+            graderaw: $this->graderaw,
+            feedback: $this->feedback,
+            iteminstance: $this->iteminstance
         );
     }
 

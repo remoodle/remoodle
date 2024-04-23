@@ -71,14 +71,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
             ->where("moodle_id", $moodleId)
             ->get()
             ->map(function (Grade $elem) {
-                return new GradeEntity(
-                    grade_id: $elem->grade_id,
-                    cmid: $elem->cmid,
-                    percentage: $elem->percentage,
-                    moodle_id: $elem->moodle_id,
-                    itemtype: $elem->itemtype,
-                    name: $elem->name
-                );
+                return $elem->toEntity();
             })
             ->all();
     }

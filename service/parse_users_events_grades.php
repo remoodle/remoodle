@@ -32,7 +32,6 @@ foreach($users as $user) {
             payload: (new Payload(JobsEnum::PARSE_GRADES->value, $user))
         )
     );
-    echo "\n\nPUSHED GRADE " . $user->name . "\n\n";
     $queue->dispatch(
         $queue->create(
             name: Task::class,

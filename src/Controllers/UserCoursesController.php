@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Modules\Moodle\Moodle;
 use App\Repositories\UserMoodle\RepositoryTypes;
 use App\Repositories\UserMoodle\UserMoodleRepositoryFactory;
 use Illuminate\Database\Connection;
@@ -46,6 +47,12 @@ class UserCoursesController extends BaseController
                 courseId: (int)$args['course']
             )
         );
+
+
+        // return $this->jsonResponse(
+        //     response: $response,
+        //     body: Moodle::createFromToken($user->moodle_token, $user->moodle_id)->getWrapper()->getCourseGrades((int)$args['course'])
+        // );
     }
 
     public function getDeadlines(Request $request, Response $response): Response
