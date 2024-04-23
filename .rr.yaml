@@ -31,7 +31,7 @@ http:
         num_workers: ${HTTP_NUM_WORKERS:-6}
         supervisor:
         max_worker_memory: 100
-        debug: true
+        debug: false
 logs:
     mode: ${MODE:-development}
     # Logging level can be "panic", "error", "warn", "info", "debug".
