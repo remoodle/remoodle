@@ -201,6 +201,8 @@ final class Moodle
                 allowsubmissionsfromdate: (int) $assignment['allowsubmissionsfromdate'],
                 duedate: (int) $assignment['duedate'],
                 grade: (int) $assignment['grade'],
+                intro: $assignment['intro'],
+                introformat: (int) $assignment['introformat'],
                 introattachments: array_map(function ($introattachment): IntroAttachment {
                     return new IntroAttachment(
                         filename: $introattachment['filename'],
@@ -252,6 +254,8 @@ final class Moodle
                     allowsubmissionsfromdate: (int) $assignment['allowsubmissionsfromdate'],
                     duedate: (int) $assignment['duedate'],
                     grade: (int) $assignment['grade'],
+                    intro: $assignment['intro'],
+                    introformat: (int) $assignment['introformat'],
                     introattachments: array_map(function ($introattachment): IntroAttachment {
                         return new IntroAttachment(
                             filename: $introattachment['filename'],
