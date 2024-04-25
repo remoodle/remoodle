@@ -46,6 +46,8 @@ class ParseUserAssignments extends BaseHandler
                 'duedate' => $assisgnment->duedate,
                 'allowsubmissionsfromdate' => $assisgnment->allowsubmissionsfromdate,
                 'grade' => $assisgnment->grade,
+                'intro' => $assisgnment->intro,
+                'introformat' => $assisgnment->introformat,
             ];
 
             foreach($assisgnment->introattachments as $introattachment) {

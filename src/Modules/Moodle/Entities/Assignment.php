@@ -30,6 +30,8 @@ class Assignment implements SearchableInterface
         public readonly int $allowsubmissionsfromdate,
         public readonly int $grade,
         public readonly array $introattachments,
+        public readonly int $introformat,
+        public readonly ?string $intro = null,
         public readonly ?Grade $gradeEntity = null
     ) {
     }
@@ -46,6 +48,8 @@ class Assignment implements SearchableInterface
             allowsubmissionsfromdate: $this->allowsubmissionsfromdate,
             grade: $this->grade,
             introattachments: $this->introattachments,
+            intro: $this->intro,
+            introformat: $this->introformat,
             gradeEntity: $grade,
         );
     }

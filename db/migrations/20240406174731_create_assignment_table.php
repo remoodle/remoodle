@@ -30,6 +30,9 @@ final class CreateAssignmentTable extends AbstractMigration
             ->addColumn('duedate', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('allowsubmissionsfromdate', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('grade', 'integer', ['signed' => false, 'null' => false])
+            ->addColumn('introformat', 'integer', ['signed' => false, 'null' => false])
+            ->addColumn('intro', 'text', ['null' => true])
+
             ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addIndex('cmid', [
                 'unique' => true

@@ -35,7 +35,9 @@ class Assignment extends Model
         'duedate',
         'allowsubmissionsfromdate',
         'grade',
-        'cmid'
+        'cmid',
+        'intro',
+        'introformat'
     ];
 
     /**
@@ -86,6 +88,8 @@ class Assignment extends Model
                     );
                 })
                 ->all(),
+            intro: $this->intro,
+            introformat: $this->introformat,
             gradeEntity: $this->relatedGrade?->toEntity()
         );
     }
