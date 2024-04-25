@@ -6,7 +6,6 @@ use App\Modules\Search\Lemmetizations\KeyValueLemmetization;
 use Core\Config;
 use Slim\Factory\AppFactory;
 use Spiral\RoadRunner\Http\PSR7WorkerInterface;
-use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Connection;
 
 require_once __DIR__ . "/vendor/autoload.php";
@@ -16,15 +15,6 @@ Config::loadConfigs();
 /**@var Core\Container */
 $container = require __DIR__ . "/bootstrap/container-laravel.php";
 $routes = require __DIR__ . "/routes/api.php";
-
-$capsule = new Capsule($container);
-$capsule->addConnection(Config::get('eloquent'));
-$capsule->setAsGlobal();
-
-$capsule->bootEloquent();
-$container->bind(Connection::class, function () use ($capsule) {
-    return $capsule->getConnection();
-});
 
 while($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map") === null) {
     sleep(1);
@@ -50,20 +40,22 @@ while ($req = $worker->waitRequest()) {
     }
 
     try {
-        try {
-            $pdo = $capsule->getConnection()->getPdo();
-            if($pdo === null) {
-                throw new PDOException();
-            }
-        } catch (\Throwable $th) {
-            $capsule->getConnection()->reconnect();
-        }
+        // try {
+        //     $connection = $container->get(Connection::class);
+        //     $pdo = $connection->getPdo();
+        //     if($pdo === null) {
+        //         throw new PDOException();
+        //     }
+        // } catch (\Throwable $th) {
+        //     $connection->reconnect();
+        // }
 
         $res = $app->handle($req);
         $worker->respond($res);
     } catch (Throwable $e) {
         $worker->getWorker()->error($e->getMessage());
-    } finally {
-        gc_collect_cycles();
     }
+    // finally {
+    //     gc_collect_cycles();
+    // }
 }

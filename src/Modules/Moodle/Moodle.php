@@ -16,6 +16,8 @@ use GuzzleHttp\Client;
 
 final class Moodle
 {
+    private const WEEK = 604800;
+
     public static function constructMoodleWrapper(string $token, ?int $moodleUserId = null): MoodleWrapperMoodle
     {
         return new MoodleWrapperMoodle(Config::get("moodle.webservice_url"), $token, $moodleUserId);
@@ -143,8 +145,8 @@ final class Moodle
      */
     public function getDeadlines(?int $from = null, ?int $to = null, bool $withAssignments = true): array
     {
-        $from = $from ?? time();
-        $to ??= time() + (3600 * 24 * 7);
+        $from ??= time();
+        $to ??= time() + static::WEEK * 4;
 
         $deadlines = $this->moodleWrapper->getCalendarActionByTimesort($from, $to);
         $events = [];
