@@ -47,12 +47,6 @@ class UserCoursesController extends BaseController
                 courseId: (int)$args['course']
             )
         );
-
-
-        // return $this->jsonResponse(
-        //     response: $response,
-        //     body: Moodle::createFromToken($user->moodle_token, $user->moodle_id)->getWrapper()->getCourseGrades((int)$args['course'])
-        // );
     }
 
     public function getDeadlines(Request $request, Response $response): Response

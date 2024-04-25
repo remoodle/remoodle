@@ -30,13 +30,13 @@ foreach($users as $user) {
     $queueEvents->dispatch(
         $queueEvents->create(
             name: Task::class,
-            payload: (new Payload(JobsEnum::PARSE_GRADES->value, $user))
+            payload: (new Payload(JobsEnum::PARSE_EVENTS->value, $user))
         )
     );
     $queueGrades->dispatch(
         $queueGrades->create(
             name: Task::class,
-            payload: (new Payload(JobsEnum::PARSE_EVENTS->value, $user))
+            payload: (new Payload(JobsEnum::PARSE_GRADES->value, $user))
         )
     );
 }
