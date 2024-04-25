@@ -6,6 +6,7 @@ namespace Core\ServiceProvider\Application;
 
 use App\Controllers\AuthController;
 use App\Controllers\SettingsController;
+use App\Middleware\Auth as MiddlewareAuth;
 use App\Modules\Auth\Auth;
 use App\Repositories\UserMoodle\ApiUserMoodleRepositoryInterface;
 use App\Repositories\UserMoodle\Concrete\ApiUserMoodleRepository;
@@ -41,6 +42,13 @@ class ApplicationProvider implements ServiceProviderInterface
 
         $container
             ->when(Auth::class)
+            ->needs(StorageInterface::class)
+            ->give(function () use ($container) {
+                return $container->get(Factory::class)->select('users');
+            });
+
+        $container
+            ->when(MiddlewareAuth::class)
             ->needs(StorageInterface::class)
             ->give(function () use ($container) {
                 return $container->get(Factory::class)->select('users');
