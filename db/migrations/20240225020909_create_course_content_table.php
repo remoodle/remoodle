@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Phinx\Db\Adapter\MysqlAdapter;
 use Phinx\Migration\AbstractMigration;
 
 final class CreateCourseContentTable extends AbstractMigration
@@ -28,7 +29,7 @@ final class CreateCourseContentTable extends AbstractMigration
             ->addColumn('uservisible', 'boolean', ['null' => false])
             ->addColumn('summaryformat', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('hiddenbynumsections', 'integer', ['signed' => false, 'null' => false])
-            ->addColumn('summary', 'text', ['null' => true])
+            ->addColumn('summary', 'text', ['null' => true, 'limit' => MysqlAdapter::TEXT_LONG])
             ->addColumn('section', 'integer', ['null' => false, 'signed' => false])
             ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->create();
