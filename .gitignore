@@ -3,3 +3,4 @@ vendor/*
 rr
 composer.lock
 .php-cs-fixer.cache
+test.php
