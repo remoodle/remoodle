@@ -46,12 +46,12 @@ jobs:
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
           # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g' | sed -e 's/refs_heads_main//g')
 
           # Create server version tag
           LATEST_TAG=${{ steps.latest_tag.outputs.result }}
           SHA=${{ github.workflow_sha }}
-          VERSION_TAG=${LATEST_TAG}.${SHA::8}::${VERSION}
+          VERSION_TAG=${LATEST_TAG}.${SHA::8}.$VERSION
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
