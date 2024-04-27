@@ -39,11 +39,11 @@ class CourseModule
         public readonly bool $noviewlink,
         public readonly int $visibleoncoursepage,
         public readonly bool $uservisible,
-        public readonly string $url,
         public readonly int $completion,
         public readonly string $description,
         public readonly string $modicon,
         public readonly string $name,
+        public readonly ?string $url = null,
         public readonly ?CourseModuleCompletionData $completionData = null,
         public readonly ?array $dates = null,
         public readonly ?array $contents = null

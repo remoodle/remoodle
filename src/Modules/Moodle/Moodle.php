@@ -367,7 +367,7 @@ final class Moodle
                     noviewlink: $courseModuleArray["noviewlink"],
                     visibleoncoursepage: $courseModuleArray["visibleoncoursepage"],
                     uservisible: $courseModuleArray["uservisible"],
-                    url: $courseModuleArray["url"],
+                    url: $this->issetOrNullArray($courseModuleArray, "url"),
                     completion: $courseModuleArray["completion"],
                     description: $this->issetOrNullArray($courseModuleArray, "description") ?? "",
                     modicon: $courseModuleArray["modicon"],
