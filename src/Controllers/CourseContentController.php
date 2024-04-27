@@ -41,8 +41,7 @@ class CourseContentController extends BaseController
             $course['content'] = Moodle::createFromToken(
                 moodleId: $user->moodle_id,
                 token: $user->moodle_token
-            )->getWrapper()
-            ->getCoursesInfo((int)$args['course']);
+            )->getCourseContent((int)$args['course']);
         }
 
         $response->getBody()->write(json_encode($course));

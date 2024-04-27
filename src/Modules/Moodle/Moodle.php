@@ -6,6 +6,11 @@ namespace App\Modules\Moodle;
 
 use App\Modules\Moodle\Entities\Assignment;
 use App\Modules\Moodle\Entities\Course;
+use App\Modules\Moodle\Entities\CourseContent;
+use App\Modules\Moodle\Entities\CourseModule;
+use App\Modules\Moodle\Entities\CourseModuleAttachment;
+use App\Modules\Moodle\Entities\CourseModuleCompletionData;
+use App\Modules\Moodle\Entities\CourseModuleDate;
 use App\Modules\Moodle\Entities\Event;
 use App\Modules\Moodle\Entities\Grade;
 use App\Modules\Moodle\Entities\IntroAttachment;
@@ -273,4 +278,109 @@ final class Moodle
 
         return $assignments;
     }
+
+    /**
+     * @param int $courseId
+     * @return \App\Modules\Moodle\Entities\CourseContent[]
+     */
+    public function getCourseContent(int $courseId): array
+    {
+        $rawContents = $this->moodleWrapper->getCoursesInfo($courseId);
+        $courseContents = [];
+        foreach($rawContents as $courseContent) {
+            /**
+             * @var \App\Modules\Moodle\Entities\CourseModule[]
+             */
+            $modules = [];
+            $contentId = $courseContent["id"];
+            foreach($courseContent["modules"] as $courseModuleArray) {
+                /**
+                 * @var \App\Modules\Moodle\Entities\CourseModuleDate[]
+                 */
+                $dates = [];
+
+                /**
+                 * @var \App\Modules\Moodle\Entities\CourseModuleAttachment[]
+                 */
+                $contents = [];
+
+                /**
+                 * @var int
+                 */
+                $cmid = $courseModuleArray["id"];
+                foreach($courseModuleArray["dates"] as $cousreModuleDate) {
+                    $dates[] = new CourseModuleDate(
+                        cmid: $cmid,
+                        timestamp: $cousreModuleDate["timestamp"],
+                        label: $cousreModuleDate["label"],
+                    );
+                }
+                if(isset($courseModuleArray["contents"])) {
+                    foreach($courseModuleArray["contents"] as $cousreModuleAttachment) {
+                        $contents[] = new CourseModuleAttachment(
+                            cmid: $cmid,
+                            type: $cousreModuleAttachment["type"],
+                            filename: $cousreModuleAttachment["filename"],
+                            filepath: $cousreModuleAttachment["filepath"],
+                            filesize: $cousreModuleAttachment["filesize"],
+                            fileurl: $cousreModuleAttachment["fileurl"],
+                            timecreated: $cousreModuleAttachment["timecreated"],
+                            timemodified: $cousreModuleAttachment["timemodified"],
+                            sortorder: $cousreModuleAttachment["sortorder"],
+                            mimetype: $cousreModuleAttachment["mimetype"],
+                            isexternalfile: $cousreModuleAttachment["isexternalfile"],
+                            userid: $cousreModuleAttachment["userid"],
+                            author: $cousreModuleAttachment["author"],
+                            license: $cousreModuleAttachment["license"],
+                        );
+                    }
+                }
+
+                $completionData = new CourseModuleCompletionData(
+                    cmid: $cmid,
+                    state: $courseModuleArray["completiondata"]["state"],
+                    timecompleted: $courseModuleArray["completiondata"]["timecompleted"],
+                    valueused: $courseModuleArray["completiondata"]["valueused"],
+                    hascompletion: $courseModuleArray["completiondata"]["hascompletion"],
+                    isautomatic: $courseModuleArray["completiondata"]["isautomatic"],
+                    istrackeduser: $courseModuleArray["completiondata"]["istrackeduser"],
+                    uservisible: $courseModuleArray["completiondata"]["uservisible"],
+                    overrideby: $courseModuleArray["completiondata"]["overrideby"],
+                );
+
+                $modules[] = new CourseModule(
+                    cmid: $cmid,
+                    contentId: $contentId,
+                    instance: $courseModuleArray["instance"],
+                    contextid: $courseModuleArray["contextid"],
+                    course_id: $courseId,
+                    modname: $courseModuleArray["modname"],
+                    modplural: $courseModuleArray["modplural"],
+                    noviewlink: $courseModuleArray["noviewlink"],
+                    visibleoncoursepage: $courseModuleArray["visibleoncoursepage"],
+                    uservisible: $courseModuleArray["uservisible"],
+                    url: $courseModuleArray["url"],
+                    completion: $courseModuleArray["completion"],
+                    completionData: $completionData,
+                    dates: $dates,
+                    contents: $contents,
+                );
+            }
+
+            $courseContents[] = new CourseContent(
+                id: $courseContent["id"],
+                name: $courseContent["name"],
+                visible: $courseContent["visible"],
+                section: $courseContent["section"],
+                uservisible: $courseContent["uservisible"],
+                summaryformat: $courseContent["summaryformat"],
+                hiddenbynumsections: $courseContent["hiddenbynumsections"],
+                modules: $modules,
+                summary: $courseContent["summary"],
+            );
+        }
+
+        return $courseContents;
+    }
+
 }
