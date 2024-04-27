@@ -31,6 +31,7 @@ foreach($users as $user) {
         $queue->create(
             name: Task::class,
             payload: (new Payload(JobsEnum::PARSE_COURSES->value, $user))
+                ->add(new Payload(JobsEnum::PARSE_COURSE_CONTENTS->value, $user))
                 ->add(new Payload(JobsEnum::PARSE_ASSIGNMENTS->value, $user))
         )
     );

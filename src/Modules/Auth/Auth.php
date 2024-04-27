@@ -90,6 +90,7 @@ class Auth
                 $queue->create(
                     name: Task::class,
                     payload: (new Payload(JobsEnum::PARSE_COURSES->value, $user))
+                        ->add(new Payload(JobsEnum::PARSE_COURSE_CONTENTS->value, $user))
                         ->add(new Payload(JobsEnum::PARSE_GRADES->value, $user))
                         ->add(new Payload(JobsEnum::PARSE_EVENTS->value, $user))
                         ->add(new Payload(JobsEnum::PARSE_ASSIGNMENTS->value, $user))

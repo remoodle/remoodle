@@ -8,8 +8,9 @@ use App\Modules\Moodle\Entities\Event as EventEntity;
 use App\Modules\Moodle\Entities\Course as CourseEntity;
 use App\Modules\Moodle\Entities\Grade as GradeEntity;
 use App\Modules\Moodle\Entities\Assignment as AssignmentEntity;
-use App\Models\{Assignment, AssignmentAttachment, Course, Event, Grade, MoodleUser};
+use App\Models\{Assignment, AssignmentAttachment, Course, CourseContent, Event, Grade, MoodleUser};
 use App\Modules\Moodle\BaseMoodleUser;
+use App\Modules\Moodle\Entities\CourseContent as EntitiesCourseContent;
 use App\Modules\Moodle\Entities\IntroAttachment;
 use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
 use Illuminate\Database\Connection;
@@ -164,5 +165,24 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
             ->where("moodle_id", $moodleId)
             ->where("course_id", $courseId)
             ->exists();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCourseContents(int $moodleId, string $moodleToken, int $courseId): array
+    {
+        return CourseContent::where("course_id", $courseId)
+            ->orderBy("section", "asc")
+            ->with([
+                'modules',
+                'modules.dates',
+                'modules.attachments',
+                'modules.completionData',
+            ])
+            ->get()
+            ->map(function (CourseContent $courseContent): EntitiesCourseContent {
+                return $courseContent->toEntity();
+            })->all();
     }
 }

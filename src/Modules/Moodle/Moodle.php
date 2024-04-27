@@ -19,6 +19,9 @@ use Core\Config;
 use Fugikzl\MoodleWrapper\Moodle as MoodleWrapperMoodle;
 use GuzzleHttp\Client;
 
+/**
+ * НЕ СТОИТ ЛЕЗТЬ В ЭТО!!!!!!!!!!!!!!
+ */
 final class Moodle
 {
     private const WEEK = 604800;
@@ -304,6 +307,8 @@ final class Moodle
                  */
                 $contents = [];
 
+                $completionData = null;
+
                 /**
                  * @var int
                  */
@@ -317,36 +322,39 @@ final class Moodle
                 }
                 if(isset($courseModuleArray["contents"])) {
                     foreach($courseModuleArray["contents"] as $cousreModuleAttachment) {
+
                         $contents[] = new CourseModuleAttachment(
                             cmid: $cmid,
                             type: $cousreModuleAttachment["type"],
                             filename: $cousreModuleAttachment["filename"],
-                            filepath: $cousreModuleAttachment["filepath"],
-                            filesize: $cousreModuleAttachment["filesize"],
+                            filepath: $this->issetOrNullArray($cousreModuleAttachment, "filepath"),
+                            filesize: $this->issetOrNullArray($cousreModuleAttachment, "filesize"),
                             fileurl: $cousreModuleAttachment["fileurl"],
-                            timecreated: $cousreModuleAttachment["timecreated"],
-                            timemodified: $cousreModuleAttachment["timemodified"],
+                            timecreated: $this->issetOrNullArray($cousreModuleAttachment, "timecreated"),
+                            timemodified: $this->issetOrNullArray($cousreModuleAttachment, "timemodified"),
                             sortorder: $cousreModuleAttachment["sortorder"],
-                            mimetype: $cousreModuleAttachment["mimetype"],
-                            isexternalfile: $cousreModuleAttachment["isexternalfile"],
-                            userid: $cousreModuleAttachment["userid"],
-                            author: $cousreModuleAttachment["author"],
-                            license: $cousreModuleAttachment["license"],
+                            mimetype: $this->issetOrNullArray($cousreModuleAttachment, "mimetype"),
+                            isexternalfile: $this->issetOrNullArray($cousreModuleAttachment, "isexternalfile"),
+                            userid: $this->issetOrNullArray($cousreModuleAttachment, "userid"),
+                            author: $this->issetOrNullArray($cousreModuleAttachment, "author"),
+                            license: $this->issetOrNullArray($cousreModuleAttachment, "license"),
                         );
                     }
                 }
 
-                $completionData = new CourseModuleCompletionData(
-                    cmid: $cmid,
-                    state: $courseModuleArray["completiondata"]["state"],
-                    timecompleted: $courseModuleArray["completiondata"]["timecompleted"],
-                    valueused: $courseModuleArray["completiondata"]["valueused"],
-                    hascompletion: $courseModuleArray["completiondata"]["hascompletion"],
-                    isautomatic: $courseModuleArray["completiondata"]["isautomatic"],
-                    istrackeduser: $courseModuleArray["completiondata"]["istrackeduser"],
-                    uservisible: $courseModuleArray["completiondata"]["uservisible"],
-                    overrideby: $courseModuleArray["completiondata"]["overrideby"],
-                );
+                if(isset($courseModuleArray["completiondata"])) {
+                    $completionData = new CourseModuleCompletionData(
+                        cmid: $cmid,
+                        state: $courseModuleArray["completiondata"]["state"],
+                        timecompleted: $courseModuleArray["completiondata"]["timecompleted"],
+                        valueused: $courseModuleArray["completiondata"]["valueused"],
+                        hascompletion: $courseModuleArray["completiondata"]["hascompletion"],
+                        isautomatic: $courseModuleArray["completiondata"]["isautomatic"],
+                        istrackeduser: $courseModuleArray["completiondata"]["istrackeduser"],
+                        uservisible: $courseModuleArray["completiondata"]["uservisible"],
+                        overrideby: $courseModuleArray["completiondata"]["overrideby"],
+                    );
+                }
 
                 $modules[] = new CourseModule(
                     cmid: $cmid,
@@ -361,6 +369,9 @@ final class Moodle
                     uservisible: $courseModuleArray["uservisible"],
                     url: $courseModuleArray["url"],
                     completion: $courseModuleArray["completion"],
+                    description: $this->issetOrNullArray($courseModuleArray, "description") ?? "",
+                    modicon: $courseModuleArray["modicon"],
+                    name: $courseModuleArray["name"],
                     completionData: $completionData,
                     dates: $dates,
                     contents: $contents,
@@ -383,4 +394,12 @@ final class Moodle
         return $courseContents;
     }
 
+    private function issetOrNullArray(array $object, string $key): mixed
+    {
+        if(isset($object[$key])) {
+            return $object[$key];
+        }
+
+        return null;
+    }
 }

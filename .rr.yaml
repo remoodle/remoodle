@@ -65,8 +65,12 @@ jobs:
         user_parse_assignments:
             driver: memory
             config: {}
+        user_parse_courses_contents:
+            driver: memory
+            config: {}
     consume:
         [
+            "user_parse_courses_contents",
             "user_parse_events",
             "user_parse_courses",
             "user_parse_grades",

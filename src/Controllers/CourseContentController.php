@@ -38,10 +38,13 @@ class CourseContentController extends BaseController
         }
 
         if((bool)$request->getQueryParams()['content']) {
-            $course['content'] = Moodle::createFromToken(
+            $course['content'] = $this->userMoodleRepositoryFactory->create(
+                $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
+            )->getCourseContents(
                 moodleId: $user->moodle_id,
-                token: $user->moodle_token
-            )->getCourseContent((int)$args['course']);
+                moodleToken: $user->moodle_token,
+                courseId: (int) $args['course']
+            );
         }
 
         $response->getBody()->write(json_encode($course));

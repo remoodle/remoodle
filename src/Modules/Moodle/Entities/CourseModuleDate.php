@@ -17,4 +17,9 @@ class CourseModuleDate
         public readonly int $timestamp,
     ) {
     }
+
+    public function hash(): string
+    {
+        return hash("sha256", $this->cmid . $this->label . $this->timestamp);
+    }
 }

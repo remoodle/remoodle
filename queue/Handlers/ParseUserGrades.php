@@ -37,9 +37,9 @@ class ParseUserGrades extends BaseHandler
         $this->connection->beginTransaction();
 
         try {
-            $this->connection
-                ->table("course_modules")
-                ->upsert($courseModulesUpsert, "cmid");
+            // $this->connection
+            //     ->table("course_modules")
+            //     ->upsert($courseModulesUpsert, "cmid");
             $this->connection
                 ->table("grades")
                 ->upsert(

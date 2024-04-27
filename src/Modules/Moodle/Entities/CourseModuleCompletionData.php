@@ -29,4 +29,9 @@ class CourseModuleCompletionData
         public readonly ?string $overrideby = null,
     ) {
     }
+
+    public function hash(): string
+    {
+        return hash("sha256", $this->cmid . $this->state . $this->timecompleted . $this->valueused . $this->hascompletion . $this->uservisible);
+    }
 }

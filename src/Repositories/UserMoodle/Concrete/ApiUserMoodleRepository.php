@@ -49,4 +49,12 @@ class ApiUserMoodleRepository implements ApiUserMoodleRepositoryInterface
     {
         return Moodle::createFromToken($moodleToken, $moodleId)->getCourseAssignments($courseId);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCourseContents(int $moodleId, string $moodleToken, int $courseId): array
+    {
+        return Moodle::createFromToken($moodleToken, $moodleId)->getCourseContent($courseId);
+    }
 }

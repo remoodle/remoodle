@@ -45,4 +45,12 @@ interface UserMoodleRepositoryInterface
      */
     public function getCourseAssigments(int $moodleId, string $moodleToken, int $courseId): array;
 
+    /**
+     * @param int $moodleId
+     * @param string $moodleToken
+     * @param int $courseId
+     * @return \App\Modules\Moodle\Entities\CourseContent[]
+     */
+    public function getCourseContents(int $moodleId, string $moodleToken, int $courseId): array;
+
 }
