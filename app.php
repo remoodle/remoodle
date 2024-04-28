@@ -22,7 +22,8 @@ while($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmet
 KeyValueLemmetization::bootstrap($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map"));
 
 $worker = $container->get(PSR7WorkerInterface::class);
-while ($req = $worker->waitRequest()) {
+while (true) {
+    $req = $worker->waitRequest();
     if($req === null) {
         continue;
     }

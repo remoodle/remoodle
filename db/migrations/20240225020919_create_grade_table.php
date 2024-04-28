@@ -24,7 +24,6 @@ final class CreateGradeTable extends AbstractMigration
             ->addColumn('grade_id', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('moodle_id', 'integer', ['signed' => false, 'null' => false])
 
-
             ->addColumn('cmid', 'integer', ['signed' => false, 'null' => true])
             // ->addColumn('course_id', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('name', 'string', ['null' => false])
@@ -43,7 +42,7 @@ final class CreateGradeTable extends AbstractMigration
             // ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addIndex(['moodle_id'], ['unique' => false])
             ->addIndex(['cmid'], ['unique' => false])
-            ->addIndex(['cmid', 'moodle_id'], ['unique' => true])
+            ->addIndex(['moodle_id', 'grade_id'], ['unique' => true])
             ->create();
     }
 }
