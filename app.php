@@ -41,15 +41,15 @@ while (true) {
     }
 
     try {
-        // try {
-        //     $connection = $container->get(Connection::class);
-        //     $pdo = $connection->getPdo();
-        //     if($pdo === null) {
-        //         throw new PDOException();
-        //     }
-        // } catch (\Throwable $th) {
-        //     $connection->reconnect();
-        // }
+        try {
+            $connection = $container->get(Connection::class);
+            $pdo = $connection->getPdo();
+            if($pdo === null) {
+                throw new PDOException();
+            }
+        } catch (\Throwable $th) {
+            $connection->reconnect();
+        }
 
         $res = $app->handle($req);
         $worker->respond($res);

@@ -73,6 +73,17 @@ class Auth
             throw new \Exception("Given token is invalid or Moodle webservice is down.", StatusCodeInterface::STATUS_BAD_REQUEST);
         }
 
+        if((bool)getEnvVar("FILTER_USER_REGISTER")) {
+            $allowedUsers = json_decode(getEnvVar("ALLOWED_USERS", []), true);
+            if($allowedUsers === null) {
+                throw new \Exception("Nope.", 403);
+            }
+
+            if(!in_array($baseMoodleUser->moodleId, $allowedUsers)) {
+                throw new \Exception("Nope.", 403);
+            }
+        }
+
         $rpc = RPC::create(Config::get("rpc.connection"));
         $factory = new Factory($rpc);
         $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
