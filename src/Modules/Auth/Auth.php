@@ -79,7 +79,7 @@ class Auth
                 throw new \Exception("Nope.", 403);
             }
 
-            if(!in_array($baseMoodleUser->moodleId, $allowedUsers)) {
+            if(!in_array((string)$baseMoodleUser->moodleId, $allowedUsers, true)) {
                 throw new \Exception("Nope.", 403);
             }
         }
