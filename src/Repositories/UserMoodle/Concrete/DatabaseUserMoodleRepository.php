@@ -53,7 +53,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
             ])
             ->where("moodle_id", $moodleId)
             ->first()
-            ->courses
+            ?->courses
             ->map(function (Course $course) {
                 return new CourseEntity(
                     course_id: $course->course_id,
@@ -136,7 +136,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
             ])
             ->where("moodle_id", $moodleId)
             ->first()
-            ->events
+            ?->events
             ->map(function (Event $event) {
                 return $event->toEntity();
             })
@@ -145,16 +145,16 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
 
     public function getAssignmentByCmid(int $moodleId, string $moodleToken, int $cmid): AssignmentEntity
     {
-        return Assignment::where("cmid", $cmid)->first()->toEntity();
+        return Assignment::where("cmid", $cmid)->firstOrFail()->toEntity();
     }
     public function getGradeByCmid(int $moodleId, string $moodleToken, int $cmid): GradeEntity
     {
-        return Grade::where("cmid", $cmid)->first()->toEntity();
+        return Grade::where("cmid", $cmid)->firstOrFail()->toEntity();
     }
 
     public function getEventByInstance(int $moodleId, string $moodleToken, int $instance): EventEntity
     {
-        return Event::where("instance", $instance)->first()->toEntity();
+        return Event::where("instance", $instance)->firstOrFail()->toEntity();
     }
 
     public function isUserAssignedToCourse(int $moodleId, int $courseId): bool
