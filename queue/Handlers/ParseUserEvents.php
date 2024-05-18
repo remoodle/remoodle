@@ -34,7 +34,7 @@ class ParseUserEvents extends BaseHandler
                 $event = (array)$event;
                 unset($event['assignment']);
                 return $event;
-            }, $userApiEvents), ["event_id"]);
+            }, $userApiEvents), ["instance"]);
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();

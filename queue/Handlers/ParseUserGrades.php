@@ -53,7 +53,7 @@ class ParseUserGrades extends BaseHandler
             throw $th;
         }
 
-        $this->searchEngine->putMany($gradeEntities);
+        // $this->searchEngine->putMany($gradeEntities);
     }
 
     /**

@@ -75,7 +75,7 @@ class Auth
 
         if((bool)getEnvVar("FILTER_USER_REGISTER")) {
             $allowedUsers = json_decode(getEnvVar("ALLOWED_USERS", []), true);
-            if($allowedUsers === null) {
+            if($allowedUsers === []) {
                 throw new \Exception("Nope.", 403);
             }
 
