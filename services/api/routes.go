@@ -1,4 +1,4 @@
-package server
+package api
 
 import (
 	"net/http"
@@ -14,8 +14,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	e.GET("/", s.HelloWorldHandler)
 
-	e.GET("/health", s.healthHandler)
-
 	return e
 }
 
@@ -25,8 +23,4 @@ func (s *Server) HelloWorldHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, resp)
-}
-
-func (s *Server) healthHandler(c echo.Context) error {
-	return c.JSON(http.StatusOK, s.db.Health())
 }

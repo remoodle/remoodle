@@ -2,12 +2,13 @@ package tests
 
 import (
 	"encoding/json"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"net/http/httptest"
-	"notifier/internal/server"
+	"notifier/services/api"
 	"reflect"
 	"testing"
+
+	"github.com/labstack/echo/v4"
 )
 
 func TestHandler(t *testing.T) {
@@ -15,7 +16,7 @@ func TestHandler(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	resp := httptest.NewRecorder()
 	c := e.NewContext(req, resp)
-	s := &server.Server{}
+	s := &api.Server{}
 	// Assertions
 	if err := s.HelloWorldHandler(c); err != nil {
 		t.Errorf("handler() error = %v", err)
