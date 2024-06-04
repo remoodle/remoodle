@@ -8,10 +8,10 @@ from core.utils.gpa import get_gpa_by_grade
 from core.encoder.chiper import Enigma
 from datetime import datetime, timezone, timedelta
 import requests
-from core.config.config import BOT_TOKEN
+from core.config.config import BOT_TOKEN, ALERTS_TOKEN, ALERTS_HOST
 
 router = Router()
-token = os.getenv("TELEGRAM_BOT_TOKEN")
+token = BOT_TOKEN
 bot = Bot(token, parse_mode="HTML")
 
 
@@ -21,14 +21,29 @@ async def find_moodle_token(message: types.Message):
                          "select security keys and copy \"Moodle web service\"")
 
 
+async def send_alert(topic: str, message: str):
+    url = f"{ALERTS_HOST}/alert"
+    headers = {
+        "Authorization": "Basic " + ALERTS_TOKEN
+    }
+    alert_data = {
+        "topic": topic,
+        "message": message
+    }
+    try:
+        await requests.post(url, headers=headers, json=alert_data)
+    except Exception as e:
+        print(f"Error sending alert: {e}")
+        print(e)
+
 async def define_token(message: types.Message):
     print(message.chat.id)
     user = User.objects(telegram_id=message.chat.id)[0]
     full_name = user.full_name
     barcode = user.barcode
     print(str(full_name) + " " + str(barcode))
-    
-    requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id=749243435&parse_mode=markdown&text=Новый юзер:\n" + str(full_name) + "\n" + str(barcode))
+        
+    asyncio.create_task(send_alert("users", f"Новый юзер:\n{full_name}\n{barcode}"))
     
     await message.answer(f"Welcome, <b>{full_name}</b>!\nType /start to begin using ReMoodle Bot\n\n<pre>ID:\n{message.from_user.id}\n" +
                          f"\nToken:\n{message.text}\n" +
