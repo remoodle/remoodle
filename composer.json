@@ -21,13 +21,15 @@
         "vlucas/phpdotenv": "^5.6",
         "symfony/var-dumper": "^7.0",
         "spiral/roadrunner-metrics": "^3.2",
-        "spatie/php-cloneable": "^1.0"
+        "spatie/php-cloneable": "^1.0",
+        "spiral/roadrunner-grpc": "^3.3"
     },
     "autoload": {
         "psr-4": {
             "App\\": "src/",
             "Core\\": "core/",
-            "Queue\\": "queue/"
+            "Queue\\": "queue/",
+            "": "gen/"
         },
         "files": [
             "helpers.php"
