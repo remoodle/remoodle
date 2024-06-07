@@ -16,15 +16,15 @@ type App struct {
 
 func NewApp() *App {
 	db := database.NewDBHandler()
+
 	if err := db.Initialize(); err != nil {
 		log.Fatalf("Failed to initialize database handler: %v", err)
 	}
 
-	app := &App{}
-
-	app.Telegram = telegram.NewService()
-
-	app.Db = db
+	app := &App{
+		Db:       db,
+		Telegram: telegram.NewService(),
+	}
 
 	return app
 }

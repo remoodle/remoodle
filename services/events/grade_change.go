@@ -20,12 +20,12 @@ func NewGradeChangeHandler(srv *app.App) *GradeChangeHandler {
 
 func (h *GradeChangeHandler) HandleGradeChanges() {
 	ctx := context.Background()
-	stream := "grades:changes"
-	group := "notifierGroup"
-	consumer := "gradeConsumer"
+	streamName := "stream::grade-change"
+	group := "tg"
+	consumer := "worker"
 
 	for {
-		messages, err := h.app.Db.MessageStream.Get(ctx, stream, group, consumer, 10, 0)
+		messages, err := h.app.Db.MessageStream.Get(ctx, streamName, group, consumer, 10, 0)
 		if err != nil {
 			log.Printf("Error reading from stream: %v", err)
 			continue
@@ -40,7 +40,7 @@ func (h *GradeChangeHandler) HandleGradeChanges() {
 				log.Printf("Failed to send Telegram message: %v", err)
 			}
 
-			if err := h.app.Db.MessageStream.Ack(ctx, stream, group, msg.ID); err != nil {
+			if err := h.app.Db.MessageStream.Ack(ctx, streamName, group, msg.ID); err != nil {
 				log.Printf("Failed to acknowledge message: %v", err)
 			}
 		}
