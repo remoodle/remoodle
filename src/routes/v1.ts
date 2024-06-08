@@ -5,17 +5,18 @@ import { genToken } from "../utils";
 const api = new Hono();
 
 api.post("/users", async (c) => {
-  const { name, email, password } = await c.req.json();
+  const { email, telegramId, password } = await c.req.json();
 
-  const userExists = await User.findOne({ email });
+  const userExists = await User.findOne({ $or: [{ email }, { telegramId }] });
   if (userExists) {
     c.status(400);
     return c.json({ message: "User already exists" });
   }
 
   const user = await User.create({
-    name,
+    // name,
     email,
+    telegramId,
     password,
   });
 
@@ -27,14 +28,15 @@ api.post("/users", async (c) => {
   const token = await genToken(user._id.toString());
 
   return c.json({
-    success: true,
-    data: {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-    },
+    user,
+    // success: true,
+    // data: {
+    //   _id: user._id,
+    //   name: user.name,
+    //   email: user.email,
+    // },
     token,
-    message: "User created successfully",
+    // message: "User created successfully",
   });
 });
 
@@ -59,14 +61,16 @@ api.post("/users/login", async (c) => {
     const token = await genToken(user._id.toString());
 
     return c.json({
-      success: true,
-      data: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+      user,
       token,
-      message: "User logged in successfully",
+      // success: true,
+      // data: {
+      //   _id: user._id,
+      //   name: user.name,
+      //   email: user.email,
+      // },
+      // token,
+      // message: "User logged in successfully",
     });
   }
 });
