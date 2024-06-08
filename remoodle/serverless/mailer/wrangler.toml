@@ -1,0 +1,16 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "alert-point"
+main = "src/index.ts"
+compatibility_date = "2024-05-24"
+compatibility_flags = ["nodejs_compat"]
+
+keep_vars = true
+
+[vars]
+MJ_API_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+MJ_API_SECRET="xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+MJ_CONTACT_LIST_ID=2281337
+
+MG_API_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+AUTH_TOKEN="xxxxxxxxxxxxxxxxxxxxxxxxxxxx"

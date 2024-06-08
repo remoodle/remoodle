@@ -1,11 +1,11 @@
-import { Hono } from "hono";
 import { serve } from "@hono/node-server";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
-import { cors } from "hono/cors";
+import { config } from "./config";
 import { connectDB } from "./database/mongo/connection";
 import { errorHandler, notFound } from "./middlewares/error";
-import { config } from "./config";
 import api from "./routes/v1";
 
 const app = new Hono();
@@ -19,7 +19,7 @@ app.use(
   cors({
     origin: "*",
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  })
+  }),
 );
 
 app.route("/v1", api);

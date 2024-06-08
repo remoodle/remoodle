@@ -57,22 +57,21 @@ api.post("/users/login", async (c) => {
   if (!(await user.verifyPassword(password))) {
     c.status(401);
     throw new Error("Invalid credentials");
-  } else {
-    const token = await genToken(user._id.toString());
-
-    return c.json({
-      user,
-      token,
-      // success: true,
-      // data: {
-      //   _id: user._id,
-      //   name: user.name,
-      //   email: user.email,
-      // },
-      // token,
-      // message: "User logged in successfully",
-    });
   }
+  const token = await genToken(user._id.toString());
+
+  return c.json({
+    user,
+    token,
+    // success: true,
+    // data: {
+    //   _id: user._id,
+    //   name: user.name,
+    //   email: user.email,
+    // },
+    // token,
+    // message: "User logged in successfully",
+  });
 });
 
 export default api;

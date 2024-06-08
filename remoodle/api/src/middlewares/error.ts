@@ -1,4 +1,4 @@
-import { Context } from "hono";
+import type { Context } from "hono";
 
 export const errorHandler = (c: Context) => {
   console.log(c.res.status);

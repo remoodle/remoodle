@@ -1,5 +1,5 @@
-import { Jwt } from "hono/utils/jwt";
 import bcrypt from "bcrypt";
+import { Jwt } from "hono/utils/jwt";
 
 import { config } from "../config";
 
@@ -11,7 +11,7 @@ const genToken = (id: string) => {
 
 const verifyPassword = async (
   enteredPassword: string,
-  userPassword: string
+  userPassword: string,
 ) => {
   return await bcrypt.compare(enteredPassword, userPassword);
 };

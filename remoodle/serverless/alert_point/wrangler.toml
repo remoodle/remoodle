@@ -1,0 +1,11 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "alert-point"
+main = "src/index.ts"
+compatibility_date = "2024-05-24"
+compatibility_flags = ["nodejs_compat"]
+
+keep_vars = true
+
+[vars]
+TELEGRAM_CHAT_ID = "-1002242666096"
+TELEGRAM_TOPICS_MAP = "{\"users\":3,\"grafana\":5}"

@@ -1,15 +1,12 @@
-import { Context, Next } from "hono";
+import type { Context, Next } from "hono";
 import { Jwt } from "hono/utils/jwt";
-import { User } from "../database";
 import { config } from "../config";
+import { User } from "../database";
 
 export const protect = async (c: Context, next: Next) => {
   let token;
 
-  if (
-    c.req.header("Authorization") &&
-    c.req.header("Authorization")?.startsWith("Bearer")
-  ) {
+  if (c.req.header("Authorization")?.startsWith("Bearer")) {
     try {
       token = c.req.header("Authorization")?.replace(/Bearer\s+/i, "");
       if (!token) {

@@ -1,0 +1,12 @@
+{
+  "name": "infra",
+  "description": "Infrastructure Monorepo",
+  "scripts": {
+    "lint": "biome lint .",
+    "format": "pnpm biome format . --write && pnpm biome check . --apply-unsafe "
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.8.0",
+    "typescript": "^5.0.4"
+  }
+}

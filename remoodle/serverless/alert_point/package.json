@@ -1,0 +1,20 @@
+{
+  "name": "alert-point",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
+  },
+  "dependencies": {
+    "hono": "^4.4.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.8.0",
+    "@cloudflare/workers-types": "^4.20240605.0",
+    "@remoodle/config-typescript": "workspace:^",
+    "typescript": "^5.0.4",
+    "wrangler": "^3.57.1"
+  }
+}

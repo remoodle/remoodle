@@ -1,6 +1,6 @@
+import { type Document, Schema, model } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { Document, Schema, model } from "mongoose";
-import { verifyPassword, hashPassword } from "../../../utils";
+import { hashPassword, verifyPassword } from "../../../utils";
 
 interface IUser {
   name: string;
@@ -23,17 +23,17 @@ const userSchema = new Schema<IUserDoc>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 userSchema.index(
   { email: 1 },
-  { unique: true, partialFilterExpression: { email: { $exists: true } } }
+  { unique: true, partialFilterExpression: { email: { $exists: true } } },
 );
 
 userSchema.index(
   { telegramId: 1 },
-  { unique: true, partialFilterExpression: { telegramId: { $exists: true } } }
+  { unique: true, partialFilterExpression: { telegramId: { $exists: true } } },
 );
 
 userSchema.methods.verifyPassword = async function (enteredPassword: string) {
