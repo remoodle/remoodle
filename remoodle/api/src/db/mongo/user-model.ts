@@ -1,24 +1,30 @@
-import { type Document, Schema, model } from "mongoose";
+import type { Model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { hashPassword, verifyPassword } from "../../../utils";
+import { hashPassword, verifyPassword } from "../../utils/password";
 
 interface IUser {
+  _id: string;
   name: string;
   email: string;
   telegramId: string;
   password: string;
+  moodleId: string;
 }
 
-interface IUserDoc extends IUser, Document {
+interface UserMethods {
   verifyPassword: (pass: string) => Promise<boolean>;
 }
 
-const userSchema = new Schema<IUserDoc>(
+type UserModel = Model<IUser, UserMethods>;
+
+const userSchema = new Schema<IUser, UserModel, UserMethods>(
   {
     _id: { type: String, default: uuidv4() },
-    name: { type: String, required: true },
+    name: { type: String },
     email: { type: String, unique: true },
     telegramId: { type: String, unique: true },
+    moodleId: { type: String },
     password: { type: String },
   },
   {
@@ -41,7 +47,7 @@ userSchema.methods.verifyPassword = async function (enteredPassword: string) {
 };
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
+  if (!this.password || !this.isModified("password")) {
     next();
   }
 

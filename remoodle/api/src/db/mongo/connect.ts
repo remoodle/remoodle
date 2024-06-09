@@ -3,8 +3,8 @@ import { config } from "../../config";
 
 export const connectDB = async () => {
   try {
-    if (config.mongoURI !== undefined) {
-      const conn = await mongoose.connect(config.mongoURI, {
+    if (config.mongo.uri !== undefined) {
+      const conn = await mongoose.connect(config.mongo.uri, {
         autoIndex: true,
       });
 
