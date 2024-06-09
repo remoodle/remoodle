@@ -8,15 +8,6 @@ server:
     command: "php app.php"
     relay: pipes
 
-grpc:
-    listen: "tcp://127.0.0.1:9002"
-
-    pool:
-        command: "php grpc.php"
-
-    proto:
-        - "proto/remoodle.proto"
-
 http:
     raw_body: true
     address: ${SERVER_HOST:-0.0.0.0}:${SERVER_PORT:-8080}

@@ -23,5 +23,6 @@ $users = MoodleUser::all()->keyBy('moodle_id');
 $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
 
 foreach($users as $user) {
+    $storage->set('m'.$user->moodle_id, $user->moodle_token);
     $storage->set($user->moodle_token, $user);
 }

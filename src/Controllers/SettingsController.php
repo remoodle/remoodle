@@ -61,6 +61,7 @@ class SettingsController extends BaseController
         ]);
 
         $this->kvStorage->set($user->moodle_token, $user);
+        $this->kvStorage->set($user->moodle_id, $user->moodle_token);
 
         return $this->jsonResponse(
             response: $response,
@@ -76,10 +77,12 @@ class SettingsController extends BaseController
         try {
             $this->connection->beginTransaction();
             $this->kvStorage->delete($user->moodle_token);
+            $this->kvStorage->delete($user->moodle_id);
             $user->delete();
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->kvStorage->set($user->moodle_token, $user);
+            $this->kvStorage->set($user->moodle_id, $user->moodle_token);
             $this->connection->rollBack();
 
             throw $th;

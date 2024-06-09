@@ -32,6 +32,10 @@ class InitializeUser extends BaseHandler
             ->factory
             ->select('users')
             ->set($user->moodle_token, $user->withoutRelations());
+        $this
+            ->factory
+            ->select('users')
+            ->set('m'.$user->moodle_id, $user->moodle_token);
     }
 
 }

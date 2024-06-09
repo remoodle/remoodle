@@ -50,6 +50,7 @@ class MoodleUser extends Model
             $factory = new Factory($rpc);
             $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
             $storage->set($user->moodle_token, $user);
+            $storage->set('m'.$user->moodle_id, $user->moodle_token);
         });
 
         static::created(function ($user) {
@@ -57,6 +58,7 @@ class MoodleUser extends Model
             $factory = new Factory($rpc);
             $storage = $factory->withSerializer(new IgbinarySerializer())->select('users');
             $storage->set($user->moodle_token, $user);
+            $storage->set('m'.$user->moodle_id, $user->moodle_token);
         });
     }
 

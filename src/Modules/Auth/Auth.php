@@ -95,6 +95,8 @@ class Auth
                 $data[static::IDENTIFIER_ALIAS] ?? null,
             );
             $storage->set($user->moodle_token, $user);
+            $storage->set('m'.$user->moodle_id, $user->moodle_token);
+
 
             $queue = $this->jobsFactory->createQueue(JobsEnum::PARSE_COURSES->value);
             $queue->dispatch(
