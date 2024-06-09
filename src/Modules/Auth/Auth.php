@@ -113,6 +113,7 @@ class Auth
         } catch (\Throwable $th) {
             if(isset($user)) {
                 $storage->delete($user->moodle_token);
+                $storage->delete('m'.$user->moodle_id);
             }
             $this->connection->rollBack();
             throw $th;
