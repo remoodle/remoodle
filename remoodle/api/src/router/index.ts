@@ -1,13 +1,9 @@
 import { Hono } from "hono";
-
 import type { StatusCode } from "hono/utils/http-status";
 import { HTTPException } from "hono/http-exception";
-
 import { User } from "../db";
-import { config } from "../config";
-import { issueTokens, verifyJwtToken, decodeJwtToken } from "../utils/jwt";
-
-import { authMiddleware, proxyMiddleware } from "./middleware";
+import { issueTokens } from "../utils/jwt";
+import { authMiddleware, proxyMiddleware } from "../middleware/auth-proxy";
 
 const api = new Hono<{
   Variables: {
@@ -82,7 +78,7 @@ api.post("/auth/register", async (c) => {
   const user = await User.findOneAndUpdate(
     { _id: ghost._id },
     { $set: { name: student.name, moodleId: student.moodle_id } },
-    { upsert: true },
+    { upsert: true, new: true },
   );
 
   if (!user) {
@@ -104,19 +100,22 @@ api.post("/auth/login", async (c) => {
   const { email, password } = await c.req.json();
 
   if (!email || !password) {
-    c.status(400);
-    return c.json({ message: "Please provide an email and password" });
+    throw new HTTPException(400, {
+      message: "Please provide an email and password",
+    });
   }
 
   const user = await User.findOne({ email });
   if (!user) {
-    c.status(401);
-    return c.json({ message: "No user found with this email" });
+    throw new HTTPException(401, {
+      message: "No user found with this email",
+    });
   }
 
   if (!(await user.verifyPassword(password))) {
-    c.status(401);
-    throw new Error("Invalid credentials");
+    throw new HTTPException(401, {
+      message: "Invalid credentials",
+    });
   }
 
   const { accessToken, refreshToken } = issueTokens(
@@ -154,8 +153,6 @@ api.all("/x/*", async (c) => {
   //   public const INTERNAL_CROSS_USER_HEADER = 'X-Remoodle-Moodle-Id';
 
   // console.log(c.get("moodleId"));
-
-  console.log("requesting ", requestURL);
 
   const headers = new Headers({
     "Content-Type": "apilication/json",

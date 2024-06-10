@@ -3,12 +3,11 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
-
-import type { StatusCode } from "hono/utils/http-status";
 import { HTTPException } from "hono/http-exception";
 
 import { config } from "./config";
 import { connectDB } from "./db/mongo/connect";
+import { errorHandler } from "./middleware/error";
 import api from "./router";
 
 const app = new Hono();
@@ -33,19 +32,15 @@ app.notFound((c) => {
   });
 });
 
-app.onError((err, c) => {
-  c.status((c.res.status || 400) as StatusCode);
+app.onError(errorHandler);
 
-  return c.json({
-    error: {
-      status: c.res.status,
-      message: c.error?.message,
-      stack: process.env.NODE_ENV === "production" ? null : c.error?.stack,
-    },
-  });
-});
-
-serve({
-  port: config.http.port,
-  fetch: app.fetch,
-});
+serve(
+  {
+    hostname: config.http.host,
+    port: config.http.port,
+    fetch: app.fetch,
+  },
+  (info) => {
+    console.log(`Server is running on http://${info.address}:${info.port}`);
+  },
+);

@@ -8,7 +8,7 @@ const getToken = (payload: object, expiresIn: string) => {
   });
 };
 
-export const getAccessToken = (userId: string, moodleId: string) => {
+export const getAccessToken = (userId: string, moodleId: number) => {
   return getToken({ userId, moodleId }, config.jwt.accessTokenExpiration);
 };
 
@@ -16,7 +16,7 @@ export const getRefreshToken = (accessToken: string) => {
   return getToken({ accessToken }, config.jwt.refreshTokenExpiration);
 };
 
-export const issueTokens = (userId: string, moodleId: string) => {
+export const issueTokens = (userId: string, moodleId: number) => {
   const accessToken = getAccessToken(userId, moodleId);
   const refreshToken = getRefreshToken(accessToken);
 

@@ -7,9 +7,9 @@ interface IUser {
   _id: string;
   name: string;
   email: string;
-  telegramId: string;
+  telegramId: number;
   password: string;
-  moodleId: string;
+  moodleId: number;
 }
 
 interface UserMethods {
@@ -20,11 +20,11 @@ type UserModel = Model<IUser, UserMethods>;
 
 const userSchema = new Schema<IUser, UserModel, UserMethods>(
   {
-    _id: { type: String, default: uuidv4() },
+    _id: { type: String, default: uuidv4 },
     name: { type: String },
     email: { type: String, unique: true },
-    telegramId: { type: String, unique: true },
-    moodleId: { type: String },
+    telegramId: { type: Number, unique: true },
+    moodleId: { type: Number },
     password: { type: String },
   },
   {

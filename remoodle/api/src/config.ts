@@ -4,10 +4,14 @@ dotenv.config();
 
 export const config = {
   http: {
-    port: Number(process.env.PORT) || 8000,
+    host: process.env.SERVER_HOST || "0.0.0.0",
+    port: Number(process.env.SERVER_PORT) || 9000,
   },
   mongo: {
     uri: process.env.MONGO_URI,
+  },
+  internal: {
+    secret: process.env.API_SECRET_TOKEN,
   },
   jwt: {
     algorithm: process.env.AUTH_JWT_ALGORITHM || "ES512",
