@@ -3,11 +3,11 @@ import { Hono } from "hono";
 import type { StatusCode } from "hono/utils/http-status";
 import { HTTPException } from "hono/http-exception";
 
-import { authMiddleware, proxyMiddleware } from "./middleware";
-
 import { User } from "../db";
 import { config } from "../config";
 import { issueTokens, verifyJwtToken, decodeJwtToken } from "../utils/jwt";
+
+import { authMiddleware, proxyMiddleware } from "./middleware";
 
 const api = new Hono<{
   Variables: {

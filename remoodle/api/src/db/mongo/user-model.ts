@@ -33,6 +33,11 @@ const userSchema = new Schema<IUser, UserModel, UserMethods>(
 );
 
 userSchema.index(
+  { moodleId: 1 },
+  { unique: true, partialFilterExpression: { moodleId: { $exists: true } } },
+);
+
+userSchema.index(
   { email: 1 },
   { unique: true, partialFilterExpression: { email: { $exists: true } } },
 );

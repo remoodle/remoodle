@@ -9,7 +9,6 @@ import { HTTPException } from "hono/http-exception";
 
 import { config } from "./config";
 import { connectDB } from "./db/mongo/connect";
-
 import api from "./router";
 
 const app = new Hono();
