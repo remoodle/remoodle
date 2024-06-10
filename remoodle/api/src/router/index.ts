@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import type { StatusCode } from "hono/utils/http-status";
 import { HTTPException } from "hono/http-exception";
 
-import { authMiddleware } from "./middleware";
+import { authMiddleware, proxyMiddleware } from "./middleware";
 
 import { User } from "../db";
 import { config } from "../config";
@@ -13,14 +13,17 @@ const api = new Hono<{
   Variables: {
     userId: string;
     moodleId: string;
+    host: string;
   };
 }>();
 
-const createProxyURL = (path: string) => {
-  const requestURL = new URL(path, config.proxy.url);
+const prepareURL = (host: string, path: string) => {
+  const requestURL = new URL(path, host);
 
   return requestURL;
 };
+
+api.use("*", proxyMiddleware());
 
 api.post("/auth/register", async (c) => {
   const { email, telegramId, password, moodleToken } = await c.req.json();
@@ -45,16 +48,19 @@ api.post("/auth/register", async (c) => {
 
   let student;
   try {
-    const response = await fetch(createProxyURL("/v1/auth/register"), {
-      method: "POST",
-      headers: {
-        "Auth-Token": moodleToken,
-        "Content-Type": "application/json",
+    const response = await fetch(
+      prepareURL(c.get("host"), "/v1/auth/register"),
+      {
+        method: "POST",
+        headers: {
+          "Auth-Token": moodleToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: moodleToken,
+        }),
       },
-      body: JSON.stringify({
-        token: moodleToken,
-      }),
-    });
+    );
 
     if (!response.ok) {
       throw new Error("Failed to create user in the critical service");
@@ -125,30 +131,36 @@ api.post("/auth/login", async (c) => {
   });
 });
 
-api.use("*", authMiddleware());
+const PUBLIC_PATHS = ["/", "/health"];
 
-api.all("x", async (c) => {
-  // eg: /v1/user/courses/overall
-  const requestPath = c.req.header("forward-to");
+api.use("*", authMiddleware({ publicPaths: PUBLIC_PATHS }));
 
-  if (!requestPath) {
+api.all("/x/*", async (c) => {
+  // remove prefix
+  // prefix = /x/*, path = /x/v1/user/courses/overall
+  // => suffix_path = /v1/user/courses/overall
+  let path = c.req.path;
+  path = path.replace(new RegExp(`^${c.req.routePath.replace("*", "")}`), "/");
+
+  if (!path) {
     return c.json({ message: "Forward-To header is required" });
   }
 
   // eg: 'https://aitu0.remoodle.api/v1/user/courses/overall'
-  const requestURL = createProxyURL(requestPath);
+  const requestURL = prepareURL(c.get("host"), path);
   // const requestURL = new URL(requestPath, "https://aitu0.remoodle.api/");
 
   //   public const INTERNAL_CROSS_TOKEN_HEADER = 'X-Remoodle-Internal-Token';
   //   public const INTERNAL_CROSS_USER_HEADER = 'X-Remoodle-Moodle-Id';
 
-  console.log(c.get("moodleId"));
+  // console.log(c.get("moodleId"));
+
+  console.log("requesting ", requestURL);
 
   const headers = new Headers({
     "Content-Type": "apilication/json",
     // Authorization: `Bearer ${c.get("userId")}`,
     // "X-Moodle-Id": c.get("moodleId"),
-    // "Auth-Token": "1bbec94f1df5c1090f56d7d26f7a9b27",
     "X-Remoodle-Internal-Token": "private-token",
     "X-Remoodle-Moodle-Id": c.get("moodleId"),
   });

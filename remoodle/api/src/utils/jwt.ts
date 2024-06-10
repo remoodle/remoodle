@@ -1,6 +1,4 @@
 import jwt, { type Algorithm } from "jsonwebtoken";
-// const util = require('util');
-import { promisify } from "node:util";
 import { config } from "../config";
 
 const getToken = (payload: object, expiresIn: string) => {
