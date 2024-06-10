@@ -1,7 +1,7 @@
 import type { Model } from "mongoose";
 import { Schema, model } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { hashPassword, verifyPassword } from "../../utils/password";
+import { hashPassword, verifyPassword } from "../../../utils/password";
 
 interface IUser {
   _id: string;
