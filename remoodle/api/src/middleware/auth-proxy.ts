@@ -6,11 +6,11 @@ import { User } from "../db";
 
 export function proxyMiddleware(): MiddlewareHandler {
   return async (ctx, next) => {
-    const host = ctx.req.header("X-Forwarded-For");
+    const host = ctx.req.header("X-Forwarded-Host");
 
     if (!host) {
       throw new HTTPException(401, {
-        message: "Missing X-Forwarded-For header",
+        message: "Missing X-Forwarded-Host header",
       });
     }
 
