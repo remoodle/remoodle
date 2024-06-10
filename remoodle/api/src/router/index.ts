@@ -133,7 +133,7 @@ api.post("/auth/login", async (c) => {
 
 const PUBLIC_PATHS = ["/", "/health"];
 
-api.use("*", authMiddleware({ publicPaths: PUBLIC_PATHS }));
+api.use("*", authMiddleware({ excludePaths: PUBLIC_PATHS }));
 
 api.all("/x/*", async (c) => {
   // remove prefix

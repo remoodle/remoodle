@@ -3,13 +3,13 @@ import { HTTPException } from "hono/http-exception";
 import { verifyJwtToken, decodeJwtToken } from "../utils/jwt";
 
 export function authMiddleware({
-  publicPaths,
-}: { publicPaths: string[] }): MiddlewareHandler {
+  excludePaths,
+}: { excludePaths: string[] }): MiddlewareHandler {
   return async (ctx, next) => {
     console.log(ctx.req.path);
     // remove /x from the path
     ctx.req.path = ctx.req.path.replace(/^\/x/, "");
-    if (publicPaths.includes(ctx.req.path)) {
+    if (excludePaths.includes(ctx.req.path)) {
       return await next();
     }
 
