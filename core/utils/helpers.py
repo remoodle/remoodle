@@ -22,9 +22,9 @@ async def find_moodle_token(message: types.Message):
 
 
 async def send_alert(topic: str, message: str):
-    url = f"{ALERTS_HOST}/alert"
+    url = f"{ALERTS_HOST}/new"
     headers = {
-        "Authorization": "Basic " + ALERTS_TOKEN
+        "Authorization": "Bearer " + ALERTS_TOKEN
     }
     alert_data = {
         "topic": topic,
