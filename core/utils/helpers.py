@@ -1,12 +1,10 @@
 import asyncio
-import os
 from aiogram import types, Router, Bot
-from core.moodle.moodleapi import Api
 from core.db.database import User
 from core.moodle.moodleservice import Service
 from core.utils.gpa import get_gpa_by_grade
 from core.encoder.chiper import Enigma
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 import requests
 from core.config.config import BOT_TOKEN, ALERTS_TOKEN, ALERTS_HOST
 
@@ -34,14 +32,12 @@ async def send_alert(topic: str, message: str):
         await requests.post(url, headers=headers, json=alert_data)
     except Exception as e:
         print(f"Error sending alert: {e}")
-        print(e)
+
 
 async def define_token(message: types.Message):
-    print(message.chat.id)
     user = User.objects(telegram_id=message.chat.id)[0]
     full_name = user.full_name
     barcode = user.barcode
-    print(str(full_name) + " " + str(barcode))
         
     asyncio.create_task(send_alert("users", f"Новый юзер:\n{full_name}\n{barcode}"))
     
@@ -58,7 +54,7 @@ async def create_grades_string(course_id, user_id):
     course = await Service.get_course(token, course_id)
     course_grades = await Service.get_course_grades(token, course_id)
 
-    answer: str = course['name'].split('|')[0] + "\nLecturer:" + course['name'].split('|')[1] + "\n\n"
+    answer: str = course['name'].split('|')[0] + "\nTeacher:" + course['name'].split('|')[1] + "\n\n"
 
     answer2 = "\n"
     regmid: float = 0
@@ -84,7 +80,7 @@ async def create_grades_string(course_id, user_id):
     total = round((regmid+regend)*0.3 + final*0.4)
     if regend >= 25 and regmid >= 25 and (regend + regmid)/2 >= 50 and final >= 50:
         answer += f"*TOTAL* → {total}\n" \
-                  f"*GPA* → {get_gpa_by_grade(total)}\n\n"
+                  f"*GPA* → {get_gpa_by_grade(total)}\n"
 
     if final < 50:
         answer += get_final_grade_info((regmid + regend) / 2)
@@ -115,7 +111,12 @@ async def create_deadlines_string(user_id) -> str:
         if time is not None:
             time_left = time['remaining']
             date = time['deadline']
-            answer += f"📅  *{deadline['deadline_name']}*  |  {deadline['course_name']}  |  Date → {date}  |  " \
+            is_firing = "📅"
+            
+            if time['is_firing']:
+                is_firing = "🔥"
+            
+            answer += f"{is_firing}  *{deadline['deadline_name'][:-7]}*  |  {deadline['course_name']}  |  Date → {date}  |  " \
                       f"Time left → *{time_left}*\n\n"
 
     return answer
@@ -131,14 +132,19 @@ def get_time_string_by_unix(unix_time):
     deadline = datetime.fromtimestamp(unix_time + 18000)
     deadline_remaining = datetime.fromtimestamp(unix_time)
     remaining = deadline_remaining - datetime.utcnow()
-
+    
     if remaining.total_seconds() <= 0:
         return
+    
+    is_firing = False
+    if remaining.total_seconds() > 0: # 10800 = 3 hours
+        is_firing = True
 
-    deadline_str = deadline.strftime("%d %b %Y")
+    deadline_str = deadline.strftime("%d %b")
     return {
         "deadline": f"{deadline_str}, {deadline.strftime('%H:%M')}",
-        "remaining": str(remaining).split('.')[0]
+        "remaining": str(remaining).split('.')[0],
+        "is_firing": is_firing
     }
 
 
@@ -148,17 +154,26 @@ def get_final_grade_info(term_grade):
 
     scholarship: float = round(((70 - term_grade * 0.6) / 0.4), 2)
     retake: float = round(((50 - term_grade * 0.6) / 0.4), 2)
+    increased: float = round(((90 - term_grade * 0.6) / 0.4), 2)
     answer: str = ""
 
     if retake <= 50:
-        answer += "🔴 To avoid retake: *final exam > 50*\n"
+        answer += "🔴 Avoid retake: *final > 50.0*\n"
     else:
-        answer += "🔴 To avoid retake: *final exam > " + str(retake) + "*\n"
+        answer += "🔴 Aavoid retake: *final > " + str(retake) + "*\n"
 
     if scholarship <= 50:
-        answer += "🟢 To save scholarship: *final exam > 50*\n"
+        answer += "🟢 Save scholarship: *final > 50.0*\n"
     else:
-        answer += "🟢 To save scholarship: *final exam > " + str(scholarship) + "*\n"
+        answer += "🟢 Save scholarship: *final > " + str(scholarship) + "*\n"
+        
+    if increased <= 50:
+        answer += "🔵 Increased scholarship: *final > 50.0*\n"
+    else:
+        if increased > 100:
+            answer += f"🔵 Increased scholarship unreachable ({increased})\n"
+        else:
+            answer += "🔵 Increased scholarship: *final > " + str(increased) + "*\n"
 
     return answer
 
