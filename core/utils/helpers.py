@@ -137,7 +137,7 @@ def get_time_string_by_unix(unix_time):
         return
     
     is_firing = False
-    if remaining.total_seconds() > 0: # 10800 = 3 hours
+    if remaining.total_seconds() > 10800: # 3 hours
         is_firing = True
 
     deadline_str = deadline.strftime("%d %b")
@@ -171,7 +171,7 @@ def get_final_grade_info(term_grade):
         answer += "🔵 Increased scholarship: *final > 50.0*\n"
     else:
         if increased > 100:
-            answer += f"🔵 Increased scholarship unreachable ({increased})\n"
+            answer += f"🔵 Increased scholarship: unreachable ({increased})\n"
         else:
             answer += "🔵 Increased scholarship: *final > " + str(increased) + "*\n"
 
