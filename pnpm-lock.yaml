@@ -15,8 +15,6 @@ importers:
         specifier: ^5.0.4
         version: 5.4.5
 
-  packages/config-typescript: {}
-
   remoodle/api:
     dependencies:
       '@hono/node-server':
@@ -69,36 +67,7 @@ importers:
         specifier: ^4.7.1
         version: 4.14.0
 
-  remoodle/notifications/remoodle/api:
-    dependencies:
-      '@hono/node-server':
-        specifier: ^1.10.0
-        version: 1.11.2
-      bcrypt:
-        specifier: ^5.1.1
-        version: 5.1.1
-      credit-card-type:
-        specifier: ^10.0.0
-        version: 10.0.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
-      hono:
-        specifier: ^4.2.3
-        version: 4.4.4
-      mongoose:
-        specifier: ^8.3.1
-        version: 8.4.1
-    devDependencies:
-      '@types/bcrypt':
-        specifier: ^5.0.2
-        version: 5.0.2
-      '@types/node':
-        specifier: ^20.11.17
-        version: 20.14.2
-      tsx:
-        specifier: ^4.7.1
-        version: 4.14.0
+  remoodle/packages/config-typescript: {}
 
   remoodle/serverless/alert_point:
     dependencies:
@@ -114,7 +83,7 @@ importers:
         version: 4.20240605.0
       '@remoodle/config-typescript':
         specifier: workspace:^
-        version: link:../../../packages/config-typescript
+        version: link:../../packages/config-typescript
       typescript:
         specifier: ^5.0.4
         version: 5.4.5
@@ -136,7 +105,7 @@ importers:
         version: 4.20240605.0
       '@remoodle/config-typescript':
         specifier: workspace:^
-        version: link:../../../packages/config-typescript
+        version: link:../../packages/config-typescript
       typescript:
         specifier: ^5.0.4
         version: 5.4.5
