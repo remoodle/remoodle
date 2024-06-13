@@ -1,26 +1,19 @@
-FROM node:20-alpine
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+COPY . /app
+WORKDIR /app
 
-RUN apk update \
-    && apk upgrade \
-    && apk add --no-cache git openssh \
-    && apk add curl
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
-RUN mkdir -p /home/app
-WORKDIR /home/app
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run build
 
-RUN corepack enable && corepack prepare pnpm@latest-8 --activate
-RUN pnpm config set store-dir .pnpm-store
-
-COPY pnpm-lock.yaml ./
-RUN pnpm fetch --prod
-ADD . ./
-RUN pnpm install -r --offline --prod
-
-RUN export TZ="Etc/UTC" \
-    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone
-
-ARG VERSION_TAG
-ENV VERSION_TAG=$VERSION_TAG
-
-ENTRYPOINT pnpm start
+FROM base
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/dist /app/dist
+EXPOSE 9000
+CMD [ "pnpm", "start" ]
