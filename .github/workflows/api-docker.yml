@@ -6,7 +6,7 @@ on:
     paths:
       - "remoodle/api/**"
       - ".github/workflows/api-docker.yml"
-      
+
   workflow_dispatch:
 
 env:
@@ -18,10 +18,6 @@ permissions: write-all
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       - name: Checkout
