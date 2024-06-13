@@ -12,39 +12,36 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  push:
+  build-and-push:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+      - name: Log in to ghcr
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build image
-        working-directory: remoodle/api
         run: |
-          IMAGE_ID=$REGISTRY/${{ github.repository }}/$IMAGE_NAME
-
-          # Change all uppercase to lowercase
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
-
-          # Use Docker `standalone` tag convention
-          [ "$VERSION" == "refs_heads_main" ] && VERSION=standalone
-
-          # Create server version tag
-          SHA=${{ github.workflow_sha }}
-          VERSION_TAG=${SHA::8}::${VERSION}
+          IMAGE_ID=ghcr.io/remoodle/api
+          GITHUB_REF="${{ github.ref }}"
 
           echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-          echo VERSION_TAG=$VERSION_TAG
+          echo GITHUB_REF=$GITHUB_REF
 
-          docker pull $IMAGE_ID:standalone
-          docker build . --file Dockerfile --tag $IMAGE_ID:$VERSION --cache-from $IMAGE_ID:standalone --build-arg VERSION_TAG=$VERSION_TAG
+          cd remoodle/api
+          docker pull $IMAGE_ID:latest
+          docker build . --file Dockerfile --tag $IMAGE_ID:$IMAGE_TAG --cache-from $IMAGE_ID:latest
+          docker build . --file Dockerfile --tag $IMAGE_ID:latest --cache-from $IMAGE_ID:$IMAGE_TAG
 
-          docker push $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$IMAGE_TAG
+          docker push $IMAGE_ID:latest
