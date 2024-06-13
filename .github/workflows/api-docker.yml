@@ -1,0 +1,50 @@
+name: "[api] Publish Docker image"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "remoodle/api/**"
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: api
+  REGISTRY: ghcr.io
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+
+      - name: Build image
+        working-directory: remoodle/api
+        run: |
+          IMAGE_ID=$REGISTRY/${{ github.repository }}/$IMAGE_NAME
+
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+
+          # Use Docker `standalone` tag convention
+          [ "$VERSION" == "refs_heads_main" ] && VERSION=standalone
+
+          # Create server version tag
+          SHA=${{ github.workflow_sha }}
+          VERSION_TAG=${SHA::8}::${VERSION}
+
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          echo VERSION_TAG=$VERSION_TAG
+
+          docker pull $IMAGE_ID:standalone
+          docker build . --file Dockerfile --tag $IMAGE_ID:$VERSION --cache-from $IMAGE_ID:standalone --build-arg VERSION_TAG=$VERSION_TAG
+
+          docker push $IMAGE_ID:$VERSION
