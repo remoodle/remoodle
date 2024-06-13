@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: api
+  IMAGE_NAME: proxy-api
   REGISTRY: ghcr.io
 
 permissions: write-all
