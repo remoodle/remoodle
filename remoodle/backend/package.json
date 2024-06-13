@@ -1,0 +1,27 @@
+{
+  "scripts": {
+    "start": "tsx src/app.ts",
+    "dev": "tsx watch src/app.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.10.0",
+    "@t3-oss/env-core": "^0.10.1",
+    "bcrypt": "^5.1.1",
+    "credit-card-type": "^10.0.0",
+    "dotenv": "^16.4.5",
+    "hono": "^4.2.3",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.1",
+    "nanoid": "^5.0.7",
+    "uuid": "^9.0.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.11.17",
+    "@types/uuid": "^9.0.8",
+    "tsx": "^4.7.1"
+  }
+}
