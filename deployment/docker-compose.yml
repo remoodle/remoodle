@@ -62,8 +62,8 @@ services:
     env_file:
       - .env.moodbot
 
-  api:
-    image: ghcr.io/remoodle/proxy-api:refs_heads_main
+  backend:
+    image: ghcr.io/remoodle/backend:refs_heads_main
     restart: always
     depends_on:
       mongo:
@@ -71,7 +71,7 @@ services:
     networks:
       - r1ng
     env_file:
-      - .env.api
+      - .env.backend
     ports:
       - "9000:9000"
 
