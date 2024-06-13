@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.2
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: remoodle_aitu
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 2s
+      retries: 20
+    networks:
+      - r1ng
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=moodbot
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD","mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    networks:
+      - r1ng
+
+  aitu:
+    image: ghcr.io/remoodle/api:refs_heads_main
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - r1ng
+    env_file:
+      - .env.aitu
+    ports:
+      - "8080:4000"
+      - "4000:4000"
+
+  moodbot:
+    image: ghcr.io/remoodle/moodbot:refs_heads_main
+    restart: always
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - r1ng
+    env_file:
+      - .env.moodbot
+
+  api:
+    image: ghcr.io/remoodle/proxy-api:refs_heads_main
+    restart: always
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - r1ng
+    env_file:
+      - .env.api
+    ports:
+      - "9000:9000"
+
+networks:
+  r1ng:
+
+volumes:
+  mysql_data:
+  mongodb_data:
