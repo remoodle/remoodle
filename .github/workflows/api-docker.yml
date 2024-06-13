@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "remoodle/api/**"
+      - ".github/workflows/api-docker.yml"
   workflow_dispatch:
 
 env:
