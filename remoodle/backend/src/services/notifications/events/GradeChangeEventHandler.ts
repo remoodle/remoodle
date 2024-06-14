@@ -50,7 +50,7 @@ export class GradeChangeEventHandler {
         const items = await this.messageStream.get(
           this.streamName,
           this.groupName,
-          this.consumerName
+          this.consumerName,
         );
 
         console.log("Processing", this.streamName, "messages", items);
@@ -62,7 +62,7 @@ export class GradeChangeEventHandler {
 
           if (user?.telegramId) {
             const text = GradeChangeEventHandler.prepareUpdatedGradesMessage(
-              msg.payload
+              msg.payload,
             );
 
             const response = await sendTelegramMessage(user.telegramId, text);
@@ -73,12 +73,12 @@ export class GradeChangeEventHandler {
               await this.messageStream.ack(
                 this.streamName,
                 this.groupName,
-                item.id
+                item.id,
               );
             } else {
               console.error(
                 "Failed to send message to Telegram",
-                response.statusText
+                response.statusText,
               );
             }
           }

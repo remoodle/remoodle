@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import type { StatusCode } from "hono/utils/http-status";
 import { HTTPException } from "hono/http-exception";
+import type { StatusCode } from "hono/utils/http-status";
 import { User } from "../database";
-import { issueTokens } from "../utils/jwt";
 import { authMiddleware, proxyMiddleware } from "../middleware/auth-proxy";
+import { issueTokens } from "../utils/jwt";
 
 const api = new Hono<{
   Variables: {

@@ -14,7 +14,7 @@ export class MessageStream {
   async add(
     streamName: string,
     msg: string,
-    options: { maxlen?: number } = {}
+    options: { maxlen?: number } = {},
   ) {
     const { maxlen = 0 } = options;
 
@@ -34,7 +34,7 @@ export class MessageStream {
       JSON.stringify({
         pv: 1,
         ts: new Date().toISOString(),
-      })
+      }),
     );
 
     // @ts-ignore
@@ -56,7 +56,7 @@ export class MessageStream {
       idleTimeToClaim?: number;
       maxRetries?: number;
       blockTime?: number;
-    } = {}
+    } = {},
   ) {
     const streamKey = MessageStream._getStreamKey(streamName);
 
@@ -76,7 +76,7 @@ export class MessageStream {
       idleTimeToClaim,
       "-",
       "+",
-      limit * 2
+      limit * 2,
     );
 
     const idsToDelete = pendingMessages
@@ -105,7 +105,7 @@ export class MessageStream {
         groupName,
         consumerName,
         idleTimeToClaim,
-        ...idsToClaim
+        ...idsToClaim,
       );
       messages = messages.concat(claimedMessages);
     }
@@ -121,7 +121,7 @@ export class MessageStream {
         blockTime,
         "STREAMS",
         streamKey,
-        ">"
+        ">",
       );
 
       if (newMessages !== null) {

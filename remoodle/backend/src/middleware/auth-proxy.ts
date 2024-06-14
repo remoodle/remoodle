@@ -1,8 +1,8 @@
 import type { MiddlewareHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { verifyJwtToken, decodeJwtToken } from "../utils/jwt";
 import { config } from "../config";
 import { User } from "../database";
+import { decodeJwtToken, verifyJwtToken } from "../utils/jwt";
 
 export function proxyMiddleware(): MiddlewareHandler {
   return async (ctx, next) => {

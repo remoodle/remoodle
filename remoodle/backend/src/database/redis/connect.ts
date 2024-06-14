@@ -39,15 +39,15 @@ const eventsReducer = (result: any[]): Record<string, any>[] => {
 };
 
 Redis.Command.setReplyTransformer("xrange", (result: any) =>
-  Array.isArray(result) ? eventsReducer(result) : result
+  Array.isArray(result) ? eventsReducer(result) : result,
 );
 
 Redis.Command.setReplyTransformer("xautoclaim", (result: any) =>
-  Array.isArray(result) ? eventsReducer(result[1]) : result
+  Array.isArray(result) ? eventsReducer(result[1]) : result,
 );
 
 Redis.Command.setReplyTransformer("xclaim", (result: any) =>
-  Array.isArray(result) ? eventsReducer(result) : result
+  Array.isArray(result) ? eventsReducer(result) : result,
 );
 
 Redis.Command.setReplyTransformer("xreadgroup", (result: any) =>
@@ -57,12 +57,12 @@ Redis.Command.setReplyTransformer("xreadgroup", (result: any) =>
           // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
           ...res,
           ...eventsReducer(stream[1]).map((event: Record<string, any>) =>
-            Object.assign(event, { stream: stream[0] })
+            Object.assign(event, { stream: stream[0] }),
           ),
         ],
-        []
+        [],
       )
-    : result
+    : result,
 );
 
 const redisClient = new Redis(config.redis.uri);
