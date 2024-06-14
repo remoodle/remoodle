@@ -168,9 +168,14 @@ api.all("/x/*", async (c) => {
     body: c.req.raw.body,
   });
 
+  const json = await response.json();
+  // console.log(kal);
+
   if (response.status === 101) return response;
 
-  return c.newResponse(response.body, response.status as StatusCode);
+  return c.json(json, response.status as StatusCode);
+
+  // return c.newResponse(kal, response.status as StatusCode);
 });
 
 export default api;

@@ -77,3 +77,27 @@ serve(
     console.log(`Server is running on http://${info.address}:${info.port}`);
   },
 );
+
+import { fetchCourses } from "./tasks/fetch-courses";
+
+import cron from "node-cron";
+
+const fiveMin = "*/5 * * * *";
+const fiveSec = "*/5 * * * * *";
+
+fetchCourses(messageStream, api).catch((error) => {
+  console.error("Error running script:", error);
+});
+
+cron.schedule(fiveMin, () => {
+  console.log("five min");
+  fetchCourses(messageStream, api).catch((error) => {
+    console.error("Error running script:", error);
+  });
+});
+
+// cron.schedule("*/5 * * * *", () => {
+//   fetchCourses(messageStream).catch((error) => {
+//     console.error("Error running script:", error);
+//   });
+// });
