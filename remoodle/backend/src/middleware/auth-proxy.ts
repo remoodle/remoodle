@@ -6,17 +6,16 @@ import { decodeJwtToken, verifyJwtToken } from "../utils/jwt";
 
 export function proxyMiddleware(): MiddlewareHandler {
   return async (ctx, next) => {
-    const host = ctx.req.header("X-Forwarded-Host");
+    // const host = ctx.req.header("X-Forwarded-Host");
 
-    if (!host) {
-      throw new HTTPException(401, {
-        message: "Missing X-Forwarded-Host header",
-      });
-    }
+    // if (!host) {
+    //   throw new HTTPException(401, {
+    //     message: "Missing X-Forwarded-Host header",
+    //   });
+    // }
 
-    console.log("proxying to ", host);
-
-    ctx.set("host", host);
+    // ctx.set("host", host);
+    ctx.set("host", config.http.addr);
 
     return await next();
   };
@@ -24,7 +23,9 @@ export function proxyMiddleware(): MiddlewareHandler {
 
 export function authMiddleware({
   excludePaths,
-}: { excludePaths: string[] }): MiddlewareHandler {
+}: {
+  excludePaths: string[];
+}): MiddlewareHandler {
   return async (ctx, next) => {
     // remove /x from the path
     ctx.req.path = ctx.req.path.replace(/^\/x/, "");

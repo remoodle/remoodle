@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  backend:
+    image: ghcr.io/remoodle/backend:refs_heads_main
+    restart: always
+    networks:
+      - r1ng
+    env_file:
+      - .env
+    ports:
+      - "9000:9000"
+
+networks:
+  r1ng:

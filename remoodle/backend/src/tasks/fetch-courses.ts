@@ -12,7 +12,7 @@ const fetchCourses = async (messageStream: MessageStream, api: Hono) => {
     const data = await api.request("/x/v1/user/courses/overall", {
       headers: {
         Authorization: `Bearer ${config.internal.secret}::${user.telegramId}`,
-        "X-Forwarded-Host": "http://aitu:8080/",
+        "X-Forwarded-Host": config.http.addr,
         "Content-Type": "application/json",
       },
     });
@@ -32,7 +32,7 @@ const fetchCourses = async (messageStream: MessageStream, api: Hono) => {
               moodleId: user.moodleId,
               payload: diff,
             }),
-            { maxlen: 10000 },
+            { maxlen: 10000 }
           );
         }
       }
@@ -41,20 +41,20 @@ const fetchCourses = async (messageStream: MessageStream, api: Hono) => {
     await Course.findOneAndUpdate(
       { userId: user._id },
       { $set: { data: json, fetchedAt: new Date() } },
-      { upsert: true, new: true },
+      { upsert: true, new: true }
     );
   }
 };
 
 const trackCourseDiff = (
   oldData: ExtendedCourse[],
-  newData: ExtendedCourse[],
+  newData: ExtendedCourse[]
 ) => {
   const diffs = [];
 
   // Create a map for quick lookup of old courses by course_id
   const oldCoursesMap = new Map(
-    oldData.map((course) => [course.course_id, course]),
+    oldData.map((course) => [course.course_id, course])
   );
 
   // Iterate through each course in newData to detect changes
@@ -67,7 +67,7 @@ const trackCourseDiff = (
 
       // Create a map for quick lookup of old grades by grade_id
       const oldGradesMap = new Map(
-        oldCourse.grades?.map((grade) => [grade.grade_id, grade]),
+        oldCourse.grades?.map((grade) => [grade.grade_id, grade])
       );
 
       // Check each grade in newCourse for changes

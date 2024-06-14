@@ -4,6 +4,7 @@ dotenv.config();
 
 export const config = {
   http: {
+    addr: "http://172.17.0.1:8080/",
     host: process.env.SERVER_HOST || "0.0.0.0",
     port: Number(process.env.SERVER_PORT) || 9000,
   },

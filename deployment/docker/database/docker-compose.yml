@@ -7,7 +7,7 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-  networks:
+    networks:
       - r1ng
       
   mysql:
@@ -45,44 +45,6 @@ services:
       retries: 3
     networks:
       - r1ng
-
-  aitu:
-    image: ghcr.io/remoodle/api:refs_heads_main
-    restart: always
-    depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - r1ng
-    env_file:
-      - .env.aitu
-    ports:
-      - "8080:4000"
-      - "4000:4000"
-
-  moodbot:
-    image: ghcr.io/remoodle/moodbot:refs_heads_main
-    restart: always
-    depends_on:
-      mongo:
-        condition: service_healthy
-    networks:
-      - r1ng
-    env_file:
-      - .env.moodbot
-
-  backend:
-    image: ghcr.io/remoodle/backend:refs_heads_main
-    restart: always
-    depends_on:
-      mongo:
-        condition: service_healthy
-    networks:
-      - r1ng
-    env_file:
-      - .env.backend
-    ports:
-      - "9000:9000"
 
 networks:
   r1ng:

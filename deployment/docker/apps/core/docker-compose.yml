@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  aitu:
+    image: ghcr.io/remoodle/api:refs_heads_main
+    restart: always
+    networks:
+      - r1ng
+    env_file:
+      - .env
+    ports:
+      - "8080:4000"
+      - "4000:4000"
+
+networks:
+  r1ng:
