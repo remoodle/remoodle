@@ -55,10 +55,11 @@ api.post("/auth/register", async (c) => {
         body: JSON.stringify({
           token: moodleToken,
         }),
-      },
+      }
     );
 
     if (!response.ok) {
+      console.log(await response.json());
       throw new Error("Failed to create user in the critical service");
     }
 
@@ -78,7 +79,7 @@ api.post("/auth/register", async (c) => {
   const user = await User.findOneAndUpdate(
     { _id: ghost._id },
     { $set: { name: student.name, moodleId: student.moodle_id } },
-    { upsert: true, new: true },
+    { upsert: true, new: true }
   );
 
   if (!user) {
@@ -120,7 +121,7 @@ api.post("/auth/login", async (c) => {
 
   const { accessToken, refreshToken } = issueTokens(
     user._id.toString(),
-    user.moodleId,
+    user.moodleId
   );
 
   return c.json({
