@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+  networks:
+      - r1ng
+      
   mysql:
     image: mysql:8.2
     restart: always
@@ -81,3 +90,4 @@ networks:
 volumes:
   mysql_data:
   mongodb_data:
+  redis_data:
