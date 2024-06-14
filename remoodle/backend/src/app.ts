@@ -5,34 +5,18 @@ import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { HTTPException } from "hono/http-exception";
 import { config } from "./config";
-import { connectDB, redisClient } from "./database";
+import { connectDB, redisClient, MessageStream } from "./database";
 import { errorHandler } from "./middleware/error";
 import router from "./router/routes";
+import { init } from "./services/notifications/service";
 
 connectDB();
 
-import { EventService } from "./services/notifications";
+const messageStream = new MessageStream(redisClient);
 
-const eventService = new EventService(redisClient);
-
-async function init() {
-  eventService
-    .handleEvents("stream::grade-change", "tg", "worker")
-    .catch((err) => console.error("Handler error", err));
-
-  process.on("SIGINT", async () => {
-    console.log("Shutting down server...");
-    // server.close();
-    // await serverApp.shutdown();
-    console.log("Server gracefully shutdown.");
-    process.exit(0);
-  });
-}
-
-init().catch((err) => {
-  console.error("Failed to initialize the application", err);
-  process.exit(1);
-});
+init(messageStream).catch((err) =>
+  console.error("Error running task manager", err)
+);
 
 const api = new Hono();
 
@@ -43,8 +27,35 @@ api.use(
   cors({
     origin: "*",
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  }),
+  })
 );
+
+api.post("/event", async (c) => {
+  await messageStream.add(
+    "grade-change",
+    JSON.stringify({
+      moodleId: 8798,
+      payload: {
+        course: "Introduction to SRE | Meirmanova Aigul",
+        grades: [
+          {
+            name: "Final exam documentation",
+            previous: "-",
+            updated: "96.00%",
+          },
+          {
+            name: "Register Final",
+            previous: "-",
+            updated: "98.00%",
+          },
+        ],
+      },
+    }),
+    { maxlen: 10000 }
+  );
+
+  return c.text("OK", 200);
+});
 
 api.route("/", router);
 
@@ -64,5 +75,5 @@ serve(
   },
   (info) => {
     console.log(`Server is running on http://${info.address}:${info.port}`);
-  },
+  }
 );

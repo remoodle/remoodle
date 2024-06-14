@@ -1,10 +1,8 @@
-import { config } from "../../../config";
+import { config } from "../../config";
 
-export async function notifyAtTelegram(
-  chatId: number,
-  message: string,
-): Promise<void> {
+export async function sendTelegramMessage(chatId: number, message: string) {
   const url = `https://api.telegram.org/bot${config.internal.telegramToken}/sendMessage`;
+
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -16,7 +14,9 @@ export async function notifyAtTelegram(
     }),
   });
 
-  if (!response.ok) {
-    throw new Error(`Failed to send message: ${response.statusText}`);
-  }
+  return response;
+}
+
+async function sendEmail(email: string, message: string) {
+  // TODO: Send an email via Resend
 }

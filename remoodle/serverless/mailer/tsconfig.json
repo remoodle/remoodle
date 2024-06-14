@@ -1,7 +1,0 @@
-{
-  "extends": "@remoodle/config-typescript/tsconfig.cf.json",
-  "exclude": ["test"],
-  "compilerOptions": {
-    "types": ["@cloudflare/workers-types/2023-07-01"]
-  }
-}

@@ -1,5 +1,5 @@
 packages:
   - "packages/config-typescript"
-  - "remoodle/api"
+  - "remoodle/backend"
   - "remoodle/serverless/alert_point"
   - "remoodle/serverless/mailer"
