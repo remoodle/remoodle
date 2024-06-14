@@ -7,30 +7,10 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    networks:
-      - r1ng
       
-  mysql:
-    image: mysql:8.2
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: remoodle_aitu
-      MYSQL_USER: username
-      MYSQL_PASSWORD: password
-    volumes:
-      - mysql_data:/var/lib/mysql
-    ports:
-      - 3306:3306
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 2s
-      retries: 20
-    networks:
-      - r1ng
-
   mongo:
     image: mongo:latest
+    command: --bind_ip 0.0.0.0
     restart: always
     environment:
       - MONGO_INITDB_DATABASE=moodbot
@@ -43,13 +23,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 3
-    networks:
-      - r1ng
-
-networks:
-  r1ng:
 
 volumes:
-  mysql_data:
   mongodb_data:
   redis_data:

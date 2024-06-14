@@ -1,16 +1,34 @@
 version: '3.8'
 
 services:
+  mysql:
+    image: mysql:8.2
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: remoodle_aitu
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 2s
+      retries: 20
+
   aitu:
     image: ghcr.io/remoodle/api:refs_heads_main
     restart: always
-    networks:
-      - r1ng
+    depends_on:
+      mysql:
+        condition: service_healthy
     env_file:
       - .env
     ports:
       - "8080:4000"
       - "4000:4000"
 
-networks:
-  r1ng:
+volumes:
+  mysql_data:
