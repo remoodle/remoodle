@@ -29,12 +29,12 @@ const userSchema = new Schema<IUser, UserModel, UserMethods>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 userSchema.index(
   { moodleId: 1 },
-  { unique: true, partialFilterExpression: { moodleId: { $exists: true } } }
+  { unique: true, partialFilterExpression: { moodleId: { $exists: true } } },
 );
 
 // userSchema.index(
@@ -44,7 +44,7 @@ userSchema.index(
 
 userSchema.index(
   { telegramId: 1 },
-  { unique: true, partialFilterExpression: { telegramId: { $exists: true } } }
+  { unique: true, partialFilterExpression: { telegramId: { $exists: true } } },
 );
 
 userSchema.methods.verifyPassword = async function (enteredPassword: string) {
