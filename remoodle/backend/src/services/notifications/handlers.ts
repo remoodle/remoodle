@@ -1,7 +1,7 @@
 import { config } from "../../config";
 
 export async function sendTelegramMessage(chatId: number, message: string) {
-  const url = `https://api.telegram.org/bot${config.internal.telegramToken}/sendMessage`;
+  const url = `https://api.telegram.org/bot${config.telegram.token}/sendMessage`;
 
   const response = await fetch(url, {
     method: "POST",

@@ -1,20 +1,24 @@
+import cron from "node-cron";
+
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
+
 import { config } from "./config";
 import { MessageStream, connectDB, redisClient } from "./database";
 import { errorHandler } from "./middleware/error";
 import router from "./router/routes";
-import { init } from "./services/notifications/service";
+import { initEventService } from "./services/notifications/service";
+import { fetchCourses } from "./tasks/fetch-courses";
 
 connectDB();
 
 const messageStream = new MessageStream(redisClient);
 
-init(messageStream).catch((err) =>
+initEventService(messageStream).catch((err) =>
   console.error("Error running task manager", err),
 );
 
@@ -31,28 +35,11 @@ api.use(
 );
 
 api.post("/event", async (c) => {
-  await messageStream.add(
-    "grade-change",
-    JSON.stringify({
-      moodleId: 8798,
-      payload: {
-        course: "Introduction to SRE | Meirmanova Aigul",
-        grades: [
-          {
-            name: "Final exam documentation",
-            previous: "-",
-            updated: "96.00%",
-          },
-          {
-            name: "Register Final",
-            previous: "-",
-            updated: "98.00%",
-          },
-        ],
-      },
-    }),
-    { maxlen: 10000 },
-  );
+  const body = await c.req.json();
+
+  await messageStream.add("grade-change", JSON.stringify(body), {
+    maxlen: 10000,
+  });
 
   return c.text("OK", 200);
 });
@@ -78,26 +65,17 @@ serve(
   },
 );
 
-import { fetchCourses } from "./tasks/fetch-courses";
+const FIVE_MINUTES = "*/5 * * * *";
+// const FIVE_SECONDS = "*/5 * * * * *";
 
-import cron from "node-cron";
-
-const fiveMin = "*/5 * * * *";
-const fiveSec = "*/5 * * * * *";
-
-fetchCourses(messageStream, api).catch((error) => {
-  console.error("Error running script:", error);
-});
-
-cron.schedule(fiveMin, () => {
-  console.log("five min");
-  fetchCourses(messageStream, api).catch((error) => {
-    console.error("Error running script:", error);
-  });
-});
-
-// cron.schedule("*/5 * * * *", () => {
-//   fetchCourses(messageStream).catch((error) => {
-//     console.error("Error running script:", error);
-//   });
-// });
+cron.schedule(
+  FIVE_MINUTES,
+  () => {
+    fetchCourses(messageStream, api).catch((error) => {
+      console.error("Error running script:", error);
+    });
+  },
+  {
+    runOnInit: true,
+  },
+);

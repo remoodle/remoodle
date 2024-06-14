@@ -4,6 +4,7 @@ import type { StatusCode } from "hono/utils/http-status";
 import { User } from "../database";
 import { authMiddleware, proxyMiddleware } from "../middleware/auth-proxy";
 import { issueTokens } from "../utils/jwt";
+import { config } from "../config";
 
 const api = new Hono<{
   Variables: {
@@ -148,18 +149,10 @@ api.all("/x/*", async (c) => {
 
   // eg: 'https://aitu0.remoodle.api/v1/user/courses/overall'
   const requestURL = prepareURL(c.get("host"), path);
-  // const requestURL = new URL(requestPath, "https://aitu0.remoodle.api/");
-
-  //   public const INTERNAL_CROSS_TOKEN_HEADER = 'X-Remoodle-Internal-Token';
-  //   public const INTERNAL_CROSS_USER_HEADER = 'X-Remoodle-Moodle-Id';
-
-  // console.log(c.get("moodleId"));
 
   const headers = new Headers({
     "Content-Type": "apilication/json",
-    // Authorization: `Bearer ${c.get("userId")}`,
-    // "X-Moodle-Id": c.get("moodleId"),
-    "X-Remoodle-Internal-Token": "private-token",
+    "X-Remoodle-Internal-Token": config.core.secret,
     "X-Remoodle-Moodle-Id": c.get("moodleId"),
   });
 
@@ -170,12 +163,10 @@ api.all("/x/*", async (c) => {
   });
 
   const json = await response.json();
-  // console.log(kal);
 
   if (response.status === 101) return response;
 
   return c.json(json, response.status as StatusCode);
-
   // return c.newResponse(kal, response.status as StatusCode);
 });
 

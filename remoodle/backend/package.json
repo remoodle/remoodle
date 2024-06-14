@@ -1,7 +1,8 @@
 {
   "scripts": {
     "start": "tsx src/app.ts",
-    "dev": "tsx watch src/app.ts"
+    "dev": "tsx watch src/app.ts",
+    "test": "vitest"
   },
   "dependencies": {
     "@hono/node-server": "^1.10.0",
@@ -25,6 +26,7 @@
     "@types/node": "^20.11.17",
     "@types/node-cron": "^3.0.11",
     "@types/uuid": "^9.0.8",
-    "tsx": "^4.7.1"
+    "tsx": "^4.7.1",
+    "vitest": "^1.6.0"
   }
 }

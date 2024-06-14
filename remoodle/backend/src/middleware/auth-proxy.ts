@@ -15,7 +15,7 @@ export function proxyMiddleware(): MiddlewareHandler {
     // }
 
     // ctx.set("host", host);
-    ctx.set("host", config.http.addr);
+    ctx.set("host", config.core.url);
 
     return await next();
   };
@@ -38,7 +38,7 @@ export function authMiddleware({
     if (authorization) {
       const [token, telegramId] = authorization.split("::");
 
-      if (token !== `Bearer ${config.internal.secret}`) {
+      if (token !== `Bearer ${config.http.secret}`) {
         throw new HTTPException(403, {
           message: "Forbidden",
         });

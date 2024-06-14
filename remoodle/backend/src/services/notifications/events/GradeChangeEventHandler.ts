@@ -36,7 +36,7 @@ export class GradeChangeEventHandler {
     message += "Updated grades:\n\n";
     message += `  ${course}:\n`;
     for (const grade of grades) {
-      message += `      ${grade.name} / ${grade.previous} -> ${grade.updated} %\n`;
+      message += `      ${grade.name} ${grade.previous} -> ${grade.updated}\n`;
     }
 
     return message;
@@ -53,12 +53,21 @@ export class GradeChangeEventHandler {
           this.consumerName,
         );
 
-        console.log("Processing", this.streamName, "messages", items);
+        // console.log("Processing", this.streamName, "messages", items);
 
         for (const item of items) {
           const msg = JSON.parse(item.msg) as GradeChangeEvent;
 
           const user = await User.findOne({ moodleId: msg.moodleId });
+
+          console.log(
+            "Processing",
+            msg.moodleId,
+            "message",
+            msg.payload,
+            "user",
+            user?.name,
+          );
 
           if (user?.telegramId) {
             const text = GradeChangeEventHandler.prepareUpdatedGradesMessage(
@@ -68,7 +77,7 @@ export class GradeChangeEventHandler {
             const response = await sendTelegramMessage(user.telegramId, text);
 
             if (response.ok) {
-              console.log("Message sent to Telegram", user._id);
+              console.log("Message sent to Telegram", user.telegramId);
 
               await this.messageStream.ack(
                 this.streamName,

@@ -21,7 +21,7 @@ export class TaskManager {
   }
 }
 
-export async function init(messageStream: MessageStream) {
+export async function initEventService(messageStream: MessageStream) {
   const taskManager = new TaskManager(messageStream);
 
   taskManager.registerHandler(GradeChangeEventHandler);
