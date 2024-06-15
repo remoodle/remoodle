@@ -29,7 +29,10 @@ export type ExtendedCourse = ActiveCourse & {
 };
 
 // Crawler
-export type CourseDiff = Record<string, [string, string, string][]>;
+export type CourseDiff = {
+  n: string;
+  d: [string, string | number | null, string | number | null][];
+};
 
 export type GradeChangeEvent = {
   moodleId: number;

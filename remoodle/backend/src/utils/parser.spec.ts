@@ -62,9 +62,8 @@ test("trackCourseDiff", () => {
   expect(trackCourseDiff(oldData, newData)).toStrictEqual({
     diffs: [
       {
-        "Introduction to SRE | Meirmanova Aigul": [
-          ["Final exam documentation submission", null, 100],
-        ],
+        n: "Introduction to SRE | Meirmanova Aigul",
+        d: [["Final exam documentation submission", null, 100]],
       },
     ],
     hasDiff: true,
@@ -76,9 +75,8 @@ test("formatCourseDiffs", () => {
     moodleId: 1234,
     payload: [
       {
-        "Introduction to SRE | Meirmanova Aigul": [
-          ["Final exam documentation submission", "null", "100"],
-        ],
+        n: "Introduction to SRE | Meirmanova Aigul",
+        d: [["Final exam documentation submission", "null", "100"]],
       },
     ],
   };
