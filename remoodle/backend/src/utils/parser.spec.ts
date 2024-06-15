@@ -76,12 +76,12 @@ test("formatCourseDiffs", () => {
     payload: [
       {
         n: "Introduction to SRE | Meirmanova Aigul",
-        d: [["Final exam documentation submission", "null", "100"]],
+        d: [["Final exam documentation submission", null, 100]],
       },
     ],
   };
 
   expect(formatCourseDiffs(event.payload)).toStrictEqual(
-    "Updated grades:\n\n  Introduction to SRE | Meirmanova Aigul:\n      Final exam documentation submission null -> 100\n",
+    "Updated grades:\n\n  Introduction to SRE | Meirmanova Aigul:\n      Final exam documentation submission - -> 100\n",
   );
 });
