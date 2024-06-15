@@ -1,4 +1,4 @@
-import { config } from "../../config";
+import { config } from "../config";
 
 export async function sendTelegramMessage(chatId: number, message: string) {
   const url = `https://api.telegram.org/bot${config.telegram.token}/sendMessage`;

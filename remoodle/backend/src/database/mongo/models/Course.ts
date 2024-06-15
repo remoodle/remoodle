@@ -2,7 +2,7 @@ import type { Model } from "mongoose";
 import { Schema, model } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-interface ICourse {
+export interface ICourse {
   _id: string;
   userId: string;
   data: any;
@@ -24,5 +24,7 @@ const courseSchema = new Schema<ICourse, CourseModel>(
 );
 
 const Course = model("Course", courseSchema);
+
+export type CourseType = typeof Course;
 
 export default Course;

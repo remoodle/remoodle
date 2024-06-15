@@ -1,8 +1,8 @@
 import type { MiddlewareHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { config } from "../config";
-import { User } from "../database";
-import { decodeJwtToken, verifyJwtToken } from "../utils/jwt";
+import { config } from "../../../config";
+import { db } from "../../../database";
+import { decodeJwtToken, verifyJwtToken } from "../../../utils/jwt";
 
 export function proxyMiddleware(): MiddlewareHandler {
   return async (ctx, next) => {
@@ -44,7 +44,7 @@ export function authMiddleware({
         });
       }
 
-      const user = await User.findOne({ telegramId });
+      const user = await db.user.findOne({ telegramId });
 
       if (!user) {
         throw new HTTPException(403, {

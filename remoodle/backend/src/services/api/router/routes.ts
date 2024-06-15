@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import type { StatusCode } from "hono/utils/http-status";
-import { User } from "../database";
+import { db } from "../../../database";
 import { authMiddleware, proxyMiddleware } from "../middleware/auth-proxy";
-import { issueTokens } from "../utils/jwt";
-import { config } from "../config";
+import { issueTokens } from "../../../utils/jwt";
+import { config } from "../../../config";
 
 const api = new Hono<{
   Variables: {
@@ -31,7 +31,7 @@ api.post("/auth/register", async (c) => {
 
   let ghost;
   try {
-    ghost = await User.create({
+    ghost = await db.user.create({
       email,
       telegramId,
       password,
@@ -67,7 +67,7 @@ api.post("/auth/register", async (c) => {
     student = await response.json();
   } catch (error: any) {
     try {
-      await User.deleteOne({ _id: ghost._id });
+      await db.user.deleteOne({ _id: ghost._id });
     } catch (rollbackError) {
       console.error("Failed to rollback the user in MongoDB:", rollbackError);
     }
@@ -77,7 +77,7 @@ api.post("/auth/register", async (c) => {
     });
   }
 
-  const user = await User.findOneAndUpdate(
+  const user = await db.user.findOneAndUpdate(
     { _id: ghost._id },
     { $set: { name: student.name, moodleId: student.moodle_id } },
     { upsert: true, new: true },
@@ -107,7 +107,7 @@ api.post("/auth/login", async (c) => {
     });
   }
 
-  const user = await User.findOne({ email });
+  const user = await db.user.findOne({ email });
   if (!user) {
     throw new HTTPException(401, {
       message: "No user found with this email",

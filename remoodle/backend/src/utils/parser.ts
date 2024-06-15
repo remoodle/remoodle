@@ -1,10 +1,10 @@
-import type { ExtendedCourse } from "./types";
+import type { GradeChangeEvent, CourseDiff, ExtendedCourse } from "../shims";
 
 export const trackCourseDiff = (
   oldData: ExtendedCourse[],
   newData: ExtendedCourse[],
 ) => {
-  const diffs = [];
+  const diffs: CourseDiff[] = [];
 
   // Create a map for quick lookup of old courses by course_id
   const oldCoursesMap = new Map(
@@ -14,11 +14,9 @@ export const trackCourseDiff = (
   // Iterate through each course in newData to detect changes
   for (const newCourse of newData) {
     const oldCourse = oldCoursesMap.get(newCourse.course_id);
+    let courseChanges: any[] = [];
 
     if (oldCourse) {
-      let courseChanged = false;
-      const gradeChanges: any[] = [];
-
       // Create a map for quick lookup of old grades by grade_id
       const oldGradesMap = new Map(
         oldCourse.grades?.map((grade) => [grade.grade_id, grade]),
@@ -33,35 +31,28 @@ export const trackCourseDiff = (
 
           // Check if the grade exists and if it has changed
           if (!oldGrade || previous !== updated) {
-            gradeChanges.push({
-              name: newGrade.name,
-              previous: previous,
-              updated: updated,
-            });
-            courseChanged = true;
+            courseChanges.push([newGrade.name, previous, updated]);
           }
         }
       }
 
       // If any grades changed, push a structured diff for the course
-      if (courseChanged) {
+      if (courseChanges.length > 0) {
         diffs.push({
-          course: `${newCourse.name}`,
-          grades: gradeChanges,
+          [newCourse.name]: courseChanges,
         });
       }
     } else {
       if (!newCourse.grades) continue;
 
       // Handle completely new courses
-      const gradeChanges = newCourse.grades.map((grade) => ({
-        name: grade.name,
-        previous: "-",
-        updated: grade.graderaw,
-      }));
+      courseChanges = newCourse.grades.map((grade) => [
+        grade.name,
+        "-",
+        grade.graderaw,
+      ]);
       diffs.push({
-        course: `${newCourse.name}`,
-        grades: gradeChanges,
+        [newCourse.name]: courseChanges,
       });
     }
   }
@@ -70,4 +61,23 @@ export const trackCourseDiff = (
     diffs,
     hasDiff: diffs.length > 0,
   };
+};
+
+export const formatCourseDiffs = (data: GradeChangeEvent["payload"]) => {
+  let message = "Updated grades:\n\n";
+
+  for (const diff of data) {
+    for (const course in diff) {
+      message += `  ${course}:\n`;
+      const gradeChanges = diff[course];
+      for (const change of gradeChanges) {
+        const [gradeName, previous, updated] = change;
+        const displayPrevious = previous === null ? "-" : previous;
+        const displayUpdated = updated === null ? "-" : updated;
+        message += `      ${gradeName} ${displayPrevious} -> ${displayUpdated}\n`;
+      }
+    }
+  }
+
+  return message;
 };

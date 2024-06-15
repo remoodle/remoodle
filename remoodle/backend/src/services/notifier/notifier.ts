@@ -1,5 +1,5 @@
-import type { MessageStream } from "../../database";
-import { GradeChangeEventHandler } from "./events/GradeChangeEventHandler";
+import type { MessageStream } from "../../database/redis/models/MessageStream";
+import { GradeChangeEventHandler } from "./events/grade-change-event";
 
 export class TaskManager {
   private handlers: any[];
@@ -21,7 +21,7 @@ export class TaskManager {
   }
 }
 
-export async function initEventService(messageStream: MessageStream) {
+export async function startNotifier(messageStream: MessageStream) {
   const taskManager = new TaskManager(messageStream);
 
   taskManager.registerHandler(GradeChangeEventHandler);

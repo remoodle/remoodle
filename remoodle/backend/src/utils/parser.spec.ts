@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
-import { trackCourseDiff } from "./parser";
-import type { ExtendedCourse } from "./types";
+import type { ExtendedCourse, GradeChangeEvent } from "../shims";
+import { formatCourseDiffs, trackCourseDiff } from "./parser";
 
 test("trackCourseDiff", () => {
   const oldData: ExtendedCourse[] = [
@@ -62,16 +62,28 @@ test("trackCourseDiff", () => {
   expect(trackCourseDiff(oldData, newData)).toStrictEqual({
     diffs: [
       {
-        course: "Introduction to SRE | Meirmanova Aigul",
-        grades: [
-          {
-            name: "Final exam documentation submission",
-            previous: null,
-            updated: 100,
-          },
+        "Introduction to SRE | Meirmanova Aigul": [
+          ["Final exam documentation submission", null, 100],
         ],
       },
     ],
     hasDiff: true,
   });
+});
+
+test("formatCourseDiffs", () => {
+  const event: GradeChangeEvent = {
+    moodleId: 1234,
+    payload: [
+      {
+        "Introduction to SRE | Meirmanova Aigul": [
+          ["Final exam documentation submission", "null", "100"],
+        ],
+      },
+    ],
+  };
+
+  expect(formatCourseDiffs(event.payload)).toStrictEqual(
+    "Updated grades:\n\n  Introduction to SRE | Meirmanova Aigul:\n      Final exam documentation submission null -> 100\n",
+  );
 });

@@ -1,5 +1,4 @@
 import Redis from "ioredis";
-import { config } from "../../config";
 
 Redis.Command.setArgumentTransformer("xadd", (args: any[]) => {
   if (args.length === 3) {
@@ -65,6 +64,6 @@ Redis.Command.setReplyTransformer("xreadgroup", (result: any) =>
     : result,
 );
 
-const redisClient = new Redis(config.redis.uri);
-
-export default redisClient;
+export const createRedisConnection = (uri: string) => {
+  return new Redis(uri);
+};

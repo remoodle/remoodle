@@ -3,7 +3,7 @@ import { Schema, model } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 import { hashPassword, verifyPassword } from "../../../utils/password";
 
-interface IUser {
+export interface IUser {
   _id: string;
   name: string;
   email: string;
@@ -50,5 +50,7 @@ userSchema.pre("save", async function (next) {
 });
 
 const User = model("User", userSchema);
+
+export type UserType = typeof User;
 
 export default User;

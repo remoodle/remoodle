@@ -1,20 +1,8 @@
-import type { MessageStream } from "../../../database";
-import { User } from "../../../database";
-import { sendTelegramMessage } from "../handlers";
-
-type GradeChangePayload = {
-  course: string;
-  grades: {
-    name: string;
-    previous: string;
-    updated: string;
-  }[];
-};
-
-type GradeChangeEvent = {
-  moodleId: number;
-  payload: GradeChangePayload;
-};
+import type { MessageStream } from "../../../database/redis/models/MessageStream";
+import { db } from "../../../database";
+import { sendTelegramMessage } from "../../../utils/handlers";
+import type { GradeChangeEvent } from "../../../shims";
+import { formatCourseDiffs } from "../../../utils/parser";
 
 export class GradeChangeEventHandler {
   private streamName: string;
@@ -29,21 +17,8 @@ export class GradeChangeEventHandler {
     this.consumerName = "worker";
   }
 
-  static prepareUpdatedGradesMessage(data: GradeChangePayload) {
-    const { course, grades } = data;
-
-    let message = "";
-    message += "Updated grades:\n\n";
-    message += `  ${course}:\n`;
-    for (const grade of grades) {
-      message += `      ${grade.name} ${grade.previous} -> ${grade.updated}\n`;
-    }
-
-    return message;
-  }
-
   async runJob() {
-    console.log("Starting job", this.streamName);
+    console.log("Listening to stream:", this.streamName);
 
     while (true) {
       try {
@@ -58,7 +33,7 @@ export class GradeChangeEventHandler {
         for (const item of items) {
           const msg = JSON.parse(item.msg) as GradeChangeEvent;
 
-          const user = await User.findOne({ moodleId: msg.moodleId });
+          const user = await db.user.findOne({ moodleId: msg.moodleId });
 
           console.log(
             "Processing",
@@ -70,9 +45,7 @@ export class GradeChangeEventHandler {
           );
 
           if (user?.telegramId) {
-            const text = GradeChangeEventHandler.prepareUpdatedGradesMessage(
-              msg.payload,
-            );
+            const text = formatCourseDiffs(msg.payload);
 
             const response = await sendTelegramMessage(user.telegramId, text);
 

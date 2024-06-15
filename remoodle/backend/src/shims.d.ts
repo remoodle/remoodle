@@ -1,3 +1,4 @@
+// API
 export type ActiveCourse = {
   course_id: number;
   name: string;
@@ -25,4 +26,12 @@ export type Grade = {
 
 export type ExtendedCourse = ActiveCourse & {
   grades?: Grade[];
+};
+
+// Crawler
+export type CourseDiff = Record<string, [string, string, string][]>;
+
+export type GradeChangeEvent = {
+  moodleId: number;
+  payload: CourseDiff[];
 };
