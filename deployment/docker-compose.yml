@@ -1,13 +1,13 @@
 version: '3.8'
 
 services:
-  moodbot:
-    image: ghcr.io/remoodle/moodbot:refs_heads_main
+  telegram_bot:
+    image: ghcr.io/remoodle/telegram_bot:refs_heads_main
     restart: always
     networks:
       - shared
     env_file:
-      - .env.moodbot
+      - .env.telegram_bot
 
   backend:
     image: ghcr.io/remoodle/backend:refs_heads_main
