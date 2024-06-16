@@ -13,9 +13,9 @@ provider "digitalocean" {
   token = var.do_token
 }
 
-resource "digitalocean_droplet" "sylveon" {
+resource "digitalocean_droplet" "sylveon2" {
     image  = "ubuntu-20-04-x64"
-    name   = "sylveon"
+    name   = "sylveon2"
     region = "fra1"
     size   = "s-1vcpu-2gb"
     user_data = <<-EOF
