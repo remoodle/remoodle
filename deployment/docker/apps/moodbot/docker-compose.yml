@@ -1,8 +1,0 @@
-version: '3.8'
-
-services:
-  moodbot:
-    image: ghcr.io/remoodle/moodbot:refs_heads_main
-    restart: always
-    env_file:
-      - .env
