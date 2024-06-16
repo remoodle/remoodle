@@ -12,11 +12,7 @@ export const trackCourseDiff = (
 
   for (const newCourse of newData) {
     const oldCourse = oldCoursesMap.get(newCourse.course_id);
-    let courseChanges: [
-      string,
-      string | number | null,
-      string | number | null,
-    ][] = [];
+    let courseChanges: [string, number | null, number | null][] = [];
 
     if (oldCourse) {
       const oldGradesMap = new Map(
@@ -26,7 +22,7 @@ export const trackCourseDiff = (
       if (newCourse.grades) {
         for (const newGrade of newCourse.grades) {
           const oldGrade = oldGradesMap.get(newGrade.grade_id);
-          const previous = oldGrade ? oldGrade.graderaw : "-";
+          const previous = oldGrade ? oldGrade.graderaw : null;
           const updated = newGrade.graderaw;
 
           if (!oldGrade || previous !== updated) {
@@ -43,7 +39,7 @@ export const trackCourseDiff = (
 
       courseChanges = newCourse.grades.map((grade) => [
         grade.name,
-        "-",
+        null,
         grade.graderaw,
       ]);
       diffs.push({ n: newCourse.name, d: courseChanges });
