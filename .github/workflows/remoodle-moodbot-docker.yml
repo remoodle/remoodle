@@ -1,25 +1,29 @@
-name: Docker
+name: "[moodbot] Publish Docker image"
 
 on:
   push:
     branches: [main]
+    paths:
+      - "remoodle/frontend/telegram_bot/**"
+      - ".github/workflows/remoodle-moodbot-docker.yml"
 
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: moodbot
+  IMAGE_NAME: telegram_bot
   REGISTRY: ghcr.io
 
 permissions: write-all
 
 jobs:
-  push:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Log into registry
+      - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
 
       - name: Build image
@@ -38,6 +42,7 @@ jobs:
           echo TAG=$TAG
 
           # Build the Docker image
+          cd remoodle/frontend/telegram_bot
           docker build . --file Dockerfile --tag $TAG
 
           # Docker Push
