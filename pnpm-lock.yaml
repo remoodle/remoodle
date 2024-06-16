@@ -24,13 +24,10 @@ importers:
         version: 1.11.3
       '@t3-oss/env-core':
         specifier: ^0.10.1
-        version: 0.10.1(typescript@5.4.5)(zod@3.23.8)
+        version: 0.10.1(zod@3.23.8)
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
-      credit-card-type:
-        specifier: ^10.0.0
-        version: 10.0.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -85,28 +82,6 @@ importers:
         version: 1.6.0(@types/node@20.14.2)
 
   remoodle/serverless/alert_point:
-    dependencies:
-      hono:
-        specifier: ^4.4.4
-        version: 4.4.4
-    devDependencies:
-      '@biomejs/biome':
-        specifier: 1.8.0
-        version: 1.8.0
-      '@cloudflare/workers-types':
-        specifier: ^4.20240605.0
-        version: 4.20240605.0
-      '@remoodle/config-typescript':
-        specifier: workspace:^
-        version: link:../../../packages/config-typescript
-      typescript:
-        specifier: ^5.0.4
-        version: 5.4.5
-      wrangler:
-        specifier: ^3.57.1
-        version: 3.60.0(@cloudflare/workers-types@4.20240605.0)
-
-  remoodle/serverless/mailer:
     dependencies:
       hono:
         specifier: ^4.4.4
@@ -897,7 +872,7 @@ packages:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
     dev: true
 
-  /@t3-oss/env-core@0.10.1(typescript@5.4.5)(zod@3.23.8):
+  /@t3-oss/env-core@0.10.1(zod@3.23.8):
     resolution: {integrity: sha512-GcKZiCfWks5CTxhezn9k5zWX3sMDIYf6Kaxy2Gx9YEQftFcz8hDRN56hcbylyAO3t4jQnQ5ifLawINsNgCDpOg==}
     peerDependencies:
       typescript: '>=5.0.0'
@@ -906,7 +881,6 @@ packages:
       typescript:
         optional: true
     dependencies:
-      typescript: 5.4.5
       zod: 3.23.8
     dev: false
 
@@ -1192,10 +1166,6 @@ packages:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
     engines: {node: '>= 0.6'}
     dev: true
-
-  /credit-card-type@10.0.0:
-    resolution: {integrity: sha512-X09zdwnZd75Ne+YFZywuga4pa6Bd+ME90h8C8fQofL9O0MlRHLEb2fgwDQ9at8SGvSY2DYrLKRoTaW9zK0jAxQ==}
-    dev: false
 
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -2326,6 +2296,7 @@ packages:
     resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
     engines: {node: '>=14.17'}
     hasBin: true
+    dev: true
 
   /ufo@1.5.3:
     resolution: {integrity: sha512-Y7HYmWaFwPUmkoQCUIAYpKqkOf+SbVj/2fJJZ4RJMCfZp0rTGwRbzQD+HghfnhKOjL9E01okqz+ncJskGYfBNw==}
