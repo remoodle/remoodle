@@ -17,7 +17,7 @@ services:
     env_file:
       - .env.backend
     ports:
-      - "9000:9000"
+      - "80:9000"
 
   aitu:
     image: ghcr.io/remoodle/api:refs_heads_main

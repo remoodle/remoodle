@@ -6,7 +6,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis_data:/data
+      - ./db/redis:/data
     networks:
       - shared
   
@@ -19,7 +19,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/data/db
+      - ./db/mongo:/data/db
     networks:
       - shared
 
@@ -32,7 +32,7 @@ services:
       MYSQL_USER: username
       MYSQL_PASSWORD: password
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ./db/mysql:/var/lib/mysql
     ports:
       - 3306:3306
     networks:
@@ -41,11 +41,6 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 2s
       retries: 20
-
-volumes:
-  redis_data:
-  mongodb_data:
-  mysql_data:
 
 networks:
   shared:
