@@ -11,5 +11,8 @@
   },
   "[go]": {
     "editor.defaultFormatter": "golang.go"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
   }
 }
