@@ -1,10 +1,10 @@
-import uuid
-from cryptography.fernet import Fernet
-from datetime import datetime
-import json
-import argparse
 import os
 import time
+import uuid
+import json
+import argparse
+from datetime import datetime
+from cryptography.fernet import Fernet  # type: ignore
 
 MOODBOT_BD = "./input/moodbot.user.json"
 
