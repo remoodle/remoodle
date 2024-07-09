@@ -61,8 +61,8 @@ def migrate_data(secret_key):
         """
 
         mysql_insert_query = f"""
-            INSERT INTO moodle_users (moodle_id, username, name, moodle_token, initialized, notify_method, grades_notification, deadlines_notification)
-            VALUES ('{user.get("moodle_id")}', '{user.get("username")}', '{user.get("full_name")}', '{moodle_token}', 1, 'get_update', {int(user.get("grades_notification"))}, '{user.get("deadlines_notification")}');
+INSERT INTO moodle_users (moodle_id, username, name, moodle_token, initialized, notify_method, grades_notification, deadlines_notification)
+VALUES ('{user.get("moodle_id")}', '{user.get("username")}', '{user.get("full_name")}', '{moodle_token}', 1, 'get_update', {int(user.get("grades_notification"))}, '{user.get("deadlines_notification")}');
         """
         sql_statements.append(mysql_insert_query)
 
