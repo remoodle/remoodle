@@ -1,9 +1,9 @@
+import { config } from "../config";
 import { createMongoDBConnection } from "./mongo/connection";
-import User, { type UserType } from "./mongo/models/User";
 import Course, { type CourseType } from "./mongo/models/Course";
+import User, { type UserType } from "./mongo/models/User";
 import { createRedisConnection } from "./redis/connection";
 import MessageStream from "./redis/models/MessageStream";
-import { config } from "../config";
 
 class DB {
   user: UserType;

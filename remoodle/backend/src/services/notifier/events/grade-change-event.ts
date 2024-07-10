@@ -1,7 +1,7 @@
-import type { MessageStream } from "../../../database/redis/models/MessageStream";
 import { db } from "../../../database";
-import { sendTelegramMessage } from "../../../utils/handlers";
+import type { MessageStream } from "../../../database/redis/models/MessageStream";
 import type { GradeChangeEvent } from "../../../shims";
+import { sendTelegramMessage } from "../../../utils/handlers";
 import { formatCourseDiffs } from "../../../utils/parser";
 
 export class GradeChangeEventHandler {

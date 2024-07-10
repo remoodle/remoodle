@@ -1,7 +1,7 @@
 import { config } from "../../../config";
+import { db } from "../../../database";
 import type { MessageStream } from "../../../database/redis/models/MessageStream";
 import type { GradeChangeEvent } from "../../../shims";
-import { db } from "../../../database";
 import { trackCourseDiff } from "../../../utils/parser";
 
 const COURSES_OVERALL_URL = new URL(
@@ -59,11 +59,9 @@ const fetchCourses = async (messageStream: MessageStream) => {
             payload: diffs,
           };
 
-          await messageStream.add(
-            "grade-change",
-            JSON.stringify(event),
-            { maxlen: 10000 },
-          );
+          await messageStream.add("grade-change", JSON.stringify(event), {
+            maxlen: 10000,
+          });
         }
       }
     } catch (error) {
