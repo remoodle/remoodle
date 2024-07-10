@@ -3,7 +3,10 @@ import type { CourseDiff, ExtendedCourse } from "../shims";
 export const trackCourseDiff = (
   oldData: ExtendedCourse[],
   newData: ExtendedCourse[],
-) => {
+): {
+  hasDiff: boolean;
+  diffs: CourseDiff[];
+} => {
   const diffs: CourseDiff[] = [];
 
   const oldCoursesMap = new Map(
@@ -52,7 +55,7 @@ export const trackCourseDiff = (
   };
 };
 
-export const formatCourseDiffs = (data: CourseDiff[]) => {
+export const formatCourseDiffs = (data: CourseDiff[]): string => {
   let message = "Updated grades:\n\n";
 
   for (const diff of data) {
