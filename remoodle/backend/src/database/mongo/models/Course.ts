@@ -1,11 +1,12 @@
 import type { Model } from "mongoose";
 import { Schema, model } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
+import type { ExtendedCourse } from "../../../shims";
 
 export interface ICourse {
   _id: string;
   userId: string;
-  data: any;
+  data: ExtendedCourse[];
   fetchedAt: Date;
 }
 
