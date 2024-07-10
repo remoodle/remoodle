@@ -1,5 +1,6 @@
 import { config } from "../../../config";
 import type { MessageStream } from "../../../database/redis/models/MessageStream";
+import type { GradeChangeEvent } from "../../../shims";
 import { db } from "../../../database";
 import { trackCourseDiff } from "../../../utils/parser";
 
@@ -42,12 +43,15 @@ const fetchCourses = async (messageStream: MessageStream) => {
         const { diffs, hasDiff } = trackCourseDiff(currentCourse.data, json);
 
         if (hasDiff) {
+          const event: GradeChangeEvent = {
+            userId: user._id,
+            moodleId: user.moodleId,
+            payload: diffs,
+          };
+
           await messageStream.add(
             "grade-change",
-            JSON.stringify({
-              moodleId: user.moodleId,
-              payload: diffs,
-            }),
+            JSON.stringify(event),
             { maxlen: 10000 },
           );
         }

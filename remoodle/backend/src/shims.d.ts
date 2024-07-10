@@ -35,6 +35,7 @@ export type CourseDiff = {
 };
 
 export type GradeChangeEvent = {
+  userId: string;
   moodleId: number;
   payload: CourseDiff[];
 };
