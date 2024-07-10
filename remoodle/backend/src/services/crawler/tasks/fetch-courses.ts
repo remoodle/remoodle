@@ -35,12 +35,16 @@ const fetchCourses = async (messageStream: MessageStream) => {
         throw new Error("Failed to fetch courses");
       }
 
-      const json = await response.json();
+      const data = await response.json();
+
+      if (Array.isArray(data) && !data.length) {
+        continue;
+      }
 
       const currentCourse = await db.course.findOne({ userId: user._id });
 
       if (currentCourse) {
-        const { diffs, hasDiff } = trackCourseDiff(currentCourse.data, json);
+        const { diffs, hasDiff } = trackCourseDiff(currentCourse.data, data);
 
         if (hasDiff) {
           const event: GradeChangeEvent = {
@@ -59,7 +63,7 @@ const fetchCourses = async (messageStream: MessageStream) => {
 
       await db.course.findOneAndUpdate(
         { userId: user._id },
-        { $set: { data: json, fetchedAt: new Date() } },
+        { $set: { data: data, fetchedAt: new Date() } },
         { upsert: true, new: true },
       );
     } catch (error) {
