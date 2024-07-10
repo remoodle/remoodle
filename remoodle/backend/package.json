@@ -2,6 +2,7 @@
   "scripts": {
     "start": "tsx src/app.ts",
     "dev": "tsx watch src/app.ts",
+    "type-check": "tsc --noEmit",
     "test": "vitest"
   },
   "dependencies": {

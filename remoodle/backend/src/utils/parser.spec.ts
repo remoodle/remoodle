@@ -72,6 +72,7 @@ test("trackCourseDiff", () => {
 
 test("formatCourseDiffs", () => {
   const event: GradeChangeEvent = {
+    userId: "1234",
     moodleId: 1234,
     payload: [
       {
