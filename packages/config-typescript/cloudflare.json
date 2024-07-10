@@ -1,5 +1,7 @@
 {
-  "extends": "./tsconfig.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Cloudflare Worker",
+  "extends": "./base.json",
   "compilerOptions": {
     "module": "ESNext",
     "target": "es2021",

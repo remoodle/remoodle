@@ -2,5 +2,10 @@
   "name": "@remoodle/config-typescript",
   "version": "1.0.0",
   "private": true,
-  "main": "tsconfig.json"
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@vue/tsconfig": "^0.5.1"
+  }
 }
