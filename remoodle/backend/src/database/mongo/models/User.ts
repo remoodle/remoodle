@@ -36,6 +36,7 @@ userSchema.index(
   { moodleId: 1 },
   { unique: true, partialFilterExpression: { moodleId: { $exists: true } } },
 );
+// TODO: add same for moodleid and telegramid
 
 userSchema.methods.verifyPassword = async function (enteredPassword: string) {
   return verifyPassword(enteredPassword, this.password);
