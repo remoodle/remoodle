@@ -13,3 +13,9 @@ variable "private_key_path" {
   description = "Path to the SSH private key"
   type        = string
 }
+
+variable "droplet_name" {
+  description = "The name of the DigitalOcean droplet"
+  type        = string
+  default     = "sylveon"
+}

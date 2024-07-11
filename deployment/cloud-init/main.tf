@@ -29,9 +29,9 @@ resource "null_resource" "create_tarball" {
   }
 }
 
-resource "digitalocean_droplet" "sylveon" {
+resource "digitalocean_droplet" "vm" {
   image  = "ubuntu-20-04-x64"
-  name   = "sylveon"
+  name   = var.droplet_name
   region = "fra1"
   size   = "s-1vcpu-2gb"
   user_data = "${file("setup.sh")}"
@@ -64,7 +64,7 @@ resource "digitalocean_droplet" "sylveon" {
 
 resource "null_resource" "cleanup_local_file" {
   depends_on = [
-    digitalocean_droplet.sylveon
+    digitalocean_droplet.vm
   ]
 
   provisioner "local-exec" {
