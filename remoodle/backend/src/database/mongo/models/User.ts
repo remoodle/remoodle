@@ -22,7 +22,7 @@ const userSchema = new Schema<IUser, UserModel, UserMethods>(
   {
     _id: { type: String, default: uuidv4 },
     name: { type: String },
-    email: { type: String, unique: true },
+    email: { type: String },
     telegramId: { type: Number, unique: true },
     moodleId: { type: Number },
     password: { type: String },
