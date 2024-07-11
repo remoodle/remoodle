@@ -39,9 +39,7 @@ resource "digitalocean_droplet" "vm" {
     user        = "root"
     agent       = true
   }
-}
 
-resource "digitalocean_droplet" "vm" {
   depends_on = [null_resource.create_tarball]
 
   provisioner "file" {
@@ -49,12 +47,13 @@ resource "digitalocean_droplet" "vm" {
     destination = "/tmp/config.tar.gz"
   }
 
-  provisioner "remote-exec" {
+   provisioner "remote-exec" {
     inline = [
       "mkdir -p ~/remoodle",
       "tar -xzf /tmp/config.tar.gz -C ~/remoodle",
       "rm /tmp/config.tar.gz",
-      "bash ~/remoodle/setup.sh"
+      "bash ~/remoodle/setup.sh",
+      "docker compose -f compose.db.yml up -d",
     ]
   }
 }
