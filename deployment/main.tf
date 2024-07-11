@@ -13,15 +13,9 @@ provider "digitalocean" {
   token = var.do_token
 }
 
-data "archive_file" "config_archive" {
-  type        = "zip"
-  source_dir  = "../config"
-  output_path = "/tmp/config.tar.gz"
-}
-
 resource "null_resource" "create_tarball" {
   provisioner "local-exec" {
-    command = "tar -czf /tmp/config.tar.gz -C ../ config"
+    command = "tar -czf /tmp/config.tar.gz -C ./config ."
   }
 
   triggers = {
@@ -34,8 +28,7 @@ resource "digitalocean_droplet" "vm" {
   name   = var.droplet_name
   region = "fra1"
   size   = "s-1vcpu-2gb"
-  user_data = "${file("setup.sh")}"
-
+  
   ssh_keys = [
     var.ssh_fingerprint
   ]
@@ -46,18 +39,22 @@ resource "digitalocean_droplet" "vm" {
     user        = "root"
     agent       = true
   }
+}
+
+resource "digitalocean_droplet" "vm" {
+  depends_on = [null_resource.create_tarball]
 
   provisioner "file" {
-    source      = data.archive_file.config_archive.output_path
+    source      = "/tmp/config.tar.gz"
     destination = "/tmp/config.tar.gz"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "cd ~",
-      "mkdir remoodle",
-      "tar -xzf /tmp/config.tar.gz -C remoodle --strip-components=1",
-      "rm /tmp/config.tar.gz"
+      "mkdir -p ~/remoodle",
+      "tar -xzf /tmp/config.tar.gz -C ~/remoodle",
+      "rm /tmp/config.tar.gz",
+      "bash ~/remoodle/setup.sh"
     ]
   }
 }
