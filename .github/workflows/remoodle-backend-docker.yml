@@ -42,8 +42,7 @@ jobs:
           echo TAG=$TAG
 
           # Build the Docker image
-          cd remoodle/backend
-          docker build . --file Dockerfile --tag $TAG
+          docker build . --file remoodle/backend/Dockerfile --tag $TAG
 
           # Docker Push
           docker push $TAG
