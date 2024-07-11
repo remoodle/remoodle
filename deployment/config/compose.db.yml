@@ -3,8 +3,6 @@ version: '3.8'
 services:
   redis:
     image: redis:latest
-    ports:
-      - "6379:6379"
     volumes:
       - ./db/redis:/data
     networks:
@@ -16,8 +14,6 @@ services:
     restart: always
     environment:
       - MONGO_INITDB_DATABASE=moodbot
-    ports:
-      - "27017:27017"
     volumes:
       - ./db/mongo:/data/db
     networks:
@@ -33,8 +29,6 @@ services:
       MYSQL_PASSWORD: password
     volumes:
       - ./db/mysql:/var/lib/mysql
-    ports:
-      - 3306:3306
     networks:
       - shared
     healthcheck:
