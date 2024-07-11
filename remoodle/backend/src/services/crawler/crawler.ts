@@ -8,6 +8,7 @@ const startCrawler = async (messageStream: MessageStream) => {
   cron.schedule(
     FIVE_MINUTES,
     () => {
+      console.log("Running crawler...");
       fetchCourses(messageStream).catch((error) => {
         console.error("Error running script:", error);
       });
