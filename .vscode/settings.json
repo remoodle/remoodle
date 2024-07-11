@@ -6,12 +6,6 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
 
-  "[dockerfile]": {
-    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
-  },
-  "[go]": {
-    "editor.defaultFormatter": "golang.go"
-  },
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter"
   }
