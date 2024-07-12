@@ -18,9 +18,3 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 
 # Creating a shared network
 docker network create --subnet=172.19.0.0/16 r1ng
-
-# Create database folders
-mkdir db
-mkdir db/redis
-mkdir db/mysql
-mkdir db/mongo

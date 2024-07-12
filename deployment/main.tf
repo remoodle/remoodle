@@ -37,23 +37,24 @@ resource "digitalocean_droplet" "vm" {
     host        = self.ipv4_address
     type        = "ssh"
     user        = "root"
-    agent       = true
+    private_key = file(var.private_key_path)
   }
-
-  depends_on = [null_resource.create_tarball]
 
   provisioner "file" {
     source      = "/tmp/config.tar.gz"
     destination = "/tmp/config.tar.gz"
   }
 
-   provisioner "remote-exec" {
+  provisioner "remote-exec" {
     inline = [
       "mkdir -p ~/remoodle",
       "tar -xzf /tmp/config.tar.gz -C ~/remoodle",
       "rm /tmp/config.tar.gz",
       "bash ~/remoodle/setup.sh",
-      "docker compose -f compose.db.yml up -d",
+      "mkdir ~/remoodle/db/data",
+      "mkdir ~/remoodle/db/data/redis",
+      "mkdir ~/remoodle/db/data/mysql",
+      "mkdir ~/remoodle/db/data/mongo",
     ]
   }
 }
