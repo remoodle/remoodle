@@ -3,6 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { db } from "../../../database";
 import {
   API_METHOD_AUTH_REGISTER,
+  API_METHOD_DELETE_USER,
   getCoreInternalHeaders,
   requestCore,
 } from "../../../http/core";
@@ -121,40 +122,36 @@ api.post("/auth/login", async (c) => {
   });
 });
 
-// api.post("/auth/refresh", async (c) => {
-//   const { refreshToken } = await c.req.json();
-
-//   if (!refreshToken) {
-//     throw new HTTPException(400, {
-//       message: "Please provide a refresh token",
-//     });
-//   }
-
-//   const user = await db.user.findOne({ refreshToken });
-
-//   if (!user) {
-//     throw new HTTPException(401, {
-//       message: "No user found with this refresh token",
-//     });
-//   }
-
-//   const { accessToken, refreshToken: newRefreshToken } = issueTokens(
-//     user._id.toString(),
-//     user.moodleId,
-//   );
-
-//   return c.json({
-//     user,
-//     accessToken,
-//     refreshToken: newRefreshToken,
-//   });
-// });
-
 api.use("*", authMiddleware({ excludePaths: ["/", "/health"] }));
 
-api.post("/goodbye", async (c) => {
-  // remove user from the database
-  // DELETE: /v1/user
+api.delete("/goodbye", async (c) => {
+  const userId = c.get("userId");
+
+  const user = await db.user.findOne({ _id: userId });
+
+  if (!user) {
+    throw new HTTPException(400, {
+      message: "User not found",
+    });
+  }
+
+  const [_, error] = await requestCore(API_METHOD_DELETE_USER, {
+    headers: getCoreInternalHeaders(user.moodleId),
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  try {
+    await db.user.deleteOne({ _id: userId });
+  } catch (error) {
+    throw new HTTPException(500, {
+      message: `Failed to delete user from the database ${error}`,
+    });
+  }
+
+  return c.text("OK", 200);
 });
 
 api.all("/x/*", async (c) => {
