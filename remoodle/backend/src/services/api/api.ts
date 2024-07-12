@@ -23,6 +23,7 @@ const createApi = (messageStream: MessageStream) => {
     }),
   );
 
+// TODO: remove
   api.post("/event", async (c) => {
     const body = await c.req.json();
 
