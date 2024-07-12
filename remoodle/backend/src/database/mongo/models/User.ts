@@ -36,7 +36,14 @@ userSchema.index(
   { moodleId: 1 },
   { unique: true, partialFilterExpression: { moodleId: { $exists: true } } },
 );
-// TODO: add same for moodleid and telegramid
+userSchema.index(
+  { telegramId: 1 },
+  { unique: true, partialFilterExpression: { telegramId: { $exists: true } } },
+);
+userSchema.index(
+  { email: 1 },
+  { unique: true, partialFilterExpression: { email: { $exists: true } } },
+);
 
 userSchema.methods.verifyPassword = async function (enteredPassword: string) {
   return verifyPassword(enteredPassword, this.password);
