@@ -37,7 +37,7 @@ export const requestCore = async <T = any>(
     prepareURL(typeof endpoint === "string" ? endpoint : endpoint[1]),
     {
       ...options,
-      ...(typeof endpoint === "object" && { method: endpoint[0] }),
+      ...(typeof endpoint !== "string" && { method: endpoint[0] }),
       headers: {
         "Content-Type": "application/json",
         ...options.headers,
