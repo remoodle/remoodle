@@ -8,7 +8,7 @@ import {
   requestCore,
 } from "../../../http/core";
 import { issueTokens } from "../../../utils/jwt";
-import { authMiddleware, proxyMiddleware } from "../middleware/auth-proxy";
+import { authMiddleware } from "../middleware/auth-proxy";
 
 const api = new Hono<{
   Variables: {
@@ -17,8 +17,6 @@ const api = new Hono<{
     host: string;
   };
 }>();
-
-api.use("*", proxyMiddleware());
 
 api.post("/auth/register", async (c) => {
   const { email, telegramId, password, moodleToken } = await c.req.json();

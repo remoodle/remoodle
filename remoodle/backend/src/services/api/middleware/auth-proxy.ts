@@ -4,23 +4,6 @@ import { config } from "../../../config";
 import { db } from "../../../database";
 import { decodeJwtToken, verifyJwtToken } from "../../../utils/jwt";
 
-export function proxyMiddleware(): MiddlewareHandler {
-  return async (ctx, next) => {
-    // const host = ctx.req.header("X-Forwarded-Host");
-
-    // if (!host) {
-    //   throw new HTTPException(401, {
-    //     message: "Missing X-Forwarded-Host header",
-    //   });
-    // }
-
-    // ctx.set("host", host);
-    ctx.set("host", config.core.url);
-
-    return await next();
-  };
-}
-
 export function authMiddleware({
   excludePaths,
 }: {
