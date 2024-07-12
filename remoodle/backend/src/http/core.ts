@@ -2,34 +2,48 @@ import { HTTPException } from "hono/http-exception";
 import type { StatusCode } from "hono/utils/http-status";
 import { config } from "../config";
 
-export const prepareCoreEndpoint = (path: string) => {
+type APIMethod = ["GET" | "POST" | "PUT" | "DELETE", string];
+
+export const API_METHOD_AUTH_REGISTER: APIMethod = [
+  "POST",
+  "/v1/auth/register",
+];
+export const API_METHOD_USER_COURSES_OVERALL: APIMethod = [
+  "GET",
+  "/v1/user/courses/overall",
+];
+
+// TODO: implement missing methods
+export const API_METHOD_DELETE_USER: APIMethod = ["DELETE", "/v1/user"];
+
+const prepareURL = (path: string) => {
   return new URL(path, config.core.url);
 };
 
-export const V1_AUTH_REGISTER_URL = prepareCoreEndpoint("/v1/auth/register");
-
-export const V1_USER_COURSES_OVERALL_URL = prepareCoreEndpoint(
-  "/v1/user/courses/overall",
-);
-
-export const getCoreInternalHeaders = (moodleId: string | number) => {
-  return {
-    "X-Remoodle-Internal-Token": config.core.secret,
-    "X-Remoodle-Moodle-Id": `${moodleId}`,
-  };
-};
-
-export const requestCore = async (
-  url: URL,
+export const requestCore = async <T = any>(
+  endpoint: APIMethod | string,
   options: RequestInit,
-): Promise<[any, null] | [null, HTTPException]> => {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
+): Promise<
+  | [
+      {
+        status: StatusCode;
+        data: T;
+      },
+      null,
+    ]
+  | [null, HTTPException]
+> => {
+  const response = await fetch(
+    prepareURL(typeof endpoint === "string" ? endpoint : endpoint[1]),
+    {
+      ...options,
+      ...(typeof endpoint === "object" && { method: endpoint[0] }),
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
     },
-  });
+  );
 
   if (!response.ok) {
     return [
@@ -40,5 +54,18 @@ export const requestCore = async (
     ];
   }
 
-  return [await response.json(), null];
+  return [
+    {
+      status: response.status as StatusCode,
+      data: (await response.json()) as T,
+    },
+    null,
+  ];
+};
+
+export const getCoreInternalHeaders = (moodleId: string | number) => {
+  return {
+    "X-Remoodle-Internal-Token": config.core.secret,
+    "X-Remoodle-Moodle-Id": `${moodleId}`,
+  };
 };

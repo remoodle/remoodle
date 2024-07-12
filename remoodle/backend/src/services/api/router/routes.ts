@@ -2,9 +2,8 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { db } from "../../../database";
 import {
-  V1_AUTH_REGISTER_URL,
+  API_METHOD_AUTH_REGISTER,
   getCoreInternalHeaders,
-  prepareCoreEndpoint,
   requestCore,
 } from "../../../http/core";
 import { issueTokens } from "../../../utils/jwt";
@@ -41,8 +40,7 @@ api.post("/auth/register", async (c) => {
 
   let student;
   try {
-    const [data, error] = await requestCore(V1_AUTH_REGISTER_URL, {
-      method: "POST",
+    const [response, error] = await requestCore(API_METHOD_AUTH_REGISTER, {
       headers: {
         "Auth-Token": moodleToken,
       },
@@ -55,7 +53,7 @@ api.post("/auth/register", async (c) => {
       throw error;
     }
 
-    student = data;
+    student = response.data;
   } catch (error: any) {
     try {
       await db.user.deleteOne({ _id: ghost._id });
@@ -123,9 +121,41 @@ api.post("/auth/login", async (c) => {
   });
 });
 
-const PUBLIC_PATHS = ["/", "/health"];
+// api.post("/auth/refresh", async (c) => {
+//   const { refreshToken } = await c.req.json();
 
-api.use("*", authMiddleware({ excludePaths: PUBLIC_PATHS }));
+//   if (!refreshToken) {
+//     throw new HTTPException(400, {
+//       message: "Please provide a refresh token",
+//     });
+//   }
+
+//   const user = await db.user.findOne({ refreshToken });
+
+//   if (!user) {
+//     throw new HTTPException(401, {
+//       message: "No user found with this refresh token",
+//     });
+//   }
+
+//   const { accessToken, refreshToken: newRefreshToken } = issueTokens(
+//     user._id.toString(),
+//     user.moodleId,
+//   );
+
+//   return c.json({
+//     user,
+//     accessToken,
+//     refreshToken: newRefreshToken,
+//   });
+// });
+
+api.use("*", authMiddleware({ excludePaths: ["/", "/health"] }));
+
+api.post("/goodbye", async (c) => {
+  // remove user from the database
+  // DELETE: /v1/user
+});
 
 api.all("/x/*", async (c) => {
   // remove prefix
@@ -139,7 +169,7 @@ api.all("/x/*", async (c) => {
   }
 
   // eg: 'https://aitu0.remoodle.api/v1/user/courses/overall'
-  const [data, error] = await requestCore(prepareCoreEndpoint(path), {
+  const [response, error] = await requestCore(path, {
     method: c.req.method,
     headers: getCoreInternalHeaders(c.get("moodleId")),
     body: c.req.raw.body,
@@ -149,7 +179,7 @@ api.all("/x/*", async (c) => {
     throw error;
   }
 
-  return c.json(data, 200);
+  return c.json(response.data, response.status);
 });
 
 export default api;

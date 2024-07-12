@@ -1,11 +1,11 @@
 import { db } from "../../../database";
 import type { MessageStream } from "../../../database/redis/models/MessageStream";
 import {
-  V1_USER_COURSES_OVERALL_URL,
+  API_METHOD_USER_COURSES_OVERALL,
   getCoreInternalHeaders,
   requestCore,
 } from "../../../http/core";
-import type { GradeChangeEvent } from "../../../shims";
+import type { ExtendedCourse, GradeChangeEvent } from "../../../shims";
 import { trackCourseDiff } from "../../../utils/parser";
 
 const fetchCourses = async (messageStream: MessageStream) => {
@@ -21,9 +21,12 @@ const fetchCourses = async (messageStream: MessageStream) => {
     }
 
     try {
-      const [data, error] = await requestCore(V1_USER_COURSES_OVERALL_URL, {
-        headers: getCoreInternalHeaders(user.moodleId),
-      });
+      const [response, error] = await requestCore<ExtendedCourse[]>(
+        API_METHOD_USER_COURSES_OVERALL,
+        {
+          headers: getCoreInternalHeaders(user.moodleId),
+        },
+      );
 
       if (error) {
         console.error("Error fetching courses:", error);
@@ -36,7 +39,7 @@ const fetchCourses = async (messageStream: MessageStream) => {
       // updating course content
       await db.course.findOneAndUpdate(
         { userId: user._id },
-        { $set: { data: data, fetchedAt: new Date() } },
+        { $set: { data: response.data, fetchedAt: new Date() } },
         { upsert: true, new: true },
       );
 
@@ -44,10 +47,13 @@ const fetchCourses = async (messageStream: MessageStream) => {
       if (
         Array.isArray(currentCourse) &&
         currentCourse.length &&
-        Array.isArray(data) &&
-        data.length
+        Array.isArray(response.data) &&
+        response.data.length
       ) {
-        const { diffs, hasDiff } = trackCourseDiff(currentCourse.data, data);
+        const { diffs, hasDiff } = trackCourseDiff(
+          currentCourse.data,
+          response.data,
+        );
 
         if (hasDiff) {
           const event: GradeChangeEvent = {
