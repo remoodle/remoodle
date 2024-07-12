@@ -1,13 +1,12 @@
-import { config } from "../../../config";
 import { db } from "../../../database";
 import type { MessageStream } from "../../../database/redis/models/MessageStream";
+import {
+  V1_USER_COURSES_OVERALL_URL,
+  getCoreInternalHeaders,
+  requestCore,
+} from "../../../http/core";
 import type { GradeChangeEvent } from "../../../shims";
 import { trackCourseDiff } from "../../../utils/parser";
-
-const COURSES_OVERALL_URL = new URL(
-  "/v1/user/courses/overall",
-  config.core.url,
-);
 
 const fetchCourses = async (messageStream: MessageStream) => {
   console.log("Fetching courses...");
@@ -22,21 +21,14 @@ const fetchCourses = async (messageStream: MessageStream) => {
     }
 
     try {
-      // TODO: factor out fetching logic
-      const response = await fetch(COURSES_OVERALL_URL, {
-        headers: {
-          "Content-Type": "application/json",
-          "X-Remoodle-Internal-Token": config.core.secret,
-          "X-Remoodle-Moodle-Id": `${user.moodleId}`,
-        },
+      const [data, error] = await requestCore(V1_USER_COURSES_OVERALL_URL, {
+        headers: getCoreInternalHeaders(user.moodleId),
       });
 
-      if (!response.ok) {
-        console.log(await response.json());
-        throw new Error("Failed to fetch courses");
+      if (error) {
+        console.error("Error fetching courses:", error);
+        continue;
       }
-
-      const data = await response.json();
 
       // getting old course content
       const currentCourse = await db.course.findOne({ userId: user._id });

@@ -1,8 +1,12 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import type { StatusCode } from "hono/utils/http-status";
-import { config } from "../../../config";
 import { db } from "../../../database";
+import {
+  V1_AUTH_REGISTER_URL,
+  getCoreInternalHeaders,
+  prepareCoreEndpoint,
+  requestCore,
+} from "../../../http/core";
 import { issueTokens } from "../../../utils/jwt";
 import { authMiddleware, proxyMiddleware } from "../middleware/auth-proxy";
 
@@ -13,12 +17,6 @@ const api = new Hono<{
     host: string;
   };
 }>();
-
-const prepareURL = (host: string, path: string) => {
-  const requestURL = new URL(path, host);
-
-  return requestURL;
-};
 
 api.use("*", proxyMiddleware());
 
@@ -45,26 +43,21 @@ api.post("/auth/register", async (c) => {
 
   let student;
   try {
-    const response = await fetch(
-      prepareURL(c.get("host"), "/v1/auth/register"),
-      {
-        method: "POST",
-        headers: {
-          "Auth-Token": moodleToken,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token: moodleToken,
-        }),
+    const [data, error] = await requestCore(V1_AUTH_REGISTER_URL, {
+      method: "POST",
+      headers: {
+        "Auth-Token": moodleToken,
       },
-    );
+      body: JSON.stringify({
+        token: moodleToken,
+      }),
+    });
 
-    if (!response.ok) {
-      console.log(await response.json());
-      throw new Error("Failed to create user in the critical service");
+    if (error) {
+      throw error;
     }
 
-    student = await response.json();
+    student = data;
   } catch (error: any) {
     try {
       await db.user.deleteOne({ _id: ghost._id });
@@ -148,26 +141,17 @@ api.all("/x/*", async (c) => {
   }
 
   // eg: 'https://aitu0.remoodle.api/v1/user/courses/overall'
-  const requestURL = prepareURL(c.get("host"), path);
-
-  const headers = new Headers({
-    "Content-Type": "apilication/json",
-    "X-Remoodle-Internal-Token": config.core.secret,
-    "X-Remoodle-Moodle-Id": c.get("moodleId"),
-  });
-
-  const response = await fetch(requestURL, {
+  const [data, error] = await requestCore(prepareCoreEndpoint(path), {
     method: c.req.method,
-    headers: headers,
+    headers: getCoreInternalHeaders(c.get("moodleId")),
     body: c.req.raw.body,
   });
 
-  const json = await response.json();
+  if (error) {
+    throw error;
+  }
 
-  if (response.status === 101) return response;
-
-  return c.json(json, response.status as StatusCode);
-  // return c.newResponse(kal, response.status as StatusCode);
+  return c.json(data, 200);
 });
 
 export default api;
