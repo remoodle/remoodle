@@ -5,11 +5,12 @@ import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { config } from "../../config";
+import { db } from "../../database";
 import type { MessageStream } from "../../database/redis/models/MessageStream";
 import { errorHandler } from "./middleware/error";
 import router from "./router/routes";
 
-export const createApi = (messageStream: MessageStream) => {
+const createApi = (messageStream: MessageStream) => {
   const api = new Hono();
 
   api.use("*", logger(), prettyJSON());
@@ -45,8 +46,8 @@ export const createApi = (messageStream: MessageStream) => {
   return api;
 };
 
-export const startApi = async (messageStream: MessageStream) => {
-  const api = createApi(messageStream);
+export const startApi = async () => {
+  const api = createApi(db.messageStream);
 
   serve(
     {

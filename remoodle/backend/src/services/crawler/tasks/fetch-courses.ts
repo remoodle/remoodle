@@ -49,7 +49,12 @@ const fetchCourses = async (messageStream: MessageStream) => {
       );
 
       // make sure that we have data to compare and create an event if smth changed
-      if (currentCourse?.length && Array.isArray(data) && data.length) {
+      if (
+        Array.isArray(currentCourse) &&
+        currentCourse.length &&
+        Array.isArray(data) &&
+        data.length
+      ) {
         const { diffs, hasDiff } = trackCourseDiff(currentCourse.data, data);
 
         if (hasDiff) {
