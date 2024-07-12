@@ -7,7 +7,7 @@ const FIVE_MINUTES = "*/5 * * * *";
 const startCrawler = async () => {
   setTimeout(() => {
     // just handing there for the Core to start
-  }, 10_000);
+  }, 30_000);
 
   cron.schedule(
     FIVE_MINUTES,
