@@ -51,10 +51,6 @@ resource "digitalocean_droplet" "vm" {
       "tar -xzf /tmp/config.tar.gz -C ~/remoodle",
       "rm /tmp/config.tar.gz",
       "bash ~/remoodle/setup.sh",
-      "mkdir ~/remoodle/db/data",
-      "mkdir ~/remoodle/db/data/redis",
-      "mkdir ~/remoodle/db/data/mysql",
-      "mkdir ~/remoodle/db/data/mongo",
     ]
   }
 }
