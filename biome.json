@@ -3,6 +3,9 @@
   "organizeImports": {
     "enabled": true
   },
+  "files": {
+    "ignore": ["junk/*.*"]
+  },
   "linter": {
     "enabled": true,
     "rules": {
