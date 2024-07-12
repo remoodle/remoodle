@@ -4,15 +4,24 @@ import { config } from "../../../config";
 import { db } from "../../../database";
 import { decodeJwtToken, verifyJwtToken } from "../../../utils/jwt";
 
-export function authMiddleware({
-  excludePaths,
+export function authProxyMiddleware({
+  excludeProxyPaths,
+  prohibitedProxyPaths,
 }: {
-  excludePaths: string[];
+  excludeProxyPaths: string[];
+  prohibitedProxyPaths: string[];
 }): MiddlewareHandler {
   return async (ctx, next) => {
     // remove /x from the path
     ctx.req.path = ctx.req.path.replace(/^\/x/, "");
-    if (excludePaths.includes(ctx.req.path)) {
+
+    if (prohibitedProxyPaths.includes(ctx.req.path)) {
+      throw new HTTPException(403, {
+        message: "Forbidden",
+      });
+    }
+
+    if (excludeProxyPaths.includes(ctx.req.path)) {
       return await next();
     }
 

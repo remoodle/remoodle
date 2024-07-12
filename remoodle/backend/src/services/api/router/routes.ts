@@ -8,7 +8,7 @@ import {
   requestCore,
 } from "../../../http/core";
 import { issueTokens } from "../../../utils/jwt";
-import { authMiddleware } from "../middleware/auth-proxy";
+import { authProxyMiddleware } from "../middleware/auth-proxy";
 
 const api = new Hono<{
   Variables: {
@@ -122,7 +122,20 @@ api.post("/auth/login", async (c) => {
   });
 });
 
-api.use("*", authMiddleware({ excludePaths: ["/", "/health"] }));
+api.use(
+  "*",
+  authProxyMiddleware({
+    excludeProxyPaths: ["/health"],
+    prohibitedProxyPaths: [
+      "/",
+      "/v1/auth/register",
+      "/v1/auth/password",
+      "/v1/auth/token",
+      "/v1/user",
+      "/v1/user/settings",
+    ],
+  }),
+);
 
 api.delete("/goodbye", async (c) => {
   const userId = c.get("userId");
