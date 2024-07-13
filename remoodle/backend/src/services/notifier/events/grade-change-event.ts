@@ -28,21 +28,12 @@ export class GradeChangeEventHandler {
           this.consumerName,
         );
 
-        // console.log("Processing", this.streamName, "messages", items);
-
         for (const item of items) {
           const msg = JSON.parse(item.msg) as GradeChangeEvent;
 
           const user = await db.user.findOne({ moodleId: msg.moodleId });
 
-          console.log(
-            "Processing",
-            msg.moodleId,
-            "message",
-            msg.payload,
-            "user",
-            user?.name,
-          );
+          console.log("Processing", item.id, "message for", msg.moodleId);
 
           if (user?.telegramId) {
             const text = formatCourseDiffs(msg.payload);
