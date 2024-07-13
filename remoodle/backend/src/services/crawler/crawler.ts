@@ -8,18 +8,6 @@ const startCrawler = async () => {
   // just handing there for the Core to start
   await new Promise((resolve) => setTimeout(resolve, 10_000));
 
-  // await db.messageStream.add(
-  //   "grade-change",
-  //   JSON.stringify({
-  //     userId: 123,
-  //     moodleId: 1232,
-  //     payload: [],
-  //   }),
-  //   {
-  //     maxlen: 10000,
-  //   },
-  // );
-
   cron.schedule(
     FIVE_MINUTES,
     () => {
