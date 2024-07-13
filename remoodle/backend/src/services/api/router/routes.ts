@@ -42,7 +42,7 @@ api.post("/auth/register", async (ctx) => {
 
   let student;
   try {
-    const [response, error] = await requestCore(API_METHODS.AUTH_REGISTER, {
+    const [response, error] = await requestCore(API_METHODS.V1_AUTH_REGISTER, {
       headers: {
         "Auth-Token": moodleToken,
       },
@@ -133,13 +133,13 @@ api.get("/health", proxyRequest(API_METHODS.HEALTH));
 
 api.use("*", authMiddleware());
 
-api.get("/v1/course/*", proxyRequest(API_METHODS.COURSE));
+api.get("/v1/course/*", proxyRequest(API_METHODS.V1_COURSE));
 api.get(
   "/v1/user/courses/overall",
-  proxyRequest(API_METHODS.USER_COURSES_OVERALL),
+  proxyRequest(API_METHODS.V1_USER_COURSES_OVERALL),
 );
-api.get("/v1/user/deadlines", proxyRequest(API_METHODS.USER_DEADLINES));
-api.get("/v1/user/course/*", proxyRequest(API_METHODS.USER_COURSE));
+api.get("/v1/user/deadlines", proxyRequest(API_METHODS.V1_USER_DEADLINES));
+api.get("/v1/user/course/*", proxyRequest(API_METHODS.V1_USER_COURSE));
 
 api.delete("/goodbye", async (ctx) => {
   const userId = ctx.get("userId");
@@ -152,7 +152,7 @@ api.delete("/goodbye", async (ctx) => {
     });
   }
 
-  const [_, error] = await requestCore(API_METHODS.DELETE_USER, {
+  const [_, error] = await requestCore(API_METHODS.V1_DELETE_USER, {
     headers: getCoreInternalHeaders(user.moodleId),
   });
 

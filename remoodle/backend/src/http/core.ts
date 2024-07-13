@@ -7,14 +7,14 @@ export type APIMethod = ["GET" | "POST" | "PUT" | "DELETE", string];
 export const API_METHODS = {
   HEALTH: ["GET", "/health"] as APIMethod,
 
-  AUTH_REGISTER: ["POST", "/v1/auth/register"] as APIMethod,
-  DELETE_USER: ["DELETE", "/v1/user"] as APIMethod,
+  V1_AUTH_REGISTER: ["POST", "/v1/auth/register"] as APIMethod,
+  V1_DELETE_USER: ["DELETE", "/v1/user"] as APIMethod,
 
-  USER_COURSES_OVERALL: ["GET", "/v1/user/courses/overall"] as APIMethod,
-  USER_DEADLINES: ["GET", "/v1/user/deadlines"] as APIMethod,
+  V1_USER_COURSES_OVERALL: ["GET", "/v1/user/courses/overall"] as APIMethod,
+  V1_USER_DEADLINES: ["GET", "/v1/user/deadlines"] as APIMethod,
 
-  COURSE: ["GET", "/v1/course/*"] as APIMethod,
-  USER_COURSE: ["GET", "/v1/user/course/*"] as APIMethod,
+  V1_COURSE: ["GET", "/v1/course/*"] as APIMethod,
+  V1_USER_COURSE: ["GET", "/v1/user/course/*"] as APIMethod,
 } as const;
 
 const prepareURL = (path: string) => {
