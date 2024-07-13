@@ -19,11 +19,11 @@ const api = new Hono<{
   };
 }>();
 
-api.post("/auth/register", async (c) => {
-  const { email, telegramId, password, moodleToken } = await c.req.json();
+api.post("/auth/register", async (ctx) => {
+  const { email, telegramId, password, moodleToken } = await ctx.req.json();
 
   if (!(moodleToken && (email || telegramId))) {
-    return c.json({ message: "Missing required parameters" });
+    throw new HTTPException(500, { message: "Missing required parameters" });
   }
 
   let ghost;
@@ -59,11 +59,13 @@ api.post("/auth/register", async (c) => {
   } catch (error: any) {
     try {
       await db.user.deleteOne({ _id: ghost._id });
-    } catch (rollbackError) {
-      console.error("Failed to rollback the user in MongoDB:", rollbackError);
+    } catch (e: any) {
+      throw new HTTPException(500, {
+        message: e.message,
+      });
     }
 
-    throw new HTTPException(400, {
+    throw new HTTPException(500, {
       message: error.message,
     });
   }
@@ -75,22 +77,22 @@ api.post("/auth/register", async (c) => {
   );
 
   if (!user) {
-    throw new HTTPException(400, {
+    throw new HTTPException(500, {
       message: "Failed to update user in the database",
     });
   }
 
   const { accessToken, refreshToken } = issueTokens(user._id, user.moodleId);
 
-  return c.json({
+  return ctx.json({
     user,
     accessToken,
     refreshToken,
   });
 });
 
-api.post("/auth/login", async (c) => {
-  const { email, password } = await c.req.json();
+api.post("/auth/login", async (ctx) => {
+  const { email, password } = await ctx.req.json();
 
   if (!email || !password) {
     throw new HTTPException(400, {
@@ -116,7 +118,7 @@ api.post("/auth/login", async (c) => {
     user.moodleId,
   );
 
-  return c.json({
+  return ctx.json({
     user,
     accessToken,
     refreshToken,
@@ -131,8 +133,8 @@ api.get("/v1/user/courses/overall", proxyRequest());
 api.get("/v1/user/deadlines", proxyRequest());
 api.get("/v1/course/*", proxyRequest());
 
-api.delete("/goodbye", async (c) => {
-  const userId = c.get("userId");
+api.delete("/goodbye", async (ctx) => {
+  const userId = ctx.get("userId");
 
   const user = await db.user.findOne({ _id: userId });
 
@@ -158,7 +160,7 @@ api.delete("/goodbye", async (c) => {
     });
   }
 
-  return c.text("OK", 200);
+  return ctx.text("OK", 200);
 });
 
 export default api;

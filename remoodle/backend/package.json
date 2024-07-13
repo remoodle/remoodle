@@ -1,4 +1,5 @@
 {
+  "name": "backend",
   "scripts": {
     "start": "tsx src/app.ts",
     "dev": "tsx watch src/app.ts",
