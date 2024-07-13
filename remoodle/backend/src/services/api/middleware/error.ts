@@ -1,5 +1,5 @@
-import { HTTPException } from "hono/http-exception";
 import type { ErrorHandler } from "hono";
+import { HTTPException } from "hono/http-exception";
 
 const showStackTrace = process.env.NODE_ENV !== "production";
 

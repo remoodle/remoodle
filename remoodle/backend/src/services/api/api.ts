@@ -1,10 +1,10 @@
+import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { showRoutes } from "hono/dev";
 import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
-import { serve } from "@hono/node-server";
 import { config } from "../../config";
 import { errorHandler } from "./middleware/error";
 import router from "./router/routes";

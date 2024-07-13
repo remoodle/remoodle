@@ -1,6 +1,6 @@
 import type { Model } from "mongoose";
 import { Schema, model } from "mongoose";
-import { v4 as uuidv4 } from "uuid";
+import { v7 as uuidv7 } from "uuid";
 import type { ExtendedCourse } from "../../../shims";
 
 export interface ICourse {
@@ -14,7 +14,7 @@ type CourseModel = Model<ICourse>;
 
 const courseSchema = new Schema<ICourse, CourseModel>(
   {
-    _id: { type: String, default: uuidv4 },
+    _id: { type: String, default: uuidv7 },
     userId: { type: String, required: true, ref: "User" },
     data: { type: Schema.Types.Mixed, required: true },
     fetchedAt: { type: Date, default: Date.now },

@@ -8,6 +8,7 @@ import {
   requestCore,
 } from "../../../http/core";
 import { issueTokens } from "../../../utils/jwt";
+import { hashPassword, verifyPassword } from "../../../utils/password";
 import { authMiddleware } from "../middleware/auth";
 import { proxyRequest } from "../middleware/proxy";
 
@@ -31,7 +32,7 @@ api.post("/auth/register", async (ctx) => {
     ghost = await db.user.create({
       email,
       telegramId,
-      password,
+      ...(password && { password: hashPassword(password) }),
       moodleId: null,
     });
   } catch (error: any) {
@@ -84,6 +85,8 @@ api.post("/auth/register", async (ctx) => {
 
   const { accessToken, refreshToken } = issueTokens(user._id, user.moodleId);
 
+  user.password = "***";
+
   return ctx.json({
     user,
     accessToken,
@@ -107,7 +110,7 @@ api.post("/auth/login", async (ctx) => {
     });
   }
 
-  if (!(await user.verifyPassword(password))) {
+  if (!verifyPassword(password, user.password)) {
     throw new HTTPException(401, {
       message: "Invalid credentials",
     });
@@ -117,6 +120,8 @@ api.post("/auth/login", async (ctx) => {
     user._id.toString(),
     user.moodleId,
   );
+
+  user.password = "***";
 
   return ctx.json({
     user,

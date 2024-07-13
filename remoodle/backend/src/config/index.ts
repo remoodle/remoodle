@@ -12,6 +12,12 @@ export const config = {
     secret: process.env.CORE_SECRET || "private-token",
     url: process.env.CORE_URL || "http://127.0.0.1:8080",
   },
+  pbkdf2: {
+    digestAlg: "sha256",
+    keySize: 32,
+    iterations: 10000,
+    delimiter: "::",
+  },
   telegram: {
     token: process.env.TELEGRAM_BOT_TOKEN,
   },

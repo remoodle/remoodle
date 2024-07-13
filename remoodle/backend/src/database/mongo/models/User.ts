@@ -1,7 +1,6 @@
 import type { Model } from "mongoose";
 import { Schema, model } from "mongoose";
-import { v4 as uuidv4 } from "uuid";
-import { hashPassword, verifyPassword } from "../../../utils/password";
+import { v7 as uuidv7 } from "uuid";
 
 export interface IUser {
   _id: string;
@@ -12,15 +11,11 @@ export interface IUser {
   moodleId: number;
 }
 
-interface UserMethods {
-  verifyPassword: (pass: string) => Promise<boolean>;
-}
+type UserModel = Model<IUser>;
 
-type UserModel = Model<IUser, UserMethods>;
-
-const userSchema = new Schema<IUser, UserModel, UserMethods>(
+const userSchema = new Schema<IUser, UserModel>(
   {
-    _id: { type: String, default: uuidv4 },
+    _id: { type: String, default: uuidv7 },
     name: { type: String },
     email: { type: String },
     telegramId: { type: Number },
@@ -44,18 +39,6 @@ userSchema.index(
   { email: 1 },
   { unique: true, partialFilterExpression: { email: { $exists: true } } },
 );
-
-userSchema.methods.verifyPassword = async function (enteredPassword: string) {
-  return verifyPassword(enteredPassword, this.password);
-};
-
-userSchema.pre("save", async function (next) {
-  if (!this.password || !this.isModified("password")) {
-    next();
-  }
-
-  this.password = await hashPassword(this.password);
-});
 
 const User = model("User", userSchema);
 
