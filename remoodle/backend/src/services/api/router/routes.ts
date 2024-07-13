@@ -7,8 +7,8 @@ import {
   getCoreInternalHeaders,
   requestCore,
 } from "../../../http/core";
-import { issueTokens } from "../../../utils/jwt";
 import { hashPassword, verifyPassword } from "../../../utils/crypto";
+import { issueTokens } from "../../../utils/jwt";
 import { authMiddleware } from "../middleware/auth";
 import { proxyRequest } from "../middleware/proxy";
 

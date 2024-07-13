@@ -1,16 +1,38 @@
-import dotenv from "dotenv";
+import { cleanEnv, num, str } from "envalid";
+import "dotenv/config";
 
-dotenv.config();
+export const env = cleanEnv(process.env, {
+  NODE_ENV: str({
+    choices: ["development", "test", "production", "staging"],
+    default: "development",
+  }),
+
+  SERVER_HOST: str({ default: "0.0.0.0" }),
+  SERVER_PORT: num({ default: 9000 }),
+  SERVER_SECRET_TOKEN: str({ default: "x00001" }),
+
+  CORE_SECRET: str({ default: "private-token" }),
+  CORE_URL: str({ default: "http://127.0.0.1:8080" }),
+
+  TELEGRAM_BOT_TOKEN: str(),
+
+  MONGO_URI: str({ default: "mongodb://localhost:27017" }),
+  REDIS_URI: str({ default: "redis://localhost:6379" }),
+
+  AUTH_JWT_ALGORITHM: str({ default: "ES512" }),
+  AUTH_JWT_PRIVATE_KEY: str({ default: "" }),
+  AUTH_JWT_PUBLIC_KEY: str({ default: "" }),
+});
 
 export const config = {
   http: {
-    host: process.env.SERVER_HOST || "0.0.0.0",
-    port: Number(process.env.SERVER_PORT) || 9000,
-    secret: process.env.SERVER_SECRET_TOKEN || "x00001",
+    host: env.SERVER_HOST,
+    port: env.SERVER_PORT,
+    secret: env.SERVER_SECRET_TOKEN,
   },
   core: {
-    secret: process.env.CORE_SECRET || "private-token",
-    url: process.env.CORE_URL || "http://127.0.0.1:8080",
+    secret: env.CORE_SECRET,
+    url: env.CORE_URL,
   },
   pbkdf2: {
     digestAlg: "sha256",
@@ -19,18 +41,18 @@ export const config = {
     delimiter: "::",
   },
   telegram: {
-    token: process.env.TELEGRAM_BOT_TOKEN,
+    token: env.TELEGRAM_BOT_TOKEN,
   },
   mongo: {
-    uri: process.env.MONGO_URI || "mongodb://localhost:27017",
+    uri: env.MONGO_URI,
   },
   redis: {
-    uri: process.env.REDIS_URI || "redis://localhost:6379",
+    uri: env.REDIS_URI,
   },
   jwt: {
-    algorithm: process.env.AUTH_JWT_ALGORITHM || "ES512",
-    privateKey: Buffer.from(process.env.AUTH_JWT_PRIVATE_KEY || "", "base64"),
-    publicKey: Buffer.from(process.env.AUTH_JWT_PUBLIC_KEY || "", "base64"),
+    algorithm: env.AUTH_JWT_ALGORITHM,
+    privateKey: Buffer.from(env.AUTH_JWT_PRIVATE_KEY || "", "base64"),
+    publicKey: Buffer.from(env.AUTH_JWT_PUBLIC_KEY || "", "base64"),
     accessTokenExpiration: "4w",
     refreshTokenExpiration: "8w",
     toleranceSeconds: 300,

@@ -1,7 +1,6 @@
 import type { ErrorHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
-
-const showStackTrace = process.env.NODE_ENV !== "production";
+import { env } from "../../../config";
 
 export const errorHandler: ErrorHandler = (err, c) => {
   if (err instanceof HTTPException) {
@@ -11,7 +10,7 @@ export const errorHandler: ErrorHandler = (err, c) => {
           status: err.status,
           message: err.message,
         },
-        ...(showStackTrace && { stack: err.stack }),
+        ...(env.isDevelopment && { stack: err.stack }),
       },
       err.status,
     );
