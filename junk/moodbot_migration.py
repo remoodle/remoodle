@@ -1,6 +1,6 @@
 import os
 import time
-import uuid
+from uuid_extensions import uuid7str  # type: ignore
 import json
 import argparse
 from datetime import datetime
@@ -29,7 +29,7 @@ def migrate_data(secret_key):
     sql_statements = []
 
     for user in users:
-        new_user_id = str(uuid.uuid4())
+        new_user_id = str(uuid7str())
         new_user = {
             "_id": new_user_id,
             "telegramId": user.get("telegram_id"),
@@ -62,8 +62,8 @@ def migrate_data(secret_key):
 
         mysql_insert_query = f"""
 INSERT INTO moodle_users (moodle_id, username, name, moodle_token, initialized, notify_method, grades_notification, deadlines_notification)
-VALUES ('{user.get("moodle_id")}', '{user.get("username")}', '{user.get("full_name")}', '{moodle_token}', 0, 'get_update', {int(user.get("grades_notification"))}, '{user.get("deadlines_notification")}');
-        """
+VALUES ('{user.get("moodle_id")}', '{user.get("username")}', '{user.get("full_name")}', '{moodle_token}', 0, 'get_update', {int(user.get("grades_notification"))}, '{user.get("deadlines_notification")}');"""
+
         sql_statements.append(mysql_insert_query)
 
     with open(json_output_path, "w") as json_file:
