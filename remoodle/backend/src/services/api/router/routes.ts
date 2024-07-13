@@ -8,7 +8,7 @@ import {
   requestCore,
 } from "../../../http/core";
 import { issueTokens } from "../../../utils/jwt";
-import { authMiddleware } from "../middleware/auth-proxy";
+import { authMiddleware } from "../middleware/auth";
 import { proxyRequest } from "../middleware/proxy";
 
 const api = new Hono<{
