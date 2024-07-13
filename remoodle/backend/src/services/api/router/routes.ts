@@ -8,7 +8,8 @@ import {
   requestCore,
 } from "../../../http/core";
 import { issueTokens } from "../../../utils/jwt";
-import { authProxyMiddleware } from "../middleware/auth-proxy";
+import { authMiddleware } from "../middleware/auth-proxy";
+import { proxyRequest } from "../middleware/proxy";
 
 const api = new Hono<{
   Variables: {
@@ -122,20 +123,13 @@ api.post("/auth/login", async (c) => {
   });
 });
 
-api.use(
-  "*",
-  authProxyMiddleware({
-    excludeProxyPaths: ["/health"],
-    prohibitedProxyPaths: [
-      "/",
-      "/v1/auth/register",
-      "/v1/auth/password",
-      "/v1/auth/token",
-      "/v1/user",
-      "/v1/user/settings",
-    ],
-  }),
-);
+api.get("/health", proxyRequest());
+
+api.use("*", authMiddleware());
+
+api.get("/v1/user/courses/overall", proxyRequest());
+api.get("/v1/user/deadlines", proxyRequest());
+api.get("/v1/course/*", proxyRequest());
 
 api.delete("/goodbye", async (c) => {
   const userId = c.get("userId");
@@ -165,31 +159,6 @@ api.delete("/goodbye", async (c) => {
   }
 
   return c.text("OK", 200);
-});
-
-api.all("/x/*", async (c) => {
-  // remove prefix
-  // prefix = /x/*, path = /x/v1/user/courses/overall
-  // => suffix_path = /v1/user/courses/overall
-  let path = c.req.path;
-  path = path.replace(new RegExp(`^${c.req.routePath.replace("*", "")}`), "/");
-
-  if (!path) {
-    return c.json({ message: "Forward-To header is required" });
-  }
-
-  // eg: 'https://aitu0.remoodle.api/v1/user/courses/overall'
-  const [response, error] = await requestCore(path, {
-    method: c.req.method,
-    headers: getCoreInternalHeaders(c.get("moodleId")),
-    body: c.req.raw.body,
-  });
-
-  if (error) {
-    throw error;
-  }
-
-  return c.json(response.data, response.status);
 });
 
 export default api;

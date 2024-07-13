@@ -1,5 +1,5 @@
 import { db } from "../../../database";
-import type { MessageStream } from "../../../database/redis/models/MessageStream";
+import type { MessageStream } from "../../../database";
 import type { GradeChangeEvent } from "../../../shims";
 import { sendTelegramMessage } from "../../../utils/handlers";
 import { formatCourseDiffs } from "../../../utils/parser";

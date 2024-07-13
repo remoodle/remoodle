@@ -1,5 +1,5 @@
 import { db } from "../../../database";
-import type { MessageStream } from "../../../database/redis/models/MessageStream";
+import type { MessageStream } from "../../../database";
 import {
   API_METHOD_USER_COURSES_OVERALL,
   getCoreInternalHeaders,

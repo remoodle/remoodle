@@ -24,4 +24,4 @@ class DB {
 
 export const db = new DB();
 
-export type { DB };
+export type { DB, MessageStream };
