@@ -34,7 +34,6 @@ export const requestCore = async <T = any>(
     ]
   | [null, HTTPException]
 > => {
-  console.log(prepareURL(endpoint[1]));
   const response = await fetch(prepareURL(endpoint[1]), {
     ...options,
     method: endpoint[0],
