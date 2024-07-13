@@ -8,7 +8,7 @@ import {
   requestCore,
 } from "../../../http/core";
 import { issueTokens } from "../../../utils/jwt";
-import { hashPassword, verifyPassword } from "../../../utils/password";
+import { hashPassword, verifyPassword } from "../../../utils/crypto";
 import { authMiddleware } from "../middleware/auth";
 import { proxyRequest } from "../middleware/proxy";
 
