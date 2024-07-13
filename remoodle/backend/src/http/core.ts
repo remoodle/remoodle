@@ -2,26 +2,27 @@ import { HTTPException } from "hono/http-exception";
 import type { StatusCode } from "hono/utils/http-status";
 import { config } from "../config";
 
-type APIMethod = ["GET" | "POST" | "PUT" | "DELETE", string];
+export type APIMethod = ["GET" | "POST" | "PUT" | "DELETE", string];
 
-export const API_METHOD_AUTH_REGISTER: APIMethod = [
-  "POST",
-  "/v1/auth/register",
-];
-export const API_METHOD_USER_COURSES_OVERALL: APIMethod = [
-  "GET",
-  "/v1/user/courses/overall",
-];
+export const API_METHODS = {
+  HEALTH: ["GET", "/health"] as APIMethod,
 
-// TODO: implement missing methods
-export const API_METHOD_DELETE_USER: APIMethod = ["DELETE", "/v1/user"];
+  AUTH_REGISTER: ["POST", "/v1/auth/register"] as APIMethod,
+  DELETE_USER: ["DELETE", "/v1/user"] as APIMethod,
+
+  USER_COURSES_OVERALL: ["GET", "/v1/user/courses/overall"] as APIMethod,
+  USER_DEADLINES: ["GET", "/v1/user/deadlines"] as APIMethod,
+
+  COURSE: ["GET", "/v1/course/*"] as APIMethod,
+  USER_COURSE: ["GET", "/v1/user/course/*"] as APIMethod,
+} as const;
 
 const prepareURL = (path: string) => {
   return new URL(path, config.core.url);
 };
 
 export const requestCore = async <T = any>(
-  endpoint: APIMethod | string,
+  endpoint: APIMethod,
   options: RequestInit,
 ): Promise<
   | [
@@ -33,17 +34,15 @@ export const requestCore = async <T = any>(
     ]
   | [null, HTTPException]
 > => {
-  const response = await fetch(
-    prepareURL(typeof endpoint === "string" ? endpoint : endpoint[1]),
-    {
-      ...options,
-      ...(typeof endpoint !== "string" && { method: endpoint[0] }),
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
+  console.log(prepareURL(endpoint[1]));
+  const response = await fetch(prepareURL(endpoint[1]), {
+    ...options,
+    method: endpoint[0],
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
     },
-  );
+  });
 
   if (!response.ok) {
     return [

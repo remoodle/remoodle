@@ -1,7 +1,7 @@
 import { db } from "../../../database";
 import type { MessageStream } from "../../../database";
 import {
-  API_METHOD_USER_COURSES_OVERALL,
+  API_METHODS,
   getCoreInternalHeaders,
   requestCore,
 } from "../../../http/core";
@@ -22,7 +22,7 @@ const fetchCourses = async (messageStream: MessageStream) => {
 
     try {
       const [response, error] = await requestCore<ExtendedCourse[]>(
-        API_METHOD_USER_COURSES_OVERALL,
+        API_METHODS.USER_COURSES_OVERALL,
         {
           headers: getCoreInternalHeaders(user.moodleId),
         },
