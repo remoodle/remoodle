@@ -1,5 +1,5 @@
 {
-  "extends": "@remoodle/config-typescript/cloudflare.json",
+  "extends": "@remoodle/tsconfig/cloudflare.json",
   "compilerOptions": {
     "types": ["@cloudflare/workers-types/2023-07-01"]
   }

@@ -28,6 +28,7 @@ export const trackCourseDiff = (
           const previous = oldGrade ? oldGrade.graderaw : null;
           const updated = newGrade.graderaw;
 
+          // eslint-disable-next-line max-depth
           if (!oldGrade || previous !== updated) {
             courseChanges.push([newGrade.name, previous, updated]);
           }
@@ -38,7 +39,9 @@ export const trackCourseDiff = (
         diffs.push({ n: newCourse.name, d: courseChanges });
       }
     } else {
-      if (!newCourse.grades) continue;
+      if (!newCourse.grades) {
+        continue;
+      }
 
       courseChanges = newCourse.grades.map((grade) => [
         grade.name,

@@ -1,12 +1,15 @@
 {
-  "name": "infra",
-  "description": "Infrastructure Monorepo",
+  "name": "remoodle",
+  "description": "ReMoodle Monorepo",
+  "private": true,
   "scripts": {
-    "lint": "biome lint .",
-    "format": "pnpm biome format . --write && pnpm biome check . --apply-unsafe "
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "fix": "turbo fix",
+    "test": "turbo test"
   },
+  "packageManager": "pnpm@8.15.5",
   "devDependencies": {
-    "@biomejs/biome": "1.8.0",
-    "typescript": "^5.0.4"
+    "turbo": "^2.0.6"
   }
 }

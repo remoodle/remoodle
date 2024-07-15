@@ -1,3 +1,0 @@
-# infra
-
-Infrastructure Monorepo

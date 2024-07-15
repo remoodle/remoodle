@@ -1,20 +1,24 @@
 {
   "name": "alert-point",
   "version": "0.0.0",
-  "private": true,
   "scripts": {
-    "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0 && prettier --check \"**/*.{ts,tsx,md}\"",
+    "fix": "eslint . --fix && prettier --write \"**/*.{ts,tsx,md}\"",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "hono": "^4.4.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.8.0",
     "@cloudflare/workers-types": "^4.20240605.0",
-    "@remoodle/config-typescript": "workspace:^",
+    "@remoodle/eslint-config": "workspace:*",
+    "@remoodle/prettier-config": "workspace:*",
+    "@remoodle/tsconfig": "workspace:*",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
     "typescript": "^5.0.4",
     "wrangler": "^3.57.1"
   }

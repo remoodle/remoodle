@@ -37,7 +37,7 @@ export class MessageStream {
       }),
     );
 
-    // @ts-ignore
+    // @ts-expect-error yes
     return this.client.call(...args);
   }
 

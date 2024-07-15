@@ -16,7 +16,3 @@ export async function sendTelegramMessage(chatId: number, message: string) {
 
   return response;
 }
-
-async function sendEmail(email: string, message: string) {
-  // TODO: Send an email via Resend
-}

@@ -1,9 +1,12 @@
 {
   "name": "backend",
+  "version": "0.0.0",
   "scripts": {
-    "start": "tsx src/app.ts",
     "dev": "tsx watch src/app.ts",
+    "start": "tsx src/app.ts",
     "type-check": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0 && prettier --check \"**/*.{ts,tsx,md}\"",
+    "fix": "eslint . --fix && prettier --write \"**/*.{ts,tsx,md}\"",
     "test": "vitest"
   },
   "dependencies": {
@@ -18,12 +21,17 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@remoodle/config-typescript": "workspace:^",
+    "@remoodle/eslint-config": "workspace:*",
+    "@remoodle/prettier-config": "workspace:*",
+    "@remoodle/tsconfig": "workspace:*",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.11.17",
     "@types/node-cron": "^3.0.11",
     "@types/uuid": "^10.0.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
     "tsx": "^4.7.1",
+    "typescript": "^5.0.4",
     "vitest": "^1.6.0"
   }
 }
