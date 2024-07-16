@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@boringer-avatars/vue3@0.2.1':
+    hash: 4xhdgqtqf4n4dblyj4txqei5ce
+    path: patches/@boringer-avatars__vue3@0.2.1.patch
+
 importers:
 
   .:
@@ -111,7 +116,7 @@ importers:
     dependencies:
       '@boringer-avatars/vue3':
         specifier: ^0.2.1
-        version: 0.2.1(vue@3.4.31)
+        version: 0.2.1(patch_hash=4xhdgqtqf4n4dblyj4txqei5ce)(vue@3.4.31)
       '@radix-icons/vue':
         specifier: ^1.0.0
         version: 1.0.0(vue@3.4.31)
@@ -662,13 +667,14 @@ packages:
       '@babel/helper-validator-identifier': 7.24.7
       to-fast-properties: 2.0.0
 
-  /@boringer-avatars/vue3@0.2.1(vue@3.4.31):
+  /@boringer-avatars/vue3@0.2.1(patch_hash=4xhdgqtqf4n4dblyj4txqei5ce)(vue@3.4.31):
     resolution: {integrity: sha512-KzAfh31SDXToTvFL0tBNG5Ur+VzfD1PP4jmY5/GS+eIuObGTIAiUu9eiht0LjuAGI+0xCgnaEgsTrOx8H3vLOQ==}
     peerDependencies:
       vue: ^3.0.0
     dependencies:
       vue: 3.4.31(typescript@5.4.5)
     dev: false
+    patched: true
 
   /@cloudflare/kv-asset-handler@0.3.4:
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}

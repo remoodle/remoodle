@@ -61,10 +61,5 @@
     "vite-plugin-vue-devtools": "^7.0.27",
     "vitest": "^1.6.0",
     "vue-tsc": "^2.0.7"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "@boringer-avatars/vue3@0.2.1": "patches/@boringer-avatars__vue3@0.2.1.patch"
-    }
   }
 }
