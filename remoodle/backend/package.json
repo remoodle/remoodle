@@ -5,8 +5,8 @@
     "dev": "tsx watch src/app.ts",
     "start": "tsx src/app.ts",
     "type-check": "tsc --noEmit",
-    "lint": "eslint . --max-warnings 0 && prettier --check \"**/*.{ts,tsx,md}\"",
-    "fix": "eslint . --fix && prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "eslint . --max-warnings 0 && prettier --check src/",
+    "fix": "eslint . --fix && prettier --write src/",
     "test": "vitest"
   },
   "dependencies": {
