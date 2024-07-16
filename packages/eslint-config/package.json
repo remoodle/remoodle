@@ -2,7 +2,7 @@
   "name": "@remoodle/eslint-config",
   "version": "0.0.0",
   "files": [
-    "common.js"
+    "base.js"
   ],
   "devDependencies": {
     "@vercel/style-guide": "^5.2.0",
