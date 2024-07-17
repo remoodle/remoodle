@@ -135,6 +135,7 @@ const { preferences } = storeToRefs(userStore);
   <PageWrapper sticky-header>
     <template #title>
       <h1>
+        ТЕСТ
         <template v-if="!courseName && loading && !isDefined(course)">
           Loading...
         </template>
