@@ -35,5 +35,5 @@ jobs:
           cloudflare-api-token: ${{ secrets.CF_API_TOKEN }}
           cloudflare-account-id: ${{ vars.CF_ACCOUNT_ID }}
           cloudflare-project-name: frontend-dev-svo
-          directory: dist
+          directory: remoodle/frontend/web/dist
           github-token: ${{ secrets.GITHUB_TOKEN }}
