@@ -37,3 +37,4 @@ jobs:
           cloudflare-project-name: frontend-dev-svo
           directory: remoodle/frontend/web/dist
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-environment: "Preview"
