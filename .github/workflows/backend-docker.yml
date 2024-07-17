@@ -1,4 +1,4 @@
-name: "[api] Publish Docker image"
+name: "[backend] Publish Docker image"
 
 on:
   push:

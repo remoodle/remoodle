@@ -1,4 +1,4 @@
-name: "[moodbot] Publish Docker image"
+name: "[telegram_bot] Publish Docker image"
 
 on:
   push:

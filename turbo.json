@@ -4,6 +4,7 @@
     "lint": {},
     "fix": {},
     "test": {},
+    "type-check": {},
     "dev": {
       "cache": false,
       "persistent": true

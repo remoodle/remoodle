@@ -1,0 +1,36 @@
+name: "[frontend/web] Deploy preview"
+
+on:
+  pull_request:
+    paths:
+      - "remoodle/frontend/web/**"
+      - ".github/workflows/web-deploy-preview.yml"
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  deploy:
+    permissions:
+      actions: read
+      contents: read
+      deployments: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node_version: 20
+      - run: cd remoodle/frontend/web && pnpm install && pnpm run build
+      - name: Deploy to Cloudflare Pages
+        uses: andykenward/github-actions-cloudflare-pages@v2.3.0
+        id: pages
+        with:
+          cloudflare-api-token: ${{ secrets.CF_API_TOKEN }}
+          cloudflare-account-id: ${{ vars.CF_ACCOUNT_ID }}
+          cloudflare-project-name: frontend-dev-svo
+          directory: dist
+          github-token: ${{ secrets.GITHUB_TOKEN }}

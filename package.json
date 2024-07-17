@@ -6,7 +6,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "fix": "turbo fix",
-    "test": "turbo test"
+    "test": "turbo test",
+    "type-check": "turbo type-check"
   },
   "devDependencies": {
     "turbo": "^2.0.6"
