@@ -24,6 +24,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node_version: 20
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
       - run: cd remoodle/frontend/web && pnpm install && pnpm run build
       - name: Deploy to Cloudflare Pages
         uses: andykenward/github-actions-cloudflare-pages@v2.3.0

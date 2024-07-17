@@ -12,7 +12,7 @@
   "devDependencies": {
     "turbo": "^2.0.6"
   },
-  "packageManager": "pnpm@8.15.5",
+  "packageManager": "pnpm@8",
   "pnpm": {
     "patchedDependencies": {
       "@boringer-avatars/vue3@0.2.1": "patches/@boringer-avatars__vue3@0.2.1.patch"
