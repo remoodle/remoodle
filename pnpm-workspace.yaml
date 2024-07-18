@@ -1,5 +1,3 @@
 packages:
-  - "remoodle/backend"
-  - "remoodle/frontend/web"
-  - "remoodle/serverless/*"
-  - "packages/*"
+  - "remoodle/**/*"
+  - "packages/**/*"
