@@ -74,7 +74,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
-        uses: ./.github/workflows/web-preview.yml
+        uses: remoodle/heresy/.github/workflows/web-preview.yml@trunk
+        secrets: inherit
         with:
           title: ${{ needs.check_prs.outputs.pr_title }}
           number: ${{ needs.check_prs.outputs.pr_number }}
