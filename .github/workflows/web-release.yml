@@ -91,23 +91,20 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: "remoodle/frontend/web/pnpm-lock.yaml"
 
-      - name: Change directory
-        run: cd remoodle/frontend/web
-
       - name: Install dependencies
-        run: pnpm install
+        run: cd remoodle/frontend/web && pnpm install
 
       - name: Build app
         env:
           COMMIT_SHA: ${{ github.sha }}
-        run: pnpm build-only
+        run: cd remoodle/frontend/web && pnpm build-only
 
       - name: Deploy on stage
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
-          command: pages deploy dist --project-name="frontend-dev-svo" --branch="production"
+          command: pages deploy remoodle/frontend/web/dist --project-name="frontend-dev-svo" --branch="production"
 
       - name: Deploy on production
         if: needs.release.outputs.releases_created == 'true'
@@ -115,4 +112,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
-          command: pages deploy dist --project-name="frontend-prod-nqz" --branch="production"
+          command: pages deploy remoodle/frontend/web/dist --project-name="frontend-prod-nqz" --branch="production"
