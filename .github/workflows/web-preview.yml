@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
-          cache-dependency-path: "tradelink/frontend/pnpm-lock.yaml"
+          cache-dependency-path: "remoodle/frontend/web/pnpm-lock.yaml"
 
       - name: Retrieve deploy-as info
         id: deploy-as
