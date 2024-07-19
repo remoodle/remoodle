@@ -28,6 +28,8 @@ jobs:
         node-version: [20]
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
       - uses: pnpm/action-setup@v4
         with:
           version: 8.15.5
