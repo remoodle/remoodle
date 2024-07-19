@@ -106,7 +106,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
-          command: pages deploy remoodle/frontend/web/dist --project-name="frontend-dev-svo" --branch="production"
+          command: pages deploy remoodle/frontend/web/dist --project-name="frontend-dev-svo" --branch="trunk"
 
       - name: Deploy on production
         if: needs.release.outputs.releases_created == 'true'
