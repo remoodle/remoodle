@@ -1,16 +1,19 @@
-name: "Release, please"
+name: "Release, web"
 
 on:
   push:
     branches: [trunk]
     paths:
       - "remoodle/frontend/web/**"
-      - "remoodle/backend/**"
-      - ".github/workflows/release-please.yml"
+      - ".github/workflows/web-release.yml"
 
 permissions:
   contents: write
   pull-requests: write
+
+defaults:
+  run:
+    working-directory: ./remoodle/frontend/web
 
 jobs:
   release:
@@ -63,12 +66,12 @@ jobs:
               break
             fi
           done
-          echo "::set-output name=deploy_needed::$DEPLOY_NEEDED"
-          echo "::set-output name=pr_title::$PR_TITLE"
-          echo "::set-output name=pr_number::$PR_NUMBER"
-          echo "::set-output name=pr_head_branch::$PR_HEAD_BRANCH"
+          echo "deploy_needed=$DEPLOY_NEEDED" >> $GITHUB_OUTPUT
+          echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "pr_head_branch=$PR_HEAD_BRANCH" >> $GITHUB_OUTPUT
 
-  deploy:
+  deploy-preview:
     needs: [release, check_prs]
     if: needs.check_prs.outputs.deploy_needed == 'true'
     uses: remoodle/heresy/.github/workflows/web-preview.yml@trunk
@@ -77,3 +80,40 @@ jobs:
       title: ${{ needs.check_prs.outputs.pr_title }}
       number: ${{ needs.check_prs.outputs.pr_number }}
       branch: ${{ needs.check_prs.outputs.pr_head_branch }}
+
+  deploy:
+    needs: [release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          cache-dependency-path: "remoodle/frontend/web/pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build app
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: pnpm build-only
+
+      - name: Deploy on stage
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ vars.CF_ACCOUNT_ID }}
+          command: pages deploy dist --project-name="frontend-dev-svo" --branch="production"
+
+      - name: Deploy on production
+        if: needs.release.outputs.releases_created == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ vars.CF_ACCOUNT_ID }}
+          command: pages deploy dist --project-name="frontend-prod-nqz" --branch="production"
