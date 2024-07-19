@@ -97,7 +97,7 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
         run: cd remoodle/frontend/web && pnpm build-only
 
-      - run: cd remoodle/frontend/web && echo "ignore-workspace-root-check=true" >> .npmrc
+      - run: echo "ignore-workspace-root-check=true" >> .npmrc
 
       - name: Deploy on stage
         uses: cloudflare/wrangler-action@v3
