@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/remoodle/heresy/compare/remoodle/web-v0.3.0...remoodle/web-v0.3.1) (2024-07-19)
+
+
+### Bug Fixes
+
+* change app title ([d79560c](https://github.com/remoodle/heresy/commit/d79560c7f47943e77fae04c9a26a11d822d1cb0d))
+
 ## [0.3.0](https://github.com/remoodle/heresy/compare/remoodle/web-v0.2.6...remoodle/web-v0.3.0) (2024-07-19)
 
 
