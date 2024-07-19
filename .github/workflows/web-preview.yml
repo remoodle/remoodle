@@ -146,7 +146,7 @@ jobs:
 
             const subdomain = branch.replace(/\//g, '-').replace(/\./g, '-').toLowerCase().slice(0, 28);
 
-            const previewURL = `https://${subdomain}.wahda-polygon.pages.dev`;
+            const previewURL = `https://${subdomain}.heresy.pages.dev`;
 
             await github.rest.issues.updateComment({
               issue_number: issueNumber,
