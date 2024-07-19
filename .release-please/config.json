@@ -54,12 +54,12 @@
   "packages": {
     "remoodle/frontend/web": {
       "release-type": "node",
-      "package-name": "remoodle/web"
+      "package-name": "remoodle/web",
+      "pull-request-title-pattern": "chore${scope}: release ${component} (deploy-as: release-${version})"
     },
     "remoodle/backend": {
       "release-type": "node",
-      "package-name": "remoodle/backend",
-      "pull-request-title-pattern": "chore${scope}: release ${component} (deploy-as: release-${version})"
+      "package-name": "remoodle/backend"
     }
   }
 }
