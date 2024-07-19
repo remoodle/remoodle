@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.6](https://github.com/remoodle/heresy/compare/remoodle/web-v0.2.5...remoodle/web-v0.2.6) (2024-07-19)
+
+
+### Bug Fixes
+
+* test ([ce42727](https://github.com/remoodle/heresy/commit/ce42727e0233474c1975dcf12902b6ab725f0fb2))
+* test 2 ([a31d1e1](https://github.com/remoodle/heresy/commit/a31d1e1433ae622973e0178938d8e5dc18e0558d))
+
 ## [0.2.5](https://github.com/remoodle/heresy/compare/v0.2.4...v0.2.5) (2024-06-10)
 
 
