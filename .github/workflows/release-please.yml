@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
-        uses: ./.github/workflows/deploy-preview.yml
+        uses: ./.github/workflows/web-preview.yml
         with:
           title: ${{ needs.check_prs.outputs.pr_title }}
           number: ${{ needs.check_prs.outputs.pr_number }}
