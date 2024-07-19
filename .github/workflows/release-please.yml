@@ -1,23 +1,19 @@
-name: "[frontend/web] Release, please"
+name: "Release, please"
 
 on:
   push:
     branches: [trunk]
     paths:
       - "remoodle/frontend/web/**"
-      - ".github/workflows/web-release.yml"
+      - "remoodle/backend/**"
+      - ".github/workflows/release-please.yml"
 
 permissions:
   contents: write
   pull-requests: write
 
-defaults:
-  run:
-    working-directory: ./remoodle/frontend/web
-
 jobs:
-  deploy:
-    name: Update Release PR, Build and Deploy to Stage / Production
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,4 +22,3 @@ jobs:
         with:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
-          bootstrap-sha: "0c23623140e3252814960243b61e917e26143e24"
