@@ -98,7 +98,7 @@ jobs:
         run: cd remoodle/frontend/web && pnpm build-only
 
       - name: Deploy on stage
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v3.6.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
@@ -106,7 +106,7 @@ jobs:
 
       - name: Deploy on production
         if: needs.release.outputs.releases_created == 'true'
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v3.6.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
