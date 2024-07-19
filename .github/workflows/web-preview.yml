@@ -1,0 +1,157 @@
+name: Build and Deploy PR Preview
+
+on:
+  workflow_call:
+    inputs:
+      title:
+        description: "PR title"
+        required: true
+        type: "string"
+      number:
+        description: "PR issue number"
+        required: true
+        type: "string"
+      branch:
+        description: "branch name"
+        required: true
+        type: "string"
+
+defaults:
+  run:
+    working-directory: ./remoodle/frontend/web
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+          cache-dependency-path: "tradelink/frontend/pnpm-lock.yaml"
+
+      - name: Retrieve deploy-as info
+        id: deploy-as
+        uses: actions/github-script@v7
+        env:
+          INPUT_TITLE: ${{ inputs.title }} # this part hotfixes the bug
+          INPUT_BRANCH: ${{ inputs.branch }} # this part hotfixes the bug
+        with:
+          result-encoding: string
+          script: |
+            const pr = core.getInput('title');
+            const branch = core.getInput('branch');
+
+            const optionMatches = /\(deploy-as: (.*?)\)/.exec(pr);
+
+            return optionMatches ? optionMatches[1] : branch;
+
+      - name: Comment Deploy In Progress
+        id: in-progress-comment
+        uses: actions/github-script@v7
+        env:
+          INPUT_NUMBER: ${{ inputs.number }} # this part hotfixes the bug
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const issueNumber = core.getInput('number');
+
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+            });
+
+            const commentBody = "## Deploying on Cloudflare Pages\n\n" + ":hourglass: Deployment in progress...";
+
+            const inProgressComment = comments.data.find((comment) => comment.body.includes("Deploying on Cloudflare Pages"));
+
+            if (inProgressComment) {
+              await github.rest.issues.updateComment({
+                issue_number: issueNumber,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: inProgressComment.id,
+                body: commentBody,
+              });
+              
+              return inProgressComment.id;
+            }
+
+            const comment = await github.rest.issues.createComment({
+              issue_number: issueNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: commentBody,
+            });
+
+            return comment.data.id;
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build app in "preview" mode
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: pnpm build-only --mode="preview"
+
+      - name: Deploy on named branch
+        uses: cloudflare/wrangler-action@v3
+        with:
+          workingDirectory: ./remoodle/frontend/web
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ vars.CF_ACCOUNT_ID }}
+          command: >
+            pages deploy dist
+            --project-name="frontend-dev-svo"
+            --branch="${{ steps.deploy-as.outputs.result }}"
+
+      - name: Comment Deploy Failure
+        if: failure()
+        uses: actions/github-script@v7
+        env:
+          INPUT_NUMBER: ${{ inputs.number }} # this part hotfixes the bug
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const commitCommentId = ${{ steps.in-progress-comment.outputs.result }};
+            const issueNumber = core.getInput('number');
+
+            await github.rest.issues.updateComment({
+              issue_number: issueNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: commitCommentId,
+              body: "## Deploying on Cloudflare Pages\n\n" + `:x: The deployment failed.`,
+            });
+
+      - name: Comment Deploy Preview Link
+        uses: actions/github-script@v7
+        env:
+          INPUT_NUMBER: ${{ inputs.number }} # this part hotfixes the bug
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const commitCommentId = "${{ steps.in-progress-comment.outputs.result }}";
+            const issueNumber = core.getInput('number');
+
+            const branch = "${{ steps.deploy-as.outputs.result }}";
+
+            const subdomain = branch.replace(/\//g, '-').replace(/\./g, '-').toLowerCase().slice(0, 28);
+
+            const previewURL = `https://${subdomain}.wahda-polygon.pages.dev`;
+
+            await github.rest.issues.updateComment({
+              issue_number: issueNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: commitCommentId,
+              body: "## Deploying on Cloudflare Pages\n\n" + `:rocket: The PR preview for *${subdomain}* is ready and deployed at ${previewURL}`,
+            });
