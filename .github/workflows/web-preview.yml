@@ -34,6 +34,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+          cache-dependency-path: "remoodle/frontend/web/pnpm-lock.yaml"
 
       - name: Retrieve deploy-as info
         id: deploy-as
