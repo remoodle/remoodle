@@ -88,6 +88,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: "pnpm"
+          cache-dependency-path: "remoodle/frontend/web/pnpm-lock.yaml"
 
       - name: Install dependencies
         run: cd remoodle/frontend/web && pnpm install
