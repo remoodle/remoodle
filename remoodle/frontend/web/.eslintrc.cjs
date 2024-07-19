@@ -1,6 +1,6 @@
 require("@rushstack/eslint-patch/modern-module-resolution");
 
-const baseConfig = require("@remoodle/eslint-config/base.js");
+const baseConfig = require("@remoodle/eslint-config/base.js")
 
 module.exports = {
   root: true,
