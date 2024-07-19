@@ -26,3 +26,4 @@ jobs:
         with:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
+          bootstrap-sha: "0c23623140e3252814960243b61e917e26143e24"
