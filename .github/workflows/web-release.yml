@@ -97,8 +97,10 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
         run: cd remoodle/frontend/web && pnpm build-only
 
+      - run: cd remoodle/frontend/web && echo "ignore-workspace-root-check=true" >> .npmrc
+
       - name: Deploy on stage
-        uses: cloudflare/wrangler-action@v3.6.0
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
@@ -106,7 +108,7 @@ jobs:
 
       - name: Deploy on production
         if: needs.release.outputs.releases_created == 'true'
-        uses: cloudflare/wrangler-action@v3.6.0
+        uses: cloudflare/wrangler-action@v3.6
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
