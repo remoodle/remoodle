@@ -71,12 +71,9 @@ jobs:
   deploy:
     needs: [release, check_prs]
     if: needs.check_prs.outputs.deploy_needed == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy
-        uses: remoodle/heresy/.github/workflows/web-preview.yml@trunk
-        secrets: inherit
-        with:
-          title: ${{ needs.check_prs.outputs.pr_title }}
-          number: ${{ needs.check_prs.outputs.pr_number }}
-          branch: ${{ needs.check_prs.outputs.pr_base_branch }}
+    uses: remoodle/heresy/.github/workflows/web-preview.yml@trunk
+    secrets: inherit
+    with:
+      title: ${{ needs.check_prs.outputs.pr_title }}
+      number: ${{ needs.check_prs.outputs.pr_number }}
+      branch: ${{ needs.check_prs.outputs.pr_base_branch }}
