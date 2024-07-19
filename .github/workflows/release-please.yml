@@ -15,6 +15,12 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      paths_released: ${{ steps.release.outputs.paths_released }}
+      prs_created: ${{ steps.release.outputs.prs_created }}
+      prs: ${{ steps.release.outputs.prs }}
+      pr: ${{ steps.release.outputs.pr }}
     steps:
       - uses: actions/checkout@v4
       - uses: googleapis/release-please-action@v4
@@ -22,3 +28,54 @@ jobs:
         with:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
+
+  check_prs:
+    needs: release
+    if: needs.release.outputs.prs_created == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      deploy_needed: ${{ steps.filter_prs.outputs.deploy_needed }}
+      pr_title: ${{ steps.filter_prs.outputs.pr_title }}
+      pr_number: ${{ steps.filter_prs.outputs.pr_number }}
+      pr_base_branch: ${{ steps.filter_prs.outputs.pr_base_branch }}
+    steps:
+      - name: Check PRs for Deployment
+        id: filter_prs
+        if: needs.release.outputs.prs_created == 'true'
+        run: |
+          PRS='${{ needs.release.outputs.prs }}'
+          DEPLOY_NEEDED=false
+          PR_TITLE=""
+          PR_NUMBER=""
+          PR_BASE_BRANCH=""
+          for ROW in $(echo "${PRS}" | jq -r '.[] | @base64'); do
+            _jq() {
+              echo ${ROW} | base64 --decode | jq -r ${1}
+            }
+            TITLE=$(_jq '.title')
+            NUMBER=$(_jq '.number')
+            BASE_BRANCH=$(_jq '.baseBranchName')
+            if [[ "$TITLE" == *"remoodle/web"* ]]; then
+              DEPLOY_NEEDED=true
+              PR_TITLE="$TITLE"
+              PR_NUMBER="$NUMBER"
+              PR_BASE_BRANCH="$BASE_BRANCH"
+              break
+            fi
+          done
+          echo "::set-output name=deploy_needed::$DEPLOY_NEEDED"
+          echo "::set-output name=pr_title::$PR_TITLE"
+          echo "::set-output name=pr_number::$PR_NUMBER"
+          echo "::set-output name=pr_base_branch::$PR_BASE_BRANCH"
+
+  deploy:
+    needs: [release, check_prs]
+    if: needs.check_prs.outputs.deploy_needed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        uses: ./.github/workflows/deploy-preview.yml
+        with:
+          title: ${{ needs.check_prs.outputs.pr_title }}
+          number: ${{ needs.check_prs.outputs.pr_number }}
+          branch: ${{ needs.check_prs.outputs.pr_base_branch }}
