@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/remoodle/heresy/compare/remoodle/web-v0.3.3...remoodle/web-v0.3.4) (2024-07-20)
+
+
+### Bug Fixes
+
+* temp ([#28](https://github.com/remoodle/heresy/issues/28)) ([e907fa8](https://github.com/remoodle/heresy/commit/e907fa814cb5f5b7d2e1d815733b69139b3ffd73))
+
 ## [0.3.3](https://github.com/remoodle/heresy/compare/remoodle/web-v0.3.2...remoodle/web-v0.3.3) (2024-07-20)
 
 
