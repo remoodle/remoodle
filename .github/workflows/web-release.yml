@@ -30,54 +30,34 @@ jobs:
 
   check_prs:
     needs: release
-    if: needs.release.outputs.prs_created == 'true'
     runs-on: ubuntu-latest
     outputs:
-      deploy_needed: ${{ steps.filter_prs.outputs.deploy_needed }}
-      pr_title: ${{ steps.filter_prs.outputs.pr_title }}
-      pr_number: ${{ steps.filter_prs.outputs.pr_number }}
-      pr_head_branch: ${{ steps.filter_prs.outputs.pr_head_branch }}
+      pr_for_deployment: ${{ steps.find_pr.outputs.pr_for_deployment }}
     steps:
-      - name: Check PRs for Deployment
-        id: filter_prs
-        if: needs.release.outputs.prs_created == 'true'
-        run: |
-          PRS='${{ needs.release.outputs.prs }}'
-          DEPLOY_NEEDED=false
-          PR_TITLE=""
-          PR_NUMBER=""
-          PR_HEAD_BRANCH=""
-          for ROW in $(echo "${PRS}" | jq -r '.[] | @base64'); do
-            _jq() {
-              echo ${ROW} | base64 --decode | jq -r ${1}
+      - uses: actions/github-script@v7
+        id: find_pr
+        with:
+          script: |
+            const prs = JSON.parse('${{ needs.release.outputs.prs }}');
+            const targetPr = prs.find(pr => pr.title.includes('remoodle/frontend/web'));
+            if (targetPr) {
+              console.log('PR found for deployment:', targetPr.number);
+              return targetPr;
             }
-            TITLE=$(_jq '.title')
-            NUMBER=$(_jq '.number')
-            BRANCH=$(_jq '.headBranchName')
-            if [[ "$TITLE" == *"remoodle/web"* ]]; then
-              DEPLOY_NEEDED=true
-              PR_TITLE="$TITLE"
-              PR_NUMBER="$NUMBER"
-              PR_HEAD_BRANCH="$BRANCH"
-              break
-            fi
-          done
-          echo "deploy_needed=$DEPLOY_NEEDED" >> $GITHUB_OUTPUT
-          echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-          echo "pr_head_branch=$PR_HEAD_BRANCH" >> $GITHUB_OUTPUT
+            return null;
+          result-encoding: string
 
   deploy-preview:
-    needs: [release, check_prs]
-    if: needs.check_prs.outputs.deploy_needed == 'true'
+    needs: check_prs
+    if: needs.check_prs.outputs.pr_for_deployment
     uses: remoodle/heresy/.github/workflows/web-preview.yml@trunk
     secrets: inherit
     with:
-      title: ${{ needs.check_prs.outputs.pr_title }}
-      number: ${{ needs.check_prs.outputs.pr_number }}
-      branch: ${{ needs.check_prs.outputs.pr_head_branch }}
+      title: ${{ fromJson(needs.check_prs.outputs.pr_for_deployment).title }}
+      number: ${{ fromJson(needs.check_prs.outputs.pr_for_deployment).number }}
+      branch: ${{ fromJson(needs.check_prs.outputs.pr_for_deployment).headBranchName }}
 
-  deploy:
+  deploy-stage-prod:
     needs: [release]
     runs-on: ubuntu-latest
     steps:
@@ -109,7 +89,7 @@ jobs:
           command: pages deploy remoodle/frontend/web/dist --project-name="frontend-dev-svo" --branch="trunk"
 
       - name: Deploy on production
-        if: needs.release.outputs.releases_created == 'true'
+        if: fromJson(needs.release.outputs.paths_released) && contains(needs.release.outputs.paths_released, 'remoodle/frontend/web')
         uses: cloudflare/wrangler-action@v3.6
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
