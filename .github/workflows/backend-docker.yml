@@ -2,7 +2,7 @@ name: "[backend] Publish Docker image"
 
 on:
   push:
-    branches: [main]
+    branches: [trunk]
     paths:
       - "remoodle/backend/**"
       - ".github/workflows/api-docker.yml"

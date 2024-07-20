@@ -2,7 +2,7 @@ name: "[telegram_bot] Publish Docker image"
 
 on:
   push:
-    branches: [main]
+    branches: [trunk]
     paths:
       - "remoodle/frontend/telegram_bot/**"
       - ".github/workflows/remoodle-moodbot-docker.yml"
