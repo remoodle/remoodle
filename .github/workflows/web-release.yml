@@ -31,13 +31,14 @@ jobs:
   find_release_pr:
     needs: release
     outputs:
-      pr: ${{ steps.find_pr.outputs.pr }}
-      has_pr: ${{ steps.find_pr.outputs.has_pr }}
+      pr: ${{ fromJSON(steps.find_pr.outputs.result).pr }}
+      has_pr: ${{ fromJSON(steps.find_pr.outputs.result).has_pr }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v7
         id: find_pr
         with:
+          result-encoding: json
           script: |
             let prsJson = `${{ needs.release.outputs.prs }}`;
 
@@ -70,7 +71,6 @@ jobs:
               pr: null,
               has_pr: 'false'
             };
-          result-encoding: string
 
   deploy-pr-preview:
     needs: find_release_pr
