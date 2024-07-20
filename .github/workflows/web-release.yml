@@ -29,7 +29,6 @@ jobs:
           manifest-file: .release-please/manifest.json
 
   check_prs:
-    needs: release
     runs-on: ubuntu-latest
     outputs:
       pr_for_deployment: ${{ steps.find_pr.outputs.pr_for_deployment }}
@@ -38,21 +37,28 @@ jobs:
         id: find_pr
         with:
           script: |
-            const prsJson = '${{ needs.release.outputs.prs }}';
-            if (!prsJson) {
-              console.log('No PRs data available.');
+            let prsJson = `${{ needs.release.outputs.prs }}`;
+
+            if (!prsJson || prsJson.trim() === '') {
+              console.log('No PRs data available or the data is empty.');
               return null;
             }
+
+            prsJson = prsJson.replace(/("body":\s*")[^"]*(")/g, '$1$2');
+
             try {
               const prs = JSON.parse(prsJson);
-              const targetPr = prs.find(pr => pr.title.includes('remoodle/frontend/web'));
+
+              const targetPr = prs.find(pr => pr.title.includes('remoodle/web'));
+
               if (targetPr) {
-                console.log('PR found for deployment:', targetPr.number);
+                console.log('PR found for deployment:', targetPr);
                 return JSON.stringify(targetPr);
               }
             } catch (error) {
               console.error('Error parsing PRs:', error);
             }
+
             return null;
           result-encoding: string
 
