@@ -30,6 +30,8 @@ jobs:
 
   find_release_pr:
     needs: release
+    outputs:
+      pr_info: ${{ steps.find_pr.outputs.result }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v7
@@ -63,13 +65,13 @@ jobs:
 
   deploy-pr-preview:
     needs: find_release_pr
-    if: needs.find_release_pr.outputs.result
+    if: needs.find_release_pr.outputs.pr_info
     uses: remoodle/heresy/.github/workflows/web-preview.yml@trunk
     secrets: inherit
     with:
-      title: ${{ fromJson(needs.find_release_pr.outputs.result).title }}
-      number: ${{ fromJson(needs.find_release_pr.outputs.result).number }}
-      branch: ${{ fromJson(needs.find_release_pr.outputs.result).headBranchName }}
+      title: ${{ fromJson(needs.find_release_pr.outputs.pr_info).title }}
+      number: ${{ fromJson(needs.find_release_pr.outputs.pr_info).number }}
+      branch: ${{ fromJson(needs.find_release_pr.outputs.pr_info).headBranchName }}
 
   deploy-stage:
     runs-on: ubuntu-latest
