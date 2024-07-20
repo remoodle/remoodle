@@ -28,10 +28,10 @@ jobs:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
 
-  check_prs:
+  find_release_pr:
     runs-on: ubuntu-latest
     outputs:
-      pr_for_deployment: ${{ steps.find_pr.outputs.pr_for_deployment }}
+      pr_info: ${{ steps.find_pr.outputs.pr_info }}
     steps:
       - uses: actions/github-script@v7
         id: find_pr
@@ -62,15 +62,15 @@ jobs:
             return null;
           result-encoding: string
 
-  deploy-preview:
-    needs: check_prs
-    if: needs.check_prs.outputs.pr_for_deployment
+  deploy-pr-preview:
+    needs: find_release_pr
+    if: needs.find_release_pr.outputs.pr_info
     uses: remoodle/heresy/.github/workflows/web-preview.yml@trunk
     secrets: inherit
     with:
-      title: ${{ fromJson(needs.check_prs.outputs.pr_for_deployment).title }}
-      number: ${{ fromJson(needs.check_prs.outputs.pr_for_deployment).number }}
-      branch: ${{ fromJson(needs.check_prs.outputs.pr_for_deployment).headBranchName }}
+      title: ${{ fromJson(needs.find_release_pr.outputs.pr_info).title }}
+      number: ${{ fromJson(needs.find_release_pr.outputs.pr_info).number }}
+      branch: ${{ fromJson(needs.find_release_pr.outputs.pr_info).headBranchName }}
 
   deploy-stage:
     runs-on: ubuntu-latest
