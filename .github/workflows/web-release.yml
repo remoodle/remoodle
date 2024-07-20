@@ -12,7 +12,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  release:
+  release-please:
     runs-on: ubuntu-latest
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
@@ -29,6 +29,7 @@ jobs:
           manifest-file: .release-please/manifest.json
 
   find_release_pr:
+    needs: release
     runs-on: ubuntu-latest
     outputs:
       pr_info: ${{ steps.find_pr.outputs.pr_info }}
