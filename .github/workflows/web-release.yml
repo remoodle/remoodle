@@ -15,32 +15,24 @@ jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
-      releases_created: ${{ steps.release.outputs.releases_created }}
-      paths_released: ${{ steps.release.outputs.paths_released }}
-      prs_created: ${{ steps.release.outputs.prs_created }}
-      prs: ${{ steps.release.outputs.prs }}
-      pr: ${{ steps.release.outputs.pr }}
+      pr: ${{ fromJSON(steps.find_pr.outputs.result).pr }}
+      has_pr: ${{ fromJSON(steps.find_pr.outputs.result).has_pr }}
+      paths_released: ${{ steps.release-please.outputs.paths_released }}
     steps:
       - uses: actions/checkout@v4
       - uses: googleapis/release-please-action@v4
-        id: release
+        id: release-please
         with:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
 
-  find_release_pr:
-    needs: release
-    outputs:
-      pr: ${{ fromJSON(steps.find_pr.outputs.result).pr }}
-      has_pr: ${{ fromJSON(steps.find_pr.outputs.result).has_pr }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/github-script@v7
+      - name: Find Release PR
+        uses: actions/github-script@v7
         id: find_pr
         with:
           result-encoding: json
           script: |
-            let prsJson = `${{ needs.release.outputs.prs }}`;
+            let prsJson = `${{ steps.release-please.outputs.prs }}`;
 
             if (!prsJson || prsJson.trim() === '') {
               console.log('No PRs data available or the data is empty.');
@@ -73,16 +65,17 @@ jobs:
             };
 
   deploy-pr-preview:
-    needs: find_release_pr
-    if: needs.find_release_pr.outputs.has_pr == 'true'
+    needs: release
+    if: needs.release.outputs.has_pr == 'true'
     uses: remoodle/heresy/.github/workflows/web-preview.yml@trunk
     secrets: inherit
     with:
-      title: ${{ fromJson(needs.find_release_pr.outputs.pr).title }}
-      number: ${{ fromJson(needs.find_release_pr.outputs.pr).number }}
-      branch: ${{ fromJson(needs.find_release_pr.outputs.pr).headBranchName }}
+      title: ${{ fromJson(needs.release.outputs.pr).title }}
+      number: ${{ fromJson(needs.release.outputs.pr).number }}
+      branch: ${{ fromJson(needs.release.outputs.pr).headBranchName }}
 
-  deploy-stage:
+  deploy:
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -112,32 +105,8 @@ jobs:
           accountId: ${{ vars.CF_ACCOUNT_ID }}
           command: pages deploy remoodle/frontend/web/dist --project-name="frontend-dev-svo" --branch="trunk"
 
-  deploy-prod:
-    needs: [release]
-    if: fromJson(needs.release.outputs.paths_released) && contains(needs.release.outputs.paths_released, 'remoodle/frontend/web')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 8.15.5
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
-          cache-dependency-path: "remoodle/frontend/web/pnpm-lock.yaml"
-
-      - name: Install dependencies
-        run: cd remoodle/frontend/web && pnpm install
-
-      - name: Build app
-        env:
-          COMMIT_SHA: ${{ github.sha }}
-        run: cd remoodle/frontend/web && pnpm build-only
-
-      - run: echo "ignore-workspace-root-check=true" >> .npmrc
-
       - name: Deploy on production
+        if: fromJson(needs.release.outputs.paths_released) && contains(needs.release.outputs.paths_released, 'remoodle/frontend/web')
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
