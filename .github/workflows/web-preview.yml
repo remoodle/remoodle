@@ -1,6 +1,15 @@
 name: Build and Deploy PR Preview
 
 on:
+  pull_request:
+    paths:
+      - "remoodle/frontend/web/**"
+      - ".github/workflows/web-preview.yml"
+    types:
+      - opened
+      - synchronize
+      - reopened
+
   workflow_call:
     inputs:
       title:
@@ -36,12 +45,19 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: "remoodle/frontend/web/pnpm-lock.yaml"
 
+      - name: Set Context Outputs
+        id: set-context
+        run: |
+          echo "::set-output name=title::${{ inputs.title || github.event.pull_request.title }}"
+          echo "::set-output name=number::${{ inputs.number || github.event.number }}"
+          echo "::set-output name=branch::${{ inputs.branch || github.event.pull_request.head.ref }}"
+
       - name: Retrieve deploy-as info
         id: deploy-as
         uses: actions/github-script@v7
         env:
-          INPUT_TITLE: ${{ inputs.title }} # this part hotfixes the bug
-          INPUT_BRANCH: ${{ inputs.branch }} # this part hotfixes the bug
+          INPUT_TITLE: ${{ steps.set-context.outputs.title }}
+          INPUT_BRANCH: ${{ steps.set-context.outputs.branch }}
         with:
           result-encoding: string
           script: |
@@ -56,7 +72,7 @@ jobs:
         id: in-progress-comment
         uses: actions/github-script@v7
         env:
-          INPUT_NUMBER: ${{ inputs.number }} # this part hotfixes the bug
+          INPUT_NUMBER: ${{ steps.set-context.outputs.number }}
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -116,7 +132,7 @@ jobs:
         if: failure()
         uses: actions/github-script@v7
         env:
-          INPUT_NUMBER: ${{ inputs.number }} # this part hotfixes the bug
+          INPUT_NUMBER: ${{ steps.set-context.outputs.number }}
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -134,7 +150,7 @@ jobs:
       - name: Comment Deploy Preview Link
         uses: actions/github-script@v7
         env:
-          INPUT_NUMBER: ${{ inputs.number }} # this part hotfixes the bug
+          INPUT_NUMBER: ${{ steps.set-context.outputs.number }}
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
