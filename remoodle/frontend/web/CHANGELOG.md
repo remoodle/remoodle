@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5](https://github.com/remoodle/heresy/compare/remoodle/web-v0.3.4...remoodle/web-v0.3.5) (2024-07-20)
+
+
+### Bug Fixes
+
+* aboba ([#30](https://github.com/remoodle/heresy/issues/30)) ([1a12184](https://github.com/remoodle/heresy/commit/1a12184b6e0d6f6624210f17365242f4ab3d8efc))
+
 ## [0.3.4](https://github.com/remoodle/heresy/compare/remoodle/web-v0.3.3...remoodle/web-v0.3.4) (2024-07-20)
 
 
