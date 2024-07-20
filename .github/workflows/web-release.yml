@@ -38,11 +38,20 @@ jobs:
         id: find_pr
         with:
           script: |
-            const prs = JSON.parse('${{ needs.release.outputs.prs }}');
-            const targetPr = prs.find(pr => pr.title.includes('remoodle/frontend/web'));
-            if (targetPr) {
-              console.log('PR found for deployment:', targetPr.number);
-              return targetPr;
+            const prsJson = '${{ needs.release.outputs.prs }}';
+            if (!prsJson) {
+              console.log('No PRs data available.');
+              return null;
+            }
+            try {
+              const prs = JSON.parse(prsJson);
+              const targetPr = prs.find(pr => pr.title.includes('remoodle/frontend/web'));
+              if (targetPr) {
+                console.log('PR found for deployment:', targetPr.number);
+                return JSON.stringify(targetPr);
+              }
+            } catch (error) {
+              console.error('Error parsing PRs:', error);
             }
             return null;
           result-encoding: string
@@ -57,8 +66,7 @@ jobs:
       number: ${{ fromJson(needs.check_prs.outputs.pr_for_deployment).number }}
       branch: ${{ fromJson(needs.check_prs.outputs.pr_for_deployment).headBranchName }}
 
-  deploy-stage-prod:
-    needs: [release]
+  deploy-stage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -88,9 +96,33 @@ jobs:
           accountId: ${{ vars.CF_ACCOUNT_ID }}
           command: pages deploy remoodle/frontend/web/dist --project-name="frontend-dev-svo" --branch="trunk"
 
+  deploy-prod:
+    needs: [release]
+    if: fromJson(needs.release.outputs.paths_released) && contains(needs.release.outputs.paths_released, 'remoodle/frontend/web')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          cache-dependency-path: "remoodle/frontend/web/pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: cd remoodle/frontend/web && pnpm install
+
+      - name: Build app
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: cd remoodle/frontend/web && pnpm build-only
+
+      - run: echo "ignore-workspace-root-check=true" >> .npmrc
+
       - name: Deploy on production
-        if: fromJson(needs.release.outputs.paths_released) && contains(needs.release.outputs.paths_released, 'remoodle/frontend/web')
-        uses: cloudflare/wrangler-action@v3.6
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
