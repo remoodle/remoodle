@@ -31,7 +31,8 @@ jobs:
   find_release_pr:
     needs: release
     outputs:
-      pr_info: ${{ steps.find_pr.outputs.result }}
+      pr: ${{ steps.find_pr.outputs.pr }}
+      has_pr: ${{ steps.find_pr.outputs.has_pr }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v7
@@ -42,36 +43,44 @@ jobs:
 
             if (!prsJson || prsJson.trim() === '') {
               console.log('No PRs data available or the data is empty.');
-              return null;
+              return {
+                pr: null,
+                has_pr: 'false'
+              };
             }
 
             prsJson = prsJson.replace(/("body":\s*")[^"]*(")/g, '$1$2');
 
             try {
               const prs = JSON.parse(prsJson);
-
               const targetPr = prs.find(pr => pr.title.includes('remoodle/web'));
 
               if (targetPr) {
                 console.log('PR found for deployment:', targetPr);
-                return JSON.stringify(targetPr);
+                return {
+                  pr: JSON.stringify(targetPr),
+                  has_pr: 'true'
+                };
               }
             } catch (error) {
               console.error('Error parsing PRs:', error);
             }
 
-            return null;
+            return {
+              pr: null,
+              has_pr: 'false'
+            };
           result-encoding: string
 
   deploy-pr-preview:
     needs: find_release_pr
-    if: needs.find_release_pr.outputs.pr_info
+    if: needs.find_release_pr.outputs.has_pr == 'true'
     uses: remoodle/heresy/.github/workflows/web-preview.yml@trunk
     secrets: inherit
     with:
-      title: ${{ fromJson(needs.find_release_pr.outputs.pr_info).title }}
-      number: ${{ fromJson(needs.find_release_pr.outputs.pr_info).number }}
-      branch: ${{ fromJson(needs.find_release_pr.outputs.pr_info).headBranchName }}
+      title: ${{ fromJson(needs.find_release_pr.outputs.pr).title }}
+      number: ${{ fromJson(needs.find_release_pr.outputs.pr).number }}
+      branch: ${{ fromJson(needs.find_release_pr.outputs.pr).headBranchName }}
 
   deploy-stage:
     runs-on: ubuntu-latest
