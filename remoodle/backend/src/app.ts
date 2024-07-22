@@ -5,5 +5,3 @@ import { startNotifier } from "./services/notifier/notifier";
 startApi();
 startCrawler();
 startNotifier();
-
-console.log("hello");
