@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: remoodle/release-please-action@main
+      - uses: wsehl/release-please-action@main
         id: release
         with:
           config-file: .release-please/config.json

@@ -1,7 +1,7 @@
 name: "Release, web"
 
 on:
-  pull_request:
+  push:
     branches: [trunk]
     paths:
       - "remoodle/frontend/web/**"
@@ -24,50 +24,12 @@ jobs:
       release_created: ${{ steps.release-please.outputs.releases_created }}
     steps:
       - uses: actions/checkout@v4
-      - uses: googleapis/release-please-action@v4
+      - uses: wsehl/release-please-action@main
         id: release-please
         with:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
           path: remoodle/frontend/web
-
-      # - name: Find Release PR
-      #   uses: actions/github-script@v7
-      #   id: find-pr
-      #   with:
-      #     result-encoding: json
-      #     script: |
-      #       let prsJson = `${{ steps.release-please.outputs.prs }}`;
-
-      #       if (!prsJson || prsJson.trim() === '') {
-      #         console.log('No PRs data available or the data is empty.');
-      #         return {
-      #           release_pr: null,
-      #           has_release_pr: 'false'
-      #         };
-      #       }
-
-      #       prsJson = prsJson.replace(/("body":\s*")[^"]*(")/g, '$1$2');
-
-      #       try {
-      #         const prs = JSON.parse(prsJson);
-      #         const targetPr = prs.find(pr => pr.title.includes('remoodle/web'));
-
-      #         if (targetPr) {
-      #           console.log('PR found for deployment:', targetPr);
-      #           return {
-      #             release_pr: JSON.stringify(targetPr),
-      #             has_release_pr: 'true'
-      #           };
-      #         }
-      #       } catch (error) {
-      #         console.error('Error parsing PRs:', error);
-      #       }
-
-      #       return {
-      #         release_pr: null,
-      #         has_release_pr: 'false'
-      #       };
 
   deploy-pr-preview:
     needs: release
