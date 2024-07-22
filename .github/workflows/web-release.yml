@@ -15,9 +15,13 @@ jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
-      has_release_pr: ${{ fromJSON(steps.find-pr.outputs.result).has_release_pr }}
-      release_pr: ${{ fromJSON(steps.find-pr.outputs.result).release_pr }}
-      release_created: ${{ contains(steps.release-please.outputs.paths_released, 'remoodle/frontend/web') }}
+      # has_release_pr: ${{ fromJSON(steps.find-pr.outputs.result).has_release_pr }}
+      # release_pr: ${{ fromJSON(steps.find-pr.outputs.result).release_pr }}
+      # release_created: ${{ contains(steps.release-please.outputs.paths_released, 'remoodle/frontend/web') }}
+
+      has_release_pr: ${{ steps.release-please.outputs.prs_created }}
+      release_pr: ${{ steps.release-please.outputs.pr }}
+      release_created: ${{ steps.release-please.outputs.releases_created }}
     steps:
       - uses: actions/checkout@v4
       - uses: googleapis/release-please-action@v4
@@ -25,44 +29,45 @@ jobs:
         with:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
+          path: remoodle/frontend/web
 
-      - name: Find Release PR
-        uses: actions/github-script@v7
-        id: find-pr
-        with:
-          result-encoding: json
-          script: |
-            let prsJson = `${{ steps.release-please.outputs.prs }}`;
+      # - name: Find Release PR
+      #   uses: actions/github-script@v7
+      #   id: find-pr
+      #   with:
+      #     result-encoding: json
+      #     script: |
+      #       let prsJson = `${{ steps.release-please.outputs.prs }}`;
 
-            if (!prsJson || prsJson.trim() === '') {
-              console.log('No PRs data available or the data is empty.');
-              return {
-                release_pr: null,
-                has_release_pr: 'false'
-              };
-            }
+      #       if (!prsJson || prsJson.trim() === '') {
+      #         console.log('No PRs data available or the data is empty.');
+      #         return {
+      #           release_pr: null,
+      #           has_release_pr: 'false'
+      #         };
+      #       }
 
-            prsJson = prsJson.replace(/("body":\s*")[^"]*(")/g, '$1$2');
+      #       prsJson = prsJson.replace(/("body":\s*")[^"]*(")/g, '$1$2');
 
-            try {
-              const prs = JSON.parse(prsJson);
-              const targetPr = prs.find(pr => pr.title.includes('remoodle/web'));
+      #       try {
+      #         const prs = JSON.parse(prsJson);
+      #         const targetPr = prs.find(pr => pr.title.includes('remoodle/web'));
 
-              if (targetPr) {
-                console.log('PR found for deployment:', targetPr);
-                return {
-                  release_pr: JSON.stringify(targetPr),
-                  has_release_pr: 'true'
-                };
-              }
-            } catch (error) {
-              console.error('Error parsing PRs:', error);
-            }
+      #         if (targetPr) {
+      #           console.log('PR found for deployment:', targetPr);
+      #           return {
+      #             release_pr: JSON.stringify(targetPr),
+      #             has_release_pr: 'true'
+      #           };
+      #         }
+      #       } catch (error) {
+      #         console.error('Error parsing PRs:', error);
+      #       }
 
-            return {
-              release_pr: null,
-              has_release_pr: 'false'
-            };
+      #       return {
+      #         release_pr: null,
+      #         has_release_pr: 'false'
+      #       };
 
   deploy-pr-preview:
     needs: release
