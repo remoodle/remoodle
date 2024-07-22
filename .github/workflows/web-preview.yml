@@ -33,15 +33,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Set Context
-        id: set-context
-        run: |
-          echo "title=${{ inputs.title || github.event.pull_request.title }}" >> $GITHUB_OUTPUT
-          echo "number=${{ inputs.number || github.event.number }}" >> $GITHUB_OUTPUT
-          echo "branch=${{ inputs.branch || github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
       - uses: actions/checkout@v4
         with:
-          ref: ${{ steps.set-context.outputs.branch }}
+          ref: ${{ inputs.branch }}
       - uses: pnpm/action-setup@v4
         with:
           version: 8.15.5
@@ -50,6 +44,13 @@ jobs:
           node-version: 20
           cache: "pnpm"
           cache-dependency-path: "remoodle/frontend/web/pnpm-lock.yaml"
+
+      - name: Set Context Outputs
+        id: set-context
+        run: |
+          echo "title=${{ inputs.title || github.event.pull_request.title }}" >> $GITHUB_OUTPUT
+          echo "number=${{ inputs.number || github.event.number }}" >> $GITHUB_OUTPUT
+          echo "branch=${{ inputs.branch || github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
 
       - name: Retrieve deploy-as info
         id: deploy-as
