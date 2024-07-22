@@ -1,7 +1,7 @@
 name: "Release, web"
 
 on:
-  push:
+  pull_request:
     branches: [trunk]
     paths:
       - "remoodle/frontend/web/**"
