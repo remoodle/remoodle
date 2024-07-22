@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.1.0",
+  "version": "1.45.2",
   "scripts": {
     "dev": "tsx watch src/app.ts",
     "start": "tsx src/app.ts",
