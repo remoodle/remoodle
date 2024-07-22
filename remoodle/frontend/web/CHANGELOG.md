@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.1](https://github.com/remoodle/heresy/compare/remoodle/web-v0.4.0...remoodle/web-v0.4.1) (2024-07-22)
+
+
+### Bug Fixes
+
+* 123 ([fb2d217](https://github.com/remoodle/heresy/commit/fb2d2172b8326a59284e9decd7300512737d1cdb))
+
+
+### Miscellaneous Chores
+
+* fix versioning ([bc1c371](https://github.com/remoodle/heresy/commit/bc1c371813836559da51c512d8fd1c5baf48f16d))
+* **remoodle/backend:** bump backend version ([2f8ab4b](https://github.com/remoodle/heresy/commit/2f8ab4b894d6c9d118469dc0816a7d5dfc9c78dd))
+
 ## [0.4.0](https://github.com/remoodle/heresy/compare/remoodle/web-v0.3.5...remoodle/web-v0.4.0) (2024-07-22)
 
 
