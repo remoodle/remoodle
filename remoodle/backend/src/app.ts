@@ -5,3 +5,4 @@ import { startNotifier } from "./services/notifier/notifier";
 startApi();
 startCrawler();
 startNotifier();
+
