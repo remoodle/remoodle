@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.4.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.4.0...remoodle/frontend-v0.4.1) (2024-07-23)
+
+
+### Features
+
+* both ([#33](https://github.com/remoodle/heresy/issues/33)) ([eebfa62](https://github.com/remoodle/heresy/commit/eebfa62c799b3b931a4093dda7c4534afad867cf))
+* test ([3c83ef8](https://github.com/remoodle/heresy/commit/3c83ef8fc42ed8ee419d0230693eb544ea4dcbec))
+
+
+### Bug Fixes
+
+* 123 ([fb2d217](https://github.com/remoodle/heresy/commit/fb2d2172b8326a59284e9decd7300512737d1cdb))
+* aboba ([#30](https://github.com/remoodle/heresy/issues/30)) ([1a12184](https://github.com/remoodle/heresy/commit/1a12184b6e0d6f6624210f17365242f4ab3d8efc))
+* both ([78667ab](https://github.com/remoodle/heresy/commit/78667ab257f2adf7c7e4ec371f16c22ef2a27bc1))
+* change app title ([d79560c](https://github.com/remoodle/heresy/commit/d79560c7f47943e77fae04c9a26a11d822d1cb0d))
+* temp ([447d9b5](https://github.com/remoodle/heresy/commit/447d9b582167865636baab5ddaa1adef9d18f1c1))
+* temp ([#28](https://github.com/remoodle/heresy/issues/28)) ([e907fa8](https://github.com/remoodle/heresy/commit/e907fa814cb5f5b7d2e1d815733b69139b3ffd73))
+* test ([8cc932f](https://github.com/remoodle/heresy/commit/8cc932f6f96550b9fe2f5064dd1e2b7313228db3))
+* test ([b8f8cbe](https://github.com/remoodle/heresy/commit/b8f8cbe8400680c79831e7484fd6e846a217aaf0))
+* test ([ce42727](https://github.com/remoodle/heresy/commit/ce42727e0233474c1975dcf12902b6ab725f0fb2))
+* test 2 ([a31d1e1](https://github.com/remoodle/heresy/commit/a31d1e1433ae622973e0178938d8e5dc18e0558d))
+
+
+### Miscellaneous Chores
+
+* fix versioning ([bc1c371](https://github.com/remoodle/heresy/commit/bc1c371813836559da51c512d8fd1c5baf48f16d))
+* **remoodle/backend:** bump backend version ([2f8ab4b](https://github.com/remoodle/heresy/commit/2f8ab4b894d6c9d118469dc0816a7d5dfc9c78dd))
+* test ([#8](https://github.com/remoodle/heresy/issues/8)) ([239d63d](https://github.com/remoodle/heresy/commit/239d63d761f5c06d03427dff4c587cd859e2ef99))
+* **trunk:** release  remoodle/web (deploy-as: release-0.2.6) ([#6](https://github.com/remoodle/heresy/issues/6)) ([adb7713](https://github.com/remoodle/heresy/commit/adb771304c92755233c30d12962729cef5d4aff3))
+* **trunk:** release  remoodle/web (deploy-as: release-0.3.0) ([#19](https://github.com/remoodle/heresy/issues/19)) ([65e8d0d](https://github.com/remoodle/heresy/commit/65e8d0daed73e4bddf5f0b91684f3e008ef40a40))
+* **trunk:** release  remoodle/web (deploy-as: release-0.3.1) ([#20](https://github.com/remoodle/heresy/issues/20)) ([12f26b3](https://github.com/remoodle/heresy/commit/12f26b334a5e078d19756d8dd0e6dfcb91bfd859))
+* **trunk:** release  remoodle/web (deploy-as: release-0.3.2) ([#25](https://github.com/remoodle/heresy/issues/25)) ([fef933f](https://github.com/remoodle/heresy/commit/fef933f43f3354eb47e1edf9c4c65339a22dcda3))
+* **trunk:** release  remoodle/web (deploy-as: release-0.3.3) ([#27](https://github.com/remoodle/heresy/issues/27)) ([9478460](https://github.com/remoodle/heresy/commit/94784606b246725df86f4b9a57a4e21ef7235597))
+* **trunk:** release  remoodle/web (deploy-as: release-0.3.4) ([#29](https://github.com/remoodle/heresy/issues/29)) ([8ca69a6](https://github.com/remoodle/heresy/commit/8ca69a6c130432c8e0b608880362536221f4390b))
+* **trunk:** release  remoodle/web (deploy-as: release-0.3.5) ([#31](https://github.com/remoodle/heresy/issues/31)) ([c0b283c](https://github.com/remoodle/heresy/commit/c0b283c0f4fd0b4b63a7fdf45c1532adbbe42e4a))
+* **trunk:** release  remoodle/web (deploy-as: release-0.4.0) ([#44](https://github.com/remoodle/heresy/issues/44)) ([3f96b51](https://github.com/remoodle/heresy/commit/3f96b510a8dfbb79c5afc878f9734147ffa27fdc))
+
 ## [0.4.0](https://github.com/remoodle/heresy/compare/remoodle/web-v0.3.5...remoodle/web-v0.4.0) (2024-07-22)
 
 
