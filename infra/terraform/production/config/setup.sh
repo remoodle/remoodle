@@ -1,5 +1,7 @@
 #!/bin/bash
 
+GH_PAT=$1
+
 apt-get update
 
 # Add Docker's official GPG key
@@ -18,3 +20,6 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 
 # Creating a shared network
 docker network create --subnet=172.19.0.0/16 r1ng
+
+# Docker login to GitHub Container Registry
+echo "$GH_PAT" | docker login ghcr.io -u USERNAME --password-stdin

@@ -50,7 +50,7 @@ resource "digitalocean_droplet" "vm" {
       "mkdir -p ~/remoodle",
       "tar -xzf /tmp/config.tar.gz -C ~/remoodle",
       "rm /tmp/config.tar.gz",
-      "bash ~/remoodle/setup.sh",
+      "bash ~/remoodle/setup.sh ${var.gh_token}",
     ]
   }
 }
