@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  core:
+    image: ghcr.io/remoodle/api:refs_heads_main
+    restart: always
+    networks:
+      - shared
+    env_file:
+      - .env.core
+    ports:
+      - "4000:8080"
+
+  backend:
+    image: ghcr.io/remoodle/backend:refs_heads_main
+    restart: always
+    networks:
+      - shared
+    env_file:
+      - .env.backend
+    ports:
+      - "80:9000"
+
+  telegram_bot:
+    image: ghcr.io/remoodle/telegram_bot:refs_heads_main
+    restart: always
+    networks:
+      - shared
+    env_file:
+      - .env.telegram_bot
+
+networks:
+  shared:
+    name: r1ng
+    external: true

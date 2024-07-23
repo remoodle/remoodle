@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Cloudflare Worker",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "es2021",
+    "lib": ["es2021"],
+    "jsx": "react",
+    "allowJs": true,
+    "checkJs": false,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true
+  }
+}

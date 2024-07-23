@@ -1,0 +1,77 @@
+name: "Release, frontend"
+
+on:
+  push:
+    branches: [trunk]
+    paths:
+      - "remoodle/frontend/**"
+      - ".github/workflows/frontend-release.yml"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      has_release_pr: ${{ steps.release-please.outputs.prs_created }}
+      release_pr: ${{ steps.release-please.outputs.pr }}
+      release_created: ${{ steps.release-please.outputs.releases_created }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wsehl/release-please-action@main
+        id: release-please
+        with:
+          config-file: .release-please/config.json
+          manifest-file: .release-please/manifest.json
+          path: remoodle/frontend
+
+  deploy-pr-preview:
+    needs: release
+    if: needs.release.outputs.has_release_pr == 'true'
+    uses: remoodle/heresy/.github/workflows/frontend-preview.yml@trunk
+    secrets: inherit
+    with:
+      title: ${{ fromJson(needs.release.outputs.release_pr).title }}
+      number: ${{ fromJson(needs.release.outputs.release_pr).number }}
+      branch: ${{ fromJson(needs.release.outputs.release_pr).headBranchName }}
+
+  deploy:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          cache-dependency-path: "remoodle/frontend/pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: cd remoodle/frontend && pnpm install
+
+      - name: Build app
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: cd remoodle/frontend && pnpm build-only
+
+      - run: echo "ignore-workspace-root-check=true" >> .npmrc
+
+      - name: Deploy on stage
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ vars.CF_ACCOUNT_ID }}
+          command: pages deploy remoodle/frontend/dist --project-name="frontend-dev-svo" --branch="trunk"
+
+      - name: Deploy on production
+        if: needs.release.outputs.release_created == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ vars.CF_ACCOUNT_ID }}
+          command: pages deploy remoodle/frontend/dist --project-name="frontend-prod-nqz" --branch="production"

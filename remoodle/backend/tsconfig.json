@@ -1,0 +1,11 @@
+{
+  "extends": "@remoodle/tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "types": ["node"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

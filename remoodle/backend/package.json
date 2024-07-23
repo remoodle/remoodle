@@ -1,0 +1,37 @@
+{
+  "name": "backend",
+  "version": "0.1.1",
+  "scripts": {
+    "dev": "tsx watch src/app.ts",
+    "start": "tsx src/app.ts",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0 && prettier --check src/",
+    "fix": "eslint . --fix && prettier --write src/",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.10.0",
+    "dotenv": "^16.4.5",
+    "envalid": "^8.0.0",
+    "hono": "^4.2.3",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.1",
+    "node-cron": "^3.0.3",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@remoodle/eslint-config": "workspace:*",
+    "@remoodle/prettier-config": "workspace:*",
+    "@remoodle/tsconfig": "workspace:*",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.11.17",
+    "@types/node-cron": "^3.0.11",
+    "@types/uuid": "^10.0.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "tsx": "^4.7.1",
+    "typescript": "^5.5.3",
+    "vitest": "^1.6.0"
+  }
+}

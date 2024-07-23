@@ -1,0 +1,21 @@
+{
+  "name": "remoodle",
+  "description": "ReMoodle Monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "fix": "turbo fix",
+    "test": "turbo test",
+    "type-check": "turbo type-check"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.6"
+  },
+  "packageManager": "pnpm@8.15.5",
+  "pnpm": {
+    "patchedDependencies": {
+      "@boringer-avatars/vue3@0.2.1": "patches/@boringer-avatars__vue3@0.2.1.patch"
+    }
+  }
+}

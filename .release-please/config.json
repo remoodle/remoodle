@@ -1,0 +1,69 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "separate-pull-requests": true,
+  "changelog-sections": [
+    {
+      "type": "feat",
+      "section": "Features"
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes"
+    },
+    {
+      "type": "perf",
+      "section": "Performance Improvements"
+    },
+    {
+      "type": "deps",
+      "section": "Dependencies"
+    },
+    {
+      "type": "revert",
+      "section": "Reverts"
+    },
+    {
+      "type": "docs",
+      "section": "Documentation"
+    },
+    {
+      "type": "style",
+      "section": "Styles"
+    },
+    {
+      "type": "chore",
+      "section": "Miscellaneous Chores"
+    },
+    {
+      "type": "refactor",
+      "section": "Code Refactoring"
+    },
+    {
+      "type": "test",
+      "section": "Tests"
+    },
+    {
+      "type": "build",
+      "section": "Build System"
+    },
+    {
+      "type": "ci",
+      "section": "Continuous Integration"
+    }
+  ],
+  "packages": {
+    "remoodle/frontend": {
+      "release-type": "node",
+      "package-name": "remoodle/frontend",
+      "pull-request-title-pattern": "chore${scope}: release ${component} (deploy-as: release-${version})"
+    },
+    "remoodle/backend": {
+      "release-type": "node",
+      "package-name": "remoodle/backend"
+    },
+    "remoodle/telegram_bot": {
+      "release-type": "python",
+      "package-name": "remoodle/telegram_bot"
+    }
+  }
+}
