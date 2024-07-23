@@ -15,10 +15,6 @@ jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
-      # has_release_pr: ${{ fromJSON(steps.find-pr.outputs.result).has_release_pr }}
-      # release_pr: ${{ fromJSON(steps.find-pr.outputs.result).release_pr }}
-      # release_created: ${{ contains(steps.release-please.outputs.paths_released, 'remoodle/frontend/web') }}
-
       has_release_pr: ${{ steps.release-please.outputs.prs_created }}
       release_pr: ${{ steps.release-please.outputs.pr }}
       release_created: ${{ steps.release-please.outputs.releases_created }}
