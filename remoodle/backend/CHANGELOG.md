@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.1.1...remoodle/backend-v0.1.2) (2024-07-23)
+
+
+### Miscellaneous Chores
+
+* init repo ([0f6a9ff](https://github.com/remoodle/heresy/commit/0f6a9ffcc3e87f38a4ec48965b5bec0433372dfc))
+
 ## [0.1.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.1.0...remoodle/backend-v0.1.1) (2024-07-23)
 
 
