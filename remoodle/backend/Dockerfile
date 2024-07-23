@@ -9,6 +9,8 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@latest-8 --activate
 RUN pnpm config set store-dir .pnpm-store
 
+COPY patches ./patches
+
 COPY pnpm-lock.yaml ./
 RUN pnpm fetch
 ADD . ./
