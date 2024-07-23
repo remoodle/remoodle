@@ -1,0 +1,24 @@
+name: "Release, telegram_bot"
+
+on:
+  push:
+    branches: [trunk]
+    paths:
+      - "remoodle/telegram_bot/**"
+      - ".github/workflows/tgbot-release.yml"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wsehl/release-please-action@main
+        id: release
+        with:
+          config-file: .release-please/config.json
+          manifest-file: .release-please/manifest.json
+          path: remoodle/telegram_bot

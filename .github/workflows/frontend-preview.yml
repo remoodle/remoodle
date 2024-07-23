@@ -3,8 +3,8 @@ name: Build and Deploy PR Preview
 on:
   pull_request:
     paths:
-      - "remoodle/frontend/web/**"
-      - ".github/workflows/web-preview.yml"
+      - "remoodle/frontend/**"
+      - ".github/workflows/frontend-preview.yml"
     types:
       - opened
       - synchronize
@@ -27,7 +27,7 @@ on:
 
 defaults:
   run:
-    working-directory: ./remoodle/frontend/web
+    working-directory: ./remoodle/frontend
 
 jobs:
   deploy:
@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: 20
           cache: "pnpm"
-          cache-dependency-path: "remoodle/frontend/web/pnpm-lock.yaml"
+          cache-dependency-path: "remoodle/frontend/pnpm-lock.yaml"
 
       - name: Set Context Outputs
         id: set-context
@@ -120,7 +120,7 @@ jobs:
       - name: Deploy on named branch
         uses: cloudflare/wrangler-action@v3
         with:
-          workingDirectory: ./remoodle/frontend/web
+          workingDirectory: ./remoodle/frontend
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
           command: >

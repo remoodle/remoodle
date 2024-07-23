@@ -1,6 +1,8 @@
 {
-  "remoodle/frontend/web": "0.4.0",
-  "remoodle/frontend/web+FILLER": "0.0.0",
+  "remoodle/frontend": "0.4.0",
+  "remoodle/frontend+FILLER": "0.0.0",
   "remoodle/backend": "0.1.0",
-  "remoodle/backend+FILLER": "0.0.0"
+  "remoodle/backend+FILLER": "0.0.0",
+  "remoodle/telegram_bot": "0.0.1",
+  "remoodle/telegram_bot+FILLER": "0.0.0"
 }

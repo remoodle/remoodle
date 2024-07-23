@@ -1,11 +1,11 @@
-name: "Release, web"
+name: "Release, frontend"
 
 on:
   push:
     branches: [trunk]
     paths:
-      - "remoodle/frontend/web/**"
-      - ".github/workflows/web-release.yml"
+      - "remoodle/frontend/**"
+      - ".github/workflows/frontend-release.yml"
 
 permissions:
   contents: write
@@ -25,12 +25,12 @@ jobs:
         with:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
-          path: remoodle/frontend/web
+          path: remoodle/frontend
 
   deploy-pr-preview:
     needs: release
     if: needs.release.outputs.has_release_pr == 'true'
-    uses: remoodle/heresy/.github/workflows/web-preview.yml@trunk
+    uses: remoodle/heresy/.github/workflows/frontend-preview.yml@trunk
     secrets: inherit
     with:
       title: ${{ fromJson(needs.release.outputs.release_pr).title }}
@@ -49,15 +49,15 @@ jobs:
         with:
           node-version: 20
           cache: "pnpm"
-          cache-dependency-path: "remoodle/frontend/web/pnpm-lock.yaml"
+          cache-dependency-path: "remoodle/frontend/pnpm-lock.yaml"
 
       - name: Install dependencies
-        run: cd remoodle/frontend/web && pnpm install
+        run: cd remoodle/frontend && pnpm install
 
       - name: Build app
         env:
           COMMIT_SHA: ${{ github.sha }}
-        run: cd remoodle/frontend/web && pnpm build-only
+        run: cd remoodle/frontend && pnpm build-only
 
       - run: echo "ignore-workspace-root-check=true" >> .npmrc
 
@@ -66,7 +66,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
-          command: pages deploy remoodle/frontend/web/dist --project-name="frontend-dev-svo" --branch="trunk"
+          command: pages deploy remoodle/frontend/dist --project-name="frontend-dev-svo" --branch="trunk"
 
       - name: Deploy on production
         if: needs.release.outputs.release_created == 'true'
@@ -74,4 +74,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
-          command: pages deploy remoodle/frontend/web/dist --project-name="frontend-prod-nqz" --branch="production"
+          command: pages deploy remoodle/frontend/dist --project-name="frontend-prod-nqz" --branch="production"
