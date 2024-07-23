@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.1.1...remoodle/backend-v0.1.2) (2024-07-23)
+
+
+### Bug Fixes
+
+* docker backend builds ([14c6044](https://github.com/remoodle/heresy/commit/14c6044e928cc529f819a880b1c150f8d19b6d28))
+
 ## [0.1.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.1.0...remoodle/backend-v0.1.1) (2024-07-23)
 
 
