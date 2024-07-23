@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.1.0...remoodle/backend-v0.1.1) (2024-07-23)
+
+
+### Bug Fixes
+
+* backend ([89e2f2f](https://github.com/remoodle/heresy/commit/89e2f2fbcb41e05b7f8c79c63e0a995fcfb62b84))
+
+
+### Miscellaneous Chores
+
+* **remoodle/backend:** bump backend version ([2f8ab4b](https://github.com/remoodle/heresy/commit/2f8ab4b894d6c9d118469dc0816a7d5dfc9c78dd))
+
 ## [0.1.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.0.6...remoodle/backend-v0.1.0) (2024-07-22)
 
 
