@@ -16,7 +16,7 @@ export const env = cleanEnv(process.env, {
 
   TELEGRAM_BOT_TOKEN: str(),
 
-  MONGO_URI: str({ default: "mongodb://localhost:27017" }),
+  MONGO_URI: str({ default: "mongodb://localhost:27017/remoodle" }),
   REDIS_URI: str({ default: "redis://localhost:6379" }),
 
   AUTH_JWT_ALGORITHM: str({ default: "ES512" }),

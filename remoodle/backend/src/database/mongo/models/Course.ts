@@ -1,7 +1,7 @@
 import type { Model } from "mongoose";
 import { Schema, model } from "mongoose";
 import { v7 as uuidv7 } from "uuid";
-import type { ExtendedCourse } from "../../../shims";
+import type { ExtendedCourse } from "@remoodle/types";
 
 export interface ICourse {
   _id: string;

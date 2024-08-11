@@ -1,6 +1,6 @@
 import { db } from "../../../database";
 import type { MessageStream } from "../../../database";
-import type { GradeChangeEvent } from "../../../shims";
+import type { GradeChangeEvent } from "../../../types";
 import { sendTelegramMessage } from "../../../utils/handlers";
 import { formatCourseDiffs } from "../../../utils/parser";
 

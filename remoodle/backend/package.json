@@ -24,6 +24,7 @@
     "@remoodle/eslint-config": "workspace:*",
     "@remoodle/prettier-config": "workspace:*",
     "@remoodle/tsconfig": "workspace:*",
+    "@remoodle/types": "workspace:*",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.11.17",
     "@types/node-cron": "^3.0.11",

@@ -1,15 +1,14 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { db } from "../../../database";
-import {
-  API_METHODS,
-  getCoreInternalHeaders,
-  requestCore,
-} from "../../../http/core";
+import { config } from "../../../config";
+
+import { RMC } from "../../../library/rmc-sdk";
+
 import { hashPassword, verifyPassword } from "../../../utils/crypto";
 import { issueTokens } from "../../../utils/jwt";
+
 import { authMiddleware } from "../middleware/auth";
-import { proxyRequest } from "../middleware/proxy";
 
 const api = new Hono<{
   Variables: {
@@ -42,20 +41,17 @@ api.post("/auth/register", async (ctx) => {
 
   let student;
   try {
-    const [response, error] = await requestCore(API_METHODS.V1_AUTH_REGISTER, {
-      headers: {
-        "Auth-Token": moodleToken,
-      },
-      body: JSON.stringify({
-        token: moodleToken,
-      }),
+    const rmc = new RMC(config.core.url, moodleToken);
+
+    const [data, error] = await rmc.createUser({
+      token: moodleToken,
     });
 
     if (error) {
       throw error;
     }
 
-    student = response.data;
+    student = data;
   } catch (error: any) {
     try {
       await db.user.deleteOne({ _id: ghost._id });
@@ -115,31 +111,48 @@ api.post("/auth/login", async (ctx) => {
     });
   }
 
-  const { accessToken, refreshToken } = issueTokens(
-    user._id.toString(),
-    user.moodleId,
-  );
+  try {
+    const { accessToken, refreshToken } = issueTokens(
+      user._id.toString(),
+      user.moodleId,
+    );
 
-  user.password = "***";
+    user.password = "***";
 
-  return ctx.json({
-    user,
-    accessToken,
-    refreshToken,
-  });
+    return ctx.json({
+      user,
+      accessToken,
+      refreshToken,
+    });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 });
 
-api.get("/health", proxyRequest(API_METHODS.HEALTH));
+api.get("/health", async (ctx) => {
+  const rmc = new RMC(config.core.url);
+
+  const [data, error] = await rmc.health();
+
+  if (error) {
+    throw error;
+  }
+
+  return ctx.json(data);
+});
+
+// api.get("/health", proxyRequest(API_METHODS.HEALTH));
 
 api.use("*", authMiddleware());
 
-api.get("/v1/course/*", proxyRequest(API_METHODS.V1_COURSE));
-api.get(
-  "/v1/user/courses/overall",
-  proxyRequest(API_METHODS.V1_USER_COURSES_OVERALL),
-);
-api.get("/v1/user/deadlines", proxyRequest(API_METHODS.V1_USER_DEADLINES));
-api.get("/v1/user/course/*", proxyRequest(API_METHODS.V1_USER_COURSE));
+// api.get("/v1/course/*", proxyRequest(API_METHODS.V1_COURSE));
+// api.get(
+//   "/v1/user/courses/overall",
+//   proxyRequest(API_METHODS.V1_USER_COURSES_OVERALL),
+// );
+// api.get("/v1/user/deadlines", proxyRequest(API_METHODS.V1_USER_DEADLINES));
+// api.get("/v1/user/course/*", proxyRequest(API_METHODS.V1_USER_COURSE));
 
 api.delete("/goodbye", async (ctx) => {
   const userId = ctx.get("userId");
@@ -152,9 +165,12 @@ api.delete("/goodbye", async (ctx) => {
     });
   }
 
-  const [_, error] = await requestCore(API_METHODS.V1_DELETE_USER, {
-    headers: getCoreInternalHeaders(user.moodleId),
+  const rmc = new RMC(config.core.url, {
+    secret: config.core.secret,
+    moodleId: user.moodleId,
   });
+
+  const [_, error] = await rmc.deleteUser();
 
   if (error) {
     throw error;

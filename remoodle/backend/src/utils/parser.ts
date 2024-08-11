@@ -1,4 +1,5 @@
-import type { CourseDiff, ExtendedCourse } from "../shims";
+import type { ExtendedCourse } from "@remoodle/types";
+import type { CourseDiff } from "../types";
 
 export const trackCourseDiff = (
   oldData: ExtendedCourse[],

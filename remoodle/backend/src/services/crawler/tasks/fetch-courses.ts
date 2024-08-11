@@ -1,11 +1,11 @@
 import { db } from "../../../database";
 import type { MessageStream } from "../../../database";
-import {
-  API_METHODS,
-  getCoreInternalHeaders,
-  requestCore,
-} from "../../../http/core";
-import type { ExtendedCourse, GradeChangeEvent } from "../../../shims";
+import { config } from "../../../config";
+
+import { RMC } from "../../../library/rmc-sdk";
+
+import type { GradeChangeEvent } from "../../../types";
+
 import { trackCourseDiff } from "../../../utils/parser";
 
 const fetchCourses = async (messageStream: MessageStream) => {
@@ -21,12 +21,12 @@ const fetchCourses = async (messageStream: MessageStream) => {
     }
 
     try {
-      const [response, error] = await requestCore<ExtendedCourse[]>(
-        API_METHODS.V1_USER_COURSES_OVERALL,
-        {
-          headers: getCoreInternalHeaders(user.moodleId),
-        },
-      );
+      const rmc = new RMC(config.core.url, {
+        secret: config.core.secret,
+        moodleId: user.moodleId,
+      });
+
+      const [data, error] = await rmc.getUserCoursesOverall();
 
       if (error) {
         console.error("Error fetching courses:", error);
@@ -39,7 +39,7 @@ const fetchCourses = async (messageStream: MessageStream) => {
       // updating course content
       await db.course.findOneAndUpdate(
         { userId: user._id },
-        { $set: { data: response.data, fetchedAt: new Date() } },
+        { $set: { data: data, fetchedAt: new Date() } },
         { upsert: true, new: true },
       );
 
@@ -47,13 +47,10 @@ const fetchCourses = async (messageStream: MessageStream) => {
       if (
         Array.isArray(currentCourse) &&
         currentCourse.length &&
-        Array.isArray(response.data) &&
-        response.data.length
+        Array.isArray(data) &&
+        data.length
       ) {
-        const { diffs, hasDiff } = trackCourseDiff(
-          currentCourse.data,
-          response.data,
-        );
+        const { diffs, hasDiff } = trackCourseDiff(currentCourse.data, data);
 
         if (hasDiff) {
           const event: GradeChangeEvent = {
