@@ -4,6 +4,7 @@
     "outDir": "dist",
     "types": ["node"],
     "jsx": "react-jsx",
+    "strict": true,
     "jsxImportSource": "hono/jsx"
   },
   "include": ["src"],
