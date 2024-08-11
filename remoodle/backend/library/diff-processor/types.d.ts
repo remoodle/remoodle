@@ -1,4 +1,3 @@
-// Crawler
 export type CourseDiff = {
   n: string;
   d: [string, number | null, number | null][];

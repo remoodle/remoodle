@@ -1,9 +1,8 @@
 import { expect, test } from "vitest";
-
 import type { ExtendedCourse } from "@remoodle/types";
-import type { GradeChangeEvent } from "../types";
-
-import { formatCourseDiffs, trackCourseDiff } from "./parser";
+import type { GradeChangeEvent } from "./types";
+import { trackCourseDiff } from "./checker";
+import { formatCourseDiffs } from "./formatter";
 
 test("trackCourseDiff", () => {
   const oldData: ExtendedCourse[] = [

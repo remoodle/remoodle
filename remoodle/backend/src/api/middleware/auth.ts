@@ -1,8 +1,8 @@
 import type { MiddlewareHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { config } from "../../../config";
-import { db } from "../../../database";
-import { decodeJwtToken, verifyJwtToken } from "../../../utils/jwt";
+import { db } from "../../../library/db";
+import { decodeJwtToken, verifyJwtToken } from "../helpers/jwt";
 
 export function authMiddleware(): MiddlewareHandler {
   return async (ctx, next) => {

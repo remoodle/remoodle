@@ -1,4 +1,4 @@
-import { config } from "../config";
+import { config } from "../../config";
 import { createMongoDBConnection } from "./mongo/connection";
 import Course, { type CourseType } from "./mongo/models/Course";
 import User, { type UserType } from "./mongo/models/User";

@@ -1,12 +1,9 @@
-import { db } from "../../../database";
-import type { MessageStream } from "../../../database";
 import { config } from "../../../config";
-
+import { db } from "../../../library/db";
+import type { MessageStream } from "../../../library/db";
 import { RMC } from "../../../library/rmc-sdk";
-
-import type { GradeChangeEvent } from "../../../types";
-
-import { trackCourseDiff } from "../../../utils/parser";
+import type { GradeChangeEvent } from "../../../library/diff-processor/types";
+import { trackCourseDiff } from "../../../library/diff-processor/checker";
 
 const fetchCourses = async (messageStream: MessageStream) => {
   console.log("Fetching courses...");

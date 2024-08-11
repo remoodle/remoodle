@@ -1,12 +1,12 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { db } from "../../../database";
 import { config } from "../../../config";
 
+import { db } from "../../../library/db";
 import { RMC } from "../../../library/rmc-sdk";
 
-import { hashPassword, verifyPassword } from "../../../utils/crypto";
-import { issueTokens } from "../../../utils/jwt";
+import { hashPassword, verifyPassword } from "../helpers/crypto";
+import { issueTokens } from "../helpers/jwt";
 
 import { authMiddleware } from "../middleware/auth";
 

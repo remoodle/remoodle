@@ -1,8 +1,8 @@
-import { db } from "../../../database";
-import type { MessageStream } from "../../../database";
-import type { GradeChangeEvent } from "../../../types";
-import { sendTelegramMessage } from "../../../utils/handlers";
-import { formatCourseDiffs } from "../../../utils/parser";
+import { db } from "../../../library/db";
+import type { MessageStream } from "../../../library/db";
+import type { GradeChangeEvent } from "../../../library/diff-processor/types";
+import { formatCourseDiffs } from "../../../library/diff-processor/formatter";
+import { sendTelegramMessage } from "../handlers";
 
 export class GradeChangeEventHandler {
   private streamName: string;

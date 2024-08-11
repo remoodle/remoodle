@@ -1,5 +1,5 @@
 import { pbkdf2Sync, randomBytes } from "node:crypto";
-import { config } from "../config";
+import { config } from "../../../config";
 
 export const hashPassword = (password: string) => {
   const salt = randomBytes(config.pbkdf2.keySize);

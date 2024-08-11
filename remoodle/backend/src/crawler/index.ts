@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import { db } from "../../database";
+import { db } from "../../library/db";
 import { fetchCourses } from "./tasks/fetch-courses";
 
 const FIVE_MINUTES = "*/5 * * * *";

@@ -1,4 +1,4 @@
-import { db } from "../../database";
+import { db } from "../../library/db";
 import { GradeChangeEventHandler } from "./events/grade-change-event";
 
 export async function startNotifier() {

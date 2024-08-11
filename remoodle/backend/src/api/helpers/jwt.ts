@@ -1,5 +1,5 @@
 import jwt, { type Algorithm } from "jsonwebtoken";
-import { config } from "../config";
+import { config } from "../../../config";
 
 const getToken = (payload: object, expiresIn: string) => {
   return jwt.sign(payload, config.jwt.privateKey, {
