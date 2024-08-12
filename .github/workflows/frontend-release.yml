@@ -4,7 +4,7 @@ on:
   push:
     branches: [trunk]
     paths:
-      - "remoodle/frontend/**"
+      - "apps/frontend/**"
       - ".github/workflows/frontend-release.yml"
 
 permissions:
@@ -25,7 +25,7 @@ jobs:
         with:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
-          path: remoodle/frontend
+          path: apps/frontend
 
   deploy-pr-preview:
     needs: release
@@ -49,15 +49,15 @@ jobs:
         with:
           node-version: 20
           cache: "pnpm"
-          cache-dependency-path: "remoodle/frontend/pnpm-lock.yaml"
+          cache-dependency-path: "apps/frontend/pnpm-lock.yaml"
 
       - name: Install dependencies
-        run: cd remoodle/frontend && pnpm install
+        run: cd apps/frontend && pnpm install
 
       - name: Build app
         env:
           COMMIT_SHA: ${{ github.sha }}
-        run: cd remoodle/frontend && pnpm build-only
+        run: cd apps/frontend && pnpm build-only
 
       - run: echo "ignore-workspace-root-check=true" >> .npmrc
 
@@ -66,7 +66,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
-          command: pages deploy remoodle/frontend/dist --project-name="frontend-dev-svo" --branch="trunk"
+          command: pages deploy apps/frontend/dist --project-name="frontend-dev-svo" --branch="trunk"
 
       - name: Deploy on production
         if: needs.release.outputs.release_created == 'true'
@@ -74,4 +74,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
-          command: pages deploy remoodle/frontend/dist --project-name="frontend-prod-nqz" --branch="production"
+          command: pages deploy apps/frontend/dist --project-name="frontend-prod-nqz" --branch="production"

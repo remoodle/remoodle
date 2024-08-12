@@ -50,12 +50,6 @@ export class RMC {
         },
       });
 
-      console.log({
-        "Content-Type": "application/json",
-        ...(this.auth && this.getAuthHeaders(this.auth)),
-      });
-      console.log(response);
-
       if (!response.ok) {
         return [
           null,

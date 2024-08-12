@@ -22,4 +22,4 @@ RUN export TZ="Etc/UTC" \
 
 EXPOSE 9000
 
-CMD [ "pnpm", "-C", "remoodle/backend", "run", "start" ]
+CMD [ "pnpm", "-C", "apps/backend", "run", "start" ]

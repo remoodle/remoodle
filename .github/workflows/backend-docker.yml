@@ -4,7 +4,7 @@ on:
   push:
     branches: [trunk]
     paths:
-      - "remoodle/backend/**"
+      - "apps/backend/**"
       - ".github/workflows/api-docker.yml"
 
   workflow_dispatch:
@@ -42,7 +42,7 @@ jobs:
           echo TAG=$TAG
 
           # Build the Docker image
-          docker build -f remoodle/backend/Dockerfile . --tag $TAG
+          docker build -f apps/backend/Dockerfile . --tag $TAG
 
           # Docker Push
           docker push $TAG

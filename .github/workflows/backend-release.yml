@@ -4,7 +4,7 @@ on:
   push:
     branches: [trunk]
     paths:
-      - "remoodle/backend/**"
+      - "apps/backend/**"
       - ".github/workflows/backend-release.yml"
 
 permissions:
@@ -21,4 +21,4 @@ jobs:
         with:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
-          path: remoodle/backend
+          path: apps/backend

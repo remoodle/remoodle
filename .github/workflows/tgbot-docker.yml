@@ -4,7 +4,7 @@ on:
   push:
     branches: [trunk]
     paths:
-      - "remoodle/telegram_bot/**"
+      - "apps/telegram_bot/**"
       - ".github/workflows/tgbot-docker.yml"
 
   workflow_dispatch:
@@ -42,7 +42,7 @@ jobs:
           echo TAG=$TAG
 
           # Build the Docker image
-          cd remoodle/telegram_bot
+          cd apps/telegram_bot
           docker build . --file Dockerfile --tag $TAG
 
           # Docker Push

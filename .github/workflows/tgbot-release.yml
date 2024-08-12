@@ -4,7 +4,7 @@ on:
   push:
     branches: [trunk]
     paths:
-      - "remoodle/telegram_bot/**"
+      - "apps/telegram_bot/**"
       - ".github/workflows/tgbot-release.yml"
 
 permissions:
@@ -21,4 +21,4 @@ jobs:
         with:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
-          path: remoodle/telegram_bot
+          path: apps/telegram_bot
