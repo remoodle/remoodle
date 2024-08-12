@@ -1,4 +1,3 @@
-import { config } from "../../../config";
 import { db } from "../../../library/db";
 import type { MessageStream } from "../../../library/db";
 import { RMC } from "../../../library/rmc-sdk";
@@ -18,10 +17,7 @@ const fetchCourses = async (messageStream: MessageStream) => {
     }
 
     try {
-      const rmc = new RMC(config.core.url, {
-        secret: config.core.secret,
-        moodleId: user.moodleId,
-      });
+      const rmc = new RMC({ moodleId: user.moodleId });
 
       const [data, error] = await rmc.getUserCoursesOverall();
 

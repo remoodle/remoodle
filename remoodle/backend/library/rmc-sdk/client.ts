@@ -1,31 +1,44 @@
+import { HTTPException } from "hono/http-exception";
+import { StatusCode } from "hono/utils/http-status";
 import type {
   Course,
   ExtendedCourse,
   MoodleUser,
   HealthResponse,
 } from "@remoodle/types";
+import { config } from "../../config";
 
-type InternalOptions = {
-  secret: string;
-  moodleId: number;
-};
-
-type Auth = string | InternalOptions;
+type Auth = { moodleId: number } | { moodleToken: string };
 
 export class RMC {
   private host: string;
-
+  private secret: string;
   private auth?: Auth;
 
-  constructor(host: string, auth?: Auth) {
-    this.host = host;
+  constructor(auth?: Auth) {
+    this.host = config.core.url;
+    this.secret = config.core.secret;
     this.auth = auth;
+  }
+
+  private getAuthHeaders(auth: Auth): Record<string, string> {
+    if ("moodleToken" in auth) {
+      return {
+        "Auth-Token": auth.moodleToken,
+      };
+    } else if ("moodleId" in auth) {
+      return {
+        "X-Remoodle-Internal-Token": this.secret,
+        "X-Remoodle-Moodle-Id": `${auth.moodleId}`,
+      };
+    }
+    return {};
   }
 
   private async request<T = any>(
     endpoint: string,
     options: RequestInit,
-  ): Promise<[T, null] | [null, Error]> {
+  ): Promise<[T, null] | [null, HTTPException]> {
     try {
       const url = new URL(endpoint, this.host);
 
@@ -33,25 +46,28 @@ export class RMC {
         ...options,
         headers: {
           "Content-Type": "application/json",
-          ...(this.auth &&
-            (typeof this.auth === "string"
-              ? {
-                  "Auth-Token": this.auth,
-                }
-              : {
-                  "X-Remoodle-Internal-Token": this.auth.secret,
-                  "X-Remoodle-Moodle-Id": `${this.auth.moodleId}`,
-                })),
+          ...(this.auth && this.getAuthHeaders(this.auth)),
         },
       });
 
+      console.log({
+        "Content-Type": "application/json",
+        ...(this.auth && this.getAuthHeaders(this.auth)),
+      });
+      console.log(response);
+
       if (!response.ok) {
-        return [null, new Error(response.statusText)];
+        return [
+          null,
+          new HTTPException(response.status as StatusCode, {
+            message: response.statusText,
+          }),
+        ];
       }
 
       return [(await response.json()) as T, null];
     } catch (err: any) {
-      return [null, new Error(err.message)];
+      return [null, new HTTPException(500, { message: err.message })];
     }
   }
 
@@ -85,8 +101,8 @@ export class RMC {
     });
   }
 
-  async getCourseContent(courseId: string) {
-    return this.request<Course>(`v1/course/${courseId}`, {
+  async getCourseContent(courseId: string, content?: string) {
+    return this.request<Course>(`v1/course/${courseId}?content=${content}`, {
       method: "GET",
     });
   }
