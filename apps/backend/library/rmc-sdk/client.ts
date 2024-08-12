@@ -2,7 +2,11 @@ import { HTTPException } from "hono/http-exception";
 import { StatusCode } from "hono/utils/http-status";
 import type {
   Course,
+  ActiveCourse,
   ExtendedCourse,
+  Assignment,
+  CourseGradeItem,
+  Deadline,
   MoodleUser,
   HealthResponse,
 } from "@remoodle/types";
@@ -89,6 +93,12 @@ export class RMC {
     });
   }
 
+  async getUserActiveCourses() {
+    return this.request<ActiveCourse[]>("v1/user/courses", {
+      method: "GET",
+    });
+  }
+
   async getUserCoursesOverall() {
     return this.request<ExtendedCourse[]>("v1/user/courses/overall", {
       method: "GET",
@@ -97,6 +107,27 @@ export class RMC {
 
   async getCourseContent(courseId: string, content?: string) {
     return this.request<Course>(`v1/course/${courseId}?content=${content}`, {
+      method: "GET",
+    });
+  }
+
+  async getCourseAssignments(courseId: string) {
+    return this.request<Assignment[]>(`v1/course/${courseId}/assignments`, {
+      method: "GET",
+    });
+  }
+
+  async getUserCourseGrades(courseId: string) {
+    return this.request<CourseGradeItem[]>(
+      `v1/user/course/${courseId}/grades`,
+      {
+        method: "GET",
+      },
+    );
+  }
+
+  async getUserDeadlines() {
+    return this.request<Deadline[]>("v1/user/deadlines", {
       method: "GET",
     });
   }

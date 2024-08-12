@@ -157,8 +157,47 @@ api.get("/health", async (ctx) => {
 
 api.use("*", authMiddleware());
 
+api.get("/deadlines", async (ctx) => {
+  const moodleId = ctx.get("moodleId");
+
+  const rmc = new RMC({ moodleId });
+  const [data, error] = await rmc.getUserDeadlines();
+
+  if (error) {
+    throw error;
+  }
+
+  return ctx.json(data);
+});
+
+api.get("/courses", async (ctx) => {
+  const moodleId = ctx.get("moodleId");
+
+  const rmc = new RMC({ moodleId });
+  const [data, error] = await rmc.getUserActiveCourses();
+
+  if (error) {
+    throw error;
+  }
+
+  return ctx.json(data);
+});
+
+api.get("/courses/overall", async (ctx) => {
+  const moodleId = ctx.get("moodleId");
+
+  const rmc = new RMC({ moodleId });
+  const [data, error] = await rmc.getUserCoursesOverall();
+
+  if (error) {
+    throw error;
+  }
+
+  return ctx.json(data);
+});
+
 api.get(
-  "/v1/course/:courseId",
+  "/course/:courseId",
   zValidator(
     "query",
     z.object({
@@ -170,6 +209,7 @@ api.get(
     const { content } = ctx.req.valid("query");
 
     const moodleId = ctx.get("moodleId");
+
     const rmc = new RMC({ moodleId });
     const [data, error] = await rmc.getCourseContent(courseId, content);
 
@@ -181,10 +221,13 @@ api.get(
   },
 );
 
-api.get("/v1/user/courses/overall", async (ctx) => {
+api.get("/course/:courseId/assignments", async (ctx) => {
+  const courseId = ctx.req.param("courseId");
+
   const moodleId = ctx.get("moodleId");
+
   const rmc = new RMC({ moodleId });
-  const [data, error] = await rmc.getUserCoursesOverall();
+  const [data, error] = await rmc.getCourseAssignments(courseId);
 
   if (error) {
     throw error;
@@ -192,8 +235,21 @@ api.get("/v1/user/courses/overall", async (ctx) => {
 
   return ctx.json(data);
 });
-// api.get("/v1/user/deadlines", proxyRequest(API_METHODS.V1_USER_DEADLINES));
-// api.get("/v1/user/course/*", proxyRequest(API_METHODS.V1_USER_COURSE));
+
+api.get("/course/:courseId/grades", async (ctx) => {
+  const courseId = ctx.req.param("courseId");
+
+  const moodleId = ctx.get("moodleId");
+
+  const rmc = new RMC({ moodleId });
+  const [data, error] = await rmc.getUserCourseGrades(courseId);
+
+  if (error) {
+    throw error;
+  }
+
+  return ctx.json(data);
+});
 
 api.delete("/goodbye", async (ctx) => {
   const userId = ctx.get("userId");
@@ -207,7 +263,6 @@ api.delete("/goodbye", async (ctx) => {
   }
 
   const rmc = new RMC({ moodleId: user.moodleId });
-
   const [_, error] = await rmc.deleteUser();
 
   if (error) {

@@ -25,7 +25,7 @@ api.route("/", router);
 
 api.notFound(() => {
   throw new HTTPException(404, {
-    message: "Not Found",
+    message: "Route not found",
   });
 });
 
