@@ -7,6 +7,6 @@
     "strict": true,
     "jsxImportSource": "hono/jsx"
   },
-  "include": ["src", "config", "library", "index.d.ts"],
+  "include": ["src", "index.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
