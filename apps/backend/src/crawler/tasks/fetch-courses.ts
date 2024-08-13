@@ -19,7 +19,7 @@ const fetchCourses = async (messageStream: MessageStream) => {
     try {
       const rmc = new RMC({ moodleId: user.moodleId });
 
-      const [data, error] = await rmc.getUserCoursesOverall();
+      const [data, error] = await rmc.v1_user_courses_overall();
 
       if (error) {
         console.error("Error fetching courses:", error);

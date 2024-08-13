@@ -69,13 +69,13 @@ export class RMC {
     }
   }
 
-  async health() {
+  async get_health() {
     return this.request<HealthResponse>("health", {
       method: "GET",
     });
   }
 
-  async createUser(payload: {
+  async v1_auth_register(payload: {
     token: string;
     name_alias?: string;
     password?: string;
@@ -87,48 +87,48 @@ export class RMC {
     });
   }
 
-  async deleteUser() {
+  async v1_delete_user() {
     return this.request<"OK">("v1/user", {
       method: "DELETE",
     });
   }
 
-  async getUserActiveCourses() {
+  async v1_user_deadlines() {
+    return this.request<Deadline[]>("v1/user/deadlines", {
+      method: "GET",
+    });
+  }
+
+  async v1_user_courses() {
     return this.request<ActiveCourse[]>("v1/user/courses", {
       method: "GET",
     });
   }
 
-  async getUserCoursesOverall() {
+  async v1_user_courses_overall() {
     return this.request<ExtendedCourse[]>("v1/user/courses/overall", {
       method: "GET",
     });
   }
 
-  async getCourseContent(courseId: string, content?: string) {
+  async v1_course_content(courseId: string, content?: string) {
     return this.request<Course>(`v1/course/${courseId}?content=${content}`, {
       method: "GET",
     });
   }
 
-  async getCourseAssignments(courseId: string) {
+  async v1_course_assignments(courseId: string) {
     return this.request<Assignment[]>(`v1/course/${courseId}/assignments`, {
       method: "GET",
     });
   }
 
-  async getUserCourseGrades(courseId: string) {
+  async v1_user_course_grades(courseId: string) {
     return this.request<CourseGradeItem[]>(
       `v1/user/course/${courseId}/grades`,
       {
         method: "GET",
       },
     );
-  }
-
-  async getUserDeadlines() {
-    return this.request<Deadline[]>("v1/user/deadlines", {
-      method: "GET",
-    });
   }
 }

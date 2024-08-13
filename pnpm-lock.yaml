@@ -116,6 +116,9 @@ importers:
       filesize:
         specifier: ^10.1.1
         version: 10.1.4
+      hono:
+        specifier: ^4.5.5
+        version: 4.5.5
       ky:
         specifier: ^1.2.2
         version: 1.5.0
@@ -168,6 +171,9 @@ importers:
       '@remoodle/prettier-config':
         specifier: workspace:^
         version: link:../../packages/prettier-config
+      '@remoodle/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@rushstack/eslint-patch':
         specifier: ^1.3.3
         version: 1.10.4
