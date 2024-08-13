@@ -10,6 +10,7 @@ import HomePage from "@/pages/home/Page.vue";
 import NotFoundPage from "@/pages/404/Page.vue";
 import AccountPage from "@/pages/account/Page.vue";
 import CoursePage from "@/pages/course/Page.vue";
+import TotalsPage from "@/pages/totals/Page.vue";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
 
 declare module "vue-router" {
@@ -44,6 +45,12 @@ const routes: RouteRecordRaw[] = [
             component: AccountPage,
           },
         ],
+      },
+      {
+        path: "/totals",
+        name: RouteName.TotalGrades,
+        component: TotalsPage,
+        meta: { auth: "required" },
       },
       {
         path: "course/:courseId",
