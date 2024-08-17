@@ -6,62 +6,81 @@ import { decodeJwtToken, verifyJwtToken } from "../helpers/jwt";
 
 export function authMiddleware(): MiddlewareHandler {
   return async (ctx, next) => {
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization#syntax
+    // Authorization: <auth-scheme> <authorization-parameters>
+    // example: Bearer <token>
+    // example: Basic <secret>::<telegram-id>::<with-user (1 or 0)>
     const authorization = ctx.req.header("Authorization");
 
-    if (authorization) {
-      const [token, telegramId] = authorization.split("::");
+    if (!authorization) {
+      throw new HTTPException(403, {
+        message: "Authorization header is required",
+      });
+    }
 
-      if (token !== `Bearer ${config.http.secret}`) {
+    const [scheme, authorizationParameters] = authorization.split(" ");
+
+    // Basic auth (TG bot)
+    if (scheme === "Basic") {
+      const [secret, telegramId, withUser = "1"] =
+        authorizationParameters.split("::");
+
+      if (secret !== `${config.http.secret}`) {
         throw new HTTPException(403, {
           message: "Forbidden",
         });
       }
 
-      const user = await db.user.findOne({ telegramId });
+      if (withUser !== "0") {
+        const user = await db.user.findOne({ telegramId });
 
-      if (!user) {
-        throw new HTTPException(403, {
-          message: "Forbidden",
-        });
+        if (!user) {
+          throw new HTTPException(403, {
+            message: "Forbidden",
+          });
+        }
+
+        ctx.set("userId", user._id);
+        ctx.set("moodleId", user.moodleId);
       }
-
-      ctx.set("userId", user._id);
-      ctx.set("moodleId", user.moodleId);
 
       return await next();
     }
 
-    const accessToken = ctx.req.header("Access-Token");
+    // Bearer auth (JWT, web app)
+    if (scheme === "Bearer") {
+      const token = authorizationParameters;
 
-    if (!accessToken || !accessToken.length) {
-      throw new HTTPException(401, {
-        message: "Access-Token header is required",
-      });
+      if (!token || !token.length) {
+        throw new HTTPException(401, {
+          message: "Access-Token header is required",
+        });
+      }
+
+      const valid = verifyJwtToken(token);
+
+      if (!valid) {
+        throw new HTTPException(401, {
+          message: "Access-Token is invalid",
+        });
+      }
+
+      const payload = decodeJwtToken(token);
+
+      if (
+        !payload ||
+        typeof payload !== "object" ||
+        !("userId" in payload) ||
+        !("moodleId" in payload)
+      ) {
+        throw new HTTPException(403, {
+          message: "Access-Token is missing userId or moodleId",
+        });
+      }
+
+      ctx.set("userId", payload.userId);
+      ctx.set("moodleId", payload.moodleId);
     }
-
-    const valid = verifyJwtToken(accessToken);
-
-    if (!valid) {
-      throw new HTTPException(401, {
-        message: "Access-Token is invalid",
-      });
-    }
-
-    const payload = decodeJwtToken(accessToken);
-
-    if (
-      !payload ||
-      typeof payload !== "object" ||
-      !("userId" in payload) ||
-      !("moodleId" in payload)
-    ) {
-      throw new HTTPException(403, {
-        message: "Access-Token is missing userId or moodleId",
-      });
-    }
-
-    ctx.set("userId", payload.userId);
-    ctx.set("moodleId", payload.moodleId);
 
     await next();
   };

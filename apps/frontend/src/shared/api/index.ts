@@ -6,7 +6,7 @@ class API {
     const userStore = useUserStore();
 
     return {
-      "Access-Token": userStore.accessToken,
+      Authorization: `Bearer ${userStore.accessToken}`,
     };
   }
 
