@@ -11,6 +11,8 @@ export type IUser = {
   email?: string;
   telegramId?: number;
   password?: string;
+  otp?: string;
+  otpExpiry?: Date;
 };
 
 type UserModel = Model<IUser>;
@@ -25,6 +27,8 @@ const userSchema = new Schema<IUser, UserModel>(
     email: { type: String },
     telegramId: { type: Number },
     password: { type: String },
+    otp: { type: String },
+    otpExpiry: { type: Date },
   },
   {
     timestamps: true,

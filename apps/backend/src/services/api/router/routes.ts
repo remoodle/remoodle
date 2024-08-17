@@ -9,7 +9,7 @@ import { db } from "../../../library/db";
 import type { IUser } from "../../../library/db/mongo/models/User";
 import { RMC } from "../../../library/rmc-sdk";
 
-import { hashPassword, verifyPassword } from "../helpers/crypto";
+import { generateOTP, hashPassword, verifyPassword } from "../helpers/crypto";
 import { issueTokens } from "../helpers/jwt";
 
 import { authMiddleware } from "../middleware/auth";
@@ -136,10 +136,11 @@ const publicApi = new Hono()
       "json",
       z.object({
         moodleToken: z.string(),
+        telegramId: z.number().optional(),
       }),
     ),
     async (ctx) => {
-      const { moodleToken } = ctx.req.valid("json");
+      const { moodleToken, telegramId } = ctx.req.valid("json");
 
       try {
         let user = (await db.user.findOne({ moodleToken })) as IUser | null;
@@ -151,6 +152,7 @@ const publicApi = new Hono()
               method: "POST",
               body: JSON.stringify({
                 moodleToken,
+                telegramId,
                 // telegramId: 342858247,
               }),
               headers: {
@@ -205,11 +207,14 @@ const privateApi = new Hono<{
   Variables: {
     userId: string;
     moodleId: number;
+    telegramId: number;
   };
 }>()
   .use("*", authMiddleware())
   .get("/deadlines", async (ctx) => {
     const moodleId = ctx.get("moodleId");
+
+    // console.log(moodleId);
 
     const rmc = new RMC({ moodleId });
     const [data, error] = await rmc.v1_user_deadlines();
@@ -370,6 +375,91 @@ const privateApi = new Hono<{
           message: error.message,
         });
       }
+    },
+  )
+  .post("/user/telegram/otp/generate", async (ctx) => {
+    const userId = ctx.get("userId");
+
+    const user = await db.user.findOne({ _id: userId });
+
+    if (!user) {
+      throw new HTTPException(400, {
+        message: "User not found",
+      });
+    }
+
+    const otp = generateOTP();
+
+    await db.user.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          otp,
+          otpExpiry: new Date(Date.now() + 1000 * 60 * 5), // 5 minutes from now
+        },
+      },
+      { upsert: true },
+    );
+
+    return ctx.json({ otp });
+  })
+  // FROM TELEGRAM BOT ONLY WITH ::0
+  // TODO: Add auth middleware or move to bot
+  .post(
+    "/user/telegram/otp/verify",
+    zValidator(
+      "json",
+      z.object({
+        otp: z.string(),
+      }),
+    ),
+    async (ctx) => {
+      const { otp } = ctx.req.valid("json");
+
+      const user = await db.user.findOne({ otp });
+
+      const telegramId = ctx.get("telegramId");
+
+      console.log(telegramId);
+
+      if (!user) {
+        throw new HTTPException(400, {
+          message: "User not found",
+        });
+      }
+
+      if (user.otp !== otp) {
+        throw new HTTPException(400, {
+          message: "Invalid OTP",
+        });
+      }
+
+      if (user.telegramId && user.telegramId !== telegramId) {
+        throw new HTTPException(400, {
+          message: "Invalid Telegram ID",
+        });
+      }
+
+      try {
+        await db.user.updateOne(
+          {
+            _id: user._id,
+          },
+          {
+            $set: {
+              otp: null,
+              otpExpiry: null,
+              telegramId,
+            },
+          },
+        );
+      } catch (error: any) {
+        throw new HTTPException(500, {
+          message: error.message,
+        });
+      }
+
+      return ctx.json({ ok: true });
     },
   )
   .delete("/goodbye", async (ctx) => {

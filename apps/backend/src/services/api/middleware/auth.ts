@@ -31,9 +31,12 @@ export function authMiddleware(): MiddlewareHandler {
         });
       }
 
+      ctx.set("telegramId", telegramId);
+
       if (withUser !== "0") {
         const user = await db.user.findOne({ telegramId });
 
+        console.log(user);
         if (!user) {
           throw new HTTPException(403, {
             message: "Forbidden",
