@@ -4,7 +4,7 @@ import { Error } from "@/entities/page";
 import { CourseListCard } from "@/entities/course";
 import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { Skeleton } from "@/shared/ui/skeleton";
-import type { ExtendedCourse } from "@/shared/types";
+import type { ExtendedCourse } from "@remoodle/types";
 import { createAsyncProcess, isDefined, partition } from "@/shared/utils";
 import { api } from "@/shared/api";
 

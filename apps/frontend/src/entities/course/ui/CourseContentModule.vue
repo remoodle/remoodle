@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { prepareFileURL } from "@/shared/utils";
-import type { CourseModule } from "@/shared/types";
+import type { CourseModule } from "@remoodle/types";
 import { RouteName } from "@/shared/types";
 import { Link } from "@/shared/ui/link";
 import { Text } from "@/shared/ui/text";

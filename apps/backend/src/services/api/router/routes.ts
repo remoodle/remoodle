@@ -3,13 +3,17 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
+// import type { MoodleUser } from "@remoodle/types";
+
 import { db } from "../../../library/db";
+import type { IUser } from "../../../library/db/mongo/models/User";
 import { RMC } from "../../../library/rmc-sdk";
 
 import { hashPassword, verifyPassword } from "../helpers/crypto";
 import { issueTokens } from "../helpers/jwt";
 
 import { authMiddleware } from "../middleware/auth";
+import { config } from "../../../config";
 
 const publicApi = new Hono()
   .post(
@@ -24,27 +28,15 @@ const publicApi = new Hono()
       }),
     ),
     async (ctx) => {
+      console.log("register");
       const { email, telegramId, moodleToken, password } =
         ctx.req.valid("json");
 
-      let ghost;
-      try {
-        ghost = await db.user.create({
-          email,
-          telegramId,
-          ...(password && { password: hashPassword(password) }),
-          moodleId: null,
-        });
-      } catch (error: any) {
-        throw new HTTPException(500, {
-          message: `Failed to save user in the database ${error}`,
-        });
-      }
+      const rmc = new RMC({ moodleToken });
 
-      let student;
-      try {
-        const rmc = new RMC({ moodleToken });
+      let id = "";
 
+      try {
         const [data, error] = await rmc.v1_auth_register({
           token: moodleToken,
         });
@@ -53,45 +45,39 @@ const publicApi = new Hono()
           throw error;
         }
 
-        student = data;
+        const user = (await db.user.create({
+          email,
+          telegramId,
+          moodleToken,
+          name: data.name,
+          moodleId: data.moodle_id,
+          handle: data.username,
+          ...(data.email && { email: data.email }),
+          ...(password && { password: hashPassword(password) }),
+        })) as IUser;
+
+        id = user._id;
+
+        // user.password = "***";
+
+        const { accessToken, refreshToken } = issueTokens(
+          user._id,
+          user.moodleId,
+        );
+
+        return ctx.json({
+          user,
+          accessToken,
+          refreshToken,
+        });
       } catch (error: any) {
-        try {
-          await db.user.deleteOne({ _id: ghost._id });
-        } catch (e: any) {
-          throw new HTTPException(500, {
-            message: e.message,
-          });
-        }
+        const [data, _] = await rmc.v1_delete_user();
+        await db.user.deleteOne({ _id: id });
 
         throw new HTTPException(500, {
           message: error.message,
         });
       }
-
-      const user = await db.user.findOneAndUpdate(
-        { _id: ghost._id },
-        { $set: { name: student.name, moodleId: student.moodle_id } },
-        { upsert: true, new: true },
-      );
-
-      if (!user) {
-        throw new HTTPException(500, {
-          message: "Failed to update user in the database",
-        });
-      }
-
-      const { accessToken, refreshToken } = issueTokens(
-        user._id,
-        user.moodleId,
-      );
-
-      user.password = "***";
-
-      return ctx.json({
-        user,
-        accessToken,
-        refreshToken,
-      });
     },
   )
   .post(
@@ -99,42 +85,107 @@ const publicApi = new Hono()
     zValidator(
       "json",
       z.object({
-        email: z.string(),
+        identifier: z.string(),
         password: z.string(),
       }),
     ),
     async (ctx) => {
-      const { email, password } = ctx.req.valid("json");
-
-      const user = await db.user.findOne({ email });
-      if (!user) {
-        throw new HTTPException(401, {
-          message: "No user found with this email",
-        });
-      }
-
-      if (!verifyPassword(password, user.password)) {
-        throw new HTTPException(401, {
-          message: "Invalid credentials",
-        });
-      }
+      const { identifier, password } = ctx.req.valid("json");
 
       try {
+        const user = (await db.user.findOne({
+          $or: [{ email: identifier }, { handle: identifier }],
+        })) as IUser | null;
+
+        if (!user) {
+          throw new Error("No user found with this email");
+        }
+
+        if (!user.password) {
+          throw new Error("Cannot login with this email");
+        }
+
+        if (!verifyPassword(password, user.password)) {
+          throw new Error("Invalid credentials");
+        }
+
         const { accessToken, refreshToken } = issueTokens(
           user._id.toString(),
           user.moodleId,
         );
 
-        user.password = "***";
+        // user.password = "***";
 
         return ctx.json({
           user,
           accessToken,
           refreshToken,
         });
-      } catch (error) {
-        console.log(error);
-        throw error;
+      } catch (error: any) {
+        // console.log(error);
+        // throw error;
+        throw new HTTPException(500, {
+          message: error.message,
+        });
+      }
+    },
+  )
+  .post(
+    "/auth/one-tap",
+    zValidator(
+      "json",
+      z.object({
+        moodleToken: z.string(),
+      }),
+    ),
+    async (ctx) => {
+      const { moodleToken } = ctx.req.valid("json");
+
+      try {
+        let user = (await db.user.findOne({ moodleToken })) as IUser | null;
+
+        if (!user) {
+          const res = await fetch(
+            `http://${config.http.host}:${config.http.port}/auth/register`,
+            {
+              method: "POST",
+              body: JSON.stringify({
+                moodleToken,
+                // telegramId: 342858247,
+              }),
+              headers: {
+                "Content-Type": "application/json",
+              },
+            },
+          );
+
+          if (!res.ok) {
+            throw new Error("Something went wrong");
+          }
+
+          const data = (await res.json()) as {
+            user: IUser;
+            accessToken: string;
+            refreshToken: string;
+          };
+
+          return ctx.json(data);
+        } else {
+          const { accessToken, refreshToken } = issueTokens(
+            user._id.toString(),
+            user.moodleId,
+          );
+
+          return ctx.json({
+            user,
+            accessToken,
+            refreshToken,
+          });
+        }
+      } catch (error: any) {
+        throw new HTTPException(500, {
+          message: error.message,
+        });
       }
     },
   )
@@ -245,6 +296,82 @@ const privateApi = new Hono<{
 
     return ctx.json(data);
   })
+  .get("/user/settings", async (ctx) => {
+    const userId = ctx.get("userId");
+
+    const user = await db.user.findOne({ _id: userId });
+
+    if (!user) {
+      throw new HTTPException(400, {
+        message: "User not found",
+      });
+    }
+
+    //   moodleId: number;
+    // name: string;
+    // handle: string;
+    // hasPassword: boolean;
+
+    return ctx.json({
+      moodleId: user.moodleId,
+      name: user.name,
+      handle: user.handle,
+      hasPassword: !!user.password,
+    });
+  })
+  .post(
+    "/user/settings",
+    zValidator(
+      "json",
+      z.object({
+        handle: z.string().optional(),
+        password: z.string().optional(),
+      }),
+    ),
+    async (ctx) => {
+      const userId = ctx.get("userId");
+
+      const { handle, password } = ctx.req.valid("json");
+
+      try {
+        const user = await db.user.findOne({ _id: userId });
+
+        if (!user) {
+          throw new HTTPException(400, {
+            message: "User not found",
+          });
+        }
+
+        if (handle) {
+          await db.user.updateOne(
+            { _id: userId },
+            {
+              $set: {
+                handle,
+              },
+            },
+          );
+        }
+
+        if (password) {
+          await db.user.updateOne(
+            { _id: userId },
+            {
+              $set: {
+                password: hashPassword(password),
+              },
+            },
+          );
+        }
+
+        return ctx.json({ ok: true });
+      } catch (error: any) {
+        throw new HTTPException(500, {
+          message: error.message,
+        });
+      }
+    },
+  )
   .delete("/goodbye", async (ctx) => {
     const userId = ctx.get("userId");
 
@@ -271,7 +398,7 @@ const privateApi = new Hono<{
       });
     }
 
-    return ctx.text("OK", 200);
+    return ctx.json({ ok: true });
   });
 
 export { publicApi, privateApi };

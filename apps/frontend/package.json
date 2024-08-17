@@ -14,6 +14,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@remoodle/backend": "workspace:*",
     "@boringer-avatars/vue3": "^0.2.1",
     "@radix-icons/vue": "^1.0.0",
     "@vueuse/core": "^10.7.1",
@@ -21,7 +22,7 @@
     "clsx": "^2.1.0",
     "dayjs": "^1.11.10",
     "filesize": "^10.1.1",
-    "ky": "^1.2.2",
+    "hono": "^4.5.5",
     "linkify": "^0.2.1",
     "linkify-html": "^4.1.3",
     "lucide-vue-next": "^0.307.0",
@@ -40,6 +41,7 @@
     "@julr/vite-plugin-validate-env": "^1.1.1",
     "@remoodle/eslint-config": "workspace:^",
     "@remoodle/prettier-config": "workspace:^",
+    "@remoodle/types": "workspace:*",
     "@rushstack/eslint-patch": "^1.3.3",
     "@tailwindcss/typography": "^0.5.10",
     "@tsconfig/node20": "^20.1.4",

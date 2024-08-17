@@ -2,24 +2,28 @@ import type { Model } from "mongoose";
 import { Schema, model } from "mongoose";
 import { v7 as uuidv7 } from "uuid";
 
-export interface IUser {
+export type IUser = {
   _id: string;
   name: string;
-  email: string;
-  telegramId: number;
-  password: string;
+  handle: string;
   moodleId: number;
-}
+  moodleToken: string;
+  email?: string;
+  telegramId?: number;
+  password?: string;
+};
 
 type UserModel = Model<IUser>;
 
 const userSchema = new Schema<IUser, UserModel>(
   {
     _id: { type: String, default: uuidv7 },
-    name: { type: String },
+    name: { type: String, required: true },
+    handle: { type: String, required: true, unique: true },
+    moodleId: { type: Number, required: true, unique: true },
+    moodleToken: { type: String, required: true },
     email: { type: String },
     telegramId: { type: Number },
-    moodleId: { type: Number },
     password: { type: String },
   },
   {
@@ -27,10 +31,6 @@ const userSchema = new Schema<IUser, UserModel>(
   },
 );
 
-userSchema.index(
-  { moodleId: 1 },
-  { unique: true, partialFilterExpression: { moodleId: { $exists: true } } },
-);
 userSchema.index(
   { telegramId: 1 },
   { unique: true, partialFilterExpression: { telegramId: { $exists: true } } },

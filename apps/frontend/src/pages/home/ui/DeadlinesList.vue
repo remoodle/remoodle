@@ -3,7 +3,7 @@ import { onMounted, ref } from "vue";
 import { Error } from "@/entities/page";
 import { DeadlineCard } from "@/entities/deadline";
 import { Skeleton } from "@/shared/ui/skeleton";
-import type { Deadline } from "@/shared/types";
+import type { Deadline } from "@remoodle/types";
 import { api } from "@/shared/api";
 import {
   createAsyncProcess,

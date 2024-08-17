@@ -38,7 +38,7 @@ const { run: submit, loading } = createAsyncProcess(async () => {
     throw error;
   }
 
-  userStore.login(form.value.token, data);
+  userStore.login(data.accessToken, data.refreshToken, data.user);
 });
 </script>
 

@@ -35,7 +35,7 @@ const { run: submit, loading } = createAsyncProcess(async () => {
     throw error;
   }
 
-  userStore.login(data.moodle_token, data);
+  userStore.login(data.accessToken, data.refreshToken, data.user);
 });
 </script>
 

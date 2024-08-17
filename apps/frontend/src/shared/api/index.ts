@@ -1,96 +1,13 @@
-import ky, { HTTPError, type Options } from "ky";
-import type {
-  APIError,
-  APIWrapper,
-  ActiveCourse,
-  ExtendedCourse,
-  Deadline,
-  MoodleUser,
-  UserSettings,
-  Course,
-  Assignment,
-  CourseGradeItem,
-} from "@/shared/types";
-import { isDefined, isEmptyString } from "@/shared/utils";
 import { useUserStore } from "@/shared/stores/user";
-import { useAppStore } from "@/shared/stores/app";
+import { request } from "./rpc";
 
 class API {
-  kyInstance;
+  private getAuthHeaders() {
+    const userStore = useUserStore();
 
-  constructor() {
-    this.kyInstance = ky.create({
-      retry: { limit: 1 },
-      hooks: {
-        beforeRequest: [
-          (request) => {
-            const userStore = useUserStore();
-            const token = userStore.token;
-
-            if (isDefined(token) && !isEmptyString(token)) {
-              request.headers.set("Auth-Token", token);
-            }
-
-            request.headers.set("Connection", "keep-alive");
-          },
-        ],
-        afterResponse: [
-          (_input, _options, response) => {
-            if (response.status === 401) {
-              const userStore = useUserStore();
-
-              userStore.logout();
-            }
-          },
-        ],
-      },
-    });
-  }
-
-  private async request<T>(
-    input: RequestInfo,
-    options?: Options,
-  ): Promise<[T, null] | [null, APIError]> {
-    try {
-      const response = await this.kyInstance(input, options).json<
-        APIWrapper<T>
-      >();
-
-      return [response as T, null];
-    } catch (err) {
-      try {
-        if (err instanceof HTTPError) {
-          const response = await err.response.json();
-
-          if ("error" in response) {
-            return [
-              null,
-              {
-                status: err.response.status,
-                message: response.error,
-              },
-            ];
-          }
-        }
-      } catch (_) {
-        return [null, { status: 500, message: "Couldn't parse error" }];
-      }
-
-      return [null, { status: 500, message: "Something went wrong" }];
-    }
-  }
-
-  private prepareURL(path: string) {
-    const appStore = useAppStore();
-
-    if (!appStore.selectedProvider) {
-      alert("API Provider is not set");
-      return path;
-    }
-
-    const host = appStore.selectedProvider.api;
-
-    return `${host}/v1/${path}`;
+    return {
+      "Access-Token": userStore.accessToken,
+    };
   }
 
   async register(payload: {
@@ -99,115 +16,154 @@ class API {
     password?: string;
     email?: string;
   }) {
-    return this.request<MoodleUser>(this.prepareURL("auth/register"), {
-      method: "POST",
-      json: payload,
-    });
+    return request((client) =>
+      client.auth.register.$post({
+        json: {
+          moodleToken: payload.token,
+          email: payload.email,
+          password: payload.password,
+        },
+      }),
+    );
   }
 
   async login(payload: { identifier: string; password: string }) {
-    return this.request<
-      UserSettings & {
-        moodle_token: string;
-      }
-    >(this.prepareURL("auth/password"), {
-      method: "POST",
-      json: payload,
-    });
+    return request((client) =>
+      client.auth.login.$post({
+        json: {
+          identifier: payload.identifier,
+          password: payload.password,
+        },
+      }),
+    );
   }
 
   async authorize(token: string) {
-    return this.request<
-      UserSettings & {
-        moodle_token: string;
-      }
-    >(this.prepareURL("auth/token"), {
-      method: "POST",
-      json: { token },
-    });
+    return request((client) =>
+      client.auth["one-tap"].$post({
+        json: {
+          moodleToken: token,
+        },
+      }),
+    );
   }
 
   async deleteUser() {
-    return this.request<{}>(this.prepareURL("user"), {
-      method: "DELETE",
-    });
+    return request((client) =>
+      client.goodbye.$delete(
+        {},
+        {
+          headers: this.getAuthHeaders(),
+        },
+      ),
+    );
   }
 
   async getUserSettings() {
-    return this.request<UserSettings>(this.prepareURL("user/settings"), {
-      method: "GET",
-    });
+    return request((client) =>
+      client.user.settings.$get(
+        {},
+        {
+          headers: this.getAuthHeaders(),
+        },
+      ),
+    );
   }
 
   async updateUserSettings({
-    name_alias,
+    handle,
     password,
-    deadlines_notification,
-    grades_notification,
   }: {
-    name_alias?: string;
+    handle?: string;
     password?: string;
-    deadlines_notification?: boolean;
-    grades_notification?: boolean;
   }) {
-    return this.request<UserSettings>(this.prepareURL("user/settings"), {
-      method: "POST",
-      json: {
-        name_alias,
-        password,
-        deadlines_notification,
-        grades_notification,
-      },
-    });
+    return request((client) =>
+      client.user.settings.$post(
+        {
+          json: {
+            handle,
+            password,
+          },
+        },
+        {
+          headers: this.getAuthHeaders(),
+        },
+      ),
+    );
   }
 
   async getDeadlines() {
-    return this.request<Deadline[]>(this.prepareURL("user/deadlines"), {
-      method: "GET",
-    });
+    return request((client) =>
+      client.deadlines.$get(
+        {},
+        {
+          headers: this.getAuthHeaders(),
+        },
+      ),
+    );
   }
 
   async getActiveCourses() {
-    return this.request<ActiveCourse[]>(this.prepareURL("user/courses"), {
-      method: "GET",
-    });
+    return request((client) =>
+      client.courses.$get(
+        {},
+        {
+          headers: this.getAuthHeaders(),
+        },
+      ),
+    );
   }
 
   async getCoursesOverall() {
-    return this.request<ExtendedCourse[]>(
-      this.prepareURL("user/courses/overall"),
-      {
-        method: "GET",
-      },
+    return request((client) =>
+      client.courses.overall.$get(
+        {},
+        {
+          headers: this.getAuthHeaders(),
+        },
+      ),
     );
   }
 
   async getCourseContent(courseId: string, signal?: AbortSignal) {
-    return this.request<Course>(this.prepareURL(`course/${courseId}`), {
-      method: "GET",
-      signal,
-      searchParams: {
-        content: 1,
-      },
-    });
+    return request((client) =>
+      client.course[":courseId"].$get(
+        {
+          param: { courseId },
+          query: { content: "1" },
+        },
+        {
+          init: { signal },
+          headers: this.getAuthHeaders(),
+        },
+      ),
+    );
   }
 
   async getCourseAssignments(courseId: string, signal?: AbortSignal) {
-    return this.request<Assignment[]>(
-      this.prepareURL(`course/${courseId}/assignments`),
-      {
-        method: "GET",
-        signal,
-      },
+    return request((client) =>
+      client.course[":courseId"].assignments.$get(
+        {
+          param: { courseId },
+        },
+        {
+          init: { signal },
+          headers: this.getAuthHeaders(),
+        },
+      ),
     );
   }
 
   async getCourseGrades(courseId: string) {
-    return this.request<CourseGradeItem[]>(
-      this.prepareURL(`user/course/${courseId}/grades`),
-      {
-        method: "GET",
-      },
+    return request((client) =>
+      client.course[":courseId"].grades.$get(
+        {
+          param: { courseId },
+        },
+        {
+          headers: this.getAuthHeaders(),
+        },
+      ),
     );
   }
 }

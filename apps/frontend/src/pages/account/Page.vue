@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/shared/stores/user";
 import { RoundedSection, PageWrapper } from "@/entities/page";
-import type { UserSettings } from "@/shared/types";
+import type { UserSettings } from "@remoodle/types";
 import { api } from "@/shared/api";
 import { createAsyncProcess } from "@/shared/utils";
 import { useToast } from "@/shared/ui/toast";
@@ -19,7 +19,12 @@ const route = useRoute();
 
 const { toast } = useToast();
 
-const settings = ref<UserSettings>();
+const settings = ref<{
+  moodleId: number;
+  name: string;
+  handle: string;
+  hasPassword: boolean;
+}>();
 
 const { run: loadSettings, loading: loadingSettings } = createAsyncProcess(
   async () => {
@@ -46,11 +51,11 @@ onMounted(async () => {
     <template #title>
       <template v-if="settings">
         <div class="flex items-center gap-4">
-          <Picture :name="settings.moodle_id" :size="56" />
+          <Picture :name="settings.moodleId" :size="56" />
           <div class="flex flex-col">
             {{ settings.name }}
             <span class="text-sm text-muted-foreground">
-              {{ settings.username }}
+              {{ settings.handle }}
             </span>
           </div>
         </div>

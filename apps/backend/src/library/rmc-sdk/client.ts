@@ -1,5 +1,5 @@
 import { HTTPException } from "hono/http-exception";
-import { StatusCode } from "hono/utils/http-status";
+import type { StatusCode } from "hono/utils/http-status";
 import type {
   Course,
   ActiveCourse,

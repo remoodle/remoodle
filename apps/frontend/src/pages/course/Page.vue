@@ -11,7 +11,7 @@ import { Skeleton } from "@/shared/ui/skeleton";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { api } from "@/shared/api";
 import { createAsyncProcess, isDefined, insertIf, cn } from "@/shared/utils";
-import type { Course, Assignment } from "@/shared/types";
+import type { Course, Assignment } from "@remoodle/types";
 import { useBreakpoints } from "@/shared/utils/use-breakpoints";
 import { RouteName } from "@/shared/types";
 import CourseOverview from "./CourseOverview.vue";
@@ -243,7 +243,7 @@ const { preferences } = storeToRefs(userStore);
               <CourseAssignment
                 :assignment="assignment"
                 :loading-assignments="loadingAssignments"
-                :token="userStore.token"
+                :token="userStore.accessToken"
               />
             </template>
           </KeepAlive>

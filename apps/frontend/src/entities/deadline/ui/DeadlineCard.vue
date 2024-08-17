@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Deadline } from "@/shared/types";
+import type { Deadline } from "@remoodle/types";
 import { RouteName } from "@/shared/types";
 import {
   splitCourseName,

@@ -1,6 +1,7 @@
 {
-  "name": "backend",
+  "name": "@remoodle/backend",
   "version": "0.1.2",
+  "types": "index.d.ts",
   "scripts": {
     "dev": "tsx watch src/app.ts",
     "start": "tsx src/app.ts",

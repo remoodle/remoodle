@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CourseContent, CourseModule } from "@/shared/types";
+import type { CourseContent, CourseModule } from "@remoodle/types";
 import CourseContentModule from "./CourseContentModule.vue";
 import ContentGrid from "./ContentGrid.vue";
 

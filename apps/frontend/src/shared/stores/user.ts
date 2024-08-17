@@ -2,13 +2,14 @@ import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import { useStorage, StorageSerializers } from "@vueuse/core";
 import type { RemovableRef } from "@vueuse/core";
-import { getStorageKey, isDefined } from "@/shared/utils";
-import type { MoodleUser, User } from "@/shared/types";
+import { getStorageKey } from "@/shared/utils";
+import type { IUser } from "@remoodle/backend";
 
 export const useUserStore = defineStore("user", () => {
-  const token: RemovableRef<string> = useStorage(getStorageKey("token"), "");
+  const accessToken = useStorage(getStorageKey("accessToken"), "");
+  const refreshToken = useStorage(getStorageKey("refreshToken"), "");
 
-  const user: RemovableRef<User | undefined> = useStorage(
+  const user: RemovableRef<IUser | undefined> = useStorage(
     getStorageKey("user"),
     null,
     undefined,
@@ -16,24 +17,17 @@ export const useUserStore = defineStore("user", () => {
   );
 
   const authorized = computed(() => {
-    return !!user.value && !!token.value;
+    return !!user.value && !!accessToken.value && !!refreshToken.value;
   });
 
-  const setToken = (newToken: string) => {
-    token.value = newToken;
-  };
-
-  const login = (tokenData: string, userData: MoodleUser) => {
-    setToken(tokenData);
-    user.value = {
-      moodle_id: userData.moodle_id,
-      name: userData.name,
-      username: userData.username,
-      ...(isDefined(userData.name_alias) && {
-        name_alias: userData.name_alias,
-      }),
-      ...(isDefined(userData.email) && { name_alias: userData.email }),
-    };
+  const login = (
+    accessTokenData: string,
+    refreshTokenData: string,
+    userData: IUser,
+  ) => {
+    accessToken.value = accessTokenData;
+    refreshToken.value = refreshTokenData;
+    user.value = userData;
   };
 
   const defaultPreferences = Object.freeze({
@@ -50,8 +44,9 @@ export const useUserStore = defineStore("user", () => {
   );
 
   const logout = () => {
-    token.value = "";
     user.value = null;
+    accessToken.value = "";
+    refreshToken.value = "";
 
     preferences.value = getDefaultPreferences();
   };
@@ -59,8 +54,8 @@ export const useUserStore = defineStore("user", () => {
   return {
     user,
     preferences,
-    token,
-    setToken,
+    accessToken,
+    refreshToken,
     authorized,
     login,
     logout,

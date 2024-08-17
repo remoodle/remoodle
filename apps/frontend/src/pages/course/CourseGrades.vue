@@ -16,10 +16,10 @@ import {
 } from "@/shared/ui/table";
 import { useToast } from "@/shared/ui/toast";
 import { Link } from "@/shared/ui/link";
-import { RouteName, type CourseGradeItem } from "@/shared/types";
+import type { Grade, CourseGradeItem } from "@remoodle/types";
+import { RouteName } from "@/shared/types";
 import { createAsyncProcess, isDefined, splitCourseName } from "@/shared/utils";
 import { api } from "@/shared/api";
-import { type Grade } from "@/shared/types";
 
 defineOptions({
   name: "CourseGrades",

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import type { UserSettings } from "@/shared/types";
+import type { UserSettings } from "@remoodle/types";
 import { useUserStore } from "@/shared/stores/user";
 import {
   Dialog,
@@ -25,17 +25,21 @@ const { toast } = useToast();
 const userStore = useUserStore();
 
 const props = defineProps<{
-  settings: UserSettings;
+  settings: {
+    hasPassword: boolean;
+    handle: string;
+    name: string;
+  };
 }>();
 
-const hasPassword = ref(props.settings.has_password);
+const hasPassword = ref(props.settings.hasPassword);
 
-const initialHandle = ref(props.settings.name_alias || "");
+const initialHandle = ref(props.settings.handle || "");
 const handle = ref<string>(`${initialHandle.value}`);
 const { run: updateHandle, loading: updatingHandle } = createAsyncProcess(
   async () => {
     const [_, error] = await api.updateUserSettings({
-      name_alias: handle.value,
+      handle: handle.value,
     });
 
     if (error) {
@@ -116,6 +120,8 @@ const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
       throw error;
     }
 
+    console.log(_);
+
     toast({
       title: "Account deleted",
     });
@@ -177,7 +183,7 @@ const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
             </DialogTitle>
             <DialogDescription>
               <p class="break-words" v-if="!hasPassword">
-                for <strong>{{ settings.username }}</strong>
+                for <strong>{{ settings.handle }}</strong>
               </p>
             </DialogDescription>
           </DialogHeader>

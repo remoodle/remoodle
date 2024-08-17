@@ -3,12 +3,12 @@ import { Schema, model } from "mongoose";
 import { v7 as uuidv7 } from "uuid";
 import type { ExtendedCourse } from "@remoodle/types";
 
-export interface ICourse {
+export type ICourse = {
   _id: string;
   userId: string;
   data: ExtendedCourse[];
   fetchedAt: Date;
-}
+};
 
 type CourseModel = Model<ICourse>;
 

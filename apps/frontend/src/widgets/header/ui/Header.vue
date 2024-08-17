@@ -45,7 +45,7 @@ function getInitials(name: string) {
       <div class="ml-auto inline-flex w-1/2 items-center justify-end">
         <DropdownMenu v-if="userStore.user" :modal="false">
           <DropdownMenuTrigger>
-            <Picture :name="userStore.user.moodle_id" :size="36" />
+            <Picture :name="userStore.user.moodleId" :size="36" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>

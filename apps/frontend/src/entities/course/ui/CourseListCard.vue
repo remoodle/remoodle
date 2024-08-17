@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { ExtendedCourse } from "@/shared/types";
+import type { ExtendedCourse } from "@remoodle/types";
 import { RouteName } from "@/shared/types";
 import { splitCourseName } from "@/shared/utils";
 import {

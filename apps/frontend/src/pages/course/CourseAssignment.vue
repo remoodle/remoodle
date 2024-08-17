@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import type { Assignment } from "@/shared/types";
+import type { Assignment } from "@remoodle/types";
 import { FileIcon } from "@/entities/attachment";
 import { RouteName } from "@/shared/types";
 import { Link } from "@/shared/ui/link";

@@ -2,7 +2,7 @@ import { ref, type Ref } from "vue";
 import { clsx, type ClassValue } from "clsx";
 import { type RouteLocationRaw } from "vue-router";
 import { twMerge } from "tailwind-merge";
-import type { APIError } from "../types";
+import type { APIError } from "@remoodle/types";
 import { dayjs, type TDate } from "./dayjs";
 
 export { camelize, getCurrentInstance, toHandlerKey } from "vue";
