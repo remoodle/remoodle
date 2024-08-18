@@ -43,5 +43,5 @@ export const createClient = (url: string) => {
     return [data as T, null];
   }
 
-  return { client, request };
+  return { request };
 };
