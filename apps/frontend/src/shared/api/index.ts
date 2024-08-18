@@ -17,7 +17,7 @@ class API {
     email?: string;
   }) {
     return request((client) =>
-      client.auth.register.$post({
+      client.v1.auth["one-tap"].$post({
         json: {
           moodleToken: payload.token,
           email: payload.email,
@@ -29,7 +29,7 @@ class API {
 
   async login(payload: { identifier: string; password: string }) {
     return request((client) =>
-      client.auth.login.$post({
+      client.v1.auth.login.$post({
         json: {
           identifier: payload.identifier,
           password: payload.password,
@@ -38,19 +38,9 @@ class API {
     );
   }
 
-  async authorize(token: string) {
-    return request((client) =>
-      client.auth["one-tap"].$post({
-        json: {
-          moodleToken: token,
-        },
-      }),
-    );
-  }
-
   async deleteUser() {
     return request((client) =>
-      client.goodbye.$delete(
+      client.v1.goodbye.$delete(
         {},
         {
           headers: this.getAuthHeaders(),
@@ -61,7 +51,7 @@ class API {
 
   async getUserSettings() {
     return request((client) =>
-      client.user.settings.$get(
+      client.v1.user.settings.$get(
         {},
         {
           headers: this.getAuthHeaders(),
@@ -78,7 +68,7 @@ class API {
     password?: string;
   }) {
     return request((client) =>
-      client.user.settings.$post(
+      client.v1.user.settings.$post(
         {
           json: {
             handle,
@@ -94,7 +84,7 @@ class API {
 
   async getDeadlines() {
     return request((client) =>
-      client.deadlines.$get(
+      client.v1.deadlines.$get(
         {},
         {
           headers: this.getAuthHeaders(),
@@ -105,7 +95,7 @@ class API {
 
   async getActiveCourses() {
     return request((client) =>
-      client.courses.$get(
+      client.v1.courses.$get(
         {},
         {
           headers: this.getAuthHeaders(),
@@ -116,7 +106,7 @@ class API {
 
   async getCoursesOverall() {
     return request((client) =>
-      client.courses.overall.$get(
+      client.v1.courses.overall.$get(
         {},
         {
           headers: this.getAuthHeaders(),
@@ -127,7 +117,7 @@ class API {
 
   async getCourseContent(courseId: string, signal?: AbortSignal) {
     return request((client) =>
-      client.course[":courseId"].$get(
+      client.v1.course[":courseId"].$get(
         {
           param: { courseId },
           query: { content: "1" },
@@ -142,7 +132,7 @@ class API {
 
   async getCourseAssignments(courseId: string, signal?: AbortSignal) {
     return request((client) =>
-      client.course[":courseId"].assignments.$get(
+      client.v1.course[":courseId"].assignments.$get(
         {
           param: { courseId },
         },
@@ -156,7 +146,7 @@ class API {
 
   async getCourseGrades(courseId: string) {
     return request((client) =>
-      client.course[":courseId"].grades.$get(
+      client.v1.course[":courseId"].grades.$get(
         {
           param: { courseId },
         },

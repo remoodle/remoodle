@@ -3,8 +3,6 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
-// import type { MoodleUser } from "@remoodle/types";
-
 import { db } from "../../../library/db";
 import type { IUser } from "../../../library/db/mongo/models/User";
 import { RMC } from "../../../library/rmc-sdk";
@@ -13,11 +11,10 @@ import { generateOTP, hashPassword, verifyPassword } from "../helpers/crypto";
 import { issueTokens } from "../helpers/jwt";
 
 import { authMiddleware } from "../middleware/auth";
-import { config } from "../../../config";
 
 const publicApi = new Hono()
   .post(
-    "/auth/register",
+    "/auth/one-tap",
     zValidator(
       "json",
       z.object({
@@ -28,56 +25,53 @@ const publicApi = new Hono()
       }),
     ),
     async (ctx) => {
-      console.log("register");
       const { email, telegramId, moodleToken, password } =
         ctx.req.valid("json");
 
       const rmc = new RMC({ moodleToken });
 
-      let id = "";
+      let user: IUser | null = await db.user.findOne({ moodleToken });
 
-      try {
-        const [data, error] = await rmc.v1_auth_register({
-          token: moodleToken,
-        });
+      if (!user) {
+        try {
+          const [data, error] = await rmc.v1_auth_register({
+            token: moodleToken,
+          });
 
-        if (error) {
-          throw error;
+          if (error) {
+            throw error;
+          }
+
+          user = (await db.user.create({
+            email,
+            telegramId,
+            moodleToken,
+            name: data.name,
+            moodleId: data.moodle_id,
+            handle: data.username,
+            ...(data.email && { email: data.email }),
+            ...(password && { password: hashPassword(password) }),
+          })) as IUser;
+        } catch (error: any) {
+          const [data, _] = await rmc.v1_delete_user();
+          await db.user.deleteOne({ _id: user?._id });
+
+          throw new HTTPException(500, {
+            message: error.message,
+          });
         }
-
-        const user = (await db.user.create({
-          email,
-          telegramId,
-          moodleToken,
-          name: data.name,
-          moodleId: data.moodle_id,
-          handle: data.username,
-          ...(data.email && { email: data.email }),
-          ...(password && { password: hashPassword(password) }),
-        })) as IUser;
-
-        id = user._id;
-
-        // user.password = "***";
-
-        const { accessToken, refreshToken } = issueTokens(
-          user._id,
-          user.moodleId,
-        );
-
-        return ctx.json({
-          user,
-          accessToken,
-          refreshToken,
-        });
-      } catch (error: any) {
-        const [data, _] = await rmc.v1_delete_user();
-        await db.user.deleteOne({ _id: id });
-
-        throw new HTTPException(500, {
-          message: error.message,
-        });
       }
+
+      const { accessToken, refreshToken } = issueTokens(
+        user._id,
+        user.moodleId,
+      );
+
+      return ctx.json({
+        user,
+        accessToken,
+        refreshToken,
+      });
     },
   )
   .post(
@@ -122,69 +116,6 @@ const publicApi = new Hono()
           refreshToken,
         });
       } catch (error: any) {
-        // console.log(error);
-        // throw error;
-        throw new HTTPException(500, {
-          message: error.message,
-        });
-      }
-    },
-  )
-  .post(
-    "/auth/one-tap",
-    zValidator(
-      "json",
-      z.object({
-        moodleToken: z.string(),
-        telegramId: z.number().optional(),
-      }),
-    ),
-    async (ctx) => {
-      const { moodleToken, telegramId } = ctx.req.valid("json");
-
-      try {
-        let user = (await db.user.findOne({ moodleToken })) as IUser | null;
-
-        if (!user) {
-          const res = await fetch(
-            `http://${config.http.host}:${config.http.port}/auth/register`,
-            {
-              method: "POST",
-              body: JSON.stringify({
-                moodleToken,
-                telegramId,
-                // telegramId: 342858247,
-              }),
-              headers: {
-                "Content-Type": "application/json",
-              },
-            },
-          );
-
-          if (!res.ok) {
-            throw new Error("Something went wrong");
-          }
-
-          const data = (await res.json()) as {
-            user: IUser;
-            accessToken: string;
-            refreshToken: string;
-          };
-
-          return ctx.json(data);
-        } else {
-          const { accessToken, refreshToken } = issueTokens(
-            user._id.toString(),
-            user.moodleId,
-          );
-
-          return ctx.json({
-            user,
-            accessToken,
-            refreshToken,
-          });
-        }
-      } catch (error: any) {
         throw new HTTPException(500, {
           message: error.message,
         });
@@ -213,8 +144,6 @@ const privateApi = new Hono<{
   .use("*", authMiddleware())
   .get("/deadlines", async (ctx) => {
     const moodleId = ctx.get("moodleId");
-
-    // console.log(moodleId);
 
     const rmc = new RMC({ moodleId });
     const [data, error] = await rmc.v1_user_deadlines();
@@ -311,11 +240,6 @@ const privateApi = new Hono<{
         message: "User not found",
       });
     }
-
-    //   moodleId: number;
-    // name: string;
-    // handle: string;
-    // hasPassword: boolean;
 
     return ctx.json({
       moodleId: user.moodleId,
@@ -420,8 +344,6 @@ const privateApi = new Hono<{
 
       const telegramId = ctx.get("telegramId");
 
-      console.log(telegramId);
-
       if (!user) {
         throw new HTTPException(400, {
           message: "User not found",
@@ -491,4 +413,7 @@ const privateApi = new Hono<{
     return ctx.json({ ok: true });
   });
 
-export { publicApi, privateApi };
+export const v1 = {
+  public: publicApi,
+  private: privateApi,
+};

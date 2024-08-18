@@ -7,7 +7,7 @@ import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { config } from "../../config";
 import { errorHandler } from "./middleware/error";
-import { publicApi, privateApi } from "./router/routes";
+import { v1 } from "./router/v1";
 
 const api = new Hono();
 
@@ -21,7 +21,11 @@ api.use(
   }),
 );
 
-const routes = api.route("/", publicApi).route("/", privateApi);
+api.get("/health", async (ctx) => {
+  return ctx.json({ status: "ok" });
+});
+
+const routes = api.route("/v1", v1.public).route("/v1", v1.private);
 
 export type AppType = typeof routes;
 

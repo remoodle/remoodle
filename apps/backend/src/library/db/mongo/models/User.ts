@@ -12,7 +12,7 @@ export type IUser = {
   telegramId?: number;
   password?: string;
   otp?: string;
-  otpExpiry?: Date;
+  otpExpiry?: string;
 };
 
 type UserModel = Model<IUser>;
@@ -23,7 +23,7 @@ const userSchema = new Schema<IUser, UserModel>(
     name: { type: String, required: true },
     handle: { type: String, required: true, unique: true },
     moodleId: { type: Number, required: true, unique: true },
-    moodleToken: { type: String, required: true },
+    moodleToken: { type: String, required: true, unique: true },
     email: { type: String },
     telegramId: { type: Number },
     password: { type: String },

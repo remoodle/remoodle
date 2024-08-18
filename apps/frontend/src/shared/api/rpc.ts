@@ -4,10 +4,6 @@ import type { StatusCode } from "hono/utils/http-status";
 import type { APIErrorResponse, APIError } from "@remoodle/types";
 import type { AppType } from "@remoodle/backend";
 
-// const getStoredApi = () => {
-//  return localStorage.getItem("api") || "http://localhost:9000/";
-// };
-
 const client = hc<AppType>("http://localhost:9000/");
 
 type ClientFn<T, Z extends "json" | "text" = "json"> = (

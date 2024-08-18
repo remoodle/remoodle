@@ -18,7 +18,9 @@ const form = ref({
 const { toast } = useToast();
 
 const { run: submit, loading } = createAsyncProcess(async () => {
-  const [data, error] = await api.authorize(form.value.token);
+  const [data, error] = await api.register({
+    token: form.value.token,
+  });
 
   if (error) {
     toast({
