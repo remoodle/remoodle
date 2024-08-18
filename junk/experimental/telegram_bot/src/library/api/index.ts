@@ -1,3 +1,6 @@
-import { createClient } from "@remoodle/backend";
+import { createHC } from "@remoodle/hc-wrapper";
+import type { AppType } from "@remoodle/backend";
 
-export const { request } = createClient("http://localhost:9000/");
+const { request } = createHC<AppType>("http://localhost:9000/");
+
+export { request };

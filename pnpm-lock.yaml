@@ -101,6 +101,9 @@ importers:
       '@radix-icons/vue':
         specifier: ^1.0.0
         version: 1.0.0(vue@3.4.37(typescript@5.4.5))
+      '@remoodle/hc-wrapper':
+        specifier: workspace:*
+        version: link:../../packages/hc-wrapper
       '@vueuse/core':
         specifier: ^10.7.1
         version: 10.11.1(vue@3.4.37(typescript@5.4.5))
@@ -116,9 +119,6 @@ importers:
       filesize:
         specifier: ^10.1.1
         version: 10.1.4
-      hono:
-        specifier: ^4.5.5
-        version: 4.5.5
       linkify:
         specifier: ^0.2.1
         version: 0.2.1
@@ -271,15 +271,15 @@ importers:
 
   junk/experimental/telegram_bot:
     dependencies:
+      '@remoodle/hc-wrapper':
+        specifier: workspace:*
+        version: link:../../../packages/hc-wrapper
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
       envalid:
         specifier: ^8.0.0
         version: 8.0.0
-      hono:
-        specifier: ^4.5.5
-        version: 4.5.5
       telegraf:
         specifier: 4.16.3
         version: 4.16.3
@@ -341,6 +341,34 @@ importers:
       typescript:
         specifier: ^5.0.4
         version: 5.5.4
+
+  packages/hc-wrapper:
+    dependencies:
+      hono:
+        specifier: ^4.5.5
+        version: 4.5.5
+    devDependencies:
+      '@remoodle/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@remoodle/prettier-config':
+        specifier: workspace:*
+        version: link:../prettier-config
+      '@remoodle/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@remoodle/types':
+        specifier: workspace:*
+        version: link:../types
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
+      typescript:
+        specifier: ~5.4.3
+        version: 5.4.5
 
   packages/prettier-config: {}
 
