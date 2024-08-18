@@ -52,16 +52,16 @@
     }
   ],
   "packages": {
-    "remoodle/frontend": {
+    "apps/frontend": {
       "release-type": "node",
       "package-name": "remoodle/frontend",
       "pull-request-title-pattern": "chore${scope}: release ${component} (deploy-as: release-${version})"
     },
-    "remoodle/backend": {
+    "apps/backend": {
       "release-type": "node",
       "package-name": "remoodle/backend"
     },
-    "remoodle/telegram_bot": {
+    "apps/telegram_bot": {
       "release-type": "python",
       "package-name": "remoodle/telegram_bot"
     }
