@@ -14,22 +14,21 @@ import { authMiddleware } from "../middleware/auth";
 
 const publicApi = new Hono()
   .post(
-    "/auth/one-tap",
+    "/auth/register",
     zValidator(
       "json",
       z.object({
         moodleToken: z.string(),
         email: z.string().optional(),
-        telegramId: z.number().optional(),
         password: z.string().optional(),
       }),
     ),
     async (ctx) => {
-      const { email, telegramId, moodleToken, password } =
-        ctx.req.valid("json");
+      const { email, moodleToken, password } = ctx.req.valid("json");
 
       const rmc = new RMC({ moodleToken });
 
+      // TODO: Refactor this
       let user: IUser | null = await db.user.findOne({ moodleToken });
 
       if (!user) {
@@ -44,7 +43,6 @@ const publicApi = new Hono()
 
           user = (await db.user.create({
             email,
-            telegramId,
             moodleToken,
             name: data.name,
             moodleId: data.moodle_id,
@@ -301,7 +299,35 @@ const privateApi = new Hono<{
       }
     },
   )
-  .post("/user/telegram/otp/generate", async (ctx) => {
+  .delete("/goodbye", async (ctx) => {
+    const userId = ctx.get("userId");
+
+    const user = await db.user.findOne({ _id: userId });
+
+    if (!user) {
+      throw new HTTPException(400, {
+        message: "User not found",
+      });
+    }
+
+    const rmc = new RMC({ moodleId: user.moodleId });
+    const [_, error] = await rmc.v1_delete_user();
+
+    if (error) {
+      throw error;
+    }
+
+    try {
+      await db.user.deleteOne({ _id: userId });
+    } catch (error) {
+      throw new HTTPException(500, {
+        message: `Failed to delete user from the database ${error}`,
+      });
+    }
+
+    return ctx.json({ ok: true });
+  })
+  .post("/telegram/otp/generate", async (ctx) => {
     const userId = ctx.get("userId");
 
     const user = await db.user.findOne({ _id: userId });
@@ -330,7 +356,7 @@ const privateApi = new Hono<{
   // FROM TELEGRAM BOT ONLY WITH ::0
   // TODO: Add auth middleware or move to bot
   .post(
-    "/user/telegram/otp/verify",
+    "/telegram/otp/verify",
     zValidator(
       "json",
       z.object({
@@ -384,34 +410,57 @@ const privateApi = new Hono<{
       return ctx.json({ ok: true });
     },
   )
-  .delete("/goodbye", async (ctx) => {
-    const userId = ctx.get("userId");
+  .post(
+    "/telegram/register",
+    zValidator(
+      "json",
+      z.object({
+        moodleToken: z.string(),
+      }),
+    ),
+    async (ctx) => {
+      const { moodleToken } = ctx.req.valid("json");
 
-    const user = await db.user.findOne({ _id: userId });
+      const telegramId = ctx.get("telegramId");
 
-    if (!user) {
-      throw new HTTPException(400, {
-        message: "User not found",
+      const rmc = new RMC({ moodleToken });
+
+      // TODO: Refactor this
+      let user: IUser | null = await db.user.findOne({ moodleToken });
+
+      if (!user) {
+        try {
+          const [data, error] = await rmc.v1_auth_register({
+            token: moodleToken,
+          });
+
+          if (error) {
+            throw error;
+          }
+
+          user = (await db.user.create({
+            telegramId,
+            moodleToken,
+            name: data.name,
+            moodleId: data.moodle_id,
+            handle: data.username,
+            ...(data.email && { email: data.email }),
+          })) as IUser;
+        } catch (error: any) {
+          const [data, _] = await rmc.v1_delete_user();
+          await db.user.deleteOne({ _id: user?._id });
+
+          throw new HTTPException(500, {
+            message: error.message,
+          });
+        }
+      }
+
+      return ctx.json({
+        user,
       });
-    }
-
-    const rmc = new RMC({ moodleId: user.moodleId });
-    const [_, error] = await rmc.v1_delete_user();
-
-    if (error) {
-      throw error;
-    }
-
-    try {
-      await db.user.deleteOne({ _id: userId });
-    } catch (error) {
-      throw new HTTPException(500, {
-        message: `Failed to delete user from the database ${error}`,
-      });
-    }
-
-    return ctx.json({ ok: true });
-  });
+    },
+  );
 
 export const v1 = {
   public: publicApi,

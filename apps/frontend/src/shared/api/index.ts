@@ -12,12 +12,11 @@ class API {
 
   async register(payload: {
     token: string;
-    name_alias?: string;
-    password?: string;
     email?: string;
+    password?: string;
   }) {
     return request((client) =>
-      client.v1.auth["one-tap"].$post({
+      client.v1.auth.register.$post({
         json: {
           moodleToken: payload.token,
           email: payload.email,
