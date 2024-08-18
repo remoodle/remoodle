@@ -14,7 +14,6 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@remoodle/backend": "workspace:*",
     "@boringer-avatars/vue3": "^0.2.1",
     "@radix-icons/vue": "^1.0.0",
     "@vueuse/core": "^10.7.1",
@@ -41,6 +40,7 @@
     "@julr/vite-plugin-validate-env": "^1.1.1",
     "@remoodle/eslint-config": "workspace:^",
     "@remoodle/prettier-config": "workspace:^",
+    "@remoodle/backend": "workspace:*",
     "@remoodle/types": "workspace:*",
     "@rushstack/eslint-patch": "^1.3.3",
     "@tailwindcss/typography": "^0.5.10",
