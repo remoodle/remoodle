@@ -117,6 +117,8 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
         run: pnpm build-only --mode="preview"
 
+      - run: echo "ignore-workspace-root-check=true" >> .npmrc
+
       - name: Deploy on named branch
         uses: cloudflare/wrangler-action@v3
         with:
