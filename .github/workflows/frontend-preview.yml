@@ -117,14 +117,15 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
         run: pnpm build-only --mode="preview"
 
+      - run: echo "ignore-workspace-root-check=true" >> .npmrc
+
       - name: Deploy on named branch
         uses: cloudflare/wrangler-action@v3
         with:
-          workingDirectory: ./apps/frontend
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
           command: >
-            pages deploy dist
+            pages deploy apps/frontend/dist
             --project-name="frontend-dev-svo"
             --branch="${{ steps.deploy-as.outputs.result }}"
 
