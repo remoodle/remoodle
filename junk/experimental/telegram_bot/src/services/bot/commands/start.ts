@@ -1,7 +1,7 @@
 import type { Context } from "telegraf";
 import type { Update } from "@telegraf/types";
 
-import { request } from "../../../library/rpc";
+import { request } from "../../../library/api";
 import type { ICommand } from "./types";
 
 export class StartCommand implements ICommand {
