@@ -41,7 +41,7 @@ showRoutes(api, {
   verbose: true,
 });
 
-export const startApi = () => {
+export const startServer = () => {
   serve(
     {
       hostname: config.http.host,

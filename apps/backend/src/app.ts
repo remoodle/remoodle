@@ -1,7 +1,7 @@
-import { startApi } from "./services/api";
+import { startServer } from "./services/server";
 import { startNotifier } from "./services/notifier";
 import { startCrawler } from "./services/crawler";
 
-startApi();
+startServer();
 startCrawler();
 startNotifier();
