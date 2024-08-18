@@ -305,6 +305,12 @@ importers:
       '@types/node':
         specifier: ^20.11.17
         version: 20.14.15
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
       tsx:
         specifier: ^4.7.1
         version: 4.17.0
