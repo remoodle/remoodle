@@ -122,11 +122,10 @@ jobs:
       - name: Deploy on named branch
         uses: cloudflare/wrangler-action@v3
         with:
-          workingDirectory: ./apps/frontend
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
           command: >
-            echo "ignore-workspace-root-check=true" >> .npmrc &&
+            cd apps/frontend &&
             pages deploy dist
             --project-name="frontend-dev-svo"
             --branch="${{ steps.deploy-as.outputs.result }}"
