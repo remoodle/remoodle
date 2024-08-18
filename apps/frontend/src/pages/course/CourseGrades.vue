@@ -19,7 +19,7 @@ import { Link } from "@/shared/ui/link";
 import type { Grade, CourseGradeItem } from "@remoodle/types";
 import { RouteName } from "@/shared/types";
 import { createAsyncProcess, isDefined, splitCourseName } from "@/shared/utils";
-import { api } from "@/shared/api";
+import { request, getAuthHeaders } from "@/shared/api";
 
 defineOptions({
   name: "CourseGrades",
@@ -44,7 +44,16 @@ const {
   loading,
   error,
 } = createAsyncProcess(async (id: string) => {
-  const [data, error] = await api.getCourseGrades(id);
+  const [data, error] = await request((client) =>
+    client.v1.course[":courseId"].grades.$get(
+      {
+        param: { courseId: id },
+      },
+      {
+        headers: getAuthHeaders(),
+      },
+    ),
+  );
 
   if (error) {
     throw error;

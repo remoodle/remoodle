@@ -4,7 +4,7 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Separator } from "@/shared/ui/separator";
 import { useToast } from "@/shared/ui/toast";
-import { api } from "@/shared/api";
+import { request, getAuthHeaders } from "@/shared/api";
 import { createAsyncProcess } from "@/shared/utils";
 
 const props = defineProps<{
@@ -18,7 +18,14 @@ const { toast } = useToast();
 const TELEGRAM_BOT_URL = "https://t.me/remoodlebot";
 
 const { run: generate, loading } = createAsyncProcess(async () => {
-  const [data, error] = await api.generateOTP();
+  const [data, error] = await request((client) =>
+    client.v1.telegram.otp.generate.$post(
+      {},
+      {
+        headers: getAuthHeaders(),
+      },
+    ),
+  );
 
   if (error) {
     toast({

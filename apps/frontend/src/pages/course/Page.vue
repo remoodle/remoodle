@@ -9,7 +9,7 @@ import { Link } from "@/shared/ui/link";
 import { Button } from "@/shared/ui/button";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { ScrollArea } from "@/shared/ui/scroll-area";
-import { api } from "@/shared/api";
+import { request, getAuthHeaders } from "@/shared/api";
 import { createAsyncProcess, isDefined, insertIf, cn } from "@/shared/utils";
 import type { Course, Assignment } from "@remoodle/types";
 import { useBreakpoints } from "@/shared/utils/use-breakpoints";
@@ -44,7 +44,18 @@ const {
 } = createAsyncProcess(async (id: string, signal: AbortSignal) => {
   updateCourse(undefined);
 
-  const [data, error] = await api.getCourseContent(id, signal);
+  const [data, error] = await request((client) =>
+    client.v1.course[":courseId"].$get(
+      {
+        param: { courseId: id },
+        query: { content: "1" },
+      },
+      {
+        init: { signal },
+        headers: getAuthHeaders(),
+      },
+    ),
+  );
 
   if (error) {
     throw error;
@@ -78,7 +89,17 @@ const {
 } = createAsyncProcess(async (id: string, signal: AbortSignal) => {
   updateAssignments(undefined);
 
-  const [data, error] = await api.getCourseAssignments(id, signal);
+  const [data, error] = await request((client) =>
+    client.v1.course[":courseId"].assignments.$get(
+      {
+        param: { courseId: id },
+      },
+      {
+        init: { signal },
+        headers: getAuthHeaders(),
+      },
+    ),
+  );
 
   if (error) {
     throw error;

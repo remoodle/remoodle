@@ -4,7 +4,7 @@ import { useRoute } from "vue-router";
 import { useUserStore } from "@/shared/stores/user";
 import { RoundedSection, PageWrapper } from "@/entities/page";
 import type { UserSettings } from "@remoodle/types";
-import { api } from "@/shared/api";
+import { request, getAuthHeaders } from "@/shared/api";
 import { createAsyncProcess } from "@/shared/utils";
 import { useToast } from "@/shared/ui/toast";
 import { Picture } from "@/shared/ui/picture";
@@ -29,7 +29,14 @@ const settings = ref<{
 
 const { run: loadSettings, loading: loadingSettings } = createAsyncProcess(
   async () => {
-    const [data, error] = await api.getUserSettings();
+    const [data, error] = await request((client) =>
+      client.v1.user.settings.$get(
+        {},
+        {
+          headers: getAuthHeaders(),
+        },
+      ),
+    );
 
     if (error) {
       toast({

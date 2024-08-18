@@ -17,7 +17,7 @@ import { Button } from "@/shared/ui/button";
 import { Label } from "@/shared/ui/label";
 import { Separator } from "@/shared/ui/separator";
 import { createAsyncProcess, isEmptyString } from "@/shared/utils";
-import { api } from "@/shared/api";
+import { request, getAuthHeaders } from "@/shared/api";
 import { useToast } from "@/shared/ui/toast";
 
 const { toast } = useToast();
@@ -38,9 +38,18 @@ const initialHandle = ref(props.settings.handle || "");
 const handle = ref<string>(`${initialHandle.value}`);
 const { run: updateHandle, loading: updatingHandle } = createAsyncProcess(
   async () => {
-    const [_, error] = await api.updateUserSettings({
-      handle: handle.value,
-    });
+    const [_, error] = await request((client) =>
+      client.v1.user.settings.$post(
+        {
+          json: {
+            handle: handle.value,
+          },
+        },
+        {
+          headers: getAuthHeaders(),
+        },
+      ),
+    );
 
     if (error) {
       toast({
@@ -80,9 +89,18 @@ const resetPasswordFields = () => {
 };
 const { run: updatePassword, loading: updatingPassword } = createAsyncProcess(
   async () => {
-    const [_, error] = await api.updateUserSettings({
-      password: newPassword.value,
-    });
+    const [_, error] = await request((client) =>
+      client.v1.user.settings.$post(
+        {
+          json: {
+            password: newPassword.value,
+          },
+        },
+        {
+          headers: getAuthHeaders(),
+        },
+      ),
+    );
 
     if (error) {
       toast({
@@ -111,7 +129,14 @@ const canUpdatePassword = computed(() => {
 
 const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
   async () => {
-    const [_, error] = await api.deleteUser();
+    const [_, error] = await request((client) =>
+      client.v1.goodbye.$delete(
+        {},
+        {
+          headers: getAuthHeaders(),
+        },
+      ),
+    );
 
     if (error) {
       toast({

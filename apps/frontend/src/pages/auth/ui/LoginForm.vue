@@ -6,7 +6,7 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { useToast } from "@/shared/ui/toast/use-toast";
-import { api } from "@/shared/api";
+import { request, getAuthHeaders } from "@/shared/api";
 import { createAsyncProcess, vFocus } from "@/shared/utils";
 import { useUserStore } from "@/shared/stores/user";
 import { RouteName } from "@/shared/types";
@@ -23,10 +23,14 @@ const form = ref({
 const { toast } = useToast();
 
 const { run: submit, loading } = createAsyncProcess(async () => {
-  const [data, error] = await api.login({
-    identifier: form.value.name,
-    password: form.value.password,
-  });
+  const [data, error] = await request((client) =>
+    client.v1.auth.login.$post({
+      json: {
+        identifier: form.value.name,
+        password: form.value.password,
+      },
+    }),
+  );
 
   if (error) {
     toast({

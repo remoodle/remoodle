@@ -6,7 +6,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { Skeleton } from "@/shared/ui/skeleton";
 import type { ExtendedCourse } from "@remoodle/types";
 import { createAsyncProcess, isDefined, partition } from "@/shared/utils";
-import { api } from "@/shared/api";
+import { request, getAuthHeaders } from "@/shared/api";
 
 const toggledCourseCategories = defineModel<string[]>("categories", {
   required: true,
@@ -19,7 +19,14 @@ const courses = ref<{
 const courseCategories = computed(() => Object.keys(courses.value || {}));
 
 const { run, loading, error } = createAsyncProcess(async () => {
-  const [data, error] = await api.getCoursesOverall();
+  const [data, error] = await request((client) =>
+    client.v1.courses.overall.$get(
+      {},
+      {
+        headers: getAuthHeaders(),
+      },
+    ),
+  );
 
   if (error) {
     throw error;

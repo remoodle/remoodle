@@ -5,7 +5,7 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { useToast } from "@/shared/ui/toast/use-toast";
-import { api } from "@/shared/api";
+import { request, getAuthHeaders } from "@/shared/api";
 import { createAsyncProcess, vFocus } from "@/shared/utils";
 import { useUserStore } from "@/shared/stores/user";
 
@@ -21,15 +21,19 @@ const form = ref({
 const { toast } = useToast();
 
 const { run: submit, loading } = createAsyncProcess(async () => {
-  const [data, error] = await api.register({
-    token: form.value.token,
-    ...(!isEmptyString(form.value.password) && {
-      password: form.value.password,
+  const [data, error] = await request((client) =>
+    client.v1.auth.register.$post({
+      json: {
+        moodleToken: form.value.token,
+        ...(!isEmptyString(form.value.password) && {
+          password: form.value.password,
+        }),
+        ...(!isEmptyString(form.value.name) && {
+          name_alias: form.value.name,
+        }),
+      },
     }),
-    ...(!isEmptyString(form.value.name) && {
-      name_alias: form.value.name,
-    }),
-  });
+  );
 
   if (error) {
     toast({

@@ -4,7 +4,7 @@ import { Error } from "@/entities/page";
 import { DeadlineCard } from "@/entities/deadline";
 import { Skeleton } from "@/shared/ui/skeleton";
 import type { Deadline } from "@remoodle/types";
-import { api } from "@/shared/api";
+import { request, getAuthHeaders } from "@/shared/api";
 import {
   createAsyncProcess,
   isDefined,
@@ -19,7 +19,14 @@ const deadlines = ref<{
 }>();
 
 const { run, loading, error } = createAsyncProcess(async () => {
-  const [data, error] = await api.getDeadlines();
+  const [data, error] = await request((client) =>
+    client.v1.deadlines.$get(
+      {},
+      {
+        headers: getAuthHeaders(),
+      },
+    ),
+  );
 
   if (error) {
     throw error;
