@@ -1,6 +1,6 @@
 import { hc } from "hono/client";
-import type { Hono } from "hono";
 import type { ClientResponse } from "hono/client";
+import type { Hono } from "hono";
 import type { StatusCode } from "hono/utils/http-status";
 import type { APIErrorResponse, APIError } from "@remoodle/types";
 
