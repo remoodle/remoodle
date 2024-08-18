@@ -25,10 +25,6 @@ on:
         required: true
         type: "string"
 
-defaults:
-  run:
-    working-directory: ./apps/frontend
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -115,7 +111,7 @@ jobs:
       - name: Build app in "preview" mode
         env:
           COMMIT_SHA: ${{ github.sha }}
-        run: pnpm build-only --mode="preview"
+        run: cd apps/frontend && pnpm build-only --mode="preview"
 
       - run: echo "ignore-workspace-root-check=true" >> .npmrc
 
