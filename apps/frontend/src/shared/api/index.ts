@@ -1,5 +1,7 @@
+import { createClient } from "@remoodle/backend";
 import { useUserStore } from "@/shared/stores/user";
-import { request } from "./rpc";
+
+const { request } = createClient("http://localhost:9000/");
 
 class API {
   private getAuthHeaders() {

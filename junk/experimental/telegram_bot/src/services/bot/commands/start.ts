@@ -1,7 +1,7 @@
 import type { Context } from "telegraf";
 import type { Update } from "@telegraf/types";
 
-import { client } from "../../../library/rpc";
+import { request } from "../../../library/rpc";
 import type { ICommand } from "./types";
 
 export class StartCommand implements ICommand {
@@ -11,20 +11,22 @@ export class StartCommand implements ICommand {
 
     const otp = messageText.split(" ")[1];
 
-    const response = await client.v1.telegram.otp.verify.$post(
-      {
-        json: {
-          otp,
+    const [_, error] = await request((client) =>
+      client.v1.telegram.otp.verify.$post(
+        {
+          json: {
+            otp,
+          },
         },
-      },
-      {
-        headers: {
-          Authorization: `Basic aboba::${ctx.from?.id}::0`,
+        {
+          headers: {
+            Authorization: `Basic aboba::${ctx.from?.id}::0`,
+          },
         },
-      },
+      ),
     );
 
-    if (!response.ok) {
+    if (error) {
       await ctx.reply(
         "Invalid or expired OTP. Please try again from the website.",
       );
