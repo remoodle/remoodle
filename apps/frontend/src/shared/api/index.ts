@@ -155,6 +155,17 @@ class API {
       ),
     );
   }
+
+  async generateOTP() {
+    return request((client) =>
+      client.v1.telegram.otp.generate.$post(
+        {},
+        {
+          headers: this.getAuthHeaders(),
+        },
+      ),
+    );
+  }
 }
 
 export const api = new API();

@@ -244,6 +244,7 @@ const privateApi = new Hono<{
       name: user.name,
       handle: user.handle,
       hasPassword: !!user.password,
+      telegramId: user.telegramId,
     });
   })
   .post(
@@ -335,6 +336,12 @@ const privateApi = new Hono<{
     if (!user) {
       throw new HTTPException(400, {
         message: "User not found",
+      });
+    }
+
+    if (user.telegramId) {
+      throw new HTTPException(400, {
+        message: "Telegram ID already connected",
       });
     }
 

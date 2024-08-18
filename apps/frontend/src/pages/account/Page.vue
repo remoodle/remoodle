@@ -24,6 +24,7 @@ const settings = ref<{
   name: string;
   handle: string;
   hasPassword: boolean;
+  telegramId?: number;
 }>();
 
 const { run: loadSettings, loading: loadingSettings } = createAsyncProcess(
@@ -74,7 +75,7 @@ onMounted(async () => {
               <AccountProfilePage :settings="settings" />
             </template>
             <template v-else-if="route.name === RouteName.AccountNotifications">
-              <AccountNotificationsPage />
+              <AccountNotificationsPage :settings="settings" />
             </template>
           </div>
         </div>
