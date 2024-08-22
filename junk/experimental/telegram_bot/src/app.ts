@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 import { config } from "./config";
 
 import { createServer } from "./services/server";
@@ -15,18 +13,18 @@ function main(): void {
   const bot = createBot(config.bot.token);
 
   process.once("SIGINT", () => {
-    bot.stop("SIGINT");
+    bot.stop();
     server.close();
   });
 
   process.once("SIGTERM", () => {
-    bot.stop("SIGTERM");
+    bot.stop();
     server.close();
   });
 
   console.log("💨 Bot is running");
 
-  bot.launch();
+  bot.start();
 }
 
 main();

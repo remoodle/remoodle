@@ -1,16 +1,36 @@
-import { Telegraf } from "telegraf";
-
-import { StartCommand } from "./commands/start";
+import { Bot } from "grammy";
+import { request, getAuthHeaders } from "../../helpers/hc";
 
 export function createBot(token: string) {
-  const startCommand = new StartCommand();
+  const bot = new Bot(token);
 
-  const bot = new Telegraf(token);
+  bot.command("start", async (ctx) => {
+    if (!ctx.message?.text) {
+      return;
+    }
 
-  bot.start(startCommand.execute);
+    const otp = ctx.message.text.split(" ")[1];
 
-  bot.on("message", (ctx) => {
-    console.log("Received message", ctx.message);
+    const [_, error] = await request((client) =>
+      client.v1.telegram.otp.verify.$post(
+        {
+          json: {
+            otp,
+          },
+        },
+        {
+          headers: getAuthHeaders(ctx.from.id, 0),
+        },
+      ),
+    );
+
+    if (error) {
+      await ctx.reply(
+        "Invalid or expired OTP. Please try again from the website.",
+      );
+    }
+
+    await ctx.reply("✌️");
   });
 
   return bot;

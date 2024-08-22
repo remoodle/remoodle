@@ -12,7 +12,7 @@
     "@remoodle/hc-wrapper": "workspace:*",
     "dotenv": "^16.4.5",
     "envalid": "^8.0.0",
-    "telegraf": "4.16.3"
+    "grammy": "^1.29.0"
   },
   "devDependencies": {
     "@remoodle/backend": "workspace:*",
@@ -20,7 +20,6 @@
     "@remoodle/prettier-config": "workspace:*",
     "@remoodle/tsconfig": "workspace:*",
     "@remoodle/types": "workspace:*",
-    "@telegraf/types": "^7.1.0",
     "@types/node": "^20.11.17",
     "eslint": "^8.57.0",
     "prettier": "^3.3.3",
