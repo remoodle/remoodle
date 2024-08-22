@@ -18,6 +18,7 @@ jobs:
       has_release_pr: ${{ steps.release-please.outputs.prs_created }}
       release_pr: ${{ steps.release-please.outputs.pr }}
       release_created: ${{ steps.release-please.outputs.releases_created }}
+      version: ${{ steps.release-please.outputs['remoodle/frontend--version'] }}
     steps:
       - uses: actions/checkout@v4
       - uses: wsehl/release-please-action@main
@@ -53,6 +54,9 @@ jobs:
 
       - name: Install dependencies
         run: cd apps/frontend && pnpm install
+
+      - name: echo needs.release.outputs.version
+        run: echo ${{ needs.release.outputs.version }}
 
       - name: Build app
         env:
