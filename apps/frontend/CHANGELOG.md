@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.0.1...remoodle/frontend-v1.0.2) (2024-08-22)
+
+
+### Bug Fixes
+
+* test ([0ca9751](https://github.com/remoodle/heresy/commit/0ca9751e4b5fa911a04caaa3b52bb7a663aac8ce))
+
 ## [1.0.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.0.0...remoodle/frontend-v1.0.1) (2024-08-22)
 
 
