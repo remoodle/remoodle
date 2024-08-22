@@ -5,5 +5,5 @@
   "remoodle/backend+FILLER": "0.0.0",
   "remoodle/telegram_bot": "0.0.1",
   "remoodle/telegram_bot+FILLER": "0.0.0",
-  "apps/frontend": "1.0.0"
+  "apps/frontend": "1.0.1"
 }
