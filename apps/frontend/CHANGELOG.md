@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.0.0 (2024-08-18)
+
+
+### Features
+
+* integrate otp connect ([2ce8f1d](https://github.com/remoodle/heresy/commit/2ce8f1dabe85c48b0218a59f03019579ddd9206c))
+
+
+### Bug Fixes
+
+* move backed to dev deps ([5e09d23](https://github.com/remoodle/heresy/commit/5e09d237f50e044d9c7f14e802642f87b4bfbf49))
+* previews ([e81a88c](https://github.com/remoodle/heresy/commit/e81a88c207d1a0f7ef33c26393a635902c4a068d))
+* trigger deply ([0587389](https://github.com/remoodle/heresy/commit/05873892a260a211339a0c1053ae092cfbcd77e9))
+
+
+### Miscellaneous Chores
+
+* **remoodle/backend:** bump backend version ([2f8ab4b](https://github.com/remoodle/heresy/commit/2f8ab4b894d6c9d118469dc0816a7d5dfc9c78dd))
+
+
+### Code Refactoring
+
+* common rpc client ([db9eb3e](https://github.com/remoodle/heresy/commit/db9eb3e7b1f5ba023e066d2203be659620bc41be))
+* delayer api layer ([5ac8e92](https://github.com/remoodle/heresy/commit/5ac8e92142cdd2893947a4d3135626e5ecc71985))
+* hc-wrapper ([a33e5be](https://github.com/remoodle/heresy/commit/a33e5be0f7ff46385ab7be124a62b59f2703e54d))
+
 ## [0.4.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.4.0...remoodle/frontend-v0.4.1) (2024-07-23)
 
 
