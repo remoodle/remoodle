@@ -9,13 +9,13 @@ export function createBot(token: string) {
       return;
     }
 
-    const otp = ctx.message.text.split(" ")[1];
+    const token = ctx.message.text.split(" ")[1];
 
-    const [_, error] = await request((client) =>
-      client.v1.telegram.otp.verify.$post(
+    const [data, error] = await request((client) =>
+      client.v1.telegram.register.$post(
         {
           json: {
-            otp,
+            moodleToken: token,
           },
         },
         {
@@ -25,12 +25,10 @@ export function createBot(token: string) {
     );
 
     if (error) {
-      await ctx.reply(
-        "Invalid or expired OTP. Please try again from the website.",
-      );
+      return ctx.reply(error.message);
     }
 
-    await ctx.reply("✌️");
+    return ctx.reply(data.user.name);
   });
 
   return bot;
