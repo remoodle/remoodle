@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { MonoLogo } from "@/widgets/logo";
 import { ThemeSwitcher } from "@/features/theme-switcher";
-import { ProviderDialog } from "@/entities/provider";
-import { useAppStore } from "@/shared/stores/app";
-import APIVersion from "./APIVersion.vue";
 import ClientVersion from "./ClientVersion.vue";
-
-const appStore = useAppStore();
 
 withDefaults(
   defineProps<{
@@ -17,8 +11,6 @@ withDefaults(
     slim: false,
   },
 );
-
-const { providerId, availableProviders } = storeToRefs(appStore);
 </script>
 
 <template>
@@ -30,20 +22,6 @@ const { providerId, availableProviders } = storeToRefs(appStore);
         >
           <li>
             <ClientVersion />
-          </li>
-          <li>
-            <ProviderDialog
-              v-model:provider-id="providerId"
-              v-model:providers="availableProviders"
-            >
-              <template #default="{ selectedProvider }">
-                <p v-if="selectedProvider">
-                  Connected to
-                  {{ selectedProvider.name }}
-                </p>
-                <p v-else>Click here to select API Provider</p>
-              </template>
-            </ProviderDialog>
           </li>
           <li>
             <ThemeSwitcher v-slot="{ theme, toggleTheme }">
@@ -64,21 +42,6 @@ const { providerId, availableProviders } = storeToRefs(appStore);
       >
         <div class="flex flex-wrap gap-2 text-muted-foreground">
           <ClientVersion />
-          <ProviderDialog
-            v-model:provider-id="providerId"
-            v-model:providers="availableProviders"
-          >
-            <template #default="{ selectedProvider }">
-              <APIVersion
-                v-if="selectedProvider"
-                :host="selectedProvider.api"
-              />
-            </template>
-          </ProviderDialog>
-          <!-- <APIVersion
-            v-if="appStore.selectedProvider"
-            :host="appStore.selectedProvider.api"
-          /> -->
         </div>
         <ThemeSwitcher class="flex-none" />
       </div>

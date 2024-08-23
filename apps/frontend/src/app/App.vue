@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
-import { storeToRefs } from "pinia";
+import { watch } from "vue";
 import { RouterView, useRoute, useRouter } from "vue-router";
 import { useUserStore } from "@/shared/stores/user";
 import { useAppStore } from "@/shared/stores/app";
 import { RouteName } from "@/shared/types";
-import { defaultProviders } from "@/shared/config";
 import Toaster from "@/shared/ui/toast/Toaster.vue";
 
 const appStore = useAppStore();
-
-const { availableProviders } = storeToRefs(appStore);
 
 watch(
   () => appStore.theme,
@@ -19,14 +15,6 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(() => {
-  Object.assign(
-    availableProviders.value,
-    defaultProviders,
-    availableProviders.value,
-  );
-});
 
 const route = useRoute();
 const router = useRouter();
