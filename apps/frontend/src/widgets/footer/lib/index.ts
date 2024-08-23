@@ -5,5 +5,5 @@ export function getRepoURL(repo: string) {
 }
 
 export function getBuildInfo() {
-  return window.__BUILD_INFO__;
+  return __BUILD_INFO__;
 }

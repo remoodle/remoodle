@@ -7,8 +7,6 @@ type ImportMetaEnvAugmented =
 
 interface ImportMetaEnv extends ImportMetaEnvAugmented {}
 
-interface Window {
-  __BUILD_INFO__?: {
-    version: string;
-  };
-}
+declare const __BUILD_INFO__: ?{
+  version: string;
+};
