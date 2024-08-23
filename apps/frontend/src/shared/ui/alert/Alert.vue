@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { alertVariants } from ".";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 interface Props {
   variant?: NonNullable<Parameters<typeof alertVariants>[0]>["variant"];

@@ -5,8 +5,8 @@ import { CourseListCard } from "@/entities/course";
 import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { Skeleton } from "@/shared/ui/skeleton";
 import type { ExtendedCourse } from "@remoodle/types";
-import { createAsyncProcess, isDefined, partition } from "@/shared/utils";
-import { request, getAuthHeaders } from "@/shared/api";
+import { createAsyncProcess, isDefined, partition } from "@/shared/lib/helpers";
+import { request, getAuthHeaders } from "@/shared/lib/hc";
 
 const toggledCourseCategories = defineModel<string[]>("categories", {
   required: true,

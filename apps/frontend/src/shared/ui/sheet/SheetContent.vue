@@ -10,7 +10,7 @@ import {
 } from "radix-vue";
 import { X } from "lucide-vue-next";
 import { cva } from "class-variance-authority";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 interface SheetContentProps extends DialogContentProps {
   side?: "left" | "right" | "top" | "bottom";

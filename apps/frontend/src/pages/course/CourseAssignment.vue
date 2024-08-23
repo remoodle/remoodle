@@ -6,7 +6,7 @@ import { FileIcon } from "@/entities/attachment";
 import { RouteName } from "@/shared/types";
 import { Link } from "@/shared/ui/link";
 import { Text } from "@/shared/ui/text";
-// import { toRoutePath } from "@/shared/utils";
+// import { toRoutePath } from "@/shared/lib/helpers";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,7 +23,7 @@ import {
   fromUnix,
   prepareFileURL,
   getRelativeTime,
-} from "@/shared/utils";
+} from "@/shared/lib/helpers";
 
 defineOptions({
   name: "CourseAssignment",

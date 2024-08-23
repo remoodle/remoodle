@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 import { Button } from "@/shared/ui/button";
 import { Link } from "@/shared/ui/link";
 import { RouteName } from "@/shared/types";

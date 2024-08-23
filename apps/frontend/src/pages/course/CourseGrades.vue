@@ -18,8 +18,12 @@ import { useToast } from "@/shared/ui/toast";
 import { Link } from "@/shared/ui/link";
 import type { Grade, CourseGradeItem } from "@remoodle/types";
 import { RouteName } from "@/shared/types";
-import { createAsyncProcess, isDefined, splitCourseName } from "@/shared/utils";
-import { request, getAuthHeaders } from "@/shared/api";
+import {
+  createAsyncProcess,
+  isDefined,
+  splitCourseName,
+} from "@/shared/lib/helpers";
+import { request, getAuthHeaders } from "@/shared/lib/hc";
 
 defineOptions({
   name: "CourseGrades",

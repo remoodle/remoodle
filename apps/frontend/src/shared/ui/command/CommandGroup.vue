@@ -2,7 +2,7 @@
 import { type HTMLAttributes, computed } from "vue";
 import type { ComboboxGroupProps } from "radix-vue";
 import { ComboboxGroup, ComboboxLabel } from "radix-vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<
   ComboboxGroupProps & {

@@ -7,7 +7,7 @@ import {
   useEmitAsProps,
 } from "radix-vue";
 import { Circle } from "lucide-vue-next";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<DropdownMenuRadioItemProps & { class?: string }>();
 

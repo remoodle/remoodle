@@ -3,7 +3,7 @@ import type { AppType } from "@remoodle/backend";
 
 import { useUserStore } from "@/shared/stores/user";
 
-const { request } = createHC<AppType>("http://localhost:9000/");
+const { request } = createHC<AppType>(import.meta.env.VITE_SERVER_URL);
 
 const getAuthHeaders = () => {
   const userStore = useUserStore();

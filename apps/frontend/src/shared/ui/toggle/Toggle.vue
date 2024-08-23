@@ -7,7 +7,7 @@ import {
   useForwardPropsEmits,
 } from "radix-vue";
 import { type ToggleVariants, toggleVariants } from ".";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = withDefaults(
   defineProps<

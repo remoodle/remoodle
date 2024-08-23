@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ToastTitle, type ToastTitleProps } from "radix-vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<ToastTitleProps & { class?: string }>();
 </script>

@@ -16,8 +16,8 @@ import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
 import { Label } from "@/shared/ui/label";
 import { Separator } from "@/shared/ui/separator";
-import { createAsyncProcess, isEmptyString } from "@/shared/utils";
-import { request, getAuthHeaders } from "@/shared/api";
+import { createAsyncProcess, isEmptyString } from "@/shared/lib/helpers";
+import { request, getAuthHeaders } from "@/shared/lib/hc";
 import { useToast } from "@/shared/ui/toast";
 
 const { toast } = useToast();

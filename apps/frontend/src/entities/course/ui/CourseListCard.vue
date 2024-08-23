@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import type { ExtendedCourse } from "@remoodle/types";
 import { RouteName } from "@/shared/types";
-import { splitCourseName } from "@/shared/utils";
+import { splitCourseName } from "@/shared/lib/helpers";
 import {
   Tooltip,
   TooltipContent,

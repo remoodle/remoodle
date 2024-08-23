@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AlertDialogTitle, type AlertDialogTitleProps } from "radix-vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<AlertDialogTitleProps & { class?: string }>();
 </script>

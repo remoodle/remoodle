@@ -9,10 +9,15 @@ import { Link } from "@/shared/ui/link";
 import { Button } from "@/shared/ui/button";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { ScrollArea } from "@/shared/ui/scroll-area";
-import { request, getAuthHeaders } from "@/shared/api";
-import { createAsyncProcess, isDefined, insertIf, cn } from "@/shared/utils";
+import { request, getAuthHeaders } from "@/shared/lib/hc";
+import {
+  createAsyncProcess,
+  isDefined,
+  insertIf,
+  cn,
+} from "@/shared/lib/helpers";
 import type { Course, Assignment } from "@remoodle/types";
-import { useBreakpoints } from "@/shared/utils/use-breakpoints";
+import { useBreakpoints } from "@/shared/lib/use-breakpoints";
 import { RouteName } from "@/shared/types";
 import CourseOverview from "./CourseOverview.vue";
 import CourseGrades from "./CourseGrades.vue";

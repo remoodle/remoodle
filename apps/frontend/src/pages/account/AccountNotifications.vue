@@ -4,8 +4,8 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Separator } from "@/shared/ui/separator";
 import { useToast } from "@/shared/ui/toast";
-import { request, getAuthHeaders } from "@/shared/api";
-import { createAsyncProcess } from "@/shared/utils";
+import { request, getAuthHeaders } from "@/shared/lib/hc";
+import { createAsyncProcess } from "@/shared/lib/helpers";
 
 const props = defineProps<{
   settings: {

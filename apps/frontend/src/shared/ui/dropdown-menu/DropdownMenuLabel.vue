@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DropdownMenuLabel, type DropdownMenuLabelProps } from "radix-vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<
   DropdownMenuLabelProps & {

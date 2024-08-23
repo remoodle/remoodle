@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { prepareFileURL } from "@/shared/utils";
+import { prepareFileURL } from "@/shared/lib/helpers";
 import type { CourseModule } from "@remoodle/types";
 import { RouteName } from "@/shared/types";
 import { Link } from "@/shared/ui/link";
 import { Text } from "@/shared/ui/text";
-import { filesize } from "@/shared/utils";
+import { filesize } from "@/shared/lib/helpers";
 
 const props = defineProps<{
   courseId: number;

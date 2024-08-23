@@ -2,7 +2,7 @@
 import type { HTMLAttributes } from "vue";
 import { AvatarRoot } from "radix-vue";
 import { type AvatarVariants, avatarVariant } from ".";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = withDefaults(
   defineProps<{

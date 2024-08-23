@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { cn, isEmptyString } from "@/shared/utils";
+import { cn, isEmptyString } from "@/shared/lib/helpers";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { useToast } from "@/shared/ui/toast/use-toast";
-import { request, getAuthHeaders } from "@/shared/api";
-import { createAsyncProcess, vFocus } from "@/shared/utils";
+import { request, getAuthHeaders } from "@/shared/lib/hc";
+import { createAsyncProcess, vFocus } from "@/shared/lib/helpers";
 import { useUserStore } from "@/shared/stores/user";
 
 const userStore = useUserStore();

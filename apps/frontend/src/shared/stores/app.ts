@@ -1,7 +1,7 @@
 import { computed } from "vue";
 import { defineStore } from "pinia";
 import { useColorMode } from "@vueuse/core";
-import { getStorageKey } from "@/shared/utils";
+import { getStorageKey } from "@/shared/lib/helpers";
 
 export const useAppStore = defineStore("app", () => {
   const { store: storedTheme, system: systemTheme } = useColorMode({

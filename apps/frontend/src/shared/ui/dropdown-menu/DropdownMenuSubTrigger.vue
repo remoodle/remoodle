@@ -4,7 +4,7 @@ import {
   type DropdownMenuSubTriggerProps,
 } from "radix-vue";
 import { ChevronRight } from "lucide-vue-next";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<DropdownMenuSubTriggerProps & { class?: string }>();
 </script>

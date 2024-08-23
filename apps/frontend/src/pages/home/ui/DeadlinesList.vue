@@ -4,7 +4,7 @@ import { Error } from "@/entities/page";
 import { DeadlineCard } from "@/entities/deadline";
 import { Skeleton } from "@/shared/ui/skeleton";
 import type { Deadline } from "@remoodle/types";
-import { request, getAuthHeaders } from "@/shared/api";
+import { request, getAuthHeaders } from "@/shared/lib/hc";
 import {
   createAsyncProcess,
   isDefined,
@@ -12,7 +12,7 @@ import {
   objectEntries,
   fromUnix,
   formatDate,
-} from "@/shared/utils";
+} from "@/shared/lib/helpers";
 
 const deadlines = ref<{
   [date: string]: Deadline[] | undefined;

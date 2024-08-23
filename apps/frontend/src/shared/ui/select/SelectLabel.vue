@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { SelectLabel, type SelectLabelProps } from "radix-vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<SelectLabelProps & { class?: string }>();
 </script>

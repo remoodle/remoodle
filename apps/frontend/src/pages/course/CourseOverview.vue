@@ -2,7 +2,7 @@
 import { CourseContentCard, ContentGrid } from "@/entities/course";
 import type { CourseContent } from "@remoodle/types";
 import { Skeleton } from "@/shared/ui/skeleton";
-import { getRandomInt } from "@/shared/utils";
+import { getRandomInt } from "@/shared/lib/helpers";
 import { useUserStore } from "@/shared/stores/user";
 
 defineOptions({

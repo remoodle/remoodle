@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { TabsList, type TabsListProps } from "radix-vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<TabsListProps & { class?: string }>();
 </script>

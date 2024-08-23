@@ -7,7 +7,7 @@ import {
   formatDate,
   fromUnix,
   getRelativeTime,
-} from "@/shared/utils";
+} from "@/shared/lib/helpers";
 import {
   Tooltip,
   TooltipContent,

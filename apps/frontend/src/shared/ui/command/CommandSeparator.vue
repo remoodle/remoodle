@@ -2,7 +2,7 @@
 import { type HTMLAttributes, computed } from "vue";
 import type { ComboboxSeparatorProps } from "radix-vue";
 import { ComboboxSeparator } from "radix-vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<
   ComboboxSeparatorProps & { class?: HTMLAttributes["class"] }

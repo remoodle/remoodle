@@ -11,6 +11,6 @@
   "framework": "vite",
   "aliases": {
     "components": "@/shared",
-    "utils": "@/shared/utils"
+    "utils": "@/shared/lib/helpers"
   }
 }

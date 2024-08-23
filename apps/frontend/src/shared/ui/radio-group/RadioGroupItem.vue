@@ -7,7 +7,7 @@ import {
   useForwardProps,
 } from "radix-vue";
 import { CheckIcon } from "@radix-icons/vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<
   RadioGroupItemProps & { class?: HTMLAttributes["class"] }

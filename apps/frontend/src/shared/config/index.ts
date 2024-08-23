@@ -1,3 +1,4 @@
-export const githubOrgURL = "https://github.com/remoodle";
-
-export const telegramChat = "https://t.me/remoodle";
+export const org = {
+  github: "https://github.com/remoodle",
+  telegram: "https://t.me/remoodle",
+};

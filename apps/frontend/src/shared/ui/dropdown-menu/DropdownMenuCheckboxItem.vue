@@ -7,7 +7,7 @@ import {
   useEmitAsProps,
 } from "radix-vue";
 import { Check } from "lucide-vue-next";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<DropdownMenuCheckboxItemProps & { class?: string }>();
 const emits = defineEmits<DropdownMenuCheckboxItemEmits>();

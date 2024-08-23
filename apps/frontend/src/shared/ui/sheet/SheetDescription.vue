@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DialogDescription, type DialogDescriptionProps } from "radix-vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<DialogDescriptionProps & { class?: string }>();
 </script>

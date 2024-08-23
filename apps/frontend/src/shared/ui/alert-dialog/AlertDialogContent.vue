@@ -7,7 +7,7 @@ import {
   AlertDialogPortal,
   useEmitAsProps,
 } from "radix-vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<AlertDialogContentProps & { class?: string }>();
 const emits = defineEmits<AlertDialogContentEmits>();

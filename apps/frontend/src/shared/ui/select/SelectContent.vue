@@ -7,7 +7,7 @@ import {
   SelectViewport,
   useForwardPropsEmits,
 } from "radix-vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 const props = withDefaults(
   defineProps<SelectContentProps & { class?: string }>(),

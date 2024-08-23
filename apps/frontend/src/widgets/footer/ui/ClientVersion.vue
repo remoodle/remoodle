@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Link } from "@/shared/ui/link";
-import { isDefined } from "@/shared/utils";
-import { getRepoURL, getBuildInfo } from "../lib";
+import { isDefined } from "@/shared/lib/helpers";
+
+const getBuildInfo = () => {
+  return __BUILD_INFO__;
+};
 
 const buildInfo = getBuildInfo() ?? {
   version: "0",

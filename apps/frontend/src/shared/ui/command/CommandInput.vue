@@ -6,7 +6,7 @@ import {
   type ComboboxInputProps,
   useForwardProps,
 } from "radix-vue";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/lib/helpers";
 
 defineOptions({
   inheritAttrs: false,
