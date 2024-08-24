@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.2.0 (2024-08-24)
+
+
+### Features
+
+* add experimental bot ([04be2a9](https://github.com/remoodle/heresy/commit/04be2a986d93da93d0b937dd48ec6a39f5db8ab5))
+* integrate otp connect ([2ce8f1d](https://github.com/remoodle/heresy/commit/2ce8f1dabe85c48b0218a59f03019579ddd9206c))
+
+
+### Bug Fixes
+
+* remove courses with user ([b6647e5](https://github.com/remoodle/heresy/commit/b6647e5e58d88b60ce4fdf40dcfe05c940f6e7b5))
+* trigger deploy ([1b2920c](https://github.com/remoodle/heresy/commit/1b2920cf0ccf2cefd29124ca5cc781b9d3ce3c45))
+
+
+### Miscellaneous Chores
+
+* **remoodle/backend:** bump backend version ([2f8ab4b](https://github.com/remoodle/heresy/commit/2f8ab4b894d6c9d118469dc0816a7d5dfc9c78dd))
+* remove unused export ([34f3579](https://github.com/remoodle/heresy/commit/34f3579c8913514427ea88f1181d61fa6dbd9a97))
+
+
+### Code Refactoring
+
+* common rpc client ([db9eb3e](https://github.com/remoodle/heresy/commit/db9eb3e7b1f5ba023e066d2203be659620bc41be))
+* create hc-wrapper ([f699e6b](https://github.com/remoodle/heresy/commit/f699e6b5791b391fb95d507962bd0b0aa266af1c))
+
 ## [0.1.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.1.1...remoodle/backend-v0.1.2) (2024-07-23)
 
 
