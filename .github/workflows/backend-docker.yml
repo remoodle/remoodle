@@ -62,16 +62,18 @@ jobs:
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
 
           if [[ -n "${RELEASE_VERSION}" ]]; then
-            DOCKER_TAG="release-v${RELEASE_VERSION}.${SHORT_SHA}"
+            DOCKER_TAG="${RELEASE_VERSION}"
+            VERSION_TAG="release-v${RELEASE_VERSION}::${SHORT_SHA}"
           else
             VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
             LATEST_TAG=${{ steps.latest_tag.outputs.result }}
-            DOCKER_TAG="${LATEST_TAG}.${SHORT_SHA}.${VERSION}"
+            DOCKER_TAG="${VERSION}"
+            VERSION_TAG="${LATEST_TAG}.${SHORT_SHA}::${VERSION}"
           fi
 
           echo IMAGE_ID=$IMAGE_ID
           echo DOCKER_TAG=$DOCKER_TAG
 
-          docker build -f apps/backend/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG --build-arg VERSION_TAG=$DOCKER_TAG
+          docker build -f apps/backend/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG --build-arg VERSION_TAG=$VERSION_TAG
 
           docker push $IMAGE_ID:$DOCKER_TAG
