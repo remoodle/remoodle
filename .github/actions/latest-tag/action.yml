@@ -31,8 +31,6 @@ runs:
           const foundTags = tags.data.filter(tag => tag.name.startsWith(prefix));
           const latestTag = foundTags[0] ? foundTags[0].name : '';
           return latestTag.slice(prefix.length);
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set the output
       run: echo "latest_tag=${{ steps.get_tag.outputs.result }}" >> $GITHUB_OUTPUT
