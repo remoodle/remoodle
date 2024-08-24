@@ -5,11 +5,9 @@ on:
     branches: [trunk]
     paths:
       - "apps/backend/**"
-      - ".github/workflows/api-docker.yml"
-  release:
-    types: [published]
-
+      - ".github/workflows/backend-docker.yml"
   workflow_dispatch:
+  workflow_call:
 
 env:
   IMAGE_NAME: backend
