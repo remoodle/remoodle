@@ -14,7 +14,7 @@
         "symfony/console": "^6.0",
         "resend/resend-php": "^0.11.0",
         "spiral/roadrunner-kv": "^4.0",
-        "ext-igbinary" : "*",
+        "ext-igbinary": "*",
         "phlib/encrypt": "^1.0",
         "moontoast/math": "^1.2",
         "thiagoprz/eloquent-composite-key": "^1.0",
