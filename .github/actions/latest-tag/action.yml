@@ -34,3 +34,4 @@ runs:
 
     - name: Set the output
       run: echo "latest_tag=${{ steps.get_tag.outputs.result }}" >> $GITHUB_OUTPUT
+      shell: bash
