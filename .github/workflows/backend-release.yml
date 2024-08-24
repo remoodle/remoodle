@@ -25,7 +25,7 @@ jobs:
           manifest-file: .release-please/manifest.json
           path: apps/backend
 
-  # deploy-pr-preview:
-  #   needs: release
-  #   if: needs.release.outputs.release_created == 'true'
-  #   uses: remoodle/heresy/.github/workflows/backend-docker.yml@trunk
+  publish-docker-image:
+    needs: release
+    if: needs.release.outputs.release_created == 'true'
+    uses: remoodle/heresy/.github/workflows/backend-docker.yml@trunk
