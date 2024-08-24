@@ -12,9 +12,6 @@ permissions: write-all
 jobs:
   release:
     runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.releases_created }}
-      version: ${{ steps.release.outputs['apps/backend--version'] }}
     steps:
       - uses: actions/checkout@v4
       - uses: wsehl/release-please-action@main
