@@ -6,14 +6,9 @@ on:
     paths:
       - "apps/backend/**"
       - ".github/workflows/backend-docker.yml"
-
+    tags:
+      - "remoodle/backend-*"
   workflow_dispatch:
-
-  workflow_call:
-    inputs:
-      release_version:
-        required: true
-        type: "string"
 
 env:
   IMAGE_NAME: backend
@@ -39,24 +34,17 @@ jobs:
           tag_prefix: "remoodle/backend-"
 
       - name: Build image
-        env:
-          RELEASE_VERSION: ${{ inputs.release_version }}
         run: |
           IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-8)
 
-          if [[ -n "${RELEASE_VERSION}" ]]; then
-            DOCKER_TAG="${RELEASE_VERSION}"
-            VERSION_TAG="release-v${RELEASE_VERSION}.${SHORT_SHA}"
-          else
-            GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
-            LATEST_TAG=${{ steps.latest_tag.outputs.result }}
-            
-            DOCKER_TAG="${GITHUB_REF}"
-            VERSION_TAG="${LATEST_TAG}.${SHORT_SHA}::${GITHUB_REF}"
-          fi
+          GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+          LATEST_TAG=${{ steps.latest_tag.outputs.result }}
+
+          DOCKER_TAG="${GITHUB_REF}"
+          VERSION_TAG="${LATEST_TAG}.${SHORT_SHA}::${GITHUB_REF}"
 
           echo IMAGE_ID=$IMAGE_ID
           echo DOCKER_TAG=$DOCKER_TAG
