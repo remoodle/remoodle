@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.2...remoodle/backend-v0.2.3) (2024-08-24)
+
+
+### Bug Fixes
+
+* test ([0ce2924](https://github.com/remoodle/heresy/commit/0ce2924925112e2aa32f83d9714c36c6d89072ee))
+
 ## [0.2.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.1...remoodle/backend-v0.2.2) (2024-08-24)
 
 
