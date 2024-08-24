@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.4...remoodle/backend-v0.2.5) (2024-08-24)
+
+
+### Continuous Integration
+
+* add ci ([c3b316b](https://github.com/remoodle/heresy/commit/c3b316b9e08f514ecab6a14956e6b4153dfd6de9))
+
 ## [0.2.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.3...remoodle/backend-v0.2.4) (2024-08-24)
 
 
