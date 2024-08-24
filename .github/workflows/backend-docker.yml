@@ -27,12 +27,6 @@ jobs:
       - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
 
-      - name: Get latest tag
-        id: latest_tag
-        uses: ./.github/actions/latest-tag
-        with:
-          tag_prefix: "remoodle/backend-"
-
       - name: Build image
         run: |
           IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
@@ -41,10 +35,9 @@ jobs:
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-8)
 
           GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
-          LATEST_TAG=${{ steps.latest_tag.outputs.result }}
 
           DOCKER_TAG="${GITHUB_REF}"
-          VERSION_TAG="${LATEST_TAG}.${SHORT_SHA}::${GITHUB_REF}"
+          VERSION_TAG="${GITHUB_REF}::${SHORT_SHA}"
 
           echo IMAGE_ID=$IMAGE_ID
           echo DOCKER_TAG=$DOCKER_TAG
