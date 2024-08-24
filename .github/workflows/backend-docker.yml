@@ -38,7 +38,7 @@ jobs:
         with:
           tag_prefix: "remoodle/backend-"
 
-      - name: Build image
+      - name: Build Docker image
         env:
           RELEASE_VERSION: ${{ inputs.release_version }}
         run: |
