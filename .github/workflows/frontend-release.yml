@@ -26,16 +26,7 @@ jobs:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
           path: apps/frontend
-
-  deploy-pr-preview:
-    needs: release
-    if: needs.release.outputs.has_release_pr == 'true'
-    uses: remoodle/heresy/.github/workflows/frontend-preview.yml@trunk
-    secrets: inherit
-    with:
-      title: ${{ fromJson(needs.release.outputs.release_pr).title }}
-      number: ${{ fromJson(needs.release.outputs.release_pr).number }}
-      branch: ${{ fromJson(needs.release.outputs.release_pr).headBranchName }}
+          token: ${{ secrets.ROBOT_PAT }}
 
   deploy:
     needs: release

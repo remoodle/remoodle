@@ -10,28 +10,11 @@ on:
       - synchronize
       - reopened
 
-  workflow_call:
-    inputs:
-      title:
-        description: "PR title"
-        required: true
-        type: "string"
-      number:
-        description: "PR issue number"
-        required: true
-        type: "string"
-      branch:
-        description: "branch name"
-        required: true
-        type: "string"
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.branch }}
       - uses: pnpm/action-setup@v4
         with:
           version: 8.15.5
@@ -44,9 +27,9 @@ jobs:
       - name: Set Context Outputs
         id: set-context
         run: |
-          echo "title=${{ inputs.title || github.event.pull_request.title }}" >> $GITHUB_OUTPUT
-          echo "number=${{ inputs.number || github.event.number }}" >> $GITHUB_OUTPUT
-          echo "branch=${{ inputs.branch || github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+          echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
+          echo "number=${{ github.event.number }}" >> $GITHUB_OUTPUT
+          echo "branch=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
 
       - name: Retrieve deploy-as info
         id: deploy-as
