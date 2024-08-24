@@ -58,7 +58,7 @@ jobs:
           # Create server version tag
           LATEST_TAG=${{ steps.latest_tag.outputs.result }}
           SHA=${{ github.workflow_sha }}
-          VERSION_TAG=${LATEST_TAG}.${SHA::8}::${VERSION}
+          VERSION_TAG=${LATEST_TAG}.${SHA::8}.${VERSION}
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
