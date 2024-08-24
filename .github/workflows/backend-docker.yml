@@ -6,6 +6,8 @@ on:
     paths:
       - "apps/backend/**"
       - ".github/workflows/api-docker.yml"
+  release:
+    types: [published]
 
   workflow_dispatch:
 
@@ -30,8 +32,13 @@ jobs:
         run: |
           IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
 
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            # Extract tag name from refs/tags/<tag_name>
+            VERSION=$(echo "${{ github.ref }}" | sed -e 's/refs\/tags\///')
+          else
+            # Strip git ref prefix from version
+            VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+          fi
 
           # tag
           TAG=$IMAGE_ID:$VERSION
