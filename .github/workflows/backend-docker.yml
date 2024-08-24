@@ -12,7 +12,6 @@ on:
   workflow_call:
     inputs:
       release_version:
-        description: "Release version"
         required: true
         type: "string"
 
@@ -59,7 +58,7 @@ jobs:
           IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-8)
 
           if [[ -n "${RELEASE_VERSION}" ]]; then
             DOCKER_TAG="${RELEASE_VERSION}"
