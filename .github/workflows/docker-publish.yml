@@ -5,7 +5,6 @@ on:
     branches: [main]
     tags:
       - "*"
-
   workflow_dispatch:
 
 env:
@@ -19,46 +18,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Log into registry
+      - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
-
-      - name: Get the latest tag
-        id: latest_tag
-        uses: actions/github-script@v3
-        with:
-          result-encoding: string
-          script: |
-            const { data: tags } = await github.repos.listTags({
-              ...context.repo,
-              per_page: 1,
-              page: 1,
-            });
-
-            const latestTag = tags[0] && tags[0].name;
-
-            return latestTag || "";
 
       - name: Build image
         run: |
           IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
-
-          # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-8)
 
-          # Create server version tag
-          LATEST_TAG=${{ steps.latest_tag.outputs.result }}
-          SHA=${{ github.workflow_sha }}
-          VERSION_TAG=${LATEST_TAG}.${SHA::8}::${VERSION}
+          GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+
+          DOCKER_TAG="${GITHUB_REF}"
+          VERSION_TAG="${GITHUB_REF}::${SHORT_SHA}"
 
           echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-          echo VERSION_TAG=$VERSION_TAG
+          echo DOCKER_TAG=$DOCKER_TAG
 
-          docker build . --file Dockerfile --tag $IMAGE_ID:$VERSION --build-arg VERSION_TAG=$VERSION_TAG
+          docker build . --file Dockerfile --tag $IMAGE_ID:$DOCKER_TAG --build-arg VERSION_TAG=$VERSION_TAG
 
-          docker push $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$DOCKER_TAG
