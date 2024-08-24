@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release.outputs.releases_created }}
+      version: ${{ steps.release.outputs['apps/backend--version'] }}
     steps:
       - uses: actions/checkout@v4
       - uses: wsehl/release-please-action@main
@@ -27,3 +28,5 @@ jobs:
     needs: release
     if: needs.release.outputs.release_created == 'true'
     uses: remoodle/heresy/.github/workflows/backend-docker.yml@trunk
+    with:
+      release_version: ${{ needs.release.outputs.version }}

@@ -1,13 +1,20 @@
 name: "[backend] Publish Docker image"
 
 on:
-  workflow_call:
   push:
     branches: [trunk]
     paths:
       - "apps/backend/**"
       - ".github/workflows/backend-docker.yml"
+
   workflow_dispatch:
+
+  workflow_call:
+    inputs:
+      release_version:
+        description: "Release version"
+        required: true
+        type: "string"
 
 env:
   IMAGE_NAME: backend
@@ -29,43 +36,42 @@ jobs:
       - name: Get the latest tag
         id: latest_tag
         uses: actions/github-script@v3
+        env:
+          TAG_PREFIX: "remoodle/backend-"
         with:
           result-encoding: string
           script: |
+            const prefix = process.env.TAG_PREFIX;
             const { data: tags } = await github.repos.listTags({
               ...context.repo,
               per_page: 100,
             });
 
-            const prefix = "remoodle/backend-";
-            const foundTags = tags
-              .filter(({name}) => name.startsWith(prefix))
-
+            const foundTags = tags.filter(({name}) => name.startsWith(prefix))
             const latestTag = foundTags[0] && foundTags[0].name;
 
             return latestTag ? latestTag.slice(prefix.length) : "";
 
       - name: Build image
+        env:
+          RELEASE_VERSION: ${{ inputs.release_version }}
         run: |
           IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
-
-          # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+          SHORT_SHA=${{ github.sha }}::8
 
-          # Create server version tag
-          LATEST_TAG=${{ steps.latest_tag.outputs.result }}
-          SHA=${{ github.workflow_sha }}
-          VERSION_TAG=${LATEST_TAG}.${SHA::8}.${VERSION}
+          if [[ -n "${RELEASE_VERSION}" ]]; then
+            DOCKER_TAG="release-v${RELEASE_VERSION}.${SHORT_SHA}"
+          else
+            VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+            LATEST_TAG=${{ steps.latest_tag.outputs.result }}
+            DOCKER_TAG="${LATEST_TAG}.${SHORT_SHA}.${VERSION}"
+          fi
 
           echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-          echo VERSION_TAG=$VERSION_TAG
+          echo DOCKER_TAG=$DOCKER_TAG
 
-          # Build the Docker image
-          docker build -f apps/backend/Dockerfile . --tag $IMAGE_ID:$VERSION_TAG --build-arg VERSION_TAG=$VERSION_TAG
+          docker build -f apps/backend/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG --build-arg VERSION_TAG=$DOCKER_TAG
 
-          # Docker Push
-          docker push $IMAGE_ID:$VERSION_TAG
+          docker push $IMAGE_ID:$DOCKER_TAG
