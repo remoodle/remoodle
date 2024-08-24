@@ -6,7 +6,8 @@ on:
     paths:
       - "apps/telegram_bot/**"
       - ".github/workflows/tgbot-docker.yml"
-
+    tags:
+      - "remoodle/telegram_bot-*"
   workflow_dispatch:
 
 env:
@@ -29,21 +30,11 @@ jobs:
       - name: Build image
         run: |
           IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+          GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+          DOCKER_TAG="${GITHUB_REF}"
 
-          # tag
-          TAG=$IMAGE_ID:$VERSION
+          docker build -f apps/telegram_bot/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG
 
-          # Change all uppercase to lowercase
-          TAG=$(echo $TAG | tr '[A-Z]' '[a-z]')
-
-          echo TAG=$TAG
-
-          # Build the Docker image
-          cd apps/telegram_bot
-          docker build . --file Dockerfile --tag $TAG
-
-          # Docker Push
-          docker push $TAG
+          docker push $IMAGE_ID:$DOCKER_TAG

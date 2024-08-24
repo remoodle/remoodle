@@ -22,3 +22,4 @@ jobs:
           config-file: .release-please/config.json
           manifest-file: .release-please/manifest.json
           path: apps/telegram_bot
+          token: ${{ secrets.ROBOT_PAT }}
