@@ -65,7 +65,7 @@ jobs:
           echo VERSION_TAG=$VERSION_TAG
 
           # Build the Docker image
-          docker build -f apps/backend/Dockerfile . --tag $VERSION_TAG --build-arg VERSION_TAG=$VERSION_TAG
+          docker build -f apps/backend/Dockerfile . --tag $IMAGE_ID:$VERSION_TAG --build-arg VERSION_TAG=$VERSION_TAG
 
           # Docker Push
-          docker push $VERSION_TAG
+          docker push $IMAGE_ID:$VERSION_TAG
