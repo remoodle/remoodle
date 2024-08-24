@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.5.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.4.1...remoodle/frontend-v0.5.0) (2024-08-24)
+
+
+### Features
+
+* integrate otp connect ([2ce8f1d](https://github.com/remoodle/heresy/commit/2ce8f1dabe85c48b0218a59f03019579ddd9206c))
+
+
+### Bug Fixes
+
+* move backed to dev deps ([5e09d23](https://github.com/remoodle/heresy/commit/5e09d237f50e044d9c7f14e802642f87b4bfbf49))
+* previews ([e81a88c](https://github.com/remoodle/heresy/commit/e81a88c207d1a0f7ef33c26393a635902c4a068d))
+* trigger deply ([0587389](https://github.com/remoodle/heresy/commit/05873892a260a211339a0c1053ae092cfbcd77e9))
+
+
+### Code Refactoring
+
+* common rpc client ([db9eb3e](https://github.com/remoodle/heresy/commit/db9eb3e7b1f5ba023e066d2203be659620bc41be))
+* create hc-wrapper ([f699e6b](https://github.com/remoodle/heresy/commit/f699e6b5791b391fb95d507962bd0b0aa266af1c))
+* delayer api layer ([5ac8e92](https://github.com/remoodle/heresy/commit/5ac8e92142cdd2893947a4d3135626e5ecc71985))
+* flat lib folder ([0b8c91c](https://github.com/remoodle/heresy/commit/0b8c91cdcf1ef8b83a3d92fc3ef468fb79e95742))
+* **frontend:** get rid of providers ([e5d8df5](https://github.com/remoodle/heresy/commit/e5d8df53192fb10418b9d4c0554d71048b49bd95))
+
+
+### Build System
+
+* refactor vite config ([25ef96e](https://github.com/remoodle/heresy/commit/25ef96e3d9e1c1556a20a338d4bfdd3870beb3d7))
+
+
+### Continuous Integration
+
+* add ci ([c3b316b](https://github.com/remoodle/heresy/commit/c3b316b9e08f514ecab6a14956e6b4153dfd6de9))
+* simplify frontend ci ([374d55a](https://github.com/remoodle/heresy/commit/374d55a62aa5f656307e12170e5865bab2aa3852))
+
 ## [0.4.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.4.0...remoodle/frontend-v0.4.1) (2024-07-23)
 
 
