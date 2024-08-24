@@ -5,5 +5,3 @@ import { startCrawler } from "./services/crawler";
 startServer();
 startNotifier();
 startCrawler();
-
-// TODO: Remove this
