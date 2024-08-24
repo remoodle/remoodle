@@ -63,12 +63,13 @@ jobs:
 
           if [[ -n "${RELEASE_VERSION}" ]]; then
             DOCKER_TAG="${RELEASE_VERSION}"
-            VERSION_TAG="release-v${RELEASE_VERSION}::${SHORT_SHA}"
+            VERSION_TAG="release-v${RELEASE_VERSION}.${SHORT_SHA}"
           else
-            VERSION=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
+            GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/[\/-]/_/g')
             LATEST_TAG=${{ steps.latest_tag.outputs.result }}
-            DOCKER_TAG="${VERSION}"
-            VERSION_TAG="${LATEST_TAG}.${SHORT_SHA}::${VERSION}"
+            
+            DOCKER_TAG="${GITHUB_REF}"
+            VERSION_TAG="${LATEST_TAG}.${SHORT_SHA}::${GITHUB_REF}"
           fi
 
           echo IMAGE_ID=$IMAGE_ID
