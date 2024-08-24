@@ -3,5 +3,5 @@ import { startNotifier } from "./services/notifier";
 import { startCrawler } from "./services/crawler";
 
 startServer();
-startCrawler();
 startNotifier();
+startCrawler();
