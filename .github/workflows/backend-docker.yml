@@ -32,24 +32,11 @@ jobs:
       - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
 
-      - name: Get the latest tag
+      - name: Get latest tag
         id: latest_tag
-        uses: actions/github-script@v3
-        env:
-          TAG_PREFIX: "remoodle/backend-"
+        uses: ./.github/actions/latest-tag
         with:
-          result-encoding: string
-          script: |
-            const prefix = process.env.TAG_PREFIX;
-            const { data: tags } = await github.repos.listTags({
-              ...context.repo,
-              per_page: 100,
-            });
-
-            const foundTags = tags.filter(({name}) => name.startsWith(prefix))
-            const latestTag = foundTags[0] && foundTags[0].name;
-
-            return latestTag ? latestTag.slice(prefix.length) : "";
+          tag_prefix: "remoodle/backend-"
 
       - name: Build image
         env:

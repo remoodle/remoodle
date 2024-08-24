@@ -1,0 +1,38 @@
+name: "Get Latest Tag"
+description: "Fetches the latest git tag with a specific prefix"
+inputs:
+  tag_prefix:
+    description: "Prefix of the tag to look for"
+    required: true
+  per_page:
+    description: "Number of tags to fetch per page"
+    required: false
+    default: "100"
+outputs:
+  latest_tag:
+    description: "The latest tag found with the specified prefix"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get latest tag using GitHub Script
+      id: get_tag
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const prefix = "${{ inputs.tag_prefix }}";
+          const perPage = parseInt(${{ inputs.per_page }});
+          const tags = await github.rest.repos.listTags({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            per_page: perPage
+          });
+
+          const foundTags = tags.data.filter(tag => tag.name.startsWith(prefix));
+          const latestTag = foundTags[0] ? foundTags[0].name : '';
+          return latestTag.slice(prefix.length);
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set the output
+      run: echo "latest_tag=${{ steps.get_tag.outputs.result }}" >> $GITHUB_OUTPUT
