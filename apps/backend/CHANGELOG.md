@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.12](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.11...remoodle/backend-v0.2.12) (2024-08-25)
+
+
+### Continuous Integration
+
+* trigger ([501dde6](https://github.com/remoodle/heresy/commit/501dde621e742e3b49834f170029ffb84bf60bc2))
+
 ## [0.2.11](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.10...remoodle/backend-v0.2.11) (2024-08-25)
 
 
