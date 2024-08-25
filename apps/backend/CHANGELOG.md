@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.10](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.9...remoodle/backend-v0.2.10) (2024-08-25)
+
+
+### Bug Fixes
+
+* correct dockerfile ([f898678](https://github.com/remoodle/heresy/commit/f8986783e7322662bf8528d14f6256a8a5483741))
+
 ## [0.2.9](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.8...remoodle/backend-v0.2.9) (2024-08-25)
 
 
