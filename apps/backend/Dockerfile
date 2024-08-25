@@ -32,4 +32,4 @@ WORKDIR /app
 
 EXPOSE 9000
 
-CMD [ "pnpm", "run", "start" ]
+CMD node dist/index.js
