@@ -362,7 +362,7 @@ const privateApi = new Hono<{
     return ctx.json({ otp });
   })
   // FROM TELEGRAM BOT ONLY WITH ::0
-  // TODO: Add auth middleware or move to bot
+  // TODO: Add auth middleware or move to bot.
   .post(
     "/telegram/otp/verify",
     zValidator(
