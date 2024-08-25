@@ -269,7 +269,7 @@ importers:
         specifier: ^3.57.1
         version: 3.70.0(@cloudflare/workers-types@4.20240806.0)
 
-  junk/experimental/telegram_bot:
+  apps/telegram_bot/experimental:
     dependencies:
       '@remoodle/hc-wrapper':
         specifier: workspace:*
@@ -286,7 +286,7 @@ importers:
     devDependencies:
       '@remoodle/backend':
         specifier: workspace:*
-        version: link:../../../apps/backend
+        version: link:../../backend
       '@remoodle/eslint-config':
         specifier: workspace:*
         version: link:../../../packages/eslint-config
