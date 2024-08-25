@@ -48,7 +48,7 @@ jobs:
       - name: Build app
         env:
           COMMIT_SHA: ${{ github.sha }}
-        run: cd apps/frontend && pnpm build-only
+        run: cd apps/frontend && pnpm build --mode="production"
 
       - run: echo "ignore-workspace-root-check=true" >> .npmrc
 
