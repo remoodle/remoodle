@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "@remoodle/frontend",
   "version": "0.5.2",
   "private": true,
   "type": "module",

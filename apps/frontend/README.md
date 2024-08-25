@@ -1,6 +1,4 @@
-# heresy
-
-> sixth circle of hell
+# @remoodle/frontend
 
 ## Recommended IDE Setup
 

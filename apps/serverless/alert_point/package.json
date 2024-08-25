@@ -1,5 +1,5 @@
 {
-  "name": "alert-point",
+  "name": "@remoodle/alert-point",
   "version": "0.0.0",
   "scripts": {
     "dev": "wrangler dev",
