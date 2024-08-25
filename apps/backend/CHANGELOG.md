@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.13](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.12...remoodle/backend-v0.2.13) (2024-08-25)
+
+
+### Reverts
+
+* shit ([e2d1ef2](https://github.com/remoodle/heresy/commit/e2d1ef26795876f98de32fb9b2c29ae845992c56))
+
 ## [0.2.12](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.11...remoodle/backend-v0.2.12) (2024-08-25)
 
 
