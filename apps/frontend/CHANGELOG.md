@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.5.1...remoodle/frontend-v0.5.2) (2024-08-25)
+
+
+### Bug Fixes
+
+* otp telegram connection ([3cbc2fe](https://github.com/remoodle/heresy/commit/3cbc2fe4d3af89b902d3eb6073e66fc1edc6664c))
+
 ## [0.5.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.5.0...remoodle/frontend-v0.5.1) (2024-08-25)
 
 
