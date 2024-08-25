@@ -5,7 +5,8 @@
   "types": "index.d.ts",
   "scripts": {
     "dev": "tsx watch src/app.ts",
-    "start": "tsx src/app.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint . && prettier --check src/",
     "fix": "eslint . --fix && prettier --write src/",
@@ -35,6 +36,7 @@
     "@types/uuid": "^10.0.0",
     "eslint": "^8.57.0",
     "prettier": "^3.3.3",
+    "tsup": "^8.2.4",
     "tsx": "^4.7.1",
     "typescript": "^5.5.3",
     "vitest": "^1.6.0"

@@ -5,6 +5,7 @@
     "fix": {},
     "test": {},
     "type-check": {},
+    "build": {},
     "dev": {
       "cache": false,
       "persistent": true
