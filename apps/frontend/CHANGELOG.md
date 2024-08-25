@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.5.0...remoodle/frontend-v0.5.1) (2024-08-25)
+
+
+### Miscellaneous Chores
+
+* setup envs ([5dee451](https://github.com/remoodle/heresy/commit/5dee45107889386b8348a04ff7237c5a48c6d880))
+
+
+### Continuous Integration
+
+* mode envs ([90a3ea2](https://github.com/remoodle/heresy/commit/90a3ea2e244474e48c9427989e52a9fcae114cde))
+
 ## [0.5.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.4.1...remoodle/frontend-v0.5.0) (2024-08-24)
 
 
