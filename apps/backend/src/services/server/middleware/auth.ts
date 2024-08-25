@@ -9,7 +9,7 @@ export function authMiddleware(): MiddlewareHandler {
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization#syntax
     // Authorization: <auth-scheme> <authorization-parameters>
     // example: Bearer <token>
-    // example: Basic <secret>::<telegram-id>::<with-user (1 or 0)>
+    // example: Telegram <secret>::<telegram-id>::<with-user (1 or 0)>
     const authorization = ctx.req.header("Authorization");
 
     if (!authorization) {
@@ -20,8 +20,8 @@ export function authMiddleware(): MiddlewareHandler {
 
     const [scheme, authorizationParameters] = authorization.split(" ");
 
-    // Basic auth (TG bot)
-    if (scheme === "Basic") {
+    // TG bot auth
+    if (scheme === "Telegram") {
       const [secret, telegramId, withUser = "1"] =
         authorizationParameters.split("::");
 

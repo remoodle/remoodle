@@ -10,11 +10,14 @@ export const env = cleanEnv(process.env, {
   SERVER_PORT: num({ default: 8888 }),
 
   TELEGRAM_BOT_TOKEN: str(),
-  BACKEND_SECRET: str(),
+
+  BACKEND_URL: str({ default: "http://localhost:9000" }),
+  BACKEND_SECRET: str({ default: "aboba" }),
 });
 
 export const config = {
   backend: {
+    url: env.BACKEND_URL,
     secret: env.BACKEND_SECRET,
   },
   http: {

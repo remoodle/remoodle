@@ -9,7 +9,7 @@ export const env = cleanEnv(process.env, {
 
   SERVER_HOST: str({ default: "0.0.0.0" }),
   SERVER_PORT: num({ default: 9000 }),
-  SERVER_SECRET_TOKEN: str({ default: "x00001" }),
+  SERVER_SECRET: str({ default: "aboba" }),
 
   CORE_SECRET: str({ default: "private-token" }),
   CORE_URL: str({ default: "http://127.0.0.1:8080" }),
@@ -28,7 +28,7 @@ export const config = {
   http: {
     host: env.SERVER_HOST,
     port: env.SERVER_PORT,
-    secret: env.SERVER_SECRET_TOKEN,
+    secret: env.SERVER_SECRET,
   },
   core: {
     secret: env.CORE_SECRET,
