@@ -1,6 +1,6 @@
 {
   "name": "@remoodle/backend",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "main": "index.ts",
   "types": "index.d.ts",
   "scripts": {

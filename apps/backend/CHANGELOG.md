@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.11](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.10...remoodle/backend-v0.2.11) (2024-08-25)
+
+
+### Bug Fixes
+
+* build command ([a997d04](https://github.com/remoodle/heresy/commit/a997d04377032b351b7176cce190f1b1c7083f62))
+
 ## [0.2.10](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.9...remoodle/backend-v0.2.10) (2024-08-25)
 
 
