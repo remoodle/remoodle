@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.9](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.8...remoodle/backend-v0.2.9) (2024-08-25)
+
+
+### Bug Fixes
+
+* proper start script ([bda199f](https://github.com/remoodle/heresy/commit/bda199f721d375055661b8b79c9e1ab8a7a94f87))
+
 ## [0.2.8](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.7...remoodle/backend-v0.2.8) (2024-08-25)
 
 
