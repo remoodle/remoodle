@@ -1,8 +1,8 @@
-import { defineConfig, type Options } from "tsup";
+import { defineConfig } from "tsup";
 
-export default defineConfig((options: Options) => ({
-  entryPoints: ["src/app.ts"],
+export default defineConfig((options) => ({
+  entry: ["src/app.ts"],
   clean: true,
   format: ["cjs"],
-  ...options,
+  target: "node20",
 }));
