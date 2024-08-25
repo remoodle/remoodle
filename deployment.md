@@ -134,13 +134,13 @@ networks:
 
 # Migration
 
-docker exec -it db-mysql-1 mysql -u root -p
-docker cp remoodle.users.json remoodle-mongo-1:/data.json
+`docker exec -it db-mysql-1 mysql -u root -p`  
+`docker cp remoodle.users.json remoodle-mongo-1:/data.json`  
 
-docker exec -it db-mongo-1 bash
-mongoimport --db remoodle --collection users --file data.json --jsonArray
+`docker exec -it db-mongo-1 bash`   
+`mongoimport --db remoodle --collection users --file data.json --jsonArray`  
 
 ### Cloud init
 
-cat /var/log/cloud-init-output.log
+`cat /var/log/cloud-init-output.log`
 
