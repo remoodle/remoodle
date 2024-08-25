@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.14](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.13...remoodle/backend-v0.2.14) (2024-08-25)
+
+
+### Code Refactoring
+
+* **backend,tg_bot:** refactor headers add change config ([1cf40ff](https://github.com/remoodle/heresy/commit/1cf40ff138087afc2730c8a40eb108c8e5f8e05f))
+
 ## [0.2.13](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.12...remoodle/backend-v0.2.13) (2024-08-25)
 
 
