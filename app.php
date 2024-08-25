@@ -56,6 +56,7 @@ while (true) {
     } catch (Throwable $e) {
         $worker->getWorker()->error($e->getMessage());
     }
+
     // finally {
     //     gc_collect_cycles();
     // }
