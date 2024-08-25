@@ -1,4 +1,4 @@
-name: "Release, frontend"
+name: "[frontend] Release"
 
 on:
   push:

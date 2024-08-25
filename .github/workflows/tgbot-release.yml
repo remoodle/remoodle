@@ -1,4 +1,4 @@
-name: "Release, telegram_bot"
+name: "[tgbot] Release"
 
 on:
   push:

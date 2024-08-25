@@ -1,4 +1,4 @@
-name: Build and Deploy PR Preview
+name: "[frontend] Build and Deploy PR Preview"
 
 on:
   pull_request:
