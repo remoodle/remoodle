@@ -1,25 +1,35 @@
-FROM node:20-slim AS base
+FROM node:20-alpine AS base
 
-RUN mkdir -p /home/app
-WORKDIR /home/app
+FROM base AS builder
+RUN apk add --no-cache libc6-compat
+RUN apk update
+# Set working directory
+WORKDIR /app
+RUN npm install -g turbo
+COPY . .
+RUN turbo prune --scope=@remoodle/backend --docker
 
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+# Add lockfile and package.json's of isolated subworkspace
+FROM base AS installer
+RUN apk add --no-cache libc6-compat
+RUN apk update
+WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@latest-9 --activate
-RUN pnpm config set store-dir .pnpm-store
+# First install the dependencies (as they change less often)
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=builder /app/out/full/patches ./patches
+RUN corepack enable
+RUN pnpm install --frozen-lockfile
 
-COPY patches ./patches
+# Build the project
+COPY --from=builder /app/out/full/ .
+RUN pnpm dlx turbo run build --filter=@remoodle/backend
 
-COPY pnpm-lock.yaml ./
-RUN pnpm fetch
-ADD . ./
-RUN pnpm install -r
-
-RUN export TZ="Etc/UTC" \
-    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone
+FROM base AS runner
+WORKDIR /app
 
 EXPOSE 9000
 
-CMD [ "pnpm", "-C", "apps/backend", "run", "start" ]
+CMD [ "pnpm", "run", "start" ]
