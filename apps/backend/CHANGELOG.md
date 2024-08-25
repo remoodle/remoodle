@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.7](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.6...remoodle/backend-v0.2.7) (2024-08-25)
+
+
+### Code Refactoring
+
+* simplify tsup config ([9c5b6a5](https://github.com/remoodle/heresy/commit/9c5b6a59831c8300976718997475f547f305f3d9))
+
+
+### Build System
+
+* **backend:** update pnpm ([acc60cc](https://github.com/remoodle/heresy/commit/acc60cc937be0f81b77a0f0aa54dc8f74decc77d))
+* optimize builds ([5b200ea](https://github.com/remoodle/heresy/commit/5b200ea53df78fe28a3b598e180c8ad755dde0ad))
+
 ## [0.2.6](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.5...remoodle/backend-v0.2.6) (2024-08-25)
 
 
