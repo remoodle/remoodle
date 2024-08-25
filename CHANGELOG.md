@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/remoodle/core/compare/v0.2.1...v0.2.2) (2024-08-25)
+
+
+### Bug Fixes
+
+* trigger build ([1d8f965](https://github.com/remoodle/core/commit/1d8f965034d3b31b81b0bb3164364d14b0630b04))
+
 ## [0.2.1](https://github.com/remoodle/core/compare/v0.2.0...v0.2.1) (2024-08-25)
 
 
