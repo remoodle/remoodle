@@ -34,7 +34,7 @@ const { run: generate, loading } = createAsyncProcess(async () => {
     throw error;
   }
 
-  window.open(`${TELEGRAM_BOT_URL}?start=${data.otp}`, "_blank");
+  window.open(`${TELEGRAM_BOT_URL}?connect=${data.otp}`, "_blank");
 });
 </script>
 
