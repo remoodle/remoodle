@@ -34,7 +34,11 @@ jobs:
 
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-8)
 
-          GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/refs\/tags\///' | sed -e 's/refs\/heads\///' | sed -e 's/[\/-]/_/g')
+          if [[ "${{ github.ref }}" =~ refs/tags/* ]]; then
+            GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/.*v//')
+          else
+            GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/refs\/heads\///' | sed -e 's/[\/-]/_/g')
+          fi
 
           DOCKER_TAG="${GITHUB_REF}"
           VERSION_TAG="${GITHUB_REF}::${SHORT_SHA}"

@@ -32,7 +32,12 @@ jobs:
           IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/refs\/tags\///' | sed -e 's/refs\/heads\///' | sed -e 's/[\/-]/_/g')
+          if [[ "${{ github.ref }}" =~ refs/tags/* ]]; then
+            GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/.*v//')
+          else
+            GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/refs\/heads\///' | sed -e 's/[\/-]/_/g')
+          fi
+
           DOCKER_TAG="${GITHUB_REF}"
 
           docker build -f apps/telegram_bot/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG
