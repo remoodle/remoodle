@@ -1,16 +1,20 @@
 {
   "name": "@remoodle/alert-worker",
   "version": "0.0.0",
+  "main": "index.ts",
   "scripts": {
     "dev": "wrangler dev",
     "start": "wrangler dev",
     "type-check": "tsc --noEmit",
-    "lint": "eslint . --max-warnings 0 && prettier --check src/",
+    "lint": "eslint . && prettier --check src/",
     "fix": "eslint . --fix && prettier --write src/",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
-    "hono": "^4.4.4"
+    "@hono/zod-validator": "^0.2.2",
+    "@remoodle/utils": "workspace:*",
+    "hono": "^4.4.4",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240605.0",

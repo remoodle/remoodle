@@ -18,6 +18,7 @@
     "@remoodle/prettier-config": "workspace:*",
     "@remoodle/tsconfig": "workspace:*",
     "@remoodle/types": "workspace:*",
+    "@types/node": "^20.11.17",
     "eslint": "^8.57.0",
     "prettier": "^3.3.3",
     "typescript": "~5.4.3"

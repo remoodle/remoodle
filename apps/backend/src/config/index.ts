@@ -14,6 +14,10 @@ export const env = cleanEnv(process.env, {
   CORE_SECRET: str({ default: "private-token" }),
   CORE_URL: str({ default: "http://127.0.0.1:8080" }),
 
+  ALERT_WORKER_URL: str({ default: "http://localhost:8787" }),
+  ALERT_WORKER_SECRET: str({ default: "YWxhcm1h" }),
+  ALERT_WORKER_ENABLED: str({ default: "1" }),
+
   TELEGRAM_BOT_TOKEN: str(),
 
   MONGO_URI: str({ default: "mongodb://localhost:27017/remoodle" }),
@@ -29,6 +33,11 @@ export const config = {
     host: env.SERVER_HOST,
     port: env.SERVER_PORT,
     secret: env.SERVER_SECRET,
+  },
+  alert: {
+    url: env.ALERT_WORKER_URL,
+    secret: env.ALERT_WORKER_SECRET,
+    enabled: env.ALERT_WORKER_ENABLED,
   },
   core: {
     secret: env.CORE_SECRET,

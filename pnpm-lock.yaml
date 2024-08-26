@@ -19,9 +19,18 @@ importers:
 
   apps/alert-worker:
     dependencies:
+      '@hono/zod-validator':
+        specifier: ^0.2.2
+        version: 0.2.2(hono@4.5.5)(zod@3.23.8)
+      '@remoodle/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       hono:
         specifier: ^4.4.4
         version: 4.5.5
+      zod:
+        specifier: ^3.22.4
+        version: 3.23.8
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240605.0
@@ -56,6 +65,12 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.2.2
         version: 0.2.2(hono@4.5.5)(zod@3.23.8)
+      '@remoodle/alert-worker':
+        specifier: workspace:*
+        version: link:../alert-worker
+      '@remoodle/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -363,6 +378,9 @@ importers:
       '@remoodle/types':
         specifier: workspace:*
         version: link:../types
+      '@types/node':
+        specifier: ^20.11.17
+        version: 20.14.15
       eslint:
         specifier: ^8.57.0
         version: 8.57.0

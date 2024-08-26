@@ -29,7 +29,7 @@ const { run: submit, loading } = createAsyncProcess(async () => {
           password: form.value.password,
         }),
         ...(!isEmptyString(form.value.name) && {
-          name_alias: form.value.name,
+          handle: form.value.name,
         }),
       },
     }),

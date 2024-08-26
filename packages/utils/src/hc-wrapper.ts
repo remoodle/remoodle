@@ -1,15 +1,18 @@
 import { hc } from "hono/client";
-import type { ClientResponse } from "hono/client";
+import type { ClientResponse, ClientRequestOptions } from "hono/client";
 import type { Hono } from "hono";
 import type { StatusCode } from "hono/utils/http-status";
 import type { APIErrorResponse, APIError } from "@remoodle/types";
 
-export const createHC = <A extends Hono<any, any, any>>(url: string) => {
+export const createHC = <A extends Hono<any, any, any>>(
+  url: string,
+  options?: ClientRequestOptions,
+) => {
   type ClientFn<T, Z extends "json" | "text" = "json"> = (
     rpc: ReturnType<typeof hc<A>>,
   ) => Promise<ClientResponse<T, StatusCode, Z>>;
 
-  const client = hc<A>(url);
+  const client = hc<A>(url, options);
 
   async function request<T, Z extends "json" | "text" = "json">(
     requestRPC: ClientFn<T, Z>,

@@ -9,6 +9,7 @@ import { RMC } from "../../../library/rmc-sdk";
 
 import { generateOTP, hashPassword, verifyPassword } from "../helpers/crypto";
 import { issueTokens } from "../helpers/jwt";
+import { requestAlertWorker } from "../helpers/hc";
 
 import { authMiddleware } from "../middleware/auth";
 
@@ -19,12 +20,12 @@ const publicApi = new Hono()
       "json",
       z.object({
         moodleToken: z.string(),
-        email: z.string().optional(),
+        handle: z.string().optional(),
         password: z.string().optional(),
       }),
     ),
     async (ctx) => {
-      const { email, moodleToken, password } = ctx.req.valid("json");
+      const { handle, moodleToken, password } = ctx.req.valid("json");
 
       const rmc = new RMC({ moodleToken });
 
@@ -42,11 +43,10 @@ const publicApi = new Hono()
           }
 
           user = (await db.user.create({
-            email,
             moodleToken,
             name: data.name,
             moodleId: data.moodle_id,
-            handle: data.username,
+            handle: handle || data.username,
             ...(data.email && { email: data.email }),
             ...(password && { password: hashPassword(password) }),
           })) as IUser;
@@ -454,6 +454,15 @@ const privateApi = new Hono<{
             handle: data.username,
             ...(data.email && { email: data.email }),
           })) as IUser;
+
+          requestAlertWorker((client) =>
+            client.new.$post({
+              json: {
+                topic: "users",
+                message: `New User From Telegram <b>${data.name}</b>`,
+              },
+            }),
+          );
         } catch (error: any) {
           const [data, _] = await rmc.v1_delete_user();
           await db.user.deleteOne({ _id: user?._id });
