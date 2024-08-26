@@ -269,11 +269,11 @@ importers:
         specifier: ^2.0.7
         version: 2.0.29(typescript@5.4.5)
 
-  apps/telegram-bot/experimental:
+  apps/telegram-bot:
     dependencies:
       '@remoodle/utils':
         specifier: workspace:*
-        version: link:../../../packages/utils
+        version: link:../../packages/utils
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -286,19 +286,19 @@ importers:
     devDependencies:
       '@remoodle/backend':
         specifier: workspace:*
-        version: link:../../backend
+        version: link:../backend
       '@remoodle/eslint-config':
         specifier: workspace:*
-        version: link:../../../packages/eslint-config
+        version: link:../../packages/eslint-config
       '@remoodle/prettier-config':
         specifier: workspace:*
-        version: link:../../../packages/prettier-config
+        version: link:../../packages/prettier-config
       '@remoodle/tsconfig':
         specifier: workspace:*
-        version: link:../../../packages/tsconfig
+        version: link:../../packages/tsconfig
       '@remoodle/types':
         specifier: workspace:*
-        version: link:../../../packages/types
+        version: link:../../packages/types
       '@types/node':
         specifier: ^20.11.17
         version: 20.14.15
