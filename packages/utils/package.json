@@ -1,29 +1,25 @@
 {
-  "name": "@remoodle/telegram_bot",
+  "name": "@remoodle/utils",
   "version": "1.0.0",
+  "main": "src/index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "dev": "tsx watch src/app.ts",
-    "start": "tsx src/app.ts",
     "type-check": "tsc --noEmit",
-    "lint": "eslint . --max-warnings 0 && prettier --check src/",
+    "lint": "eslint . && prettier --check src/",
     "fix": "eslint . --fix && prettier --write src/"
   },
   "dependencies": {
-    "@remoodle/hc-wrapper": "workspace:*",
-    "dotenv": "^16.4.5",
-    "envalid": "^8.0.0",
-    "grammy": "^1.29.0"
+    "hono": "^4.5.5"
   },
   "devDependencies": {
-    "@remoodle/backend": "workspace:*",
     "@remoodle/eslint-config": "workspace:*",
     "@remoodle/prettier-config": "workspace:*",
     "@remoodle/tsconfig": "workspace:*",
     "@remoodle/types": "workspace:*",
-    "@types/node": "^20.11.17",
     "eslint": "^8.57.0",
     "prettier": "^3.3.3",
-    "tsx": "^4.7.1",
     "typescript": "~5.4.3"
   }
 }

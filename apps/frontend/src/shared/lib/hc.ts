@@ -1,4 +1,4 @@
-import { createHC } from "@remoodle/hc-wrapper";
+import { createHC } from "@remoodle/utils";
 import type { AppType } from "@remoodle/backend";
 
 import { useUserStore } from "@/shared/stores/user";

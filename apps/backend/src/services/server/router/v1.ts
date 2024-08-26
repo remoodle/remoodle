@@ -462,6 +462,12 @@ const privateApi = new Hono<{
             message: error.message,
           });
         }
+      } else {
+        if (user.telegramId !== telegramId) {
+          throw new HTTPException(400, {
+            message: "Telegram ID already connected",
+          });
+        }
       }
 
       return ctx.json({

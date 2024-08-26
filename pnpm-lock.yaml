@@ -17,6 +17,37 @@ importers:
         specifier: ^2.0.6
         version: 2.0.12
 
+  apps/alert-worker:
+    dependencies:
+      hono:
+        specifier: ^4.4.4
+        version: 4.5.5
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20240605.0
+        version: 4.20240806.0
+      '@remoodle/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@remoodle/prettier-config':
+        specifier: workspace:*
+        version: link:../../packages/prettier-config
+      '@remoodle/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
+      typescript:
+        specifier: ^5.0.4
+        version: 5.5.4
+      wrangler:
+        specifier: ^3.57.1
+        version: 3.70.0(@cloudflare/workers-types@4.20240806.0)
+
   apps/backend:
     dependencies:
       '@hono/node-server':
@@ -104,9 +135,9 @@ importers:
       '@radix-icons/vue':
         specifier: ^1.0.0
         version: 1.0.0(vue@3.4.37(typescript@5.4.5))
-      '@remoodle/hc-wrapper':
+      '@remoodle/utils':
         specifier: workspace:*
-        version: link:../../packages/hc-wrapper
+        version: link:../../packages/utils
       '@vueuse/core':
         specifier: ^10.7.1
         version: 10.11.1(vue@3.4.37(typescript@5.4.5))
@@ -238,42 +269,11 @@ importers:
         specifier: ^2.0.7
         version: 2.0.29(typescript@5.4.5)
 
-  apps/serverless/alert_point:
+  apps/telegram-bot/experimental:
     dependencies:
-      hono:
-        specifier: ^4.4.4
-        version: 4.5.5
-    devDependencies:
-      '@cloudflare/workers-types':
-        specifier: ^4.20240605.0
-        version: 4.20240806.0
-      '@remoodle/eslint-config':
+      '@remoodle/utils':
         specifier: workspace:*
-        version: link:../../../packages/eslint-config
-      '@remoodle/prettier-config':
-        specifier: workspace:*
-        version: link:../../../packages/prettier-config
-      '@remoodle/tsconfig':
-        specifier: workspace:*
-        version: link:../../../packages/tsconfig
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      prettier:
-        specifier: ^3.3.3
-        version: 3.3.3
-      typescript:
-        specifier: ^5.0.4
-        version: 5.5.4
-      wrangler:
-        specifier: ^3.57.1
-        version: 3.70.0(@cloudflare/workers-types@4.20240806.0)
-
-  apps/telegram_bot/experimental:
-    dependencies:
-      '@remoodle/hc-wrapper':
-        specifier: workspace:*
-        version: link:../../../packages/hc-wrapper
+        version: link:../../../packages/utils
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -339,7 +339,13 @@ importers:
         specifier: ^5.0.4
         version: 5.5.4
 
-  packages/hc-wrapper:
+  packages/prettier-config: {}
+
+  packages/tsconfig: {}
+
+  packages/types: {}
+
+  packages/utils:
     dependencies:
       hono:
         specifier: ^4.5.5
@@ -366,12 +372,6 @@ importers:
       typescript:
         specifier: ~5.4.3
         version: 5.4.5
-
-  packages/prettier-config: {}
-
-  packages/tsconfig: {}
-
-  packages/types: {}
 
 packages:
 
