@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.3](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.5.2...remoodle/frontend-v0.5.3) (2024-08-27)
+
+
+### Miscellaneous Chores
+
+* bump devtools ([4ce587a](https://github.com/remoodle/heresy/commit/4ce587ad56eed7e3a2ca91337b9c4ee34a52e132))
+* move .nvmrc to root ([53d28b7](https://github.com/remoodle/heresy/commit/53d28b7bd5e70bb9d67f08ef0a320aa766fda42a))
+
 ## [0.5.2](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.5.1...remoodle/frontend-v0.5.2) (2024-08-25)
 
 
