@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.3.1...remoodle/backend-v0.4.0) (2024-08-27)
+
+
+### Features
+
+* add auth check route ([6d689d8](https://github.com/remoodle/heresy/commit/6d689d8eab35586295f03d70362ef8af25c9309b))
+
+
+### Bug Fixes
+
+* stlying ([b4ceb73](https://github.com/remoodle/heresy/commit/b4ceb73cc5eeac399d20f983f803ba1dfcbf31db))
+
 ## [0.3.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.3.0...remoodle/backend-v0.3.1) (2024-08-27)
 
 
