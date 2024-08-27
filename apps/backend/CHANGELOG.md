@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.3.0...remoodle/backend-v0.3.1) (2024-08-27)
+
+
+### Bug Fixes
+
+* bundle shit properply ([c3ce9a2](https://github.com/remoodle/heresy/commit/c3ce9a235761c523bc07bec77b31f6ab941dfcc9))
+
 ## [0.3.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.14...remoodle/backend-v0.3.0) (2024-08-27)
 
 
