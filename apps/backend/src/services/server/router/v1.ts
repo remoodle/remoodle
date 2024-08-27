@@ -364,7 +364,7 @@ const privateApi = new Hono<{
   .get("/user/check", async (ctx) => {
     const userId = ctx.get("userId");
 
-    if(!userId) {
+    if (!userId) {
       throw new HTTPException(400, {
         message: "no userId",
       });
