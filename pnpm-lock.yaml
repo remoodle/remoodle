@@ -65,9 +65,6 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.2.2
         version: 0.2.2(hono@4.5.5)(zod@3.23.8)
-      '@remoodle/alert-worker':
-        specifier: workspace:*
-        version: link:../alert-worker
       '@remoodle/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -99,6 +96,9 @@ importers:
         specifier: ^3.22.4
         version: 3.23.8
     devDependencies:
+      '@remoodle/alert-worker':
+        specifier: workspace:*
+        version: link:../alert-worker
       '@remoodle/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
