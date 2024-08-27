@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.14...remoodle/backend-v0.3.0) (2024-08-27)
+
+
+### Features
+
+* trigger release ([60c42f8](https://github.com/remoodle/heresy/commit/60c42f87dbb7a499dee49a69c2a081fb19938dff))
+
 ## [0.2.14](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.2.13...remoodle/backend-v0.2.14) (2024-08-25)
 
 
