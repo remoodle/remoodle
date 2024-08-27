@@ -31,6 +31,27 @@ export function createBot(token: string) {
     return ctx.reply(data.user.name);
   });
 
+  bot.command("test", async (ctx) => {
+    if (!ctx.message) {
+      return;
+    }
+
+    const [data, error] = await request((client) =>
+      client.v1.user.check.$get(
+        {},
+        {
+          headers: getAuthHeaders(ctx.from?.id, 1),
+        },
+      ),
+    );
+
+    if (error) {
+      return ctx.reply(error.message);
+    }
+
+    return ctx.reply(JSON.stringify(data));
+  });
+
   bot.command("connect", async (ctx) => {
     if (!ctx.message?.text) {
       return;

@@ -361,6 +361,27 @@ const privateApi = new Hono<{
 
     return ctx.json({ otp });
   })
+  .get("/user/check", async (ctx) => {
+    const userId = ctx.get("userId");
+
+    if(!userId) {
+      throw new HTTPException(400, {
+        message: "no userId",
+      });
+    }
+
+    const user = await db.user.findOne({ _id: userId });
+
+    if (!user) {
+      throw new HTTPException(400, {
+        message: "User not found",
+      });
+    }
+
+    return ctx.json({
+      user,
+    });
+  })
   // FROM TELEGRAM BOT ONLY WITH ::0
   // TODO: Add auth middleware or move to bot.
   .post(
