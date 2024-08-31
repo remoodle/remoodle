@@ -33,7 +33,7 @@ const app = new Hono<{
   };
   Bindings: {
     TELEGRAM_CHAT_ID: string;
-    TELEGRAM_TOKEN: string;
+    TELEGRAM_BOT_TOKEN: string;
     ALERT_POINT_TOKEN: string;
   };
 }>()
@@ -54,7 +54,7 @@ const app = new Hono<{
       const topicId = TOPICS[topic];
 
       const telegram = new Telegram(
-        ctx.env.TELEGRAM_TOKEN,
+        ctx.env.TELEGRAM_BOT_TOKEN,
         ctx.env.TELEGRAM_CHAT_ID,
       );
 
@@ -87,7 +87,7 @@ const app = new Hono<{
       const topicId = topics.grafana;
 
       const telegram = new Telegram(
-        ctx.env.TELEGRAM_TOKEN,
+        ctx.env.TELEGRAM_BOT_TOKEN,
         ctx.env.TELEGRAM_CHAT_ID,
       );
 
