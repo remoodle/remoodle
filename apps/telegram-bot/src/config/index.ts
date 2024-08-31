@@ -13,6 +13,8 @@ export const env = cleanEnv(process.env, {
 
   BACKEND_URL: str({ default: "http://localhost:9000" }),
   BACKEND_SECRET: str({ default: "aboba" }),
+
+  REDIS_URI: str({ default: "redis://localhost:6379" }),
 });
 
 export const config = {
@@ -25,5 +27,8 @@ export const config = {
   },
   bot: {
     token: env.TELEGRAM_BOT_TOKEN,
+  },
+  redis: {
+    uri: env.REDIS_URI,
   },
 };

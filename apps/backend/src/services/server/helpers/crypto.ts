@@ -42,10 +42,6 @@ export const verifyPassword = (
   );
 };
 
-export const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
-
 export const verifyTelegramData = (
   telegramData: Record<string, string | number>,
   botToken = config.telegram.token,

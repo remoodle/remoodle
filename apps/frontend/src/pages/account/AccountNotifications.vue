@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
@@ -14,19 +15,37 @@ const props = defineProps<{
   };
 }>();
 
+const telegramId = ref<number | undefined>(props.settings?.telegramId);
+
 const { toast } = useToast();
 
 const TELEGRAM_BOT_URL = `https://t.me/${telegram.bot}`;
 
-const { run: generate, loading } = createAsyncProcess(async () => {
+const editingMode = ref(false);
+
+const otp = ref<string>("");
+
+const connect = () => {
+  editingMode.value = true;
+  window.open(`${TELEGRAM_BOT_URL}?start=connect`, "_blank");
+};
+
+const { run: verify, loading } = createAsyncProcess(async () => {
   const [data, error] = await request((client) =>
-    client.v1.otp.generate.$post(
-      {},
+    client.v1.otp.verify.$post(
+      {
+        json: {
+          otp: otp.value,
+        },
+      },
       {
         headers: getAuthHeaders(),
       },
     ),
   );
+
+  editingMode.value = false;
+  otp.value = "";
 
   if (error) {
     toast({
@@ -35,7 +54,11 @@ const { run: generate, loading } = createAsyncProcess(async () => {
     throw error;
   }
 
-  window.open(`${TELEGRAM_BOT_URL}?connect=${data.otp}`, "_blank");
+  telegramId.value = parseInt(data.telegramId);
+
+  toast({
+    title: "Telegram connected",
+  });
 });
 </script>
 
@@ -47,13 +70,24 @@ const { run: generate, loading } = createAsyncProcess(async () => {
     </p>
   </div>
   <Separator />
-  <template v-if="settings.telegramId">
+
+  <template v-if="telegramId">
     <p class="text-sm text-muted-foreground">
-      Telegram ID: <strong>{{ settings.telegramId }}</strong>
+      Telegram ID: <strong>{{ telegramId }}</strong>
     </p>
   </template>
   <template v-else>
     <p class="text-sm text-muted-foreground">Telegram ID: Not connected</p>
-    <Button @click="generate()" :disabled="loading"> Connect Telegram </Button>
+    <template v-if="editingMode">
+      <form @submit.prevent="verify()">
+        <div class="flex max-w-sm items-center gap-2">
+          <Input v-model="otp" :disabled="loading" placeholder="Telegram OTP" />
+          <Button type="submit" :disabled="loading"> Verify </Button>
+        </div>
+      </form>
+    </template>
+    <template v-else>
+      <Button @click="connect"> Connect Telegram </Button>
+    </template>
   </template>
 </template>

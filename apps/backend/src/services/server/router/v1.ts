@@ -4,11 +4,10 @@ import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
 import { db } from "../../../library/db";
-import type { IUser } from "../../../library/db/mongo/models/User";
+import type { IUser } from "../../../library/db";
 import { RMC } from "../../../library/rmc-sdk";
 
 import {
-  generateOTP,
   hashPassword,
   verifyPassword,
   verifyTelegramData,
@@ -379,38 +378,43 @@ const commonProtectedRoutes = new Hono<{
 
     return ctx.json({ ok: true });
   })
-  .post("/otp/generate", async (ctx) => {
-    const userId = ctx.get("userId");
+  .post(
+    "/otp/verify",
+    zValidator(
+      "json",
+      z.object({
+        otp: z.string(),
+      }),
+    ),
+    async (ctx) => {
+      const userId = ctx.get("userId");
 
-    const user = await db.user.findOne({ _id: userId });
+      const { otp } = ctx.req.valid("json");
 
-    if (!user) {
-      throw new HTTPException(400, {
-        message: "User not found",
-      });
-    }
+      try {
+        const telegramId = await db.telegramToken.get(otp);
 
-    if (user.telegramId) {
-      throw new HTTPException(400, {
-        message: "Telegram ID already connected",
-      });
-    }
+        if (!telegramId) {
+          throw new HTTPException(400, { message: "Invalid or expired token" });
+        }
 
-    const otp = generateOTP();
+        const user = await db.user.findById(userId);
 
-    await db.user.updateOne(
-      { _id: userId },
-      {
-        $set: {
-          otp,
-          otpExpiry: new Date(Date.now() + 1000 * 60 * 5), // 5 minutes from now
-        },
-      },
-      { upsert: true },
-    );
+        if (!user) {
+          throw new HTTPException(404, { message: "User not found" });
+        }
 
-    return ctx.json({ otp });
-  })
+        user.telegramId = parseInt(telegramId);
+        await user.save();
+
+        await db.telegramToken.remove(otp);
+
+        return ctx.json({ telegramId });
+      } catch (error: any) {
+        throw new HTTPException(500, { message: error.message });
+      }
+    },
+  )
   .get("/user/check", async (ctx) => {
     const userId = ctx.get("userId");
 
@@ -440,61 +444,6 @@ const telegramProtectedRoutes = new Hono<{
   };
 }>()
   .use("*", authMiddleware(["Telegram"]))
-  .post(
-    "/otp/verify",
-    zValidator(
-      "json",
-      z.object({
-        otp: z.string(),
-      }),
-    ),
-    async (ctx) => {
-      const { otp } = ctx.req.valid("json");
-
-      const user = await db.user.findOne({ otp });
-
-      const telegramId = ctx.get("telegramId");
-
-      if (!user) {
-        throw new HTTPException(400, {
-          message: "User not found",
-        });
-      }
-
-      if (user.otp !== otp) {
-        throw new HTTPException(400, {
-          message: "Invalid OTP",
-        });
-      }
-
-      if (user.telegramId && user.telegramId !== telegramId) {
-        throw new HTTPException(400, {
-          message: "Invalid Telegram ID",
-        });
-      }
-
-      try {
-        await db.user.updateOne(
-          {
-            _id: user._id,
-          },
-          {
-            $set: {
-              otp: null,
-              otpExpiry: null,
-              telegramId,
-            },
-          },
-        );
-      } catch (error: any) {
-        throw new HTTPException(500, {
-          message: error.message,
-        });
-      }
-
-      return ctx.json({ ok: true });
-    },
-  )
   .post(
     "/register",
     zValidator(

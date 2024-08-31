@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { useStorage, StorageSerializers } from "@vueuse/core";
 import type { RemovableRef } from "@vueuse/core";
 import { getStorageKey } from "@/shared/lib/helpers";
-import type { IUser } from "@remoodle/backend";
+import type { IUser } from "@remoodle/db";
 
 export const useUserStore = defineStore("user", () => {
   const accessToken = useStorage(getStorageKey("accessToken"), "");

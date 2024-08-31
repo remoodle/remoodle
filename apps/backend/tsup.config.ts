@@ -5,5 +5,5 @@ export default defineConfig(() => ({
   clean: true,
   format: ["cjs"],
   target: "node20",
-  noExternal: ["@remoodle/utils"],
+  noExternal: ["@remoodle/utils", "@remoodle/db"],
 }));

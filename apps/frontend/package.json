@@ -41,6 +41,7 @@
     "@remoodle/eslint-config": "workspace:^",
     "@remoodle/prettier-config": "workspace:^",
     "@remoodle/types": "workspace:*",
+    "@remoodle/db": "workspace:*",
     "@rushstack/eslint-patch": "^1.3.3",
     "@tailwindcss/typography": "^0.5.10",
     "@tsconfig/node20": "^20.1.4",

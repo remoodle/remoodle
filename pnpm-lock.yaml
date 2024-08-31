@@ -65,6 +65,9 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.2.2
         version: 0.2.2(hono@4.5.5)(zod@3.23.8)
+      '@remoodle/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@remoodle/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -77,21 +80,12 @@ importers:
       hono:
         specifier: ^4.5.5
         version: 4.5.5
-      ioredis:
-        specifier: ^5.4.1
-        version: 5.4.1
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
-      mongoose:
-        specifier: ^8.3.1
-        version: 8.5.2
       node-cron:
         specifier: ^3.0.3
         version: 3.0.3
-      uuid:
-        specifier: ^10.0.0
-        version: 10.0.0
       zod:
         specifier: ^3.22.4
         version: 3.23.8
@@ -120,9 +114,6 @@ importers:
       '@types/node-cron':
         specifier: ^3.0.11
         version: 3.0.11
-      '@types/uuid':
-        specifier: ^10.0.0
-        version: 10.0.0
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -211,6 +202,9 @@ importers:
       '@remoodle/backend':
         specifier: workspace:*
         version: link:../backend
+      '@remoodle/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@remoodle/eslint-config':
         specifier: workspace:^
         version: link:../../packages/eslint-config
@@ -286,6 +280,9 @@ importers:
 
   apps/telegram-bot:
     dependencies:
+      '@remoodle/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@remoodle/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -298,6 +295,9 @@ importers:
       grammy:
         specifier: ^1.29.0
         version: 1.29.0
+      ioredis:
+        specifier: ^5.4.1
+        version: 5.4.1
     devDependencies:
       '@remoodle/backend':
         specifier: workspace:*
@@ -326,6 +326,46 @@ importers:
       tsx:
         specifier: ^4.7.1
         version: 4.17.0
+      typescript:
+        specifier: ~5.4.3
+        version: 5.4.5
+
+  packages/db:
+    dependencies:
+      ioredis:
+        specifier: ^5.4.1
+        version: 5.4.1
+      mongoose:
+        specifier: ^8.3.1
+        version: 8.5.2
+      uuid:
+        specifier: ^10.0.0
+        version: 10.0.0
+    devDependencies:
+      '@remoodle/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@remoodle/prettier-config':
+        specifier: workspace:*
+        version: link:../prettier-config
+      '@remoodle/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@remoodle/types':
+        specifier: workspace:*
+        version: link:../types
+      '@types/node':
+        specifier: ^20.11.17
+        version: 20.14.15
+      '@types/uuid':
+        specifier: ^10.0.0
+        version: 10.0.0
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
       typescript:
         specifier: ~5.4.3
         version: 5.4.5
