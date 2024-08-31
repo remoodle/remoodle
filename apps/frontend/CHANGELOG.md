@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.7.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.6.0...remoodle/frontend-v0.7.0) (2024-08-31)
+
+
+### Features
+
+* new db package new otp ([65c9a7b](https://github.com/remoodle/heresy/commit/65c9a7b8972e49683d3eb9b2a2a7f86d09ad2787))
+
+
+### Miscellaneous Chores
+
+* repo stuff ([c991bfb](https://github.com/remoodle/heresy/commit/c991bfbcd1145a5a8fb3ecfb3fbb10e8026e773a))
+
+
+### Code Refactoring
+
+* shit ([89ebe97](https://github.com/remoodle/heresy/commit/89ebe97ea1dd4747ee2c76c66a2cf4b55d091ed1))
+
 ## [0.6.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.5.3...remoodle/frontend-v0.6.0) (2024-08-31)
 
 
