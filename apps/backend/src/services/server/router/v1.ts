@@ -18,7 +18,7 @@ import { requestAlertWorker } from "../helpers/hc";
 
 import { authMiddleware } from "../middleware/auth";
 
-const publicApi = new Hono()
+const publicRoutes = new Hono()
   .post(
     "/auth/register",
     zValidator(
@@ -126,7 +126,7 @@ const publicApi = new Hono()
     },
   )
   .post(
-    "/auth/telegram",
+    "/oauth/telegram/callback",
     zValidator(
       "json",
       z.object({
@@ -182,7 +182,7 @@ const publicApi = new Hono()
     return ctx.json(data);
   });
 
-const privateApi = new Hono<{
+const commonProtectedRoutes = new Hono<{
   Variables: {
     userId: string;
     moodleId: number;
@@ -379,7 +379,7 @@ const privateApi = new Hono<{
 
     return ctx.json({ ok: true });
   })
-  .post("/telegram/otp/generate", async (ctx) => {
+  .post("/otp/generate", async (ctx) => {
     const userId = ctx.get("userId");
 
     const user = await db.user.findOne({ _id: userId });
@@ -431,11 +431,17 @@ const privateApi = new Hono<{
     return ctx.json({
       user,
     });
-  })
-  // FROM TELEGRAM BOT ONLY WITH ::0
-  // TODO: Add auth middleware or move to bot.
+  });
+
+// FROM TELEGRAM BOT ONLY WITH ::0
+const telegramProtectedRoutes = new Hono<{
+  Variables: {
+    telegramId: number;
+  };
+}>()
+  .use("*", authMiddleware(["Telegram"]))
   .post(
-    "/telegram/otp/verify",
+    "/otp/verify",
     zValidator(
       "json",
       z.object({
@@ -490,7 +496,7 @@ const privateApi = new Hono<{
     },
   )
   .post(
-    "/telegram/register",
+    "/register",
     zValidator(
       "json",
       z.object({
@@ -556,7 +562,7 @@ const privateApi = new Hono<{
     },
   );
 
-export const v1 = {
-  public: publicApi,
-  private: privateApi,
-};
+export const v1 = new Hono()
+  .route("/", publicRoutes)
+  .route("/", commonProtectedRoutes)
+  .route("/telegram", telegramProtectedRoutes);

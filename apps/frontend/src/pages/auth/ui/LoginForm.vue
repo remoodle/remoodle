@@ -46,7 +46,7 @@ const { run: submit, loading } = createAsyncProcess(async () => {
 
 const handleTelegramAuth: OnTelegramAuth = async (user) => {
   const [data, error] = await request((client) =>
-    client.v1.auth.telegram.$post({
+    client.v1.oauth.telegram.callback.$post({
       json: user,
     }),
   );

@@ -24,7 +24,7 @@ const emit = defineEmits(["retry"]);
         <span class="text-lg font-bold leading-6"> An error occurred </span>
         <p class="text-base-content/80 text-sm">
           Try again or
-          <Link :to="org.telegram" underline hover> contact us </Link>
+          <Link :to="org.chat" underline hover> contact us </Link>
         </p>
       </div>
       <Button class="w-fit px-4" @click="emit('retry')"> Try again </Button>

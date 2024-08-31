@@ -17,7 +17,10 @@ const props = withDefaults(
   },
 );
 
-const emit = defineEmits(["callback", "loaded"]);
+const emit = defineEmits<{
+  callback: [user: Parameters<OnTelegramAuth>[0]];
+  loaded: [];
+}>();
 
 const onTelegramAuth: OnTelegramAuth = (user) => {
   emit("callback", user);

@@ -25,7 +25,7 @@ api.get("/health", async (ctx) => {
   return ctx.json({ status: "ok" });
 });
 
-const routes = api.route("/v1", v1.public).route("/v1", v1.private);
+const routes = api.route("/v1", v1);
 
 export type AppType = typeof routes;
 
