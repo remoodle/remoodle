@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.5.3...remoodle/frontend-v0.6.0) (2024-08-31)
+
+
+### Features
+
+* **auth:** add telegram oauth ([2a4eb28](https://github.com/remoodle/heresy/commit/2a4eb28ec0743b5d72c635a54f7c69532d8bb4f3))
+
 ## [0.5.3](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.5.2...remoodle/frontend-v0.5.3) (2024-08-27)
 
 
