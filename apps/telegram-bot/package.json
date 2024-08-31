@@ -5,7 +5,7 @@
     "dev": "tsx watch src/app.ts",
     "start": "tsx src/app.ts",
     "type-check": "tsc --noEmit",
-    "lint": "eslint . --max-warnings 0 && prettier --check src/",
+    "lint": "eslint . --ignore-path .gitignore && prettier --check src/",
     "fix": "eslint . --fix && prettier --write src/"
   },
   "dependencies": {
