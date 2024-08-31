@@ -7,7 +7,12 @@ import { db } from "../../../library/db";
 import type { IUser } from "../../../library/db/mongo/models/User";
 import { RMC } from "../../../library/rmc-sdk";
 
-import { generateOTP, hashPassword, verifyPassword } from "../helpers/crypto";
+import {
+  generateOTP,
+  hashPassword,
+  verifyPassword,
+  verifyTelegramData,
+} from "../helpers/crypto";
 import { issueTokens } from "../helpers/jwt";
 import { requestAlertWorker } from "../helpers/hc";
 
@@ -118,6 +123,51 @@ const publicApi = new Hono()
           message: error.message,
         });
       }
+    },
+  )
+  .post(
+    "/auth/telegram",
+    zValidator(
+      "json",
+      z.object({
+        id: z.number(),
+        first_name: z.string(),
+        last_name: z.string().optional(),
+        username: z.string().optional(),
+        photo_url: z.string().optional(),
+        auth_date: z.number(),
+        hash: z.string(),
+      }),
+    ),
+    async (ctx) => {
+      const telegramData = ctx.req.valid("json");
+
+      if (!verifyTelegramData(telegramData)) {
+        throw new HTTPException(400, {
+          message: "Invalid Telegram data",
+        });
+      }
+
+      let user: IUser | null = await db.user.findOne({
+        telegramId: telegramData.id,
+      });
+
+      if (!user) {
+        throw new HTTPException(400, {
+          message: "User not found. Please register first.",
+        });
+      }
+
+      const { accessToken, refreshToken } = issueTokens(
+        user._id.toString(),
+        user.moodleId,
+      );
+
+      return ctx.json({
+        user,
+        accessToken,
+        refreshToken,
+      });
     },
   )
   .get("/health", async (ctx) => {

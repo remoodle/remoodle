@@ -1,4 +1,5 @@
-import { pbkdf2Sync, randomBytes } from "node:crypto";
+import { pbkdf2Sync, randomBytes, createHmac, createHash } from "node:crypto";
+
 import { config } from "../../../config";
 
 export const hashPassword = (password: string) => {
@@ -43,4 +44,24 @@ export const verifyPassword = (
 
 export const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+export const verifyTelegramData = (
+  telegramData: Record<string, string | number>,
+  botToken = config.telegram.token,
+): boolean => {
+  const { hash } = telegramData;
+
+  const dataCheckString = Object.keys(telegramData)
+    .filter((key) => key !== "hash")
+    .sort()
+    .map((key) => `${key}=${telegramData[key]}`)
+    .join("\n");
+
+  const secretKey = createHash("sha256").update(botToken).digest();
+  const hmac = createHmac("sha256", secretKey)
+    .update(dataCheckString)
+    .digest("hex");
+
+  return hmac === hash;
 };

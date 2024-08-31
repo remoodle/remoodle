@@ -9,5 +9,7 @@ export default defineConfig({
       .url()
       .optional()
       .default("http://localhost:9000/"),
+
+    VITE_TELEGRAM_BOT_NAME: z.string().optional().default("remoodlebot"),
   },
 });

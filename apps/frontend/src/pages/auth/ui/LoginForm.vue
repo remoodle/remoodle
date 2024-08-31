@@ -8,8 +8,10 @@ import { Label } from "@/shared/ui/label";
 import { useToast } from "@/shared/ui/toast/use-toast";
 import { request, getAuthHeaders } from "@/shared/lib/hc";
 import { createAsyncProcess, vFocus } from "@/shared/lib/helpers";
+import { telegram } from "@/shared/config";
 import { useUserStore } from "@/shared/stores/user";
 import { RouteName } from "@/shared/types";
+import { TelegramAuth, type OnTelegramAuth } from "@/features/telegram-auth";
 
 const userStore = useUserStore();
 
@@ -41,6 +43,24 @@ const { run: submit, loading } = createAsyncProcess(async () => {
 
   userStore.login(data.accessToken, data.refreshToken, data.user);
 });
+
+const handleTelegramAuth: OnTelegramAuth = async (user) => {
+  const [data, error] = await request((client) =>
+    client.v1.auth.telegram.$post({
+      json: user,
+    }),
+  );
+
+  if (error) {
+    toast({
+      title: "Telegram login failed",
+      description: error.message,
+    });
+    throw error;
+  }
+
+  userStore.login(data.accessToken, data.refreshToken, data.user);
+};
 </script>
 
 <template>
@@ -95,6 +115,13 @@ const { run: submit, loading } = createAsyncProcess(async () => {
         >
           Moodle web service Token
         </Button>
+
+        <div class="mx-auto">
+          <TelegramAuth
+            :telegram-login="telegram.bot"
+            @callback="handleTelegramAuth"
+          />
+        </div>
       </div>
     </form>
   </div>
