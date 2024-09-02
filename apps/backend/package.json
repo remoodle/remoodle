@@ -9,7 +9,7 @@
     "start": "node dist/index.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ignore-path .gitignore && prettier --check src/",
-    "fix": "eslint . --fix && prettier --write src/",
+    "format": "eslint . --fix && prettier --write src/",
     "test": "vitest"
   },
   "dependencies": {

@@ -10,7 +10,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore && prettier --check src/",
-    "fix": "eslint . --fix && prettier --write src/",
+    "format": "eslint . --fix && prettier --write src/",
     "test": "vitest"
   },
   "dependencies": {

@@ -7,7 +7,7 @@
     "start": "wrangler dev",
     "type-check": "tsc --noEmit",
     "lint": "eslint . && prettier --check src/",
-    "fix": "eslint . --fix && prettier --write src/",
+    "format": "eslint . --fix && prettier --write src/",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
