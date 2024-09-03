@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.8.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.7.0...remoodle/frontend-v0.8.0) (2024-09-03)
+
+
+### Features
+
+* telegram notification ([2ea6231](https://github.com/remoodle/heresy/commit/2ea623108a21033522e1f72a1fa302d998cc3b9b))
+
+
+### Bug Fixes
+
+* change route name ([b64df57](https://github.com/remoodle/heresy/commit/b64df570a954db429d8aa235530885270b6795db))
+
+
+### Code Refactoring
+
+* move logo to shared/ui ([0b77c96](https://github.com/remoodle/heresy/commit/0b77c9696466f14538ad0f1949be85cfc514ca58))
+* shared/types =&gt; shared/routes ([f9d8efd](https://github.com/remoodle/heresy/commit/f9d8efd85f8ed17de9cc001786dbafc53a6ee8fb))
+
 ## [0.7.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.6.0...remoodle/frontend-v0.7.0) (2024-08-31)
 
 
