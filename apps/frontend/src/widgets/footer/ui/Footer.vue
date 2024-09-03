@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MonoLogo } from "@/widgets/logo";
+import { MonoLogo } from "@/shared/ui/logo";
 import { ThemeSwitcher } from "@/features/theme-switcher";
 import ClientVersion from "./ClientVersion.vue";
 

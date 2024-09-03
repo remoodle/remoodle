@@ -11,7 +11,7 @@ import {
 } from "@/shared/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/shared/ui/avatar";
 import { Picture } from "@/shared/ui/picture";
-import { Logo } from "@/widgets/logo";
+import { Logo } from "@/shared/ui/logo";
 import { useUserStore } from "@/shared/stores/user";
 import { RouteName } from "@/shared/types";
 import MagicSearch from "./MagicSearch.vue";
