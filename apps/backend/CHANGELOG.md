@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.6.2...remoodle/backend-v0.6.3) (2024-09-03)
+
+
+### Bug Fixes
+
+* handle errors ([e2a572a](https://github.com/remoodle/heresy/commit/e2a572a90f520629b96093c110d6f48c1415ea42))
+
 ## [0.6.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.6.1...remoodle/backend-v0.6.2) (2024-09-03)
 
 
