@@ -126,6 +126,18 @@ services:
     ports:
       - "80:9000"
 
+  tgbot:
+    image: ghcr.io/remoodle/tgbot:0.0.2
+    restart: always
+    networks:
+      - shared
+    env_file:
+      - .env.tgbot
+    environment:
+      - BACKEND_URL=http://backend:9000
+    ports:
+      - "8888:8888"
+
 networks:
   shared:
     name: r1ng
