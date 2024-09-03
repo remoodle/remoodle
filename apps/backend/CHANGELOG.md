@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.6.0...remoodle/backend-v0.6.1) (2024-09-03)
+
+
+### Bug Fixes
+
+* implicitly define type ([e02fd7d](https://github.com/remoodle/heresy/commit/e02fd7d13ebd4ec1f0368525bca55216dd4d068f))
+
 ## [0.6.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.5.0...remoodle/backend-v0.6.0) (2024-08-31)
 
 
