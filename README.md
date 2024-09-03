@@ -51,15 +51,8 @@ pnpm install
 
 ### 5. Run the application
 
-### Make sure ReMoodle Core is running
-
-Follow the instructions in the [core repository](https://github.com/remoodle/core).
-
-:note
-
-```bash
-./rr serve --dotenv .env
-```
+> [!IMPORTANT]  
+> Make sure ReMoodle Core is running. Follow the instructions in the [core repository](https://github.com/remoodle/core) to run it if it's not.
 
 ### Run the application
 
