@@ -16,7 +16,7 @@ Make sure you have the following installed:
 
 4. **MongoDB** - Installation guides are available on the [MongoDB official site](https://www.mongodb.com/docs/manual/installation/).
 
-### Setting Up Redis
+### 1. Setting Up Redis
 
 After installing Redis, you need to execute the following command.
 
@@ -26,13 +26,13 @@ redis-cli XGROUP CREATE stream:grade-change notifier $ MKSTREAM
 
 This command creates a new consumer group named `notifier` for the stream `stream:grade-change` used in the backend for notifications.
 
-### Creating a Telegram Bot
+### 2. Creating a Telegram Bot
 
 To create a Telegram bot, chat with @BotFather on Telegram, follow his instructions to set up your TESTING bot, and obtain the API token he provides for integrating with the Telegram API.
 
 :note Follow the ReMoodle::dev::<your-bot-username> guideline
 
-### Running the Setup Script
+### 3. Running the Setup Script
 
 Before starting your development, run the setup script to configure environment variables:
 
@@ -42,13 +42,13 @@ node scripts/setup-env.cjs
 
 Follow the prompts to enter the required variables such as the Telegram Bot Token and Telegram Bot Username.
 
-## Install dependencies
+### 4. Install dependencies
 
 ```bash
 pnpm install
 ```
 
-## Run the application
+### 5. Run the application
 
 ### Make sure ReMoodle Core is running
 
