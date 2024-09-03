@@ -28,9 +28,9 @@ This command creates a new consumer group named `notifier` for the stream `strea
 
 ### Creating a Telegram Bot
 
-1. **Start a chat with BotFather**: Open your Telegram application and search for "@BotFather". Start a conversation with this bot.
-2. **Create a new bot**: Send the `/newbot` command to BotFather and follow the instructions. You will need to choose a name and a username for your bot.
-3. **Get the token**: After the bot is created, BotFather will provide a token. This token is what your software will use to send and receive messages from the Telegram API.
+To create a Telegram bot, chat with @BotFather on Telegram, follow his instructions to set up your TESTING bot, and obtain the API token he provides for integrating with the Telegram API.
+
+:note Follow the ReMoodle::dev::<your-bot-username> guideline
 
 ### Running the Setup Script
 
@@ -54,9 +54,11 @@ pnpm install
 
 Follow the instructions in the [core repository](https://github.com/remoodle/core).
 
-    ```bash
-    ./rr serve --dotenv .env
-    ```
+:note
+
+```bash
+./rr serve --dotenv .env
+```
 
 ### Run the application
 
