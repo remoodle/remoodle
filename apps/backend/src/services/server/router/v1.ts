@@ -424,7 +424,7 @@ const commonProtectedRoutes = new Hono<{
       });
     }
 
-    const user = await db.user.findOne({ _id: userId });
+    const user: IUser | null = await db.user.findOne({ _id: userId });
 
     if (!user) {
       throw new HTTPException(400, {
