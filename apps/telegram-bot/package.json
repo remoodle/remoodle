@@ -7,7 +7,7 @@
     "start": "node dist/app.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ignore-path .gitignore && prettier --check src/",
-    "format": "eslint . --fix && prettier --write src/"
+    "format": "eslint . --fix --ignore-path .gitignore && prettier --write src/"
   },
   "dependencies": {
     "@remoodle/db": "workspace:*",
