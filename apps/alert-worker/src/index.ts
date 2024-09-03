@@ -10,7 +10,7 @@ function authMiddleware(): MiddlewareHandler {
   return async (ctx, next) => {
     const authorization = ctx.req.header("Authorization");
 
-    if (authorization !== `Bearer ${ctx.env.ALERT_POINT_TOKEN}`) {
+    if (authorization !== `Bearer ${ctx.env.ALERT_POINT_TOKEN ?? "ALARMA"}`) {
       return ctx.text("Forbidden", 403);
     }
 
