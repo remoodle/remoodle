@@ -30,7 +30,8 @@ This command creates a new consumer group named `notifier` for the stream `strea
 
 To create a Telegram bot, chat with @BotFather on Telegram, follow his instructions to set up your TESTING bot, and obtain the API token he provides for integrating with the Telegram API.
 
-:note Follow the ReMoodle::dev::<your-bot-username> guideline
+> [!TIP]
+> Follow the ReMoodle::dev::[your-bot-username] guideline
 
 ### 3. Running the Setup Script
 
