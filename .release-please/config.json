@@ -61,9 +61,9 @@
       "release-type": "node",
       "package-name": "remoodle/backend"
     },
-    "apps/telegram_bot": {
-      "release-type": "python",
-      "package-name": "remoodle/telegram_bot"
+    "apps/telegram-bot": {
+      "release-type": "node",
+      "package-name": "remoodle/telegram-bot"
     }
   }
 }

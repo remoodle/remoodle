@@ -4,14 +4,14 @@ on:
   push:
     branches: [trunk]
     paths:
-      - "apps/telegram_bot/**"
+      - "apps/telegram-bot/**"
       - ".github/workflows/tgbot-docker.yml"
     tags:
-      - "remoodle/telegram_bot-*"
+      - "remoodle/telegram-bot-*"
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: telegram_bot
+  IMAGE_NAME: telegram-bot
   REGISTRY: ghcr.io
 
 permissions: write-all
@@ -40,6 +40,6 @@ jobs:
 
           DOCKER_TAG="${GITHUB_REF}"
 
-          docker build -f apps/telegram_bot/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG
+          docker build -f apps/telegram-bot/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG
 
           docker push $IMAGE_ID:$DOCKER_TAG

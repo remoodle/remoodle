@@ -1,5 +1,5 @@
 {
-  "name": "@remoodle/telegram_bot",
+  "name": "@remoodle/telegram-bot",
   "version": "1.0.0",
   "scripts": {
     "dev": "tsx watch src/app.ts",
@@ -25,6 +25,7 @@
     "@types/node": "^20.11.17",
     "eslint": "^8.57.0",
     "prettier": "^3.3.3",
+    "tsup": "^8.2.4",
     "tsx": "^4.7.1",
     "typescript": "~5.4.3"
   }
