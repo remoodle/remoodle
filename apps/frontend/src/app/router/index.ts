@@ -39,7 +39,7 @@ const routes: RouteRecordRaw[] = [
             component: AccountPage,
           },
           {
-            path: "security",
+            path: "notifications",
             name: RouteName.AccountNotifications,
             component: AccountPage,
           },
