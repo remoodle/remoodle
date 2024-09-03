@@ -1,13 +1,13 @@
-import { Bot, session, SessionFlavor } from "grammy";
+import { Bot, Context } from "grammy";
 import { request, getAuthHeaders } from "../../helpers/hc";
-import { MyContext, initial } from "./types";
 import commandsHandler from "./handlers/commands";
+import callbacksHandler from "./handlers/callbacks";
 
 export function createBot(token: string) {
-  const bot = new Bot<MyContext>(token);
+  const bot = new Bot<Context>(token);
 
-  bot.use(session({ initial }));
   bot.use(commandsHandler);
+  bot.use(callbacksHandler);
 
   bot.command("connect", async (ctx) => {
     if (!ctx.message?.text) {
