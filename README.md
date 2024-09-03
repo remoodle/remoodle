@@ -10,27 +10,23 @@ ReMoodle Monorepo
 
 Make sure you have the following installed:
 
-1. **Node.js (v20)** - You'll need Node.js to run your JavaScript code. Download and install it from [Node.js official website](https://nodejs.org/).
+1. **Node.js (v20)** - Download it via [fnm](https://github.com/Schniz/fnm).
 
-2. **pnpm (v9)** - pnpm is a fast, disk space efficient package manager for JavaScript. Install pnpm by running:
+2. **pnpm (v9)** - Installation instructions on the [pnpm website](https://pnpm.io/installation).
 
-   ```bash
-   npm install -g pnpm@9
-   ```
+3. **Redis** - Installation instructions can be found on the [Redis website](https://redis.io/download).
 
-3. **Redis** - Redis is an in-memory data structure store used as a database, cache, and message broker. Installation instructions can be found on the [Redis website](https://redis.io/download).
-
-4. **MongoDB** - MongoDB is a NoSQL database designed for ease of development and scaling. Installation guides are available on the [MongoDB official site](https://www.mongodb.com/docs/manual/installation/).
+4. **MongoDB** - Installation guides are available on the [MongoDB official site](https://www.mongodb.com/docs/manual/installation/).
 
 ### Setting Up Redis
 
-After installing Redis, you need to execute the following command to set up a stream for your application:
+After installing Redis, you need to execute the following command.
 
 ```bash
 redis-cli XGROUP CREATE stream:grade-change notifier $ MKSTREAM
 ```
 
-This command creates a new consumer group named `notifier` for the stream `stream:grade-change`.
+This command creates a new consumer group named `notifier` for the stream `stream:grade-change` used in the backend for notifications.
 
 ### Creating a Telegram Bot
 
@@ -46,16 +42,16 @@ Before starting your development, run the setup script to configure environment 
 node scripts/setup-env.cjs
 ```
 
-Follow the prompts to enter the required variables such as the Telegram Bot Token.
+Follow the prompts to enter the required variables such as the Telegram Bot Token and Telegram Bot Username.
 
-### Development Instructions
-
-With all dependencies installed and initial setup complete, you're ready to start developing. Use the following commands to run your development environment:
+## Install dependencies
 
 ```bash
-# Install dependencies
 pnpm install
+```
 
-# Run entire application
+## Run the application
+
+```bash
 pnpm run dev
 ```
