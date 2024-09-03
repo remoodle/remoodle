@@ -50,5 +50,7 @@ export const icons = {
   delete: "ic:round-delete",
   file: "vscode-icons:default-file",
   people: "fluent:people-add-20-filled",
+  telegram: "cib:telegram-plane",
+  close: "ic:round-close",
   ...fileIcons,
 } as const;

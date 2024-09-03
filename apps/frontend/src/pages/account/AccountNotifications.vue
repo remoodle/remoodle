@@ -7,6 +7,7 @@ import { Separator } from "@/shared/ui/separator";
 import { useToast } from "@/shared/ui/toast";
 import { request, getAuthHeaders } from "@/shared/lib/hc";
 import { createAsyncProcess } from "@/shared/lib/helpers";
+import { useUserStore } from "@/shared/stores/user";
 import { telegram } from "@/shared/config";
 
 const props = defineProps<{
@@ -14,6 +15,8 @@ const props = defineProps<{
     telegramId?: number | undefined;
   };
 }>();
+
+const userStore = useUserStore();
 
 const telegramId = ref<number | undefined>(props.settings?.telegramId);
 
@@ -55,6 +58,8 @@ const { run: verify, loading } = createAsyncProcess(async () => {
   }
 
   telegramId.value = parseInt(data.telegramId);
+
+  userStore.closeTelegramBanner();
 
   toast({
     title: "Telegram connected",

@@ -43,12 +43,23 @@ export const useUserStore = defineStore("user", () => {
     getDefaultPreferences(),
   );
 
+  const showTelegramBanner = useStorage(
+    getStorageKey("telegram-notifications-banner"),
+    true,
+  );
+
+  const closeTelegramBanner = () => {
+    showTelegramBanner.value = false;
+  };
+
   const logout = () => {
     user.value = null;
     accessToken.value = "";
     refreshToken.value = "";
 
     preferences.value = getDefaultPreferences();
+
+    showTelegramBanner.value = true;
   };
 
   return {
@@ -59,5 +70,7 @@ export const useUserStore = defineStore("user", () => {
     authorized,
     login,
     logout,
+    showTelegramBanner,
+    closeTelegramBanner,
   };
 });

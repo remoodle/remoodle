@@ -2,6 +2,7 @@
 import { onMounted, onBeforeUnmount } from "vue";
 import { Header } from "@/widgets/header";
 import { Footer } from "@/widgets/footer";
+import { NotificationsBanner } from "@/widgets/notifications-banner";
 
 const attr = "data-dashboard";
 
@@ -15,6 +16,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+  <NotificationsBanner />
   <Header />
   <div class="bg-secondary">
     <div class="mb-10 mt-12 flex-wrap justify-between sm:flex">
