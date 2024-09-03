@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { ExtendedCourse } from "@remoodle/types";
-import { RouteName } from "@/shared/types";
+import { RouteName } from "@/shared/lib/routes";
 import { splitCourseName } from "@/shared/lib/helpers";
 import {
   Tooltip,

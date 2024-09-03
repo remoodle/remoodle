@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Deadline } from "@remoodle/types";
-import { RouteName } from "@/shared/types";
+import { RouteName } from "@/shared/lib/routes";
 import {
   splitCourseName,
   formatAssignmentName,

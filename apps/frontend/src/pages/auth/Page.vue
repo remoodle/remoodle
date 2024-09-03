@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 import { Footer } from "@/widgets/footer";
-import { RouteName } from "@/shared/types";
+import { RouteName } from "@/shared/lib/routes";
 import { Link } from "@/shared/ui/link";
 import TokenForm from "./ui/TokenForm.vue";
 import LoginForm from "./ui/LoginForm.vue";

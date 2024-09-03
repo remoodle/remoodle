@@ -3,7 +3,7 @@ import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import type { Assignment } from "@remoodle/types";
 import { FileIcon } from "@/entities/attachment";
-import { RouteName } from "@/shared/types";
+import { RouteName } from "@/shared/lib/routes";
 import { Link } from "@/shared/ui/link";
 import { Text } from "@/shared/ui/text";
 // import { toRoutePath } from "@/shared/lib/helpers";

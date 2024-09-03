@@ -3,7 +3,7 @@ import { watch } from "vue";
 import { RouterView, useRoute, useRouter } from "vue-router";
 import { useUserStore } from "@/shared/stores/user";
 import { useAppStore } from "@/shared/stores/app";
-import { RouteName } from "@/shared/types";
+import { RouteName } from "@/shared/lib/routes";
 import Toaster from "@/shared/ui/toast/Toaster.vue";
 
 const appStore = useAppStore();

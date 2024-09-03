@@ -17,7 +17,7 @@ import {
 import { useToast } from "@/shared/ui/toast";
 import { Link } from "@/shared/ui/link";
 import type { Grade, CourseGradeItem } from "@remoodle/types";
-import { RouteName } from "@/shared/types";
+import { RouteName } from "@/shared/lib/routes";
 import {
   createAsyncProcess,
   isDefined,

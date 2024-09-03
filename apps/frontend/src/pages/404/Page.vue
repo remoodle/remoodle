@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from "@/shared/ui/link";
-import { RouteName } from "@/shared/types";
+import { RouteName } from "@/shared/lib/routes";
 </script>
 
 <template>

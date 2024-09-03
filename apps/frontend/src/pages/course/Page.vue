@@ -18,7 +18,7 @@ import {
 } from "@/shared/lib/helpers";
 import type { Course, Assignment } from "@remoodle/types";
 import { useBreakpoints } from "@/shared/lib/use-breakpoints";
-import { RouteName } from "@/shared/types";
+import { RouteName } from "@/shared/lib/routes";
 import CourseOverview from "./CourseOverview.vue";
 import CourseGrades from "./CourseGrades.vue";
 import CourseAssignment from "./CourseAssignment.vue";

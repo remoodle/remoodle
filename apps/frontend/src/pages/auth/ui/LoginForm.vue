@@ -10,7 +10,7 @@ import { request, getAuthHeaders } from "@/shared/lib/hc";
 import { createAsyncProcess, vFocus } from "@/shared/lib/helpers";
 import { telegram } from "@/shared/config";
 import { useUserStore } from "@/shared/stores/user";
-import { RouteName } from "@/shared/types";
+import { RouteName } from "@/shared/lib/routes";
 import { TelegramAuth, type OnTelegramAuth } from "@/features/telegram-auth";
 
 const userStore = useUserStore();

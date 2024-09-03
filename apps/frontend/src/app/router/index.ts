@@ -4,7 +4,7 @@ import {
   type RouteRecordRaw,
 } from "vue-router";
 import { useUserStore } from "@/shared/stores/user";
-import { RouteName } from "@/shared/types";
+import { RouteName } from "@/shared/lib/routes";
 import AuthPage from "@/pages/auth/Page.vue";
 import HomePage from "@/pages/home/Page.vue";
 import NotFoundPage from "@/pages/404/Page.vue";

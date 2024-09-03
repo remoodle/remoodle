@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { prepareFileURL } from "@/shared/lib/helpers";
 import type { CourseModule } from "@remoodle/types";
-import { RouteName } from "@/shared/types";
+import { RouteName } from "@/shared/lib/routes";
 import { Link } from "@/shared/ui/link";
 import { Text } from "@/shared/ui/text";
 import { filesize } from "@/shared/lib/helpers";
