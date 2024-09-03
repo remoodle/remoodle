@@ -22,7 +22,7 @@ function main(): void {
     server.close();
   });
 
-  console.log("💨 Bot is running!");
+  console.log("💨 Bot is running");
 
   bot.start();
 }
