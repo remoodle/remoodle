@@ -54,6 +54,15 @@ const publicRoutes = new Hono()
             ...(data.email && { email: data.email }),
             ...(password && { password: hashPassword(password) }),
           })) as IUser;
+
+          requestAlertWorker((client) =>
+            client.new.$post({
+              json: {
+                topic: "users",
+                message: `New User From Frontend <b>${data.name}</b>`,
+              },
+            }),
+          );
         } catch (error: any) {
           const [data, _] = await rmc.v1_delete_user();
           await db.user.deleteOne({ _id: user?._id });
@@ -64,16 +73,22 @@ const publicRoutes = new Hono()
         }
       }
 
-      const { accessToken, refreshToken } = issueTokens(
-        user._id,
-        user.moodleId,
-      );
+      try {
+        const { accessToken, refreshToken } = issueTokens(
+          user._id,
+          user.moodleId,
+        );
 
-      return ctx.json({
-        user,
-        accessToken,
-        refreshToken,
-      });
+        return ctx.json({
+          user,
+          accessToken,
+          refreshToken,
+        });
+      } catch (error: any) {
+        throw new HTTPException(500, {
+          message: error.message,
+        });
+      }
     },
   )
   .post(
