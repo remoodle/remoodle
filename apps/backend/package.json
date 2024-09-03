@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/app.ts",
     "build": "tsup",
-    "start": "node dist/index.js",
+    "start": "node dist/app.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ignore-path .gitignore && prettier --check src/",
     "format": "eslint . --fix && prettier --write src/",

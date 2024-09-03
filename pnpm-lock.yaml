@@ -295,9 +295,6 @@ importers:
       grammy:
         specifier: ^1.29.0
         version: 1.29.0
-      ioredis:
-        specifier: ^5.4.1
-        version: 5.4.1
     devDependencies:
       '@remoodle/backend':
         specifier: workspace:*

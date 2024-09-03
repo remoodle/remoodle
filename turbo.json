@@ -1,14 +1,14 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
     "lint": {},
     "format": {},
     "test": {},
     "type-check": {},
-    "build": {},
-    "dev": {
-      "cache": false,
-      "persistent": true
-    }
+    "build": {}
   }
 }
