@@ -59,3 +59,11 @@ pnpm install
 ```bash
 pnpm run dev
 ```
+
+### Access it
+
+- Frontend http://localhost:5173/
+- Backend http://localhost:9000/health
+- Backend (Core) http://localhost:9000/v1/health
+- Telegram Bot Server http://localhost:8888/health
+- Alert Worker http://localhost:8787/
