@@ -4,32 +4,8 @@ import { config } from "../../../config";
 import { db } from "../../../library/db";
 import { decodeJwtToken, verifyJwtToken } from "../helpers/jwt";
 
-type AuthScheme = "Telegram" | "Bearer";
-
-const validateAuthorization = (ctx: Context): [AuthScheme, string] => {
-  const authorization = ctx.req.header("Authorization");
-
-  if (!authorization) {
-    throw new HTTPException(403, {
-      message: "Authorization header is required",
-    });
-  }
-
-  const [scheme, token] = authorization.split(" ");
-
-  if (scheme !== "Telegram" && scheme !== "Bearer") {
-    throw new HTTPException(403, { message: "Invalid authorization scheme" });
-  }
-
-  if (!token || !token.length) {
-    throw new HTTPException(401, { message: "Token is required" });
-  }
-
-  return [scheme as AuthScheme, token];
-};
-
-const handleTelegramAuth = async (ctx: Context, token: string) => {
-  const [secret, telegramId, withUser = "1"] = token.split("::");
+const handleTelegramId = (ctx: Context, token: string) => {
+  const [secret, telegramId] = token.split("::");
 
   if (secret !== `${config.http.secret}`) {
     throw new HTTPException(403, { message: "Forbidden" });
@@ -37,16 +13,20 @@ const handleTelegramAuth = async (ctx: Context, token: string) => {
 
   ctx.set("telegramId", telegramId);
 
-  if (withUser !== "0") {
-    const user = await db.user.findOne({ telegramId });
+  return telegramId;
+};
 
-    if (!user) {
-      throw new HTTPException(403, { message: "Forbidden" });
-    }
+const handleTelegramAuth = async (ctx: Context, token: string) => {
+  const telegramId = handleTelegramId(ctx, token);
 
-    ctx.set("userId", user._id);
-    ctx.set("moodleId", user.moodleId);
+  const user = await db.user.findOne({ telegramId });
+
+  if (!user) {
+    throw new HTTPException(403, { message: "Forbidden" });
   }
+
+  ctx.set("userId", user._id);
+  ctx.set("moodleId", user.moodleId);
 };
 
 const handleJwtAuth = (ctx: Context, token: string) => {
@@ -73,11 +53,42 @@ const handleJwtAuth = (ctx: Context, token: string) => {
   ctx.set("moodleId", payload.moodleId);
 };
 
+type AuthScheme = "Telegram" | "Bearer";
+
 export const authMiddleware = (
   allowedSchemes: AuthScheme[] = ["Telegram", "Bearer"],
+  required: boolean = true,
 ): MiddlewareHandler => {
   return async (ctx, next) => {
-    const [scheme, token] = validateAuthorization(ctx);
+    const authorization = ctx.req.header("Authorization");
+
+    if (!required) {
+      if (allowedSchemes.includes("Telegram") && authorization) {
+        const [scheme, token] = authorization.split(" ");
+
+        if (scheme === "Telegram") {
+          handleTelegramId(ctx, token);
+        }
+      }
+
+      return await next();
+    }
+
+    if (!authorization) {
+      throw new HTTPException(403, {
+        message: "Authorization header is required",
+      });
+    }
+
+    const [scheme, token] = authorization.split(" ");
+
+    if (scheme !== "Telegram" && scheme !== "Bearer") {
+      throw new HTTPException(403, { message: "Invalid authorization scheme" });
+    }
+
+    if (!token || !token.length) {
+      throw new HTTPException(401, { message: "Token is required" });
+    }
 
     if (!allowedSchemes.includes(scheme)) {
       throw new HTTPException(403, {

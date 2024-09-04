@@ -17,7 +17,24 @@ import { requestAlertWorker } from "../helpers/hc";
 
 import { authMiddleware } from "../middleware/auth";
 
-const publicRoutes = new Hono()
+const publicRoutes = new Hono().get("/health", async (ctx) => {
+  const rmc = new RMC();
+
+  const [data, error] = await rmc.get_health();
+
+  if (error) {
+    throw error;
+  }
+
+  return ctx.json(data);
+});
+
+const authRoutes = new Hono<{
+  Variables: {
+    telegramId?: number;
+  };
+}>()
+  .use("*", authMiddleware(["Telegram"], false))
   .post(
     "/auth/register",
     zValidator(
@@ -32,6 +49,8 @@ const publicRoutes = new Hono()
       const { handle, moodleToken, password } = ctx.req.valid("json");
 
       const rmc = new RMC({ moodleToken });
+
+      const telegramId = ctx.get("telegramId");
 
       // TODO: Refactor this
       let user: IUser | null = await db.user.findOne({ moodleToken });
@@ -51,18 +70,30 @@ const publicRoutes = new Hono()
             name: data.name,
             moodleId: data.moodle_id,
             handle: handle || data.username,
+            ...(telegramId && { telegramId }),
             ...(data.email && { email: data.email }),
             ...(password && { password: hashPassword(password) }),
           })) as IUser;
 
-          requestAlertWorker((client) =>
-            client.new.$post({
-              json: {
-                topic: "users",
-                message: `New User From Frontend <b>${data.name}</b>`,
-              },
-            }),
-          );
+          if (telegramId) {
+            requestAlertWorker((client) =>
+              client.new.$post({
+                json: {
+                  topic: "users",
+                  message: `New Telegram user <b>${data.name}</b>`,
+                },
+              }),
+            );
+          } else {
+            requestAlertWorker((client) =>
+              client.new.$post({
+                json: {
+                  topic: "users",
+                  message: `New user <b>${data.name}</b>`,
+                },
+              }),
+            );
+          }
         } catch (error: any) {
           const [data, _] = await rmc.v1_delete_user();
           await db.user.deleteOne({ _id: user?._id });
@@ -183,18 +214,7 @@ const publicRoutes = new Hono()
         refreshToken,
       });
     },
-  )
-  .get("/health", async (ctx) => {
-    const rmc = new RMC();
-
-    const [data, error] = await rmc.get_health();
-
-    if (error) {
-      throw error;
-    }
-
-    return ctx.json(data);
-  });
+  );
 
 const commonProtectedRoutes = new Hono<{
   Variables: {
@@ -452,81 +472,7 @@ const commonProtectedRoutes = new Hono<{
     });
   });
 
-// FROM TELEGRAM BOT ONLY WITH ::0
-const telegramProtectedRoutes = new Hono<{
-  Variables: {
-    telegramId: number;
-  };
-}>()
-  .use("*", authMiddleware(["Telegram"]))
-  .post(
-    "/register",
-    zValidator(
-      "json",
-      z.object({
-        moodleToken: z.string(),
-      }),
-    ),
-    async (ctx) => {
-      const { moodleToken } = ctx.req.valid("json");
-
-      const telegramId = ctx.get("telegramId");
-
-      const rmc = new RMC({ moodleToken });
-
-      // TODO: Refactor this
-      let user: IUser | null = await db.user.findOne({ moodleToken });
-
-      if (!user) {
-        try {
-          const [data, error] = await rmc.v1_auth_register({
-            token: moodleToken,
-          });
-
-          if (error) {
-            throw error;
-          }
-
-          user = (await db.user.create({
-            telegramId,
-            moodleToken,
-            name: data.name,
-            moodleId: data.moodle_id,
-            handle: data.username,
-            ...(data.email && { email: data.email }),
-          })) as IUser;
-
-          requestAlertWorker((client) =>
-            client.new.$post({
-              json: {
-                topic: "users",
-                message: `New User From Telegram <b>${data.name}</b>`,
-              },
-            }),
-          );
-        } catch (error: any) {
-          const [data, _] = await rmc.v1_delete_user();
-          await db.user.deleteOne({ _id: user?._id });
-
-          throw new HTTPException(500, {
-            message: error.message,
-          });
-        }
-      } else {
-        if (user.telegramId !== telegramId) {
-          throw new HTTPException(400, {
-            message: "Telegram ID already connected",
-          });
-        }
-      }
-
-      return ctx.json({
-        user,
-      });
-    },
-  );
-
 export const v1 = new Hono()
   .route("/", publicRoutes)
-  .route("/", commonProtectedRoutes)
-  .route("/telegram", telegramProtectedRoutes);
+  .route("/", authRoutes)
+  .route("/", commonProtectedRoutes);

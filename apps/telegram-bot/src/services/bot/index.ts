@@ -21,7 +21,7 @@ export function createBot(token: string) {
     }
 
     const [data, error] = await request((client) =>
-      client.v1.telegram.register.$post(
+      client.v1.auth.register.$post(
         {
           json: {
             moodleToken: token,
