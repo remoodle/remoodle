@@ -11,9 +11,12 @@ use App\Modules\Moodle\Entities\Assignment as AssignmentEntity;
 use App\Models\{Assignment, AssignmentAttachment, Course, CourseContent, Event, Grade, MoodleUser};
 use App\Modules\Moodle\BaseMoodleUser;
 use App\Modules\Moodle\Entities\CourseContent as EntitiesCourseContent;
+use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use App\Modules\Moodle\Entities\IntroAttachment;
 use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
 use Illuminate\Database\Connection;
+
+use function PHPSTORM_META\type;
 
 class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterface
 {
@@ -43,28 +46,38 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
     /**
      * @inheritDoc
      */
-    public function getActiveCourses(int $moodleId, string $moodleToken): array
+    public function getActiveCourses(int $moodleId, string $moodleToken, ?CourseEnrolledClassification $status = null): array
     {
-        return MoodleUser::query()
-            ->with([
-                "courses" => function ($query) {
-                    $query->orderBy("course_id", "desc");
-                }
-            ])
-            ->where("moodle_id", $moodleId)
-            ->first()
-            ?->courses
-            ->map(function (Course $course) {
-                return new CourseEntity(
-                    course_id: $course->course_id,
-                    name: $course->name,
-                    coursecategory: $course->coursecategory,
-                    start_date: $course->start_date,
-                    end_date: $course->end_date,
-                    url: $course->url
-                );
-            })
-            ->all();
+        $courses = MoodleUser::query()
+        ->with([
+            "courses" => function ($query) {
+                $query->orderBy("course_id", "desc");
+            }
+        ])
+        ->where("moodle_id", $moodleId)
+        ->first()
+        ?->courses;
+
+        if ($status !== null) {
+            $courses = $courses->where("status", $status->value);
+        }
+
+        $courses = $courses
+        ->map(function (Course $course) {
+            return new CourseEntity(
+                course_id: $course->course_id,
+                name: $course->name,
+                coursecategory: $course->coursecategory,
+                start_date: $course->start_date,
+                end_date: $course->end_date,
+                url: $course->url,
+                status: $course->status
+            );
+        })
+        ->all();
+
+
+        return $courses;
 
     }
 

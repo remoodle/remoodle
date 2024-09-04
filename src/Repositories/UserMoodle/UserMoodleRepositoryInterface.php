@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories\UserMoodle;
 
 use App\Modules\Moodle\BaseMoodleUser;
+use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use Illuminate\Database\Eloquent\Collection;
 
 interface UserMoodleRepositoryInterface
@@ -12,9 +13,10 @@ interface UserMoodleRepositoryInterface
     /**
      * @param int $moodleId
      * @param string $moodleToken
+     * @param ?CourseEnrolledClassification $status
      * @return \App\Modules\Moodle\Entities\Course[]
      */
-    public function getActiveCourses(int $moodleId, string $moodleToken): array;
+    public function getActiveCourses(int $moodleId, string $moodleToken, ?CourseEnrolledClassification $status = null): array;
 
     /**
      * @param int $moodleId

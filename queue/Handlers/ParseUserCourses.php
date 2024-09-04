@@ -60,12 +60,16 @@ class ParseUserCourses extends BaseHandler
      */
     private function getUserCoursesAndAssigns(int $moodleId, Moodle $moodle): array
     {
-        $courses = $moodle->getUserCourses();
+        $inprogressCourses = $moodle->getUserCourses(CourseEnrolledClassification::INPROGRESS);
+        $pastCourses = $moodle->getUserCourses(CourseEnrolledClassification::PAST);
+        $futureCourses = $moodle->getUserCourses(CourseEnrolledClassification::FUTURE);
+        $courses = array_merge($inprogressCourses, $pastCourses, $futureCourses);
+
         $courseAssign = array_map(function (Course $course) use ($moodleId) {
             return [
                 "course_id" => $course->course_id,
                 "moodle_id" => $moodleId,
-                "classification" => CourseEnrolledClassification::INPROGRESS->value
+                "classification" => $course->status === 1 ? CourseEnrolledClassification::INPROGRESS->value : CourseEnrolledClassification::PAST->value
             ];
         }, $courses);
 

@@ -6,6 +6,7 @@ namespace App\Repositories\UserMoodle\Concrete;
 
 use App\Modules\Moodle\BaseMoodleUser;
 use App\Modules\Moodle\Moodle;
+use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use App\Repositories\UserMoodle\ApiUserMoodleRepositoryInterface;
 
 class ApiUserMoodleRepository implements ApiUserMoodleRepositoryInterface
@@ -13,7 +14,7 @@ class ApiUserMoodleRepository implements ApiUserMoodleRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function getActiveCourses(int $moodleId, string $moodleToken): array
+    public function getActiveCourses(int $moodleId, string $moodleToken, ?CourseEnrolledClassification $status = null): array
     {
         return Moodle::createFromToken($moodleToken, $moodleId)->getUserCourses();
     }

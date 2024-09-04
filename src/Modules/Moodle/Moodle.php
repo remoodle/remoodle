@@ -103,6 +103,7 @@ final class Moodle
                 name: $course["fullname"] ?? $course["shortname"],
                 end_date: $course["startdate"],
                 start_date: $course["enddate"],
+                status: $classification->value,
             );
         }
 
