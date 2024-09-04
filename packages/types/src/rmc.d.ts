@@ -26,22 +26,6 @@ export type MoodleUser = {
   email: string | null;
 };
 
-// TODO: Replace with real types
-type NotifyMethod = "email" | "webhook";
-
-export type UserSettings = {
-  moodle_id: number;
-  username: string;
-  name: string;
-  name_alias: string | null;
-  has_password: boolean;
-  email: string | null;
-  email_verified_at: string | null;
-  notify_method: NotifyMethod | null;
-  webhook_secret: string | null;
-};
-
-// TODO: Complete types
 export type Deadline = {
   event_id: number;
   timestart: number;

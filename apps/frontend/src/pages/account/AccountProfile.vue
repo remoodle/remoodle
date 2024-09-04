@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import type { UserSettings } from "@remoodle/types";
 import { useUserStore } from "@/shared/stores/user";
 import {
   Dialog,

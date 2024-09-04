@@ -3,7 +3,6 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/shared/stores/user";
 import { RoundedSection, PageWrapper } from "@/entities/page";
-import type { UserSettings } from "@remoodle/types";
 import { request, getAuthHeaders } from "@/shared/lib/hc";
 import { createAsyncProcess } from "@/shared/lib/helpers";
 import { useToast } from "@/shared/ui/toast";

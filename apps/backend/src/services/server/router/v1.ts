@@ -52,7 +52,6 @@ const authRoutes = new Hono<{
 
       const telegramId = ctx.get("telegramId");
 
-      // TODO: Refactor this
       let user: IUser | null = await db.user.findOne({ moodleToken });
 
       if (!user) {
