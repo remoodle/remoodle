@@ -27,7 +27,7 @@ class CourseContentController extends BaseController
 
         $courses = $this->userMoodleRepository->getActiveCourses(
             moodleId: $user->moodle_id,
-            type: "all"
+            moodleToken: $user->moodle_token,
         );
 
         foreach($courses as $cours) { // - govno
