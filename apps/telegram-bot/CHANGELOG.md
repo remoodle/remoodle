@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.0.2...remoodle/telegram-bot-v0.0.3) (2024-09-04)
+
+
+### Code Refactoring
+
+* get rid of total shit ([698932e](https://github.com/remoodle/heresy/commit/698932e3b182ce9894de22928f262b6535e9323d))
+
 ## [0.0.2](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.0.1...remoodle/telegram-bot-v0.0.2) (2024-09-03)
 
 
