@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.6.3...remoodle/backend-v0.6.4) (2024-09-04)
+
+
+### Code Refactoring
+
+* get rid of total shit ([698932e](https://github.com/remoodle/heresy/commit/698932e3b182ce9894de22928f262b6535e9323d))
+
 ## [0.6.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.6.2...remoodle/backend-v0.6.3) (2024-09-03)
 
 
