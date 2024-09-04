@@ -63,7 +63,8 @@ class Course extends Model
             coursecategory: $this->coursecategory,
             start_date: $this->start_date,
             end_date: $this->end_date,
-            url: $this->url
+            url: $this->url,
+            status: $this->status
         );
     }
 }
