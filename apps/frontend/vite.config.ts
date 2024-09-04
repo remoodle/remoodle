@@ -1,7 +1,5 @@
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig, loadEnv } from "vite";
-import tailwind from "tailwindcss";
-import autoprefixer from "autoprefixer";
 import vue from "@vitejs/plugin-vue";
 import vueDevTools from "vite-plugin-vue-devtools";
 import { ValidateEnv as validateEnv } from "@julr/vite-plugin-validate-env";
@@ -20,11 +18,6 @@ export default defineConfig((config) => {
   };
 
   return {
-    css: {
-      postcss: {
-        plugins: [tailwind(), autoprefixer()],
-      },
-    },
     resolve: {
       alias: {
         "@": resolve("./src"),
