@@ -1,4 +1,4 @@
-import { Context } from "grammy";
+import { Context, InlineKeyboard } from "grammy";
 import { request, getAuthHeaders } from "../../../helpers/hc";
 import keyboards from "../keyboards";
 
@@ -23,40 +23,57 @@ async function start(ctx: Context) {
     ),
   );
 
-  if (error) {
-    const token = ctx.message.text.split(" ")[1];
-
-    if (token) {
-      const [data, authError] = await request((client) =>
-        client.v1.auth.register.$post(
-          {
-            json: {
-              moodleToken: token,
-            },
-          },
-          {
-            headers: getAuthHeaders(userId, 0),
-          },
-        ),
-      );
-
-      if (authError && authError.status !== 200) {
-        await ctx.reply("Your token is invalid. Try again!");
-        return;
-      }
-
-      await ctx.reply(`Welcome to ReMoodle, ${data?.user.name}! ✨`);
-    }
-
+  if (rmcUser && !error) {
     await ctx.reply(`${rmcUser?.user.name}`, {
+      reply_markup: keyboards.main,
+    });
+    return;
+  }
+
+  const token = ctx.message.text.split(" ")[1];
+
+  if (token && token === "connect") {
+    // pass
+    return;
+  }
+
+  if (!token && error) {
+    await ctx.reply(
+      `Welcome to ReMoodle! ✨\nSend your Moodle token by typing\n\n<strong>/start YOUR_TOKEN</strong>`,
+      { parse_mode: "HTML", reply_markup: keyboards.find_token },
+    );
+    return;
+  }
+
+  const [data, authError] = await request((client) =>
+    client.v1.telegram.register.$post(
+      {
+        json: {
+          moodleToken: token,
+        },
+      },
+      {
+        headers: getAuthHeaders(userId, 0),
+      },
+    ),
+  );
+
+  if (authError && authError.status === 500) {
+    await ctx.reply("Your token is invalid. Try again!");
+    return;
+  }
+
+  if (data && !authError) {
+    await ctx.reply(`You have registered successfully!`);
+    await ctx.reply(`${data?.user.name}`, {
       reply_markup: keyboards.main,
     });
   }
 
-  await ctx.reply(
-    `Welcome to ReMoodle! ✨\nSend your Moodle token by typing\n\n<strong>/start YOUR_TOKEN</strong>`,
-    { parse_mode: "HTML" },
-  );
+  if (authError) {
+    console.log(authError);
+    await ctx.reply("An error occurred. Try again later.");
+  }
 }
 
 async function deadlines(ctx: Context) {
@@ -75,20 +92,35 @@ async function deadlines(ctx: Context) {
     ),
   );
 
-  switch (error?.status) {
-    case 401: {
-      await ctx.reply("You are not authorized!");
-      return;
+  if (error && error.status === 401) {
+    switch (ctx.chat.type) {
+      case "private":
+        await ctx.reply(
+          "You are not connected to ReMoodle. Send /start to connect.",
+        );
+        break;
+      case "group":
+        await ctx.reply(
+          "You are not connected to ReMoodle. Ask me in private.",
+        );
+        break;
     }
-    case 200: {
-      break;
+    return;
+  } else if (error) {
+    console.log(error);
+    await ctx.reply("An error occurred. Try again later.");
+    return;
+  }
+
+  if (data.length === 0) {
+    if (ctx.chat.type === "private") {
+      await ctx.reply("You have no active deadlines 🥰", {
+        reply_markup: new InlineKeyboard().text("Refresh", "refresh_deadlines"),
+      });
+    } else {
+      await ctx.reply("You have no active deadlines 🥰");
     }
-    default: {
-      await ctx.reply(
-        `ReMoodle Core Services unavailable, status ${error?.status}`,
-      );
-      return;
-    }
+    return;
   }
 
   console.log(data);
