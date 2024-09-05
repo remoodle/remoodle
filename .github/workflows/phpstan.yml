@@ -21,4 +21,4 @@ jobs:
       env:
         CHECK_PLATFORM_REQUIREMENTS: false
       with:
-        args: analyse --level=5 src queue bootstrap dispatcher service
+        args: analyse --level=5 -c phpstan.neon
