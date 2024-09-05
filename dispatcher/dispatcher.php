@@ -22,7 +22,7 @@ $container->bind(Connection::class, function () use ($capsule) {
     return $capsule->getConnection();
 });
 
-while($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map") === null) {
+while ($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map") === null) {
     sleep(1);
 }
 KeyValueLemmetization::bootstrap($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map"));
@@ -31,16 +31,15 @@ KeyValueLemmetization::bootstrap($container->get(Spiral\RoadRunner\KeyValue\Fact
 $factory = $container->get(Factory::class);
 $consumer = new Consumer();
 
-while (true) {
-    $task = $consumer->waitTask();
+while ($task = $consumer->waitTask()) {
 
-    if($task === null) {
+    if ($task == null) {
         continue;
     }
 
     $handler = $factory->createHandler($task, $container);
 
-    if($handler === null) {
+    if ($handler === null) {
         $task->fail("Unable to locate handler.");
         continue;
     }

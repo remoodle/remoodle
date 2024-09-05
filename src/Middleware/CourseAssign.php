@@ -19,23 +19,29 @@ class CourseAssign implements MiddlewareInterface
     ) {
     }
 
+    /**
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler
+     * @return \Psr\Http\Message\ResponseInterface
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $routeArguments = RouteContext::fromRequest($request)->getRoute()->getArguments();
         $user = $request->getAttribute("user");
 
-        if($user === null) {
+        if ($user === null) {
             $this->throwUnauthorizedException();
         }
 
-        if($this
+        if (!$this
             ->databaseUserMoodleRepository
             ->isUserAssignedToCourse($user->moodle_id, (int) $routeArguments['course'])
         ) {
-            return $handler->handle($request);
+            $this->throwUnauthorizedException();
         }
 
-        $this->throwUnauthorizedException();
+        return $handler->handle($request);
     }
 
     /**

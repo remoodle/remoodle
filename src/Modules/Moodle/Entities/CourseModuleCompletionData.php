@@ -15,7 +15,7 @@ class CourseModuleCompletionData
      * @param bool $isautomatic
      * @param bool $istrackeduser
      * @param bool $uservisible
-     * @param mixed $overrideby
+     * @param ?string $overrideby
      */
     public function __construct(
         public readonly int $cmid,

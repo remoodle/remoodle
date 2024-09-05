@@ -7,7 +7,7 @@ namespace App\Models;
 use App\Modules\Moodle\Entities\CourseModuleAttachment as EntitiesCourseModuleAttachment;
 use Illuminate\Database\Eloquent\Model;
 
-class CourseModuleAttachment extends Model
+class CourseModuleAttachment extends ModelAbstract
 {
     /**
      * Indicates if the model should be timestamped.

@@ -6,12 +6,23 @@ namespace App\Models;
 
 use App\Modules\Moodle\Entities\Assignment as EntitiesAssignment;
 use App\Modules\Moodle\Entities\IntroAttachment;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Assignment extends Model
+/**
+ * @property int $assignment_id
+ * @property int $course_id
+ * @property int $cmid
+ * @property string $name
+ * @property bool $nosubmissions
+ * @property int $duedate
+ * @property int $allowsubmissionsfromdate
+ * @property int $grade
+ * @property int $introformat
+ * @property ?string $intro
+ */
+class Assignment extends ModelAbstract
 {
     public $timestamps = false;
 
@@ -25,7 +36,7 @@ class Assignment extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $fillable = [
         'assignment_id',

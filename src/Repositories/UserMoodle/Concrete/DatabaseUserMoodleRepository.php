@@ -16,8 +16,6 @@ use App\Modules\Moodle\Entities\IntroAttachment;
 use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
 use Illuminate\Database\Connection;
 
-use function PHPSTORM_META\type;
-
 class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterface
 {
     public function __construct(
@@ -30,14 +28,14 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
      */
     public function getCourseAssigments(int $moodleId, string $moodleToken, int $courseId): array
     {
-        return Assignment::where("course_id", $courseId)
+        return Assignment::query()->where("course_id", $courseId)
             ->with([
                 'attachments',
                 'relatedGrade' => function ($query) use ($moodleId) {
                     $query->where("moodle_id", $moodleId);
                 }])
             ->get()
-            ->map(function (Assignment $assignment): AssignmentEntity {
+            ->map(function ($assignment): AssignmentEntity {
                 return $assignment->toEntity();
             })
             ->all();
@@ -71,7 +69,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
                 start_date: $course->start_date,
                 end_date: $course->end_date,
                 url: $course->url,
-                status: $course->status
+                status: CourseEnrolledClassification::from($course->status)
             );
         })
         ->all();
@@ -83,7 +81,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
 
     public function getCourseGrades(int $moodleId, string $moodleToken, int $courseId): array
     {
-        return Course::where("course_id", $courseId)
+        return Course::query()->where("course_id", $courseId)
             ->first()
             ?->grades()
             ->where("moodle_id", $moodleId)
@@ -158,16 +156,16 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
 
     public function getAssignmentByCmid(int $moodleId, string $moodleToken, int $cmid): AssignmentEntity
     {
-        return Assignment::where("cmid", $cmid)->firstOrFail()->toEntity();
+        return Assignment::query()->where("cmid", $cmid)->firstOrFail()->toEntity();
     }
     public function getGradeByCmid(int $moodleId, string $moodleToken, int $cmid): GradeEntity
     {
-        return Grade::where("cmid", $cmid)->firstOrFail()->toEntity();
+        return Grade::query()->where("cmid", $cmid)->firstOrFail()->toEntity();
     }
 
     public function getEventByInstance(int $moodleId, string $moodleToken, int $instance): EventEntity
     {
-        return Event::where("instance", $instance)->firstOrFail()->toEntity();
+        return Event::query()->where("instance", $instance)->firstOrFail()->toEntity();
     }
 
     public function isUserAssignedToCourse(int $moodleId, int $courseId): bool
@@ -185,7 +183,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
      */
     public function getCourseContents(int $moodleId, string $moodleToken, int $courseId): array
     {
-        return CourseContent::where("course_id", $courseId)
+        return CourseContent::query()->where("course_id", $courseId)
             ->orderBy("section", "asc")
             ->with([
                 'modules',

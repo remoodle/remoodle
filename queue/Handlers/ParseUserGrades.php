@@ -11,12 +11,10 @@ use Illuminate\Database\Connection;
 class ParseUserGrades extends BaseHandler
 {
     private Connection $connection;
-    private SearchEngineInterface $searchEngine;
 
     protected function setup(): void
     {
         $this->connection = $this->get(Connection::class);
-        $this->searchEngine = $this->get(SearchEngineInterface::class);
     }
 
     protected function dispatch(): void
@@ -28,7 +26,7 @@ class ParseUserGrades extends BaseHandler
         $courseModulesUpsert = [];
         $courseGradesUpsert = [];
 
-        foreach($user->courseAssigns as $courseAssign) {
+        foreach ($user->courseAssigns as $courseAssign) {
             [$courseModules, $courseGrades, $gradeEntities] = $this->getCourseModulesAndGrades($courseAssign->course_id, $moodle);
             $courseModulesUpsert = array_merge($courseModulesUpsert, $courseModules);
             $courseGradesUpsert = array_merge($courseGradesUpsert, $courseGrades);
@@ -69,10 +67,10 @@ class ParseUserGrades extends BaseHandler
         $courseModulesUpsertArray = [];
         $courseGradesUpsertArray = [];
 
-        foreach($courseGrades as $courseGrade) {
+        foreach ($courseGrades as $courseGrade) {
             $courseGradesFiltered[] = $courseGrade;
             $courseGradesUpsertArray[] = (array) $courseGrade;
-            if($courseGrade->cmid === null) {
+            if ($courseGrade->cmid === null) {
                 continue;
             }
 
@@ -89,6 +87,7 @@ class ParseUserGrades extends BaseHandler
      * @param array $currentGrades
      * @param array $receivedGrades
      * @return array<int, array>
+     * @phpstan-ignore-next-line
      */
     private function getDifference(array $currentGrades, array $receivedGrades): array
     {
@@ -97,23 +96,23 @@ class ParseUserGrades extends BaseHandler
         $updatedGrades = [];
         $newGrades = [];
         $tempCurrentGrades = [];
-        foreach($currentGrades as $currentGrade) {
+        foreach ($currentGrades as $currentGrade) {
             $tempCurrentGrades[$currentGrade["grade_id"]] = $currentGrade;
             $currentGradesIds[] = $currentGrade["grade_id"];
         }
         $currentGrades = $tempCurrentGrades;
         unset($tempCurrentGrades);
         $tempreceivedGrades = [];
-        foreach($receivedGrades as $receivedGrade) {
+        foreach ($receivedGrades as $receivedGrade) {
             $tempreceivedGrades[$receivedGrade["grade_id"]] = $receivedGrade;
             $receivedGradesIds[] = $receivedGrade["grade_id"];
-            if(isset($currentGrades[$receivedGrade["grade_id"]]) && $currentGrades[$receivedGrade["grade_id"]]["percentage"] !== $receivedGrade["percentage"]) {
+            if (isset($currentGrades[$receivedGrade["grade_id"]]) && $currentGrades[$receivedGrade["grade_id"]]["percentage"] !== $receivedGrade["percentage"]) {
                 $updatedGrades[] = [
                     "grade_id" => $receivedGrade["grade_id"],
                     "old" => $currentGrades[$receivedGrade["grade_id"]]["percentage"],
                     "new" => $receivedGrade["percentage"]
                 ];
-            } elseif(!isset($currentGrades[$receivedGrade["grade_id"]])) {
+            } elseif (!isset($currentGrades[$receivedGrade["grade_id"]])) {
                 $newGrades[] = [
                     "grade_id" => $receivedGrade["grade_id"],
                     "new" => $receivedGrade["percentage"]

@@ -14,7 +14,7 @@ interface HandlerInterface
      * @param \Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface $receivedTask
      * @param \Psr\Container\ContainerInterface $container
      * @param \App\Modules\Jobs\FactoryInterface $jobsFactory
-     * @return HandlerInterface
+     * @return static
      */
     public static function create(ReceivedTaskInterface $receivedTask, ContainerInterface $container, FactoryInterface $jobsFactory): static;
     public function handle(): void;

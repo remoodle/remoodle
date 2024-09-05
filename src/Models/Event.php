@@ -9,7 +9,7 @@ use App\Modules\Moodle\Entities\Event as EventEntity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Event extends Model
+class Event extends ModelAbstract
 {
     protected $primaryKey = 'event_id';
 

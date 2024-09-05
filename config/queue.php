@@ -9,7 +9,6 @@ use Queue\Handlers\ParseUserAssignments;
 use Queue\Handlers\ParseUserCourses;
 use Queue\Handlers\ParseUserEvents;
 use Queue\Handlers\ParseUserGrades;
-use Queue\Handlers\WebhookAction;
 
 return [
     'handlers' => [
@@ -17,7 +16,6 @@ return [
         JobsEnum::PARSE_COURSES->value => ParseUserCourses::class,
         JobsEnum::PARSE_GRADES->value => ParseUserGrades::class,
         JobsEnum::PARSE_EVENTS->value => ParseUserEvents::class,
-        JobsEnum::NOTIFICATION_WEBHOOK->value => WebhookAction::class,
         JobsEnum::SET_INITIALIZED->value => InitializeUser::class,
         JobsEnum::PARSE_ASSIGNMENTS->value => ParseUserAssignments::class
     ]

@@ -30,14 +30,18 @@ class CourseContentController extends BaseController
             moodleToken: $user->moodle_token,
         );
 
-        foreach($courses as $cours) { // - govno
-            if($cours->course_id === (int)$args['course']) {
+        foreach ($courses as $cours) { // - govno
+            if ($cours->course_id === (int)$args['course']) {
                 $course = (array)$cours;
                 break;
             }
         }
 
-        if((bool)$request->getQueryParams()['content']) {
+        if (!isset($course)) {
+            throw new \Exception('Course not found', 404);
+        }
+
+        if ((bool)$request->getQueryParams()['content']) {
             $course['content'] = $this->userMoodleRepositoryFactory->create(
                 $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
             )->getCourseContents(

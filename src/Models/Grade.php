@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use App\Modules\Moodle\Entities\Grade as GradeEntity;
 
-class Grade extends Model
+class Grade extends ModelAbstract
 {
     public $incrementing = false;
     protected $primaryKey = 'id';
@@ -59,10 +59,5 @@ class Grade extends Model
             feedback: $this->feedback,
             iteminstance: $this->iteminstance
         );
-    }
-
-    public static function findFromEntity(int|string $moodle_id, int|string $grade_id): ?static
-    {
-        return static::where("moodle_id", (int) $moodle_id)->where('grade_id', (int) $grade_id)->first();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use App\Controllers\UserNotificationController;
+
 use App\Middleware\SearchQueryReplace;
 use App\Middleware\Validation\VerifyUserEmail;
 use Psr\Http\Message\RequestInterface;
@@ -37,7 +37,6 @@ return function (App $app) {
             $user->delete("", [SettingsController::class, "deleteUser"]);
 
             $user->get("/deadlines", [UserCoursesController::class, "getDeadlines"]);
-            $user->get("/updates", [UserNotificationController::class,"getUpdates"]);
 
             $user->get("/courses", [UserCoursesController::class, "getCourses"]);
             $user->get("/courses/overall", [UserCoursesController::class, "getUserOverall"]);

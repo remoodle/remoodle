@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class AssignmentAttachment extends Model
+class AssignmentAttachment extends ModelAbstract
 {
     /**
      * Indicates if the model should be timestamped.
@@ -26,7 +25,7 @@ class AssignmentAttachment extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $fillable = [
         'hash',

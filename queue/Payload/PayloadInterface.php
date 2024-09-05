@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace Queue\Payload;
 
-interface PayloadInterface
+interface PayloadInterface extends \Stringable
 {
     /**
      * @return string

@@ -8,13 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Thiagoprz\CompositeKey\HasCompositeKey;
 
-class UserCourseAssign extends Model
+class UserCourseAssign extends ModelAbstract
 {
     use HasCompositeKey;
 
     protected $fillable = ['moodle_id', 'course_id', 'classification'];
     public $timestamps  = false;
     protected $table = 'user_course_assign';
+    /**
+     * @var array<int, string>
+     * @phpstan-ignore-next-line
+     */
     protected $primaryKey = ['moodle_id', 'course_id'];
 
 

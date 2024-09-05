@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace App\Modules\Moodle\Entities;
 
 use App\Modules\Moodle\Entities\Search\SearchTypeEnum;
+use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use App\Modules\Search\SearchableInterface;
 
 class Course implements SearchableInterface
 {
     /**
      * @param int $course_id
-     * @param string $coursename
+     * @param string $name
      * @param string $coursecategory
      * @param int $start_date
      * @param int $end_date
      * @param string $url
-     * @param string $status
+     * @param CourseEnrolledClassification $status
      */
     public function __construct(
         public readonly int $course_id,
@@ -25,7 +26,7 @@ class Course implements SearchableInterface
         public readonly int $start_date,
         public readonly int $end_date,
         public readonly string $url,
-        public readonly string $status
+        public readonly CourseEnrolledClassification $status
     ) {
     }
 

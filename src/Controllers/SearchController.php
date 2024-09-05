@@ -50,24 +50,24 @@ class SearchController extends BaseController
         // }
 
         $result = [];
-        foreach($resp as $type => $searchables) {
-            if((string)$type === SearchTypeEnum::GRADE->value) {
+        foreach ($resp as $type => $searchables) {
+            if ((string)$type === SearchTypeEnum::GRADE->value) {
                 continue;
             }
 
             $mergeTemp = match ($type) {
-                SearchTypeEnum::ASSIGNMENT->value => Assignment::whereIn("assignment_id", $searchables->pluck('idValue'))
+                SearchTypeEnum::ASSIGNMENT->value => Assignment::query()->whereIn("assignment_id", $searchables->pluck('idValue'))
                     ->with(["relatedGrade"])
                     ->get()
                     ->map(function (Assignment $assignment): AssignmentEntity {
                         return $assignment->toEntity();
                     }),
-                SearchTypeEnum::COURSE->value => Course::whereIn("course_id", $searchables->pluck('idValue'))
+                SearchTypeEnum::COURSE->value => Course::query()->whereIn("course_id", $searchables->pluck('idValue'))
                     ->get()
                     ->map(function (Course $course): CourseEntity {
                         return $course->toEntity();
                     }),
-                SearchTypeEnum::EVENT->value => Event::whereIn("event_id", $searchables->pluck('idValue'))
+                SearchTypeEnum::EVENT->value => Event::query()->whereIn("event_id", $searchables->pluck('idValue'))
                     ->with(["assignment", "assignment.relatedGrade"])
                     ->get()
                     ->map(function (Event $event): EventEntity {

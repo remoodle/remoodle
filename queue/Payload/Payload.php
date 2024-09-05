@@ -6,11 +6,11 @@ namespace Queue\Payload;
 
 use Stringable;
 
-class Payload implements PayloadInterface, Stringable
+class Payload implements PayloadInterface
 {
     /**
      * @param string $queue
-     * @param string $payload
+     * @param mixed $payload
      * @param PayloadInterface[] $bus
      */
     public function __construct(

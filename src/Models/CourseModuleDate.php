@@ -7,7 +7,7 @@ namespace App\Models;
 use App\Modules\Moodle\Entities\CourseModuleDate as EntitiesCourseModuleDate;
 use Illuminate\Database\Eloquent\Model;
 
-class CourseModuleDate extends Model
+class CourseModuleDate extends ModelAbstract
 {
     /**
      * Indicates if the model should be timestamped.

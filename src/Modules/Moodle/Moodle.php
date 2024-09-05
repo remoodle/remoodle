@@ -48,7 +48,7 @@ final class Moodle
             ]
         ])->getBody()->getContents(), true);
 
-        if(array_key_exists('error', $res)) {
+        if (array_key_exists('error', $res)) {
             throw new \Exception($res['error'], 400);
         }
 
@@ -95,7 +95,7 @@ final class Moodle
         $coursesRaw = $this->moodleWrapper->getEnrolledCoursesByTimelineClassification($classification->value)["courses"];
         $courses = [];
 
-        foreach($coursesRaw as $course) {
+        foreach ($coursesRaw as $course) {
             $courses[] = new Course(
                 course_id: (int)$course["id"],
                 url: $course["viewurl"],
@@ -103,7 +103,7 @@ final class Moodle
                 name: $course["fullname"] ?? $course["shortname"],
                 end_date: $course["startdate"],
                 start_date: $course["enddate"],
-                status: $classification->value,
+                status: $classification,
             );
         }
 
@@ -120,7 +120,7 @@ final class Moodle
         $rawGrades = $this->moodleWrapper->getCourseGrades($courseId);
         $grades = [];
 
-        foreach($rawGrades["usergrades"][0]['gradeitems'] as $gradeitem) {
+        foreach ($rawGrades["usergrades"][0]['gradeitems'] as $gradeitem) {
             $gradeitem['percentageformatted'] = str_replace([' ', '%'], '', $gradeitem['percentageformatted']);
             $grade = is_numeric($gradeitem['percentageformatted'])
                 ? (int) $gradeitem['percentageformatted']
@@ -161,7 +161,7 @@ final class Moodle
         $events = [];
         $courses = [];
 
-        foreach($deadlines["events"] as $event) {
+        foreach ($deadlines["events"] as $event) {
             $events[] = new Event(
                 event_id: $event['id'],
                 name: $event['name'],
@@ -174,15 +174,15 @@ final class Moodle
             $courses[$event['course']['id']] = true;
         }
 
-        if($withAssignments) {
+        if ($withAssignments) {
             $assignments = $this->getCoursesAssignments(...array_keys($courses));
             $assignmentsByCmid = [];
-            foreach($assignments as $assignment) {
+            foreach ($assignments as $assignment) {
                 $assignmentsByCmid[$assignment->cmid] = $assignment;
             }
 
-            foreach($events as &$event) {
-                if(isset($assignmentsByCmid[$event->instance])) {
+            foreach ($events as &$event) {
+                if (isset($assignmentsByCmid[$event->instance])) {
                     $event = $event->withAssignment($assignmentsByCmid[$event->instance]);
                 }
             }
@@ -200,7 +200,7 @@ final class Moodle
          * @var \App\Modules\Moodle\Entities\Assignment[]
          */
         $assignments = [];
-        foreach($this->moodleWrapper->getAssignments([$courseId])['courses'][0]['assignments'] as $assignment) {
+        foreach ($this->moodleWrapper->getAssignments([$courseId])['courses'][0]['assignments'] as $assignment) {
             $assignments[] = new Assignment(
                 assignment_id: $assignment['id'],
                 course_id: $courseId,
@@ -226,15 +226,15 @@ final class Moodle
             );
         }
 
-        if($withGrades) {
+        if ($withGrades) {
             $grades = $this->getCourseGrades($courseId);
             $gradesByCmid = [];
-            foreach($grades as $grade) {
+            foreach ($grades as $grade) {
                 $gradesByCmid[$grade->cmid] = $grade;
             }
 
-            foreach($assignments as &$assignment) {
-                if(isset($gradesByCmid[$assignment->cmid])) {
+            foreach ($assignments as &$assignment) {
+                if (isset($gradesByCmid[$assignment->cmid])) {
                     $assignment = $assignment->withGrade($gradesByCmid[$assignment->cmid]);
                 }
             }
@@ -252,8 +252,8 @@ final class Moodle
          * @var \App\Modules\Moodle\Entities\Assignment[]
          */
         $assignments = [];
-        foreach($this->moodleWrapper->getAssignments($courseIds)['courses'] as $course) {
-            foreach($course['assignments'] as $assignment) {
+        foreach ($this->moodleWrapper->getAssignments($courseIds)['courses'] as $course) {
+            foreach ($course['assignments'] as $assignment) {
                 $assignments[] = new Assignment(
                     assignment_id: $assignment['id'],
                     course_id: $course['id'],
@@ -291,13 +291,13 @@ final class Moodle
     {
         $rawContents = $this->moodleWrapper->getCoursesInfo($courseId);
         $courseContents = [];
-        foreach($rawContents as $courseContent) {
+        foreach ($rawContents as $courseContent) {
             /**
              * @var \App\Modules\Moodle\Entities\CourseModule[]
              */
             $modules = [];
             $contentId = $courseContent["id"];
-            foreach($courseContent["modules"] as $courseModuleArray) {
+            foreach ($courseContent["modules"] as $courseModuleArray) {
                 /**
                  * @var \App\Modules\Moodle\Entities\CourseModuleDate[]
                  */
@@ -314,15 +314,15 @@ final class Moodle
                  * @var int
                  */
                 $cmid = $courseModuleArray["id"];
-                foreach($courseModuleArray["dates"] as $cousreModuleDate) {
+                foreach ($courseModuleArray["dates"] as $cousreModuleDate) {
                     $dates[] = new CourseModuleDate(
                         cmid: $cmid,
                         timestamp: $cousreModuleDate["timestamp"],
                         label: $cousreModuleDate["label"],
                     );
                 }
-                if(isset($courseModuleArray["contents"])) {
-                    foreach($courseModuleArray["contents"] as $cousreModuleAttachment) {
+                if (isset($courseModuleArray["contents"])) {
+                    foreach ($courseModuleArray["contents"] as $cousreModuleAttachment) {
 
                         $contents[] = new CourseModuleAttachment(
                             cmid: $cmid,
@@ -343,7 +343,7 @@ final class Moodle
                     }
                 }
 
-                if(isset($courseModuleArray["completiondata"])) {
+                if (isset($courseModuleArray["completiondata"])) {
                     $completionData = new CourseModuleCompletionData(
                         cmid: $cmid,
                         state: $courseModuleArray["completiondata"]["state"],
@@ -397,7 +397,7 @@ final class Moodle
 
     private function issetOrNullArray(array $object, string $key): mixed
     {
-        if(isset($object[$key])) {
+        if (isset($object[$key])) {
             return $object[$key];
         }
 

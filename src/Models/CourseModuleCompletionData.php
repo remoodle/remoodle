@@ -7,7 +7,7 @@ namespace App\Models;
 use App\Modules\Moodle\Entities\CourseModuleCompletionData as EntitiesCourseModuleCompletionData;
 use Illuminate\Database\Eloquent\Model;
 
-class CourseModuleCompletionData extends Model
+class CourseModuleCompletionData extends ModelAbstract
 {
     /**
      * Indicates if the model should be timestamped.

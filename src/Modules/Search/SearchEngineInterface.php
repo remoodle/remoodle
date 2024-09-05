@@ -8,7 +8,7 @@ interface SearchEngineInterface
 {
     /**
      * @param int $moodleId
-     * @return SearchEngineInterface
+     * @return static
      */
     public function withMoodleId(int $moodleId): static;
 

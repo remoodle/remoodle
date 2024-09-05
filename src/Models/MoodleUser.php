@@ -13,7 +13,7 @@ use Spiral\Goridge\RPC\RPC;
 use Spiral\RoadRunner\KeyValue\Factory;
 use Spiral\RoadRunner\KeyValue\Serializer\IgbinarySerializer;
 
-class MoodleUser extends Model
+class MoodleUser extends ModelAbstract
 {
     protected $primaryKey = 'moodle_id';
     public $incrementing = false;
@@ -84,19 +84,19 @@ class MoodleUser extends Model
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
-    public static function findByBarcode(string $username): ?static
+    public static function findByBarcode(string $username): ?self
     {
-        return static::where("username", $username)->first();
+        return static::query()->where("username", $username)->first();
     }
 
-    public static function findByAlias(string $nameAlias): ?static
+    public static function findByAlias(string $nameAlias): ?self
     {
-        return static::where("name_alias", $nameAlias)->first();
+        return static::query()->where("name_alias", $nameAlias)->first();
     }
 
-    public static function findByToken(string $token): ?static
+    public static function findByToken(string $token): ?self
     {
-        return static::where("moodle_token", $token)->first();
+        return static::query()->where("moodle_token", $token)->first();
     }
 
     public function grades(): HasMany
@@ -136,10 +136,5 @@ class MoodleUser extends Model
     public function verifyCodes(): HasMany
     {
         return $this->hasMany(VerifyCode::class, "moodle_id", "moodle_id");
-    }
-
-    public function notifications(): HasMany
-    {
-        return $this->hasMany(Notification::class, "moodle_id", "moodle_id");
     }
 }

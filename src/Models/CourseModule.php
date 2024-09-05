@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Modules\Moodle\Entities\CourseModule as CourseModuleEntity;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class CourseModule extends Model
+class CourseModule extends ModelAbstract
 {
     public $incrementing = false;
     protected $primaryKey = 'cmid';

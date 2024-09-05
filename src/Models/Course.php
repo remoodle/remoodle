@@ -4,12 +4,21 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Modules\Moodle\Entities\Course as CourseEntity;
+use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
-class Course extends Model
+/**
+ * @property int $course_id
+ * @property string $name
+ * @property string $coursecategory
+ * @property int $start_date
+ * @property int $end_date
+ * @property string $url
+ * @property string $status
+ */
+class Course extends ModelAbstract
 {
     public $incrementing = false;
     protected $primaryKey = 'course_id';
@@ -18,7 +27,7 @@ class Course extends Model
     protected $hidden = ["laravel_through_key"];
 
     protected $fillable = [
-        'course_id', 'name', 'coursecategory', 'start_date', 'end_date', 'url'
+        'course_id', 'name', 'coursecategory', 'start_date', 'end_date', 'url', 'status'
     ];
 
     public function courseModules(): HasMany
@@ -64,7 +73,7 @@ class Course extends Model
             start_date: $this->start_date,
             end_date: $this->end_date,
             url: $this->url,
-            status: $this->status
+            status: CourseEnrolledClassification::from($this->status)
         );
     }
 }

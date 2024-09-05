@@ -10,6 +10,7 @@ use App\Modules\Search\SearchEngineInterface;
 use App\Modules\Search\SearchResult;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Collection;
+use RoadRunner\Jobs\DTO\V1\Stat;
 
 class EloquentSearch implements SearchEngineInterface
 {
@@ -22,7 +23,7 @@ class EloquentSearch implements SearchEngineInterface
 
     /**
      * @param int $moodleId
-     * @return EloquentSearch
+     * @return static
      */
     public function withMoodleId(int $moodleId): static
     {
@@ -37,7 +38,7 @@ class EloquentSearch implements SearchEngineInterface
         $searchWords = explode(" ", trim($query));
         $documentKeywordFrequency = $this->getKeywords($searchWords);
 
-        if(count($documentKeywordFrequency) > 5) {
+        if (count($documentKeywordFrequency) > 5) {
             throw new \Exception("Too many words. Max: 5.", 400);
         }
 
@@ -74,16 +75,18 @@ class EloquentSearch implements SearchEngineInterface
             $keywordSearchItemsById->add($keywordSearchItem[0]);
         }
 
-        foreach($keywordSearchItemsById->groupBy('keyword') as $keyword => $docs) {
+        foreach ($keywordSearchItemsById->groupBy('keyword') as $keyword => $docs) {
             $occuranceOfWordInDocuments[$keyword] = count($docs);
         }
 
         $_docCount = count($keywordSearchItemsById->groupBy('search_item_id'));
 
-        if(!(bool)count($searchItems) || !(bool)$_docCount) {
+        if (!(bool)count($searchItems) || !(bool)$_docCount) {
             return [];
         }
-
+        /**
+         * @var array<int, array{search_item: mixed, tf_idf_vector: array, document_vector_sum: mixed, score: int}>
+         */
         $result = [];
 
         foreach ($keywordSearchItemsById->groupBy('search_item_id') as $itemId => $keywordSearchItems) {
@@ -142,7 +145,7 @@ class EloquentSearch implements SearchEngineInterface
 
     protected function idf(int|float $docCount, int|float $docsWithWord): int|float
     {
-        if($docsWithWord === 0) {
+        if ($docsWithWord === 0) {
             $docsWithWord = 1;
         }
         return 1 + log($docCount / $docsWithWord);
@@ -208,14 +211,14 @@ class EloquentSearch implements SearchEngineInterface
         $searchItemKeywordUpsert = [];
         $allKeywords = [];
 
-        foreach($searchItems as $searchable) {
+        foreach ($searchItems as $searchable) {
             $searchableWords = $searchable->getWords();
             $keywords = $this->getKeywords($searchableWords);
             $allKeywords = array_merge($allKeywords, $keywords);
 
             $searchablesUpsert[] = $this->getSearchItemInsertArray($searchable, $searchableWords);
 
-            foreach($keywords as $keyword => $count) {
+            foreach ($keywords as $keyword => $count) {
                 $searchItemKeywordUpsert[] = [
                     'keyword' => $keyword,
                     'occurences' => $count,
@@ -254,7 +257,7 @@ class EloquentSearch implements SearchEngineInterface
         $searchItemKeywordUpsert = [];
         $keywordsUpsert = [];
 
-        foreach($keywords as $keyword => $count) {
+        foreach ($keywords as $keyword => $count) {
             $keywordsUpsert[] = [
                 'word' => $keyword
             ];
@@ -269,12 +272,6 @@ class EloquentSearch implements SearchEngineInterface
         $this->performPut($searchableUpsert, $keywordsUpsert, $searchItemKeywordUpsert);
     }
 
-    /**
-     * @param array<string int|string> $searchableUpsert
-     * @param array<string int|string> $keywordsUpsert
-     * @param array<string int|string> $searchItemKeywordUpsert
-     * @return void
-     */
     protected function performPut(array $searchableUpsert, array $keywordsUpsert, array $searchItemKeywordUpsert): void
     {
         $db = $this->db;
@@ -309,7 +306,7 @@ class EloquentSearch implements SearchEngineInterface
      * Summary of getSearchItemInsertArray
      * @param \App\Modules\Search\SearchableInterface $searchable
      * @param null|string[] $words
-     * @return array{item_id: string, id_column: string, id_value: string, words_count: int}
+     * @return array{item_id: string, id_column: string, id_value: string, word_count: int}
      */
     protected function getSearchItemInsertArray(SearchableInterface $searchable, ?array $words = null)
     {
@@ -328,20 +325,21 @@ class EloquentSearch implements SearchEngineInterface
     }
 
     /**
-     * @param string[]
+     * @param string[] $words
      * @return array<string, int>
      */
     protected function getKeywords(array $words): array
     {
         $keyWords = [];
-        foreach($words as $word) {
-            $keyWord = $this->lemmetization->get($word) ?? $word;
+        foreach ($words as $word) {
+            $lemWord = $this->lemmetization->get($word);
+            $keyWord = empty($lemWord) ? $word : $lemWord;
 
-            if($keyWord === "") {
+            if ($keyWord === "") {
                 continue;
             }
 
-            if(!isset($keyWords[$keyWord])) {
+            if (!isset($keyWords[$keyWord])) {
                 $keyWords[$keyWord] = 0;
             }
             $keyWords[$keyWord]++;

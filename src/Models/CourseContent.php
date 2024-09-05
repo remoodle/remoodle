@@ -5,11 +5,20 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Modules\Moodle\Entities\CourseContent as EntitiesCourseContent;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class CourseContent extends Model
+/**
+ * @property int $content_id
+ * @property int $course_id
+ * @property string $name
+ * @property int $visible
+ * @property int $section
+ * @property bool $uservisible
+ * @property int $summaryformat
+ * @property int $hiddenbynumsections
+ * @property ?string $summary
+ */
+class CourseContent extends ModelAbstract
 {
     /**
      * Indicates if the model should be timestamped.

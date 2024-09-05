@@ -16,7 +16,6 @@ class UserCoursesController extends BaseController
 {
     public function __construct(
         private UserMoodleRepositoryFactory $userMoodleRepositoryFactory,
-        private Connection $connection
     ) {
     }
 
@@ -25,7 +24,7 @@ class UserCoursesController extends BaseController
         /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute("user");
         $status = isset($request->getQueryParams()['status'])
-        ? CourseEnrolledClassification::from($request->getQueryParams()['status']) 
+        ? CourseEnrolledClassification::from($request->getQueryParams()['status'])
         : null;
         return $this->jsonResponse(
             response: $response,
@@ -80,7 +79,7 @@ class UserCoursesController extends BaseController
             }
         ]);
 
-        foreach($user->courses as $userCourse) {
+        foreach ($user->courses as $userCourse) {
             $userCourse->grades->makeHidden(['laravel_through_key', 'moodle_id']);
         }
 

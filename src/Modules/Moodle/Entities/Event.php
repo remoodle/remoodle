@@ -32,11 +32,11 @@ class Event implements SearchableInterface
 
     /**
      * @param null|Assignment $assignment
-     * @return Event
+     * @return self
      */
-    public function withAssignment(?Assignment $assignment): static
+    public function withAssignment(?Assignment $assignment): self
     {
-        return new static(
+        return new self(
             event_id: $this->event_id,
             timestart: $this->timestart,
             instance: $this->instance,

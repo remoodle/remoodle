@@ -49,15 +49,15 @@ class SettingsController extends BaseController
         $user = $request->getAttribute("user");
         $body = $request->getParsedBody();
 
-        if($this->userRepository->findByIdentifiers(nameAlias: $body['name_alias']) !== null) {
+        if ($this->userRepository->findByIdentifiers(nameAlias: $body['name_alias']) !== null) {
             throw new \Exception('Name alias is taken', 400);
         }
 
         $user->update([
             'name_alias' => $body['name_alias'] ?? $user->name_alias,
             'password_hash' => isset($body['password']) ? MoodleUser::hashPassword($body['password']) : $user->password_hash,
-            'deadlines_notification' => (bool)$body['deadlines_notification'] ?? $user->deadlines_notification,
-            'grades_notification' => (bool)$body['grades_notification'] ?? $user->grades_notification,
+            'deadlines_notification' => $body['deadlines_notification'] ?? $user->deadlines_notification,
+            'grades_notification' => $body['grades_notification'] ?? $user->grades_notification,
         ]);
 
         $this->kvStorage->set($user->moodle_token, $user);

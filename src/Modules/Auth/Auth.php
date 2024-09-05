@@ -9,8 +9,6 @@ use App\Models\VerifyCode;
 use App\Modules\Auth\Enums\AuthOptions;
 use App\Modules\Jobs\Factory as JobsFactory;
 use App\Modules\Jobs\JobsEnum;
-use App\Modules\Notification\Bridge;
-use App\Modules\Notification\Message;
 use App\Repositories\UserMoodle\ApiUserMoodleRepositoryInterface;
 use App\Repositories\UserMoodle\DatabaseUserMoodleRepositoryInterface;
 use Carbon\Carbon;
@@ -28,7 +26,6 @@ class Auth
     public function __construct(
         private DatabaseUserMoodleRepositoryInterface $databaseUserRepository,
         private ApiUserMoodleRepositoryInterface $apiUserRepository,
-        private Bridge $notificationBridge,
         private Connection $connection,
         private JobsFactory $jobsFactory,
     ) {
@@ -41,16 +38,16 @@ class Auth
     {
         $authOptions = [];
 
-        if($user->password_hash !== null) {
+        if ($user->password_hash !== null) {
             $authOptions[] = AuthOptions::PASSWORD->value;
         }
 
-        if($user->notify_method) {
-            if($user->notify_method === "get_update") {
+        if ($user->notify_method) {
+            if ($user->notify_method === "get_update") {
                 $authOptions[] = AuthOptions::CODE_CUSTOM->value;
             }
 
-            if($user->notify_method === "webhook" && $user->webhook) {
+            if ($user->notify_method === "webhook" && $user->webhook) {
                 $authOptions[] = AuthOptions::CODE_CUSTOM->value;
             }
         }
@@ -60,7 +57,7 @@ class Auth
 
     public function register(array $data): MoodleUser
     {
-        if($this->databaseUserRepository->findByIdentifiers(
+        if ($this->databaseUserRepository->findByIdentifiers(
             token: $data["token"] ?? null,
             nameAlias: $data[static::IDENTIFIER_ALIAS] ?? null
         )) {
@@ -73,13 +70,10 @@ class Auth
             throw new \Exception("Given token is invalid or Moodle webservice is down.", StatusCodeInterface::STATUS_BAD_REQUEST);
         }
 
-        if((bool)getEnvVar("FILTER_USER_REGISTER")) {
+        if ((bool)getEnvVar("FILTER_USER_REGISTER")) {
             $allowedUsers = explode("-", getEnvVar("ALLOWED_USERS", ""));
-            if($allowedUsers === []) {
-                throw new \Exception("Nope.", 403);
-            }
 
-            if(!in_array((string)$baseMoodleUser->moodleId, $allowedUsers, true)) {
+            if (!in_array((string)$baseMoodleUser->moodleId, $allowedUsers, true)) {
                 throw new \Exception("Nope.", 403);
             }
         }
@@ -111,7 +105,7 @@ class Auth
                 )
             );
         } catch (\Throwable $th) {
-            if(isset($user)) {
+            if (isset($user)) {
                 $storage->delete($user->moodle_token);
                 $storage->delete('m'.$user->moodle_id);
             }
@@ -130,7 +124,7 @@ class Auth
             username: $data['identifier'] ?? null
         );
 
-        if($user === null) {
+        if ($user === null) {
             throw new \Exception("No user with given identifier", StatusCodeInterface::STATUS_NOT_FOUND);
         }
 
@@ -144,11 +138,11 @@ class Auth
             username: $data['identifier'] ?? null
         );
 
-        if($user === null) {
+        if ($user === null) {
             throw new \Exception("No user with given identifier", StatusCodeInterface::STATUS_BAD_REQUEST);
         }
 
-        if(!$user->verifyPassword($data["password"])) {
+        if (!$user->verifyPassword($data["password"])) {
             return null;
         }
 

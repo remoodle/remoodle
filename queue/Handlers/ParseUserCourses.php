@@ -34,7 +34,7 @@ class ParseUserCourses extends BaseHandler
         $this->connection->beginTransaction();
 
         try {
-            UserCourseAssign::where("moodle_id", $user->moodle_id)->update([
+            UserCourseAssign::query()->where("moodle_id", $user->moodle_id)->update([
                 "classification" => CourseEnrolledClassification::PAST->value
             ]);
             $this->connection
@@ -69,7 +69,7 @@ class ParseUserCourses extends BaseHandler
             return [
                 "course_id" => $course->course_id,
                 "moodle_id" => $moodleId,
-                "classification" => $course->status === 1 ? CourseEnrolledClassification::INPROGRESS->value : CourseEnrolledClassification::PAST->value
+                "classification" => $course->status->value
             ];
         }, $courses);
 
