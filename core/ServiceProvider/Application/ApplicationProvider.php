@@ -54,14 +54,6 @@ class ApplicationProvider implements ServiceProviderInterface
             ->give(function () use ($container) {
                 return $container->get(Factory::class)->select('users');
             });
-
-
-        $container
-            ->when(AuthAuth::class)
-            ->needs(StorageInterface::class)
-            ->give(function () use ($container) {
-                return $container->get(Factory::class)->select('users');
-            });
     }
 
     public function boot(Container $container): void
