@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.7.1...remoodle/backend-v0.7.2) (2024-09-06)
+
+
+### Bug Fixes
+
+* change format for grades notifications ([#113](https://github.com/remoodle/heresy/issues/113)) ([1fb74ee](https://github.com/remoodle/heresy/commit/1fb74ee0a672a840be1d7a270070661c2eda8d91))
+* delete deadlines with user ([80c3ab1](https://github.com/remoodle/heresy/commit/80c3ab12ab256094c60360937001521351f36065))
+
 ## [0.7.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.7.0...remoodle/backend-v0.7.1) (2024-09-06)
 
 
