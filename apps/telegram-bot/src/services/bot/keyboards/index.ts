@@ -28,9 +28,9 @@ const keyboards = {
   others: new InlineKeyboard()
     .url("Contact Us", "https://t.me/remoodle")
     .webApp("Docs", "https://ext.remoodle.app/docs")
-    // .row()
-    // .webApp("Privacy Policy", "https://ext.remoodle.app/privacy-policy")
-    // .webApp("Terms of Service", "https://ext.remoodle.app/terms-of-service")
+    .row()
+    .webApp("Privacy Policy", "https://ext.remoodle.app/privacy-policy")
+    .webApp("Terms of Service", "https://ext.remoodle.app/terms-of-service")
     .row()
     .text("Back ←", "back_to_menu"),
 

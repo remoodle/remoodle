@@ -1,6 +1,7 @@
 import { Context, InlineKeyboard } from "grammy";
 import { request, getAuthHeaders } from "../../../helpers/hc";
 import { getDeadlineText } from "../utils";
+import { db } from "../../../library/db";
 import keyboards from "../keyboards";
 
 async function start(ctx: Context) {
@@ -34,8 +35,10 @@ async function start(ctx: Context) {
   const token = ctx.message.text.split(" ")[1];
 
   if (token && token === "connect") {
-    // pass
-    return;
+    const { token, expiryDate } = await db.telegramToken.set(userId);
+    return await ctx.reply(
+      `Your connection token is: ${token}\n\nPlease enter this token in the app to connect your Telegram account. This token will expire on ${expiryDate.toLocaleString()}`,
+    );
   }
 
   if (!token && error) {
