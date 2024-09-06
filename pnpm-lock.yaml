@@ -405,6 +405,9 @@ importers:
 
   packages/utils:
     dependencies:
+      dayjs:
+        specifier: ^1.11.10
+        version: 1.11.12
       hono:
         specifier: ^4.5.5
         version: 4.5.5

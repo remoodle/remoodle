@@ -1,3 +1,5 @@
+import { getTimeLeft } from "@remoodle/utils";
+
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;
 
@@ -18,31 +20,31 @@ export const DEFAULT_THRESHOLDS = [
   "9 days",
 ];
 
-export const DEFAULT_NOTIFICATIONS = Object.fromEntries(
+export const DEFAULT_THRESHOLDS_NOTIFICATIONS = Object.fromEntries(
   DEFAULT_THRESHOLDS.map((value) => [value, false]),
 );
 
-const convertToMs = (value: string): number => {
+const convertThresholdToMs = (value: string): number => {
   const [amount, unit] = value.split(" ");
-  const numAmount = parseInt(amount, 10);
+  const num = parseInt(amount, 10);
 
   switch (unit.toLowerCase()) {
     case "minute":
     case "minutes":
-      return numAmount * 60 * 1000;
+      return num * 60 * 1000;
     case "hour":
     case "hours":
-      return numAmount * 60 * 60 * 1000;
+      return num * 60 * 60 * 1000;
     case "day":
     case "days":
-      return numAmount * 24 * 60 * 60 * 1000;
+      return num * 24 * 60 * 60 * 1000;
     default:
       throw new Error(`Unsupported time unit: ${unit}`);
   }
 };
 
 const convertThresholds = (thresholds: string[]): number[] => {
-  return thresholds.map(convertToMs).sort((a, b) => a - b);
+  return thresholds.map(convertThresholdToMs).sort((a, b) => a - b);
 };
 
 export const calculateRemainingTime = (
@@ -60,12 +62,7 @@ export const calculateRemainingTime = (
 
   for (let i = 0; i < thresholdsMs.length; i++) {
     if (remainingMs <= thresholdsMs[i]) {
-      const hours = Math.floor(remainingMs / HOUR);
-      const minutes = Math.floor((remainingMs % HOUR) / MINUTE);
-      return [
-        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:00`,
-        thresholds[i],
-      ];
+      return [getTimeLeft(dueDate), thresholds[i]];
     }
   }
 

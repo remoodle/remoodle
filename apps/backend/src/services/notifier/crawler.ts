@@ -9,7 +9,7 @@ import type {
 import { trackCourseDiff, processDeadlines } from "./diff-processor/checker";
 import {
   DEFAULT_THRESHOLDS,
-  DEFAULT_NOTIFICATIONS,
+  DEFAULT_THRESHOLDS_NOTIFICATIONS,
 } from "./diff-processor/thresholds";
 
 export const fetchCourses = async (messageStream: MessageStream) => {
@@ -116,7 +116,7 @@ export const fetchDeadlines = async (messageStream: MessageStream) => {
         ...deadline,
         notifications:
           currentDeadlines?.data.find((d) => d.event_id === deadline.event_id)
-            ?.notifications || {},
+            ?.notifications || DEFAULT_THRESHOLDS_NOTIFICATIONS,
       }));
 
       await db.deadline.findOneAndUpdate(
