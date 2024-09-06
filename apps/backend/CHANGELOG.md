@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.7.2...remoodle/backend-v0.7.3) (2024-09-06)
+
+
+### Miscellaneous Chores
+
+* **docker:** set UTC+5 time ([c23420d](https://github.com/remoodle/heresy/commit/c23420d4fc73433902debcd51689600c894cb607))
+* use VERSION_TAG in docker ([f2e81af](https://github.com/remoodle/heresy/commit/f2e81af6391433c42fb438f83c7969c3151efb29))
+
+
+### Code Refactoring
+
+* move some stuff to utils ([0a7d590](https://github.com/remoodle/heresy/commit/0a7d590bc5e24bc9a6136b76092fc0346ac68559))
+
 ## [0.7.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.7.1...remoodle/backend-v0.7.2) (2024-09-06)
 
 
