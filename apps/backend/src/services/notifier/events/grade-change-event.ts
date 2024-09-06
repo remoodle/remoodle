@@ -17,6 +17,10 @@ export class GradeChangeEventHandler {
     this.consumerName = "worker";
   }
 
+  log(message?: any, ...optionalParams: any[]) {
+    console.log(`[${this.streamName}] ${message}`, ...optionalParams);
+  }
+
   async processEvents() {
     const items = await this.messageStream.get(
       this.streamName,
@@ -29,15 +33,13 @@ export class GradeChangeEventHandler {
 
       const user = await db.user.findOne({ moodleId: msg.moodleId });
 
-      console.log("Processing", item.id, "message for", msg.moodleId);
-
       if (user?.telegramId) {
         const text = formatCourseDiffs(msg.payload);
 
         const response = await sendTelegramMessage(user.telegramId, text);
 
         if (response.ok) {
-          console.log("Message sent to Telegram", user.telegramId);
+          this.log("Sent notification to Telegram ID", user.telegramId);
 
           await this.messageStream.ack(
             this.streamName,
@@ -45,9 +47,9 @@ export class GradeChangeEventHandler {
             item.id,
           );
         } else {
-          console.error(
-            "Failed to send message to Telegram",
-            response.statusText,
+          this.log(
+            "Failed to send notification to Telegram ID",
+            user.telegramId,
           );
         }
       }
