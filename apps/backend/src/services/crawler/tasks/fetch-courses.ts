@@ -5,24 +5,29 @@ import type { GradeChangeEvent } from "../../../library/diff-processor/types";
 import { trackCourseDiff } from "../../../library/diff-processor/checker";
 
 const fetchCourses = async (messageStream: MessageStream) => {
-  console.log("Fetching courses...");
+  console.log(`[crawler] Starting fetching courses`);
+
+  const users = await db.user.find({
+    telegramId: { $exists: true },
+    moodleId: { $exists: true },
+  });
+
+  console.log(`[crawler] Found ${users.length} users with Telegram ID`);
 
   const t0 = performance.now();
 
-  const users = await db.user.find({ telegramId: { $exists: true } });
-
   for (const user of users) {
-    if (!user.moodleId) {
-      continue;
-    }
-
     try {
       const rmc = new RMC({ moodleId: user.moodleId });
 
       const [data, error] = await rmc.v1_user_courses_overall();
 
       if (error) {
-        console.error("Error fetching courses:", error);
+        console.error(
+          `[crawler] Couldn't fetch courses for user ${user.name} (${user.moodleId})`,
+          error.message,
+          error.status,
+        );
         continue;
       }
 
@@ -59,14 +64,14 @@ const fetchCourses = async (messageStream: MessageStream) => {
         }
       }
     } catch (error) {
-      console.error("Error fetching courses:", error);
+      console.error("Error executing crawler:", error);
     }
   }
 
   const t1 = performance.now();
 
   console.log(
-    `Fetched courses for ${users.length} users, took ${t1 - t0} milliseconds.`,
+    `[crawler] Finished fetching courses, took ${t1 - t0} milliseconds.`,
   );
 };
 

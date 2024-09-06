@@ -58,7 +58,7 @@ export class GradeChangeEventHandler {
   }
 
   async runJob() {
-    console.log("Listening to stream:", this.streamName);
+    console.log("[notifier] Listening to stream:", this.streamName);
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
