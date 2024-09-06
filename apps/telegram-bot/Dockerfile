@@ -28,4 +28,7 @@ RUN pnpm dlx turbo run build --filter=@remoodle/telegram-bot
 
 EXPOSE 8888
 
+ARG VERSION_TAG
+ENV VERSION_TAG=$VERSION_TAG
+
 CMD ["node", "./apps/telegram-bot/dist/app.js"]

@@ -28,4 +28,7 @@ RUN pnpm dlx turbo run build --filter=@remoodle/backend
 
 EXPOSE 9000
 
+ARG VERSION_TAG
+ENV VERSION_TAG=$VERSION_TAG
+
 CMD ["node", "./apps/backend/dist/app.js"]
