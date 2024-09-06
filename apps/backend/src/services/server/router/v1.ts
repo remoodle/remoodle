@@ -101,6 +101,17 @@ const authRoutes = new Hono<{
             message: error.message,
           });
         }
+      } else {
+        if (!user.telegramId && telegramId) {
+          await db.user.updateOne(
+            { _id: user._id },
+            {
+              $set: {
+                telegramId,
+              },
+            },
+          );
+        }
       }
 
       try {
