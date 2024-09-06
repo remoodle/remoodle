@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.7.0...remoodle/backend-v0.7.1) (2024-09-06)
+
+
+### Bug Fixes
+
+* connect user on telegram register ([8d1d939](https://github.com/remoodle/heresy/commit/8d1d939ff7c89bddef9a2fc8444e46cb75f69a26))
+
+
+### Miscellaneous Chores
+
+* remove showRoutes ([dfeb30f](https://github.com/remoodle/heresy/commit/dfeb30f0b7cc81402537a73137a98210bc5c1ec8))
+
 ## [0.7.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.6.5...remoodle/backend-v0.7.0) (2024-09-06)
 
 
