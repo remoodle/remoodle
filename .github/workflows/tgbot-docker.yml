@@ -39,7 +39,11 @@ jobs:
           fi
 
           DOCKER_TAG="${GITHUB_REF}"
+          VERSION_TAG="${GITHUB_REF}::${SHORT_SHA}"
 
-          docker build -f apps/telegram-bot/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG
+          echo IMAGE_ID=$IMAGE_ID
+          echo DOCKER_TAG=$DOCKER_TAG
+
+          docker build -f apps/telegram-bot/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG --build-arg VERSION_TAG=$VERSION_TAG
 
           docker push $IMAGE_ID:$DOCKER_TAG
