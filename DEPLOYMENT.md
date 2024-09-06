@@ -54,8 +54,6 @@ docker exec -it db-redis-1 redis-cli XGROUP CREATE stream:deadline-reminder noti
 ##### docker-compose.yml
 
 ```yml
-version: "3.8"
-
 services:
   redis:
     image: redis:7.4.0
@@ -103,8 +101,6 @@ networks:
 ##### docker-compose.yml
 
 ```yml
-version: "3.8"
-
 services:
   core:
     image: ghcr.io/remoodle/core:0.2.2
