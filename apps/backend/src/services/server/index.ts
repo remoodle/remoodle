@@ -1,7 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { showRoutes } from "hono/dev";
 import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
@@ -36,8 +35,6 @@ api.notFound(() => {
 });
 
 api.onError(errorHandler);
-
-showRoutes(api);
 
 export const startServer = () => {
   serve(
