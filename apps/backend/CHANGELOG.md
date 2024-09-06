@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.6.4...remoodle/backend-v0.6.5) (2024-09-06)
+
+
+### Bug Fixes
+
+* notifications plz work ([97f796d](https://github.com/remoodle/heresy/commit/97f796df45f3d3131c941ff3b9da4e3ee7c463ad))
+* remove shit ([e4c21b8](https://github.com/remoodle/heresy/commit/e4c21b8d957e327e1665b55f573b459b5d41cec3))
+
+
+### Miscellaneous Chores
+
+* complete stale todos ([fa1b9db](https://github.com/remoodle/heresy/commit/fa1b9db77b5104e11f2225f489d4ab966d4730b5))
+
 ## [0.6.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.6.3...remoodle/backend-v0.6.4) (2024-09-04)
 
 
