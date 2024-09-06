@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.7.3...remoodle/backend-v0.7.4) (2024-09-06)
+
+
+### Bug Fixes
+
+* rookie mistake ([05f0710](https://github.com/remoodle/heresy/commit/05f07106e25eddfbfdef6cef1567e33587a8013c))
+
 ## [0.7.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.7.2...remoodle/backend-v0.7.3) (2024-09-06)
 
 
