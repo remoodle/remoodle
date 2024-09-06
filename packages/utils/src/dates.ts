@@ -4,7 +4,7 @@ import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 
 export const getTimeLeft = (date: number) => {
-  const currentTime = dayjs(new Date());
+  const currentTime = dayjs();
   const deadlineTime = dayjs(date);
   const timeDiff = deadlineTime.diff(currentTime);
 
@@ -15,5 +15,11 @@ export const getTimeLeft = (date: number) => {
   const minutes = duration.minutes();
   const seconds = duration.seconds();
 
-  return `${days} days, ${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  const formattedHours = String(hours).padStart(2, "0");
+  const formattedMinutes = String(minutes).padStart(2, "0");
+  const formattedSeconds = String(seconds).padStart(2, "0");
+
+  return days > 0
+    ? `${days} days, ${formattedHours}:${formattedMinutes}:${formattedSeconds}`
+    : `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 };
