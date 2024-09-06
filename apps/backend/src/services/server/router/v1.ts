@@ -415,6 +415,7 @@ const commonProtectedRoutes = new Hono<{
     try {
       await db.user.deleteOne({ _id: userId });
       await db.course.deleteMany({ userId });
+      await db.deadline.deleteMany({ userId });
     } catch (error) {
       throw new HTTPException(500, {
         message: `Failed to delete user from the database ${error}`,
