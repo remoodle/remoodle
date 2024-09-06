@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.8.0...remoodle/frontend-v0.8.1) (2024-09-04)
+
+
+### Miscellaneous Chores
+
+* complete stale todos ([fa1b9db](https://github.com/remoodle/heresy/commit/fa1b9db77b5104e11f2225f489d4ab966d4730b5))
+* **frontend:** bump vue and vite ([afbad52](https://github.com/remoodle/heresy/commit/afbad52fe699cdc3843ca461a3eef63c048f813a))
+
 ## [0.8.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.7.0...remoodle/frontend-v0.8.0) (2024-09-03)
 
 
