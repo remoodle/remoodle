@@ -90,8 +90,8 @@ describe("grades notifications", () => {
     expect(formatCourseDiffs(diffs)).toMatchInlineSnapshot(`
       "Updated grades:
 
-        Introduction to SRE | Meirmanova Aigul:
-            Final exam documentation submission - -> 100
+      Introduction to SRE:
+            Final exam documentation submission <b>null → 100</b>
       "
     `);
   });
