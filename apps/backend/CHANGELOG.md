@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.7.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.6.5...remoodle/backend-v0.7.0) (2024-09-06)
+
+
+### Features
+
+* add deadline notification v0 ([29fc18b](https://github.com/remoodle/heresy/commit/29fc18b8cf5203f19d1a65a461644860c2787988))
+
+
+### Bug Fixes
+
+* better logs ([b9318de](https://github.com/remoodle/heresy/commit/b9318de21709ba130f546af09c9ba2f9f362ddfd))
+* no verbose api logs ([9c42733](https://github.com/remoodle/heresy/commit/9c4273360017346f98102073eb99059dbfe55465))
+* utc time ([1b93bf0](https://github.com/remoodle/heresy/commit/1b93bf0b730fb5a00eb29d4288716a88670bf1d5))
+
+
+### Code Refactoring
+
+* **notifier:** remove unnecessary nesting and complexity ([aab271b](https://github.com/remoodle/heresy/commit/aab271b46a4f712add5e1d611e63c5222a09cc43))
+
 ## [0.6.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.6.4...remoodle/backend-v0.6.5) (2024-09-06)
 
 
