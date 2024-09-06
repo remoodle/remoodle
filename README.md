@@ -22,9 +22,8 @@ After installing Redis, you need to execute the following command.
 
 ```bash
 redis-cli XGROUP CREATE stream:grade-change notifier $ MKSTREAM
+redis-cli XGROUP CREATE stream:deadline-reminder notifier $ MKSTREAM
 ```
-
-This command creates a new consumer group named `notifier` for the stream `stream:grade-change` used in the backend for notifications.
 
 ### 2. Creating a Telegram Bot
 
