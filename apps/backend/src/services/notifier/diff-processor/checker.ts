@@ -1,14 +1,14 @@
 import type { ExtendedCourse } from "@remoodle/types";
-import type { CourseDiff } from "./types";
+import type { GradeChangeDiff } from "./shims";
 
 export const trackCourseDiff = (
   oldData: ExtendedCourse[],
   newData: ExtendedCourse[],
 ): {
   hasDiff: boolean;
-  diffs: CourseDiff[];
+  diffs: GradeChangeDiff[];
 } => {
-  const diffs: CourseDiff[] = [];
+  const diffs: GradeChangeDiff[] = [];
 
   const oldCoursesMap = new Map(
     oldData.map((course) => [course.course_id, course]),
@@ -37,7 +37,7 @@ export const trackCourseDiff = (
       }
 
       if (courseChanges.length > 0) {
-        diffs.push({ n: newCourse.name, d: courseChanges });
+        diffs.push({ c: newCourse.name, g: courseChanges });
       }
     } else {
       if (!newCourse.grades) {
@@ -49,7 +49,7 @@ export const trackCourseDiff = (
         null,
         grade.graderaw,
       ]);
-      diffs.push({ n: newCourse.name, d: courseChanges });
+      diffs.push({ c: newCourse.name, g: courseChanges });
     }
   }
 

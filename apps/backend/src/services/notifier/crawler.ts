@@ -1,10 +1,10 @@
-import { db } from "../../../library/db";
-import type { MessageStream } from "../../../library/db";
-import { RMC } from "../../../library/rmc-sdk";
-import type { GradeChangeEvent } from "../../../library/diff-processor/types";
-import { trackCourseDiff } from "../../../library/diff-processor/checker";
+import { db } from "../../library/db";
+import type { MessageStream } from "../../library/db";
+import { RMC } from "../../library/rmc-sdk";
+import type { GradeChangeEvent } from "./diff-processor/shims";
+import { trackCourseDiff } from "./diff-processor/checker";
 
-const fetchCourses = async (messageStream: MessageStream) => {
+export const fetchCourses = async (messageStream: MessageStream) => {
   console.log(`[crawler] Starting fetching courses`);
 
   const users = await db.user.find({
@@ -74,5 +74,3 @@ const fetchCourses = async (messageStream: MessageStream) => {
     `[crawler] Finished fetching courses, took ${t1 - t0} milliseconds.`,
   );
 };
-
-export { fetchCourses };

@@ -36,6 +36,8 @@ export type Deadline = {
   course_name: string;
   assignment?: {
     assignment_id: number;
+    cmid: number;
+    duedate: number;
   };
 };
 

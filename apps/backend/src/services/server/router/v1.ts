@@ -94,7 +94,7 @@ const authRoutes = new Hono<{
             );
           }
         } catch (error: any) {
-          const [data, _] = await rmc.v1_delete_user();
+          const [_data, _error] = await rmc.v1_delete_user();
           await db.user.deleteOne({ _id: user?._id });
 
           throw new HTTPException(500, {

@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import type { ExtendedCourse } from "@remoodle/types";
-import type { GradeChangeEvent } from "./types";
+import type { GradeChangeEvent, GradeChangeDiff } from "./shims";
 import { trackCourseDiff } from "./checker";
 import { formatCourseDiffs } from "./formatter";
 
@@ -61,13 +61,15 @@ test("trackCourseDiff", () => {
     },
   ];
 
+  const diffs: GradeChangeDiff[] = [
+    {
+      c: "Introduction to SRE | Meirmanova Aigul",
+      g: [["Final exam documentation submission", null, 100]],
+    },
+  ];
+
   expect(trackCourseDiff(oldData, newData)).toStrictEqual({
-    diffs: [
-      {
-        n: "Introduction to SRE | Meirmanova Aigul",
-        d: [["Final exam documentation submission", null, 100]],
-      },
-    ],
+    diffs,
     hasDiff: true,
   });
 });
@@ -78,13 +80,17 @@ test("formatCourseDiffs", () => {
     moodleId: 1234,
     payload: [
       {
-        n: "Introduction to SRE | Meirmanova Aigul",
-        d: [["Final exam documentation submission", null, 100]],
+        c: "Introduction to SRE | Meirmanova Aigul",
+        g: [["Final exam documentation submission", null, 100]],
       },
     ],
   };
 
-  expect(formatCourseDiffs(event.payload)).toStrictEqual(
-    "Updated grades:\n\n  Introduction to SRE | Meirmanova Aigul:\n      Final exam documentation submission - -> 100\n",
-  );
+  expect(formatCourseDiffs(event.payload)).toMatchInlineSnapshot(`
+    "Updated grades:
+
+      Introduction to SRE | Meirmanova Aigul:
+          Final exam documentation submission - -> 100
+    "
+  `);
 });
