@@ -1,16 +1,16 @@
 import type { GradeChangeDiff, DeadlineReminderDiff } from "./shims";
 
 export const formatCourseDiffs = (data: GradeChangeDiff[]): string => {
-  let message = "Updated grades:\n\n";
+  let message = "Updated grades:\n";
 
   for (const diff of data) {
-    message += `  ${diff.c}:\n`;
+    message += `\n${diff.c.split(" | ")[0]}:\n`;
     const gradeChanges = diff.g;
     for (const change of gradeChanges) {
       const [gradeName, previous, updated] = change;
-      const displayPrevious = previous === null ? "-" : previous;
-      const displayUpdated = updated === null ? "-" : updated;
-      message += `      ${gradeName} ${displayPrevious} -> ${displayUpdated}\n`;
+      const displayPrevious = previous === null ? "null" : previous;
+      const displayUpdated = updated === null ? "null" : updated;
+      message += `      ${gradeName} <b>${displayPrevious} → ${displayUpdated}</b>\n`;
     }
   }
 
