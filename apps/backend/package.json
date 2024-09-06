@@ -10,7 +10,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ignore-path .gitignore && prettier --check src/",
     "format": "eslint . --fix --ignore-path .gitignore && prettier --write src/",
-    "test": "vitest"
+    "test": "TZ=UTC vitest"
   },
   "dependencies": {
     "@hono/node-server": "^1.10.0",

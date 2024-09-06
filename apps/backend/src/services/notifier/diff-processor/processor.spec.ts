@@ -140,7 +140,7 @@ describe("deadlines notifications", () => {
       {
         eid: 515515,
         c: "Research Methods and Tools | Omirgaliyev Ruslan",
-        d: [["Assignment 1 is due", 1726426740000, "11:35:00", "12 hours"]],
+        d: [["Assignment 1 is due", 1726426740000, "06:35:00", "12 hours"]],
       },
     ];
 
@@ -206,7 +206,7 @@ describe("deadlines notifications", () => {
       {
         eid: 515515,
         c: "Research Methods and Tools | Omirgaliyev Ruslan",
-        d: [["Assignment 1 is due", 1726426740000, "11:35:00", "12 hours"]],
+        d: [["Assignment 1 is due", 1726426740000, "06:35:00", "12 hours"]],
       },
     ];
 
@@ -215,8 +215,8 @@ describe("deadlines notifications", () => {
 
         Research Methods and Tools | Omirgaliyev Ruslan:
             Assignment 1 is due
-            Sunday, September 15, 2024 at 11:59 PM
-            Remaining: 11:35:00
+            Sunday, September 15, 2024 at 06:59 PM
+            Remaining: 06:35:00
             ___threshold: 12 hours
 
       "
