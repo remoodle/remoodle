@@ -28,6 +28,10 @@ RUN pnpm dlx turbo run build --filter=@remoodle/backend
 
 EXPOSE 9000
 
+RUN export TZ="Asia/Karachi" \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
+
 ARG VERSION_TAG
 ENV VERSION_TAG=$VERSION_TAG
 
