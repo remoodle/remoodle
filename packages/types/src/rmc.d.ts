@@ -31,13 +31,14 @@ export type Deadline = {
   timestart: number;
   instance: number;
   name: string;
-  visible: number;
+  visible: boolean;
   course_id: number;
   course_name: string;
   assignment?: {
     assignment_id: number;
     cmid: number;
     duedate: number;
+    grade: number;
   };
 };
 

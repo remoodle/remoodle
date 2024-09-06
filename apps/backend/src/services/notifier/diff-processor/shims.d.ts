@@ -10,3 +10,17 @@ export type GradeChangeEvent = {
   moodleId: number;
   payload: GradeChangeDiff[];
 };
+
+export type DeadlineReminderDiff = {
+  eid: number;
+  // course name
+  c: string;
+  // [name, date, remaining, __threshold]
+  d: [string, number, string, string][];
+};
+
+export type DeadlineReminderEvent = {
+  userId: string;
+  moodleId: number;
+  payload: DeadlineReminderDiff[];
+};

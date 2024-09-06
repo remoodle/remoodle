@@ -6,7 +6,7 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "turbo format",
-    "test": "turbo test",
+    "test": "TZ=UTC turbo test",
     "type-check": "turbo type-check",
     "build": "turbo build"
   },

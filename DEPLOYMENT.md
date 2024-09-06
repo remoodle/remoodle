@@ -48,10 +48,11 @@ echo "$GH_PAT" | docker login ghcr.io -u USERNAME --password-stdin
 
 ### Database
 
-docker exec -it db-redis-1 redis-cli
-XGROUP CREATE stream:grade-change notifier $ MKSTREAM
+docker exec -it db-redis-1 redis-cli XGROUP CREATE stream:grade-change notifier $ MKSTREAM
+docker exec -it db-redis-1 redis-cli XGROUP CREATE stream:deadline-reminder notifier $ MKSTREAM
 
 ##### docker-compose.yml
+
 ```yml
 version: "3.8"
 
@@ -100,8 +101,9 @@ networks:
 ### Apps
 
 ##### docker-compose.yml
+
 ```yml
-version: '3.8'
+version: "3.8"
 
 services:
   core:
@@ -147,12 +149,11 @@ networks:
 # Migration
 
 `docker exec -it db-mysql-1 mysql -u root -p`  
-`docker cp remoodle.users.json remoodle-mongo-1:/data.json`  
+`docker cp remoodle.users.json remoodle-mongo-1:/data.json`
 
-`docker exec -it db-mongo-1 bash`   
-`mongoimport --db remoodle --collection users --file data.json --jsonArray`  
+`docker exec -it db-mongo-1 bash`  
+`mongoimport --db remoodle --collection users --file data.json --jsonArray`
 
 ### Cloud init
 
 `cat /var/log/cloud-init-output.log`
-

@@ -1,5 +1,6 @@
 import { createMongoDBConnection } from "./mongo/connection";
 import Course, { type CourseType } from "./mongo/models/Course";
+import Deadline, { type DeadlineType } from "./mongo/models/Deadline";
 import User, { type UserType } from "./mongo/models/User";
 
 import { createRedisConnection } from "./redis/connection";
@@ -10,10 +11,12 @@ export type { MessageStream, TelegramToken };
 
 export type { IUser } from "./mongo/models/User";
 export type { ICourse } from "./mongo/models/Course";
+export type { IDeadline } from "./mongo/models/Deadline";
 
 export class DB {
   user: UserType;
   course: CourseType;
+  deadline: DeadlineType;
 
   messageStream: MessageStream;
   telegramToken: TelegramToken;
@@ -27,6 +30,8 @@ export class DB {
   }) {
     this.user = User;
     this.course = Course;
+    this.deadline = Deadline;
+
     if (mongoURI) {
       createMongoDBConnection(mongoURI);
     }

@@ -29,7 +29,7 @@ module.exports = {
   ],
   rules: {
     curly: ["error", "all"],
-    "max-depth": ["error", 4],
+    "max-depth": ["error", 6],
     "max-lines": [
       "error",
       { max: 2500, skipBlankLines: false, skipComments: false },

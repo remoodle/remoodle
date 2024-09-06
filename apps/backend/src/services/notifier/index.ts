@@ -1,24 +1,24 @@
 import cron from "node-cron";
 import { db } from "../../library/db";
-import { fetchCourses } from "./crawler";
+import { fetchCourses, fetchDeadlines } from "./crawler";
 import { GradeChangeEventHandler } from "./grade-change-event";
-
-const FIVE_MINUTES = "*/5 * * * *";
+import { DeadlineReminderEventHandler } from "./deadline-reminder-event";
 
 export async function startNotifier() {
   cron.schedule(
-    FIVE_MINUTES,
-    () => {
-      fetchCourses(db.messageStream).catch((error) => {
-        console.error("Error running script:", error);
-      });
-    },
-    {
-      runOnInit: true,
-    },
+    "*/5 * * * *", // every 5 minutes
+    () => fetchCourses(db.messageStream),
+    { runOnInit: true },
   );
 
-  const gradeChangeEventHandler = new GradeChangeEventHandler(db.messageStream);
+  cron.schedule(
+    "*/10 * * * *", // every 10 minutes
+    () => fetchDeadlines(db.messageStream),
+    { runOnInit: true },
+  );
 
-  await Promise.all([gradeChangeEventHandler.runJob()]);
+  const grades = new GradeChangeEventHandler(db.messageStream);
+  const deadlines = new DeadlineReminderEventHandler(db.messageStream);
+
+  await Promise.all([grades.runJob(), deadlines.runJob()]);
 }
