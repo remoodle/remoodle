@@ -29,6 +29,8 @@ def migrate_data(secret_key):
     sql_statements = []
 
     for user in users:
+        moodle_token = decrypt_token(secret_key, str(user.get("hashed_token")))
+
         new_user_id = str(uuid7str())
         new_user = {
             "_id": new_user_id,
@@ -36,13 +38,13 @@ def migrate_data(secret_key):
             "moodleId": user.get("moodle_id"),
             "createdAt": datetime.utcnow().isoformat() + "Z",
             "updatedAt": datetime.utcnow().isoformat() + "Z",
+            "moodleToken": moodle_token,
             "__v": 0,
             "name": user.get("full_name"),
         }
 
         json_output.append(new_user)
 
-        moodle_token = decrypt_token(secret_key, str(user.get("hashed_token")))
 
         """
         moodle_id: int
