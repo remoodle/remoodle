@@ -9,9 +9,6 @@ export const env = cleanEnv(process.env, {
 
   SERVER_PORT: num({ default: 8888 }),
 
-  ALERT_WORKER_URL: str({ default: "http://localhost:8787" }),
-  ALERT_WORKER_SECRET: str({ default: "YWxhcm1h" }),
-
   TELEGRAM_BOT_TOKEN: str(),
 
   BACKEND_URL: str({ default: "http://localhost:9000" }),
@@ -33,9 +30,5 @@ export const config = {
   },
   redis: {
     uri: env.REDIS_URI,
-  },
-  alert: {
-    url: env.ALERT_WORKER_URL,
-    secret: env.ALERT_WORKER_SECRET,
   },
 };

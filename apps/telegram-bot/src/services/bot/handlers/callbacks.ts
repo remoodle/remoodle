@@ -25,7 +25,7 @@ callbacksHandler.callbackQuery("deadlines", async (ctx) => {
     client.v1.deadlines.$get(
       {},
       {
-        headers: getAuthHeaders(userId, 1),
+        headers: getAuthHeaders(userId),
       },
     ),
   );
@@ -62,7 +62,7 @@ callbacksHandler.callbackQuery("back_to_menu", async (ctx) => {
     client.v1.user.check.$get(
       {},
       {
-        headers: getAuthHeaders(userId, 1),
+        headers: getAuthHeaders(userId),
       },
     ),
   );
@@ -89,7 +89,7 @@ callbacksHandler.callbackQuery(/^refresh_deadlines_(.+)/, async (ctx) => {
     client.v1.deadlines.$get(
       {},
       {
-        headers: getAuthHeaders(userId, 1),
+        headers: getAuthHeaders(userId),
       },
     ),
   );
@@ -128,7 +128,7 @@ callbacksHandler.callbackQuery("grades", async (ctx) => {
     client.v1.courses.$get(
       {},
       {
-        headers: getAuthHeaders(userId, 1),
+        headers: getAuthHeaders(userId),
       },
     ),
   );
@@ -168,7 +168,7 @@ callbacksHandler.callbackQuery("back_to_grades", async (ctx) => {
     client.v1.courses.$get(
       {},
       {
-        headers: getAuthHeaders(userId, 1),
+        headers: getAuthHeaders(userId),
       },
     ),
   );
@@ -207,7 +207,7 @@ callbacksHandler.callbackQuery(/course_\d+/, async (ctx) => {
         },
       },
       {
-        headers: getAuthHeaders(userId, 1),
+        headers: getAuthHeaders(userId),
       },
     ),
   );
@@ -223,7 +223,7 @@ callbacksHandler.callbackQuery(/course_\d+/, async (ctx) => {
         },
       },
       {
-        headers: getAuthHeaders(userId, 1),
+        headers: getAuthHeaders(userId),
       },
     ),
   );
@@ -260,7 +260,7 @@ callbacksHandler.callbackQuery("delete_profile", async (ctx) => {
     client.v1.user.check.$get(
       {},
       {
-        headers: getAuthHeaders(userId, 1),
+        headers: getAuthHeaders(userId),
       },
     ),
   );
@@ -289,7 +289,7 @@ callbacksHandler.callbackQuery("delete_profile_yes", async (ctx) => {
     client.v1.goodbye.$delete(
       {},
       {
-        headers: getAuthHeaders(userId, 1),
+        headers: getAuthHeaders(userId),
       },
     ),
   );

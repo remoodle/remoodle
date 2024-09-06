@@ -1,7 +1,7 @@
 import { Context, InlineKeyboard } from "grammy";
+import { db } from "../../../library/db";
 import { request, getAuthHeaders } from "../../../helpers/hc";
 import { getDeadlineText } from "../utils";
-import { db } from "../../../library/db";
 import keyboards from "../keyboards";
 
 async function start(ctx: Context) {
@@ -20,7 +20,7 @@ async function start(ctx: Context) {
     client.v1.user.check.$get(
       {},
       {
-        headers: getAuthHeaders(userId, 1),
+        headers: getAuthHeaders(userId),
       },
     ),
   );
@@ -57,7 +57,7 @@ async function start(ctx: Context) {
         },
       },
       {
-        headers: getAuthHeaders(userId, 0),
+        headers: getAuthHeaders(userId),
       },
     ),
   );
@@ -91,7 +91,7 @@ async function deadlines(ctx: Context) {
     client.v1.deadlines.$get(
       {},
       {
-        headers: getAuthHeaders(userId, 1),
+        headers: getAuthHeaders(userId),
       },
     ),
   );
