@@ -37,9 +37,7 @@ api.notFound(() => {
 
 api.onError(errorHandler);
 
-showRoutes(api, {
-  verbose: true,
-});
+showRoutes(api);
 
 export const startServer = () => {
   serve(
