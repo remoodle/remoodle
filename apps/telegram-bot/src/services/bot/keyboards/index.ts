@@ -14,9 +14,16 @@ const keyboards = {
 
   grades: new InlineKeyboard(),
 
+  single_grade: new InlineKeyboard().text("Back ←", "back_to_grades"),
+
   deadlines: new InlineKeyboard()
     .text("Back ←", "back_to_menu")
-    .text("Refresh", "refresh_deadlines"),
+    .text("Refresh", "refresh_deadlines_menu"),
+
+  single_deadline: new InlineKeyboard().text(
+    "Refresh",
+    "refresh_deadlines_single",
+  ),
 
   others: new InlineKeyboard()
     .url("Contact Us", "https://t.me/remoodle")

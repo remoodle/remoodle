@@ -1,5 +1,6 @@
 import { Context, InlineKeyboard } from "grammy";
 import { request, getAuthHeaders } from "../../../helpers/hc";
+import { getDeadlineText } from "../utils";
 import keyboards from "../keyboards";
 
 async function start(ctx: Context) {
@@ -123,7 +124,16 @@ async function deadlines(ctx: Context) {
     return;
   }
 
-  console.log(data);
+  const text = "Upcoming deadlines:\n\n" + data.map(getDeadlineText).join("\n");
+
+  if (ctx.chat.type === "private") {
+    await ctx.reply(text, {
+      reply_markup: keyboards.single_deadline,
+      parse_mode: "HTML",
+    });
+  } else {
+    await ctx.reply(text, { parse_mode: "HTML" });
+  }
 }
 
 const commands = {
