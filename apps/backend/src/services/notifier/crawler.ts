@@ -49,9 +49,12 @@ export const fetchCourses = async (messageStream: MessageStream) => {
         { upsert: true, new: true },
       );
 
+      if (!currentCourse) {
+        continue;
+      }
+
       // make sure that we have data to compare and create an event if smth changed
       if (
-        currentCourse &&
         Array.isArray(currentCourse.data) &&
         currentCourse.data.length &&
         Array.isArray(data) &&
