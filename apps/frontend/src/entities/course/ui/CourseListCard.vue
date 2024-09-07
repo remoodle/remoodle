@@ -33,7 +33,7 @@ const attendance = computed(() => {
       params: { courseId: course.course_id },
       query: { courseName: course.name },
     }"
-    class="flex items-center justify-between rounded-lg border p-3 text-left transition-all hover:bg-secondary"
+    class="flex items-center justify-between gap-x-2 rounded-lg border p-3 text-left transition-all hover:bg-secondary"
   >
     <div class="flex flex-col">
       <div v-show="showCategory" class="text-xs text-muted-foreground">
@@ -46,12 +46,12 @@ const attendance = computed(() => {
         {{ splitted.teacher }}
       </div>
     </div>
-    <div v-if="course.grades" class="flex gap-1">
+    <div v-if="course.grades" class="flex flex-none gap-1">
       <TooltipProvider v-if="attendance?.percentage">
         <Tooltip>
           <TooltipTrigger>
-            <div class="flex items-center gap-2 rounded-md border p-2">
-              <Icon name="people" class="h-5 w-5" />
+            <div class="flex items-center gap-2 rounded-md border p-1 md:p-2">
+              <Icon name="people" class="h-4 w-4 flex-none md:h-5 md:w-5" />
               {{ attendance.percentage }}%
             </div>
           </TooltipTrigger>
