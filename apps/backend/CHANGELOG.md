@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.0.0...remoodle/backend-v1.1.0) (2024-09-07)
+
+
+### Features
+
+* add notification settings ([d60e788](https://github.com/remoodle/heresy/commit/d60e788dbb76dec90f53bc1b1c899d4fa417be65))
+
+
+### Bug Fixes
+
+* monke moment ([f6012bd](https://github.com/remoodle/heresy/commit/f6012bdcf63e05a224237457674685a635937100))
+
+
+### Code Refactoring
+
+* clean up some shit ([63bca8f](https://github.com/remoodle/heresy/commit/63bca8fe56f6f70f147e1caf779fe159fb62368b))
+
 ## [1.0.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.8.0...remoodle/backend-v1.0.0) (2024-09-07)
 
 
