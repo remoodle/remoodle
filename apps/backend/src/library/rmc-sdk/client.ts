@@ -16,6 +16,22 @@ import { config } from "../../config";
 
 type Auth = { moodleId: number } | { moodleToken: string };
 
+const qs = (params: Record<string, string | undefined>) => {
+  const filteredParams = Object.entries(params).reduce(
+    (acc, [key, value]) => {
+      if (value !== undefined && value !== "") {
+        acc[key] = String(value);
+      }
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+  const searchParams = new URLSearchParams(filteredParams);
+
+  return "?" + searchParams.toString();
+};
+
 export class RMC {
   private leastCompatibleVersion = "0.3.0";
 
@@ -51,6 +67,8 @@ export class RMC {
   ): Promise<[T, null] | [null, HTTPException]> {
     try {
       const url = new URL(endpoint, this.host);
+
+      console.log(url.toString());
 
       const response = await fetch(url, {
         ...options,
@@ -121,19 +139,15 @@ export class RMC {
     });
   }
 
-  async v1_user_courses(
-    status: z.infer<typeof RMC.zCourseType> = "inprogress",
-  ) {
-    return this.request<ActiveCourse[]>(`v1/user/courses?status=${status}`, {
+  async v1_user_courses(status?: z.infer<typeof RMC.zCourseType>) {
+    return this.request<ActiveCourse[]>("v1/user/courses" + qs({ status }), {
       method: "GET",
     });
   }
 
-  async v1_user_courses_overall(
-    status: z.infer<typeof RMC.zCourseType> = "inprogress",
-  ) {
+  async v1_user_courses_overall(status?: z.infer<typeof RMC.zCourseType>) {
     return this.request<ExtendedCourse[]>(
-      `v1/user/courses/overall?status=${status}`,
+      "v1/user/courses/overall" + qs({ status }),
       {
         method: "GET",
       },
@@ -141,7 +155,7 @@ export class RMC {
   }
 
   async v1_course_content(courseId: string, content?: string) {
-    return this.request<Course>(`v1/course/${courseId}?content=${content}`, {
+    return this.request<Course>(`v1/course/${courseId}` + qs({ content }), {
       method: "GET",
     });
   }

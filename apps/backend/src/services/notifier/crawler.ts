@@ -28,7 +28,7 @@ export const fetchCourses = async (messageStream: MessageStream) => {
     try {
       const rmc = new RMC({ moodleId: user.moodleId });
 
-      const [data, error] = await rmc.v1_user_courses_overall();
+      const [data, error] = await rmc.v1_user_courses_overall("inprogress");
 
       if (error) {
         console.error(

@@ -251,14 +251,16 @@ const commonProtectedRoutes = new Hono<{
     zValidator(
       "query",
       z.object({
-        status: RMC.zCourseType.optional().default("inprogress"),
+        status: RMC.zCourseType.optional(),
       }),
     ),
     async (ctx) => {
+      const { status } = ctx.req.valid("query");
+
       const moodleId = ctx.get("moodleId");
 
       const rmc = new RMC({ moodleId });
-      const [data, error] = await rmc.v1_user_courses();
+      const [data, error] = await rmc.v1_user_courses(status);
 
       if (error) {
         throw error;
@@ -272,7 +274,7 @@ const commonProtectedRoutes = new Hono<{
     zValidator(
       "query",
       z.object({
-        status: RMC.zCourseType.optional().default("inprogress"),
+        status: RMC.zCourseType.optional(),
       }),
     ),
     async (ctx) => {
