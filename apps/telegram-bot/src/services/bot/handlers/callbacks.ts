@@ -1,4 +1,4 @@
-import { Composer } from "grammy";
+import { Composer, InlineKeyboard } from "grammy";
 import { request, getAuthHeaders } from "../../../helpers/hc";
 import { getDeadlineText } from "../utils";
 import keyboards from "../keyboards";
@@ -146,15 +146,15 @@ callbacksHandler.callbackQuery("grades", async (ctx) => {
     return;
   }
 
-  console.log(grades);
+  const gradesKeyboards = new InlineKeyboard();
 
   grades.forEach((grade) => {
-    keyboards.grades
+    gradesKeyboards
       .row()
       .text(grade.name.split(" | ")[0], `course_${grade.course_id}`);
   });
 
-  const gradesKeyboards = keyboards.grades.row().text("Back ←", "back_to_menu");
+  gradesKeyboards.row().text("Back ←", "back_to_menu");
 
   if (grades.length === 0) {
     await ctx.editMessageText("You have no grades 🥰", {
