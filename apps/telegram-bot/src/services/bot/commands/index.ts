@@ -16,7 +16,7 @@ async function start(ctx: Context) {
     return;
   }
 
-  const [rmcUser, error] = await request((client) =>
+  const [user, error] = await request((client) =>
     client.v1.user.check.$get(
       {},
       {
@@ -25,8 +25,8 @@ async function start(ctx: Context) {
     ),
   );
 
-  if (rmcUser && !error) {
-    await ctx.reply(`${rmcUser?.user.name}`, {
+  if (user && !error) {
+    await ctx.reply(`${user.name}`, {
       reply_markup: keyboards.main,
     });
     return;
@@ -62,7 +62,7 @@ async function start(ctx: Context) {
     ),
   );
 
-  if (authError && authError.status === 500) {
+  if (authError) {
     await ctx.reply("Your token is invalid. Try again!");
     return;
   }

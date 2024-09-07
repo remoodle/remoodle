@@ -58,7 +58,7 @@ callbacksHandler.callbackQuery("back_to_menu", async (ctx) => {
 
   const userId = ctx.from.id;
 
-  const [rmcUser, _] = await request((client) =>
+  const [user, _] = await request((client) =>
     client.v1.user.check.$get(
       {},
       {
@@ -67,7 +67,12 @@ callbacksHandler.callbackQuery("back_to_menu", async (ctx) => {
     ),
   );
 
-  await ctx.editMessageText(`${rmcUser?.user.name}`, {
+  if (!user) {
+    await ctx.reply("You are not connected to ReMoodle!");
+    return;
+  }
+
+  await ctx.editMessageText(`${user.name}`, {
     reply_markup: keyboards.main,
   });
 });
@@ -264,7 +269,7 @@ callbacksHandler.callbackQuery("delete_profile", async (ctx) => {
 
   const userId = ctx.from.id;
 
-  const [rmcUser, _] = await request((client) =>
+  const [user, _] = await request((client) =>
     client.v1.user.check.$get(
       {},
       {
@@ -273,7 +278,7 @@ callbacksHandler.callbackQuery("delete_profile", async (ctx) => {
     ),
   );
 
-  if (!rmcUser) {
+  if (!user) {
     await ctx.reply("You are not connected to ReMoodle!");
     return;
   }

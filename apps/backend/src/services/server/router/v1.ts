@@ -208,7 +208,7 @@ const authRoutes = new Hono<{
       });
 
       if (!user) {
-        throw new HTTPException(400, {
+        throw new HTTPException(401, {
           message: "User not found. Please register first.",
         });
       }
@@ -350,7 +350,7 @@ const commonProtectedRoutes = new Hono<{
     const user = await db.user.findOne({ _id: userId });
 
     if (!user) {
-      throw new HTTPException(400, {
+      throw new HTTPException(401, {
         message: "User not found",
       });
     }
@@ -398,7 +398,7 @@ const commonProtectedRoutes = new Hono<{
         const user = await db.user.findOne({ _id: userId });
 
         if (!user) {
-          throw new HTTPException(400, {
+          throw new HTTPException(401, {
             message: "User not found",
           });
         }
@@ -464,7 +464,7 @@ const commonProtectedRoutes = new Hono<{
     const user = await db.user.findOne({ _id: userId });
 
     if (!user) {
-      throw new HTTPException(400, {
+      throw new HTTPException(401, {
         message: "User not found",
       });
     }
@@ -511,7 +511,7 @@ const commonProtectedRoutes = new Hono<{
         const user = await db.user.findById(userId);
 
         if (!user) {
-          throw new HTTPException(404, { message: "User not found" });
+          throw new HTTPException(401, { message: "User not found" });
         }
 
         user.telegramId = parseInt(telegramId);
@@ -537,14 +537,12 @@ const commonProtectedRoutes = new Hono<{
     const user: IUser | null = await db.user.findOne({ _id: userId });
 
     if (!user) {
-      throw new HTTPException(400, {
+      throw new HTTPException(401, {
         message: "User not found",
       });
     }
 
-    return ctx.json({
-      user,
-    });
+    return ctx.json(user);
   });
 
 export const v1 = new Hono()
