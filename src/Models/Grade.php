@@ -29,7 +29,8 @@ class Grade extends ModelAbstract
         'grademax',
         'feedbackformat',
         'graderaw',
-        'feedback'
+        'feedback',
+        'course_id',
     ];
 
     public function courseModule(): BelongsTo
@@ -46,6 +47,7 @@ class Grade extends ModelAbstract
     {
         return new GradeEntity(
             grade_id: $this->grade_id,
+            course_id: $this->course_id,
             cmid: $this->cmid,
             percentage: $this->percentage,
             moodle_id: $this->moodle_id,

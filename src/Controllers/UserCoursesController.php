@@ -74,7 +74,11 @@ class UserCoursesController extends BaseController
         $user = $request->getAttribute("user");
         $user->load([
             "courses",
-            "courses.grades" => function ($query) use ($user) {
+            "courses.courseModules",
+            "courses.courseModules.grades" => function ($query) use ($user) {
+                $query->where("moodle_id", $user->moodle_id);
+            },
+            "courses.registerGrades" => function ($query) use ($user) {
                 $query->where("moodle_id", $user->moodle_id);
             }
         ]);

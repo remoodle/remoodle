@@ -11,6 +11,7 @@ class Grade implements SearchableInterface
 {
     public function __construct(
         public readonly int $grade_id,
+        public readonly int $course_id,
         public readonly string $name,
         public readonly int $moodle_id,
         public readonly string $itemtype,

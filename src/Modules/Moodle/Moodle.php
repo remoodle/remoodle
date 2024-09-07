@@ -128,6 +128,7 @@ final class Moodle
 
             $grades[] = new Grade(
                 grade_id: $gradeitem['id'],
+                course_id: $courseId,
                 cmid: $gradeitem['cmid'] ?? null,
                 name: $gradeitem['itemname'] ?? "",
                 percentage: $grade,

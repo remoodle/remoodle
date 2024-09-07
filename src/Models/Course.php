@@ -35,7 +35,7 @@ class Course extends ModelAbstract
         return $this->hasMany(CourseModule::class, 'course_id', 'course_id');
     }
 
-    public function grades(): HasManyThrough
+    public function gradesThroughModules(): HasManyThrough
     {
         return $this->hasManyThrough(
             Grade::class,
@@ -45,6 +45,16 @@ class Course extends ModelAbstract
             'course_id',
             'cmid'
         );
+    }
+
+    public function registerGrades(): HasMany
+    {
+        return $this->grades()->where('cmid', null);
+    }
+
+    public function grades(): HasMany
+    {
+        return $this->hasMany(Grade::class, 'course_id', 'course_id');
     }
 
     public function users(): HasManyThrough
