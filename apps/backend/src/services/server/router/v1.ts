@@ -246,30 +246,50 @@ const commonProtectedRoutes = new Hono<{
 
     return ctx.json(data);
   })
-  .get("/courses", async (ctx) => {
-    const moodleId = ctx.get("moodleId");
+  .get(
+    "/courses",
+    zValidator(
+      "query",
+      z.object({
+        status: RMC.zCourseType.optional().default("inprogress"),
+      }),
+    ),
+    async (ctx) => {
+      const moodleId = ctx.get("moodleId");
 
-    const rmc = new RMC({ moodleId });
-    const [data, error] = await rmc.v1_user_courses();
+      const rmc = new RMC({ moodleId });
+      const [data, error] = await rmc.v1_user_courses();
 
-    if (error) {
-      throw error;
-    }
+      if (error) {
+        throw error;
+      }
 
-    return ctx.json(data);
-  })
-  .get("/courses/overall", async (ctx) => {
-    const moodleId = ctx.get("moodleId");
+      return ctx.json(data);
+    },
+  )
+  .get(
+    "/courses/overall",
+    zValidator(
+      "query",
+      z.object({
+        status: RMC.zCourseType.optional().default("inprogress"),
+      }),
+    ),
+    async (ctx) => {
+      const { status } = ctx.req.valid("query");
 
-    const rmc = new RMC({ moodleId });
-    const [data, error] = await rmc.v1_user_courses_overall();
+      const moodleId = ctx.get("moodleId");
 
-    if (error) {
-      throw error;
-    }
+      const rmc = new RMC({ moodleId });
+      const [data, error] = await rmc.v1_user_courses_overall(status);
 
-    return ctx.json(data);
-  })
+      if (error) {
+        throw error;
+      }
+
+      return ctx.json(data);
+    },
+  )
   .get(
     "/course/:courseId",
     zValidator(

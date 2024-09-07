@@ -1,6 +1,7 @@
 import { HTTPException } from "hono/http-exception";
 import type { StatusCode } from "hono/utils/http-status";
 import { compare } from "compare-versions";
+import { z } from "zod";
 import type {
   Course,
   ActiveCourse,
@@ -21,6 +22,8 @@ export class RMC {
   private host: string;
   private secret: string;
   private auth?: Auth;
+
+  static zCourseType = z.enum(["inprogress", "past", "future"]);
 
   constructor(auth?: Auth) {
     this.host = config.core.url;
@@ -73,8 +76,6 @@ export class RMC {
         }
       }
 
-      console.log(version);
-
       if (!response.ok) {
         return [
           null,
@@ -120,16 +121,23 @@ export class RMC {
     });
   }
 
-  async v1_user_courses() {
-    return this.request<ActiveCourse[]>("v1/user/courses", {
+  async v1_user_courses(
+    status: z.infer<typeof RMC.zCourseType> = "inprogress",
+  ) {
+    return this.request<ActiveCourse[]>(`v1/user/courses?status=${status}`, {
       method: "GET",
     });
   }
 
-  async v1_user_courses_overall() {
-    return this.request<ExtendedCourse[]>("v1/user/courses/overall", {
-      method: "GET",
-    });
+  async v1_user_courses_overall(
+    status: z.infer<typeof RMC.zCourseType> = "inprogress",
+  ) {
+    return this.request<ExtendedCourse[]>(
+      `v1/user/courses/overall?status=${status}`,
+      {
+        method: "GET",
+      },
+    );
   }
 
   async v1_course_content(courseId: string, content?: string) {
