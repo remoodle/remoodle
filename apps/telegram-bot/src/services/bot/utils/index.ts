@@ -28,7 +28,7 @@ const getDeadlineText = (deadline: Deadline) => {
 const getGradeText = (grade: any) => {
   let text = "";
   if (!["category", "course"].includes(grade.itemtype)) {
-    text += `${grade.name} → ${grade.graderaw !== null ? grade.graderaw?.toFixed(2) : "None"}\n`;
+    text += `${grade.name} → <b>${grade.graderaw !== null ? grade.graderaw?.toFixed(2) : "None"}</b>\n`;
 
     if (grade.name === "Attendance") {
       text += "\n";
@@ -61,12 +61,12 @@ const calculateGrades = (grades: any[]) => {
   const regFinal = grades.find((grade) => grade.name === "Register Final");
   const regMid = grades.find((grade) => grade.name === "Register Midterm");
   const regEnd = grades.find((grade) => grade.name === "Register Endterm");
-  const regTerm = (regMid.graderaw + regEnd.graderaw) / 2;
+  const regTerm = (regMid?.graderaw + regEnd?.graderaw) / 2;
 
-  if (regFinal.graderaw && regTerm && regMid.graderaw && regEnd.graderaw) {
+  if (regFinal?.graderaw && regTerm && regMid?.graderaw && regEnd?.graderaw) {
     const total =
       regFinal.graderaw * 0.4 + regMid.graderaw * 0.3 + regEnd.graderaw * 0.3;
-    const text = `TOTAL: ${total.toFixed(2)}\nGPA: ${getGPA(total)}\n`;
+    const text = `<b>TOTAL  →  ${total.toFixed(2)}</b>\n<b>GPA  →  ${getGPA(total)}</b>\n\n`;
 
     if (total >= 50 && total < 70) {
       return `No scholarship 😭\n${text}`;

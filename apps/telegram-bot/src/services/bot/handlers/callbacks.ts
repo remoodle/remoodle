@@ -151,13 +151,13 @@ callbacksHandler.callbackQuery("grades", async (ctx) => {
   grades.forEach((grade) => {
     gradesKeyboards
       .row()
-      .text(grade.name.split(" | ")[0], `course_${grade.course_id}`);
+      .text(grade.name.split(" | ")[0], `inprogress_course_${grade.course_id}`);
   });
 
   gradesKeyboards
     .row()
     .text("Back ←", "back_to_menu")
-    .text("Old courses", "old_grades");
+    .text("Past courses", "old_grades_1");
 
   if (grades.length === 0) {
     await ctx.editMessageText("You have no grades 🥰", {
@@ -199,24 +199,24 @@ callbacksHandler.callbackQuery("back_to_grades", async (ctx) => {
   grades.forEach((grade) => {
     gradesKeyboards
       .row()
-      .text(grade.name.split(" | ")[0], `course_${grade.course_id}`);
+      .text(grade.name.split(" | ")[0], `inprogress_course_${grade.course_id}`);
   });
 
   gradesKeyboards
     .row()
     .text("Back ←", "back_to_menu")
-    .text("Old courses", "old_grades");
+    .text("Past courses", "old_grades_1");
 
   await ctx.editMessageText("Your courses:", { reply_markup: gradesKeyboards });
 });
 
-callbacksHandler.callbackQuery(/course_\d+/, async (ctx) => {
+callbacksHandler.callbackQuery(/inprogress_course_\d+/, async (ctx) => {
   if (!ctx.from) {
     return;
   }
 
   const userId = ctx.from.id;
-  const courseId = ctx.match[0].split("_")[1];
+  const courseId = ctx.match[0].split("_")[2];
 
   const [grades, _] = await request((client) =>
     client.v1.course[":courseId"].grades.$get(
@@ -266,6 +266,7 @@ callbacksHandler.callbackQuery(/course_\d+/, async (ctx) => {
 
   return await ctx.editMessageText(message, {
     reply_markup: keyboard.text("Refresh", `refresh_grade_${courseId}`),
+    parse_mode: "HTML",
   });
 });
 
@@ -324,11 +325,147 @@ callbacksHandler.callbackQuery(/^refresh_grade_\d+/, async (ctx) => {
 
   return await ctx.editMessageText(message, {
     reply_markup: keyboard.text("Refresh", `refresh_grade_${courseId}`),
+    parse_mode: "HTML",
   });
 });
 
 // Old courses
-callbacksHandler.callbackQuery("old_grades", async (ctx) => {});
+callbacksHandler.callbackQuery(/old_grades_\d+/, async (ctx) => {
+  if (!ctx.from) {
+    return;
+  }
+
+  const page = parseInt(ctx.match[0]?.split("_")[2]);
+
+  const userId = ctx.from.id;
+
+  let [rmcCourses, _] = await request((client) =>
+    client.v1.courses.$get(
+      {
+        query: {
+          status: "past",
+        },
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  rmcCourses = Object.entries(rmcCourses).map(([k, v]) => ({ ...v, id: k }));
+
+  if (!rmcCourses) {
+    await ctx.editMessageText("Past courses are not available.", {
+      reply_markup: new InlineKeyboard().text("Back ←", "back_to_grades"),
+    });
+    return;
+  }
+
+  if (rmcCourses.length === 0) {
+    await ctx.editMessageText("You have no past courses 🥰", {
+      reply_markup: new InlineKeyboard().text("Back", "back_to_grades"),
+    });
+    return;
+  }
+
+  let courses = rmcCourses.splice((page - 1) * 10, 10);
+
+  const coursesKeyboards = new InlineKeyboard();
+
+  courses.forEach((course) => {
+    coursesKeyboards
+      .row()
+      .text(
+        course.name.split(" | ")[0],
+        `past_course_${course.course_id}_${page}`,
+      );
+  });
+
+  if (page === 1) {
+    coursesKeyboards
+      .row()
+      .text("Back", "back_to_grades")
+      .text("→", `old_grades_${page + 1}`);
+  } else if (page === rmcCourses.length / 10 + 1) {
+    coursesKeyboards
+      .row()
+      .text("Back", "back_to_grades")
+      .text("←", `old_grades_${page - 1}`);
+  } else {
+    coursesKeyboards
+      .row()
+      .text("Back", "back_to_grades")
+      .text("←", `old_grades_${page - 1}`)
+      .text("→", `old_grades_${page + 1}`);
+  }
+
+  await ctx.editMessageText("Your past courses:", {
+    reply_markup: coursesKeyboards,
+  });
+});
+
+callbacksHandler.callbackQuery(/past_course_\d+_\d+/, async (ctx) => {
+  if (!ctx.from) {
+    return;
+  }
+
+  const userId = ctx.from.id;
+  const courseId = ctx.match[0].split("_")[2];
+
+  const [grades, _] = await request((client) =>
+    client.v1.course[":courseId"].grades.$get(
+      {
+        param: {
+          courseId: courseId,
+        },
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  const [course, __] = await request((client) =>
+    client.v1.course[":courseId"].$get(
+      {
+        param: {
+          courseId: courseId,
+        },
+        query: {
+          content: "0",
+        },
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  const keyboard = new InlineKeyboard().text(
+    "Back ←",
+    `old_grades_${ctx.match[0].split("_")[3]}`,
+  );
+
+  if (!grades || !course) {
+    await ctx.editMessageText("Grades for this course are not available.", {
+      reply_markup: keyboard,
+    });
+    return;
+  }
+
+  let message: string = `${course.name.split(" | ")[0]}\nTeacher: ${course.name.split(" | ")[1]}\n\n`;
+
+  message += `${calculateGrades(grades)}`;
+
+  grades.forEach((grade) => {
+    message += `${getGradeText(grade)}`;
+  });
+
+  return await ctx.editMessageText(message, {
+    reply_markup: keyboard,
+    parse_mode: "HTML",
+  });
+});
 
 // Delete profile
 callbacksHandler.callbackQuery("delete_profile", async (ctx) => {
