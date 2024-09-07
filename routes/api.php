@@ -15,6 +15,7 @@ use App\Controllers\UserCoursesController;
 use App\Controllers\UtilityController;
 use App\Middleware\Auth;
 use App\Middleware\CourseAssign;
+use App\Middleware\EncodeGzip;
 use App\Middleware\Validation\AuthPassword;
 use App\Middleware\Validation\ChangeUserSettings;
 use App\Middleware\Validation\GenerateToken;

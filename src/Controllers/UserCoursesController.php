@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Modules\Moodle\Moodle;
 use App\Repositories\UserMoodle\RepositoryTypes;
 use App\Repositories\UserMoodle\UserMoodleRepositoryFactory;
-use Illuminate\Database\Connection;
 use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -24,8 +22,8 @@ class UserCoursesController extends BaseController
         /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute("user");
         $status = isset($request->getQueryParams()['status'])
-        ? CourseEnrolledClassification::from($request->getQueryParams()['status'])
-        : null;
+            ? CourseEnrolledClassification::from($request->getQueryParams()['status'])
+            : null;
         return $this->jsonResponse(
             response: $response,
             body: $this->userMoodleRepositoryFactory->create(
@@ -72,15 +70,18 @@ class UserCoursesController extends BaseController
     {
         /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute("user");
+        $status = isset($request->getQueryParams()['status'])
+            ? CourseEnrolledClassification::from($request->getQueryParams()['status'])
+            : null;
         $user->load([
-            "courses",
-            "courses.courseModules",
-            "courses.courseModules.grades" => function ($query) use ($user) {
+            "courses" => function ($query) use ($status) {
+                if ($status !== null) {
+                    $query->where('status', $status->value);
+                }
+            },
+            "courses.grades" => function ($query) use ($user) {
                 $query->where("moodle_id", $user->moodle_id);
             },
-            "courses.registerGrades" => function ($query) use ($user) {
-                $query->where("moodle_id", $user->moodle_id);
-            }
         ]);
 
         foreach ($user->courses as $userCourse) {

@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+
+use App\Middleware\EncodeGzip;
 use App\Middleware\ErrorMiddleware;
 use App\Modules\Search\Lemmetizations\KeyValueLemmetization;
 use Core\Config;
@@ -16,7 +18,7 @@ Config::loadConfigs();
 $container = require __DIR__ . "/bootstrap/container-laravel.php";
 $routes = require __DIR__ . "/routes/api.php";
 
-while($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map") === null) {
+while ($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map") === null) {
     sleep(1);
 }
 KeyValueLemmetization::bootstrap($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map"));
@@ -24,17 +26,18 @@ KeyValueLemmetization::bootstrap($container->get(Spiral\RoadRunner\KeyValue\Fact
 $worker = $container->get(PSR7WorkerInterface::class);
 while (true) {
     $req = $worker->waitRequest();
-    if($req === null) {
+    if ($req === null) {
         continue;
     }
 
     /**@var Slim\App */
     $app = AppFactory::createFromContainer($container);
     $app->addBodyParsingMiddleware();
+    $app->addMiddleware($container->get(EncodeGzip::class));
 
     $routes($app);
 
-    if(Config::get('app.mode') !== 'production') {
+    if (Config::get('app.mode') !== 'production') {
         $app->addErrorMiddleware(true, true, true);
     } else {
         $app->addMiddleware($container->get(ErrorMiddleware::class));
@@ -44,7 +47,7 @@ while (true) {
         try {
             $connection = $container->get(Connection::class);
             $pdo = $connection->getPdo();
-            if($pdo === null) {
+            if ($pdo === null) {
                 throw new PDOException();
             }
         } catch (\Throwable $th) {
