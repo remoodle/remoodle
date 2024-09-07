@@ -157,7 +157,7 @@ const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
 
 <template>
   <div>
-    <h3 class="text-lg font-medium">Profile</h3>
+    <h1 class="text-xl font-medium">Profile</h1>
     <p class="text-sm text-muted-foreground">Account information</p>
   </div>
   <Separator />

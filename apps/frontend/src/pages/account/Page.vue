@@ -11,6 +11,7 @@ import { RouteName } from "@/shared/lib/routes";
 import AccountSidebar from "./ui/AccountSidebar.vue";
 import AccountProfilePage from "./AccountProfile.vue";
 import AccountNotificationsPage from "./AccountNotifications.vue";
+import Skeleton from "@/shared/ui/skeleton/Skeleton.vue";
 
 const userStore = useUserStore();
 
@@ -19,11 +20,18 @@ const route = useRoute();
 const { toast } = useToast();
 
 const settings = ref<{
-  moodleId: number;
   name: string;
   handle: string;
-  hasPassword: boolean;
+  moodleId: number;
   telegramId?: number;
+  hasPassword: boolean;
+  notifications: {
+    telegram: {
+      enabled: boolean;
+      gradeUpdates: boolean;
+      deadlineReminders: boolean;
+    };
+  };
 }>();
 
 const { run: loadSettings, loading: loadingSettings } = createAsyncProcess(
@@ -56,34 +64,43 @@ onMounted(async () => {
 <template>
   <PageWrapper v-if="userStore.user && userStore.authorized">
     <template #title>
-      <template v-if="settings">
-        <div class="flex items-center gap-4">
-          <Picture :name="settings.moodleId" :size="56" />
-          <div class="flex flex-col">
-            {{ settings.name }}
-            <span class="text-sm text-muted-foreground">
-              {{ settings.handle }}
-            </span>
-          </div>
+      <div class="flex items-center gap-4">
+        <Picture :name="userStore.user.moodleId" :size="56" />
+        <div class="flex flex-col">
+          {{ userStore.user.name }}
+          <span class="text-sm text-muted-foreground">
+            {{ userStore.user.handle }}
+          </span>
         </div>
-      </template>
+      </div>
     </template>
     <RoundedSection>
       <div
-        class="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0"
+        class="flex flex-col space-x-2 space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0"
       >
-        <aside class="-mx-4 lg:w-1/5">
+        <aside class="lg:w-1/5">
           <AccountSidebar />
         </aside>
         <div class="flex-1">
-          <div class="space-y-6" v-if="settings">
-            <template v-if="route.name === RouteName.AccountProfile">
-              <AccountProfilePage :settings="settings" />
-            </template>
-            <template v-else-if="route.name === RouteName.AccountNotifications">
-              <AccountNotificationsPage :settings="settings" />
-            </template>
-          </div>
+          <template v-if="loadingSettings">
+            <div class="flex flex-col gap-4">
+              <Skeleton class="h-12" />
+              <Skeleton class="h-6" />
+              <Skeleton class="h-6" />
+            </div>
+          </template>
+          <template v-else-if="settings">
+            <div class="space-y-6">
+              <template v-if="route.name === RouteName.AccountProfile">
+                <AccountProfilePage :settings="settings" />
+              </template>
+              <template
+                v-else-if="route.name === RouteName.AccountNotifications"
+              >
+                <AccountNotificationsPage :settings="settings" />
+              </template>
+            </div>
+          </template>
         </div>
       </div>
     </RoundedSection>

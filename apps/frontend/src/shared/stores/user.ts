@@ -4,6 +4,8 @@ import { useStorage, StorageSerializers } from "@vueuse/core";
 import type { RemovableRef } from "@vueuse/core";
 import { getStorageKey } from "@/shared/lib/helpers";
 import type { IUser } from "@remoodle/db";
+import { createAsyncProcess } from "@/shared/lib/helpers";
+import { request, getAuthHeaders } from "@/shared/lib/hc";
 
 export const useUserStore = defineStore("user", () => {
   const accessToken = useStorage(getStorageKey("accessToken"), "");
@@ -62,6 +64,29 @@ export const useUserStore = defineStore("user", () => {
     showTelegramBanner.value = true;
   };
 
+  const { run: updateUser, loading: updatingUser } = createAsyncProcess(
+    async () => {
+      const [data, error] = await request((client) =>
+        client.v1.user.check.$get(
+          {},
+          {
+            headers: getAuthHeaders(),
+          },
+        ),
+      );
+
+      if (error) {
+        if (error.status === 401) {
+          logout();
+        }
+
+        return;
+      }
+
+      user.value = data;
+    },
+  );
+
   return {
     user,
     preferences,
@@ -72,5 +97,7 @@ export const useUserStore = defineStore("user", () => {
     logout,
     showTelegramBanner,
     closeTelegramBanner,
+    updateUser,
+    updatingUser,
   };
 });
