@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.8.1...remoodle/frontend-v0.8.2) (2024-09-07)
+
+
+### Bug Fixes
+
+* dont shirk shit ([2ce74e9](https://github.com/remoodle/heresy/commit/2ce74e979e0cc0099342d9ef03cda76fabc7c961))
+
 ## [0.8.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.8.0...remoodle/frontend-v0.8.1) (2024-09-04)
 
 
