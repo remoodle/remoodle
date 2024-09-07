@@ -44,15 +44,15 @@ export class DeadlineReminderEventHandler {
 
       if (response.ok) {
         console.log(
-          `[${this.streamName}] Sent notification to Telegram ID`,
-          user.telegramId,
+          `[${this.streamName}] Sent notification to ${user.name} mid: ${user.moodleId} tgid: ${user.telegramId}`,
+          JSON.stringify(msg.payload),
         );
 
         await this.messageStream.ack(this.streamName, this.groupName, item.id);
       } else {
         console.error(
-          `[${this.streamName}] Failed to send notification to Telegram ID`,
-          user.telegramId,
+          `[${this.streamName}] Failed to send notification to ${user.name} mid: ${user.moodleId} tgid: ${user.telegramId}`,
+          JSON.stringify(msg.payload),
           response.statusText,
           response.status,
         );
@@ -61,7 +61,7 @@ export class DeadlineReminderEventHandler {
   }
 
   async runJob() {
-    console.log("[notifier] Listening to stream:", this.streamName);
+    console.log(`[${this.streamName}] Listening to stream`);
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
