@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.8.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.7.5...remoodle/backend-v0.8.0) (2024-09-07)
+
+
+### Features
+
+* add course status support ([735e4db](https://github.com/remoodle/heresy/commit/735e4db27a40b7adf9ee2093af6da83c3ee810d2))
+* leastCompatibleVersion check ([bea80c6](https://github.com/remoodle/heresy/commit/bea80c6731532d3e1b0a8db57804788096a298c7))
+
+
+### Bug Fixes
+
+* better types ([1acfc02](https://github.com/remoodle/heresy/commit/1acfc024de2076174a50ff34116bab7723352e3f))
+* **processing:** do not include [_, null, null] diffs ([af417c1](https://github.com/remoodle/heresy/commit/af417c16baea6d48c04a44ddcbcfe7c6717bcd2e))
+
 ## [0.7.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v0.7.4...remoodle/backend-v0.7.5) (2024-09-06)
 
 
