@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.1.2...remoodle/telegram-bot-v0.2.0) (2024-09-07)
+
+
+### Bug Fixes
+
+* update callbacks ([e947231](https://github.com/remoodle/heresy/commit/e947231d0a5324e2e1d2985634792d90d91493e4))
+
+
+### Miscellaneous Chores
+
+* aaa ([5b6b276](https://github.com/remoodle/heresy/commit/5b6b27695c409b09ade9fbd29c8df57d0d36a65b))
+
 ## [0.1.2](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.1.1...remoodle/telegram-bot-v0.1.2) (2024-09-06)
 
 
