@@ -11,3 +11,4 @@ parameters:
         - '#Unsafe usage of new static\(\)#'
         - '#Access to an undefined property App\\Models\\[a-zA-Z0-9::a-zA-Z]#'
         - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder|Illuminate\\Database\\Eloquent\\Model::toEntity\(\)#'
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\[a-zA-Z::a-zA-Z]()#'
