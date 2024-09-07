@@ -20,6 +20,14 @@ export const fetchCourses = async (messageStream: MessageStream) => {
   const users = await db.user.find({
     telegramId: { $exists: true },
     moodleId: { $exists: true },
+    // TODO: Consider parsing only users with grade updates enabled
+    // notificationSettings: {
+    //   telegram: {
+    //     $elemMatch: {
+    //       gradeUpdates: true,
+    //     },
+    //   },
+    // },
   });
 
   console.log(`[crawler] Found ${users.length} users with Telegram ID`);
@@ -94,6 +102,13 @@ export const fetchDeadlines = async (messageStream: MessageStream) => {
   const users = await db.user.find({
     telegramId: { $exists: true },
     moodleId: { $exists: true },
+    // notificationSettings: {
+    //   telegram: {
+    //     $elemMatch: {
+    //       deadlineReminders: true,
+    //     },
+    //   },
+    // },
   });
 
   console.log(`[crawler] Found ${users.length} users with Telegram ID`);

@@ -29,30 +29,33 @@ export class GradeChangeEventHandler {
 
       const user = await db.user.findOne({ moodleId: msg.moodleId });
 
-      if (user?.telegramId) {
-        const text = formatCourseDiffs(msg.payload);
+      if (
+        !user?.telegramId ||
+        !user.notificationSettings.telegram.gradeUpdates
+      ) {
+        await this.messageStream.ack(this.streamName, this.groupName, item.id);
 
-        const response = await sendTelegramMessage(user.telegramId, text);
+        continue;
+      }
 
-        if (response.ok) {
-          console.log(
-            `[${this.streamName}] Sent notification to Telegram ID`,
-            user.telegramId,
-          );
+      const text = formatCourseDiffs(msg.payload);
 
-          await this.messageStream.ack(
-            this.streamName,
-            this.groupName,
-            item.id,
-          );
-        } else {
-          console.error(
-            `[${this.streamName}] Failed to send notification to Telegram ID`,
-            user.telegramId,
-            response.statusText,
-            response.status,
-          );
-        }
+      const response = await sendTelegramMessage(user.telegramId, text);
+
+      if (response.ok) {
+        console.log(
+          `[${this.streamName}] Sent notification to Telegram ID`,
+          user.telegramId,
+        );
+
+        await this.messageStream.ack(this.streamName, this.groupName, item.id);
+      } else {
+        console.error(
+          `[${this.streamName}] Failed to send notification to Telegram ID`,
+          user.telegramId,
+          response.statusText,
+          response.status,
+        );
       }
     }
   }

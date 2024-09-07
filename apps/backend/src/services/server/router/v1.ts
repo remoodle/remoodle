@@ -434,12 +434,22 @@ const commonProtectedRoutes = new Hono<{
           if (telegramGradeUpdates !== undefined) {
             notificationFields["notificationSettings.telegram.gradeUpdates"] =
               telegramGradeUpdates;
+
+            // TODO: Consider removing courses for users with grade updates disabled
+            // if (!telegramGradeUpdates) {
+            //   await db.course.deleteMany({ userId });
+            // }
           }
 
           if (telegramDeadlineReminders !== undefined) {
             notificationFields[
               "notificationSettings.telegram.deadlineReminders"
             ] = telegramDeadlineReminders;
+
+            // TODO: Consider removing deadlines for users with deadline reminders disabled
+            // if (!telegramDeadlineReminders) {
+            //   await db.deadline.deleteMany({ userId });
+            // }
           }
 
           await db.user.updateOne(
