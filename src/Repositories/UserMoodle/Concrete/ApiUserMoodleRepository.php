@@ -14,9 +14,9 @@ class ApiUserMoodleRepository implements ApiUserMoodleRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function getActiveCourses(int $moodleId, string $moodleToken, ?CourseEnrolledClassification $status = null): array
+    public function getCourses(int $moodleId, string $moodleToken, ?CourseEnrolledClassification $status = null): array
     {
-        return Moodle::createFromToken($moodleToken, $moodleId)->getUserCourses();
+        return Moodle::createFromToken($moodleToken, $moodleId)->getUserCourses($status);
     }
 
     /**

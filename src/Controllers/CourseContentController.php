@@ -25,7 +25,7 @@ class CourseContentController extends BaseController
         /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute('user');
 
-        $courses = $this->userMoodleRepository->getActiveCourses(
+        $courses = $this->userMoodleRepository->getCourses(
             moodleId: $user->moodle_id,
             moodleToken: $user->moodle_token,
         );

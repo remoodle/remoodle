@@ -28,7 +28,7 @@ class UserCoursesController extends BaseController
             response: $response,
             body: $this->userMoodleRepositoryFactory->create(
                 $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
-            )->getActiveCourses($user->moodle_id, "", $status)
+            )->getCourses($user->moodle_id, "", $status)
         );
     }
 
@@ -73,24 +73,39 @@ class UserCoursesController extends BaseController
         $status = isset($request->getQueryParams()['status'])
             ? CourseEnrolledClassification::from($request->getQueryParams()['status'])
             : null;
-        $user->load([
-            "courses" => function ($query) use ($status) {
-                if ($status !== null) {
-                    $query->where('status', $status->value);
-                }
-            },
-            "courses.grades" => function ($query) use ($user) {
-                $query->where("moodle_id", $user->moodle_id);
-            },
-        ]);
 
-        foreach ($user->courses as $userCourse) {
-            $userCourse->grades->makeHidden(['laravel_through_key', 'moodle_id']);
+        if ($user->initialized) {
+            $user->load([
+                "courses" => function ($query) use ($status) {
+                    if ($status !== null) {
+                        $query->where('status', $status->value);
+                    }
+                },
+                "courses.grades" => function ($query) use ($user) {
+                    $query->where("moodle_id", $user->moodle_id);
+                },
+            ]);
+
+            foreach ($user->courses as $userCourse) {
+                $userCourse->grades->makeHidden(['laravel_through_key', 'moodle_id']);
+            }
+
+            return $this->jsonResponse(
+                response: $response,
+                body: $user->courses
+            );
         }
 
+        $repository = $this->userMoodleRepositoryFactory->create(RepositoryTypes::MOODLE_API);
         return $this->jsonResponse(
             response: $response,
-            body: $user->courses
+            body: [
+                'courses' => $repository->getCourses(
+                    $user->moodle_id,
+                    $user->moodle_token,
+                    CourseEnrolledClassification::INPROGRESS
+                ),
+            ]
         );
     }
 

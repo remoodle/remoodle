@@ -90,9 +90,15 @@ final class Moodle
      * @param \App\Modules\Moodle\Enums\CourseEnrolledClassification $classification
      * @return \App\Modules\Moodle\Entities\Course[]
      */
-    public function getUserCourses(CourseEnrolledClassification $classification = CourseEnrolledClassification::INPROGRESS): array
+    public function getUserCourses(?CourseEnrolledClassification $classification = CourseEnrolledClassification::INPROGRESS): array
     {
-        $coursesRaw = $this->moodleWrapper->getEnrolledCoursesByTimelineClassification($classification->value)["courses"];
+        $coursesRaw = $classification === null
+            ? array_merge(
+                $this->moodleWrapper->getEnrolledCoursesByTimelineClassification(CourseEnrolledClassification::FUTURE->value)["courses"],
+                $this->moodleWrapper->getEnrolledCoursesByTimelineClassification(CourseEnrolledClassification::INPROGRESS->value)["courses"],
+                $this->moodleWrapper->getEnrolledCoursesByTimelineClassification(CourseEnrolledClassification::PAST->value)["courses"],
+            )
+            : $this->moodleWrapper->getEnrolledCoursesByTimelineClassification($classification->value)["courses"];
         $courses = [];
 
         foreach ($coursesRaw as $course) {

@@ -16,7 +16,7 @@ interface UserMoodleRepositoryInterface
      * @param ?CourseEnrolledClassification $status
      * @return \App\Modules\Moodle\Entities\Course[]
      */
-    public function getActiveCourses(int $moodleId, string $moodleToken, ?CourseEnrolledClassification $status = null): array;
+    public function getCourses(int $moodleId, string $moodleToken, ?CourseEnrolledClassification $status = null): array;
 
     /**
      * @param int $moodleId
