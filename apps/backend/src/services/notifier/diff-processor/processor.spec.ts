@@ -9,7 +9,7 @@ export type DeadlineData = Deadline & {
 };
 
 describe("grades notifications", () => {
-  test("trackCourseDiff", () => {
+  test("trackCourseDiff: default behavior", () => {
     const oldData: ExtendedCourse[] = [
       {
         course_id: 4496,
@@ -79,7 +79,46 @@ describe("grades notifications", () => {
     });
   });
 
-  test("formatCourseDiffs", () => {
+  test("trackCourseDiff: do not include [_, null, null] diffs", () => {
+    const oldData: ExtendedCourse[] = [];
+
+    const newData: ExtendedCourse[] = [
+      {
+        course_id: 4496,
+        name: "Introduction to SRE | Meirmanova Aigul",
+        coursecategory: "Trimester 3",
+        url: "https://moodle.astanait.edu.kz/course/view.php?id=4496",
+        start_date: 1719792000,
+        end_date: 1710720000,
+        grades: [
+          {
+            id: 3863,
+            grade_id: 89083,
+            cmid: 131479,
+            name: "Final exam documentation submission",
+            percentage: null,
+            itemtype: "mod",
+            itemmodule: "assign",
+            iteminstance: 40432,
+            grademin: 0,
+            grademax: 100,
+            feedbackformat: 0,
+            graderaw: null,
+            feedback: "",
+          },
+        ],
+      },
+    ];
+
+    const diffs: GradeChangeDiff[] = [];
+
+    expect(trackCourseDiff(oldData, newData)).toStrictEqual({
+      diffs,
+      hasDiff: false,
+    });
+  });
+
+  test("formatCourseDiffs: single", () => {
     const diffs: GradeChangeDiff[] = [
       {
         c: "Introduction to SRE | Meirmanova Aigul",
@@ -92,6 +131,34 @@ describe("grades notifications", () => {
 
       Introduction to SRE:
             Final exam documentation submission <b>null → 100</b>
+      "
+    `);
+  });
+
+  test("formatCourseDiffs: multiple courses and grades", () => {
+    const diffs: GradeChangeDiff[] = [
+      {
+        c: "Course 1",
+        g: [["Midterm", null, 100]],
+      },
+      {
+        c: "Course 2",
+        g: [
+          ["Midterm", null, 100],
+          ["Endterm", null, 100],
+        ],
+      },
+    ];
+
+    expect(formatCourseDiffs(diffs)).toMatchInlineSnapshot(`
+      "Updated grades:
+
+      Course 1:
+            Midterm <b>null → 100</b>
+
+      Course 2:
+            Midterm <b>null → 100</b>
+            Endterm <b>null → 100</b>
       "
     `);
   });

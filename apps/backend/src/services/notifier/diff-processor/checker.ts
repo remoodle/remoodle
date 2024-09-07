@@ -30,9 +30,11 @@ export const trackCourseDiff = (
           const previous = oldGrade ? oldGrade.graderaw : null;
           const updated = newGrade.graderaw;
 
-          // eslint-disable-next-line max-depth
-          if (!oldGrade || previous !== updated) {
-            courseChanges.push([newGrade.name, previous, updated]);
+          // Skip if both previous and updated are null
+          if (previous !== null || updated !== null) {
+            if (!oldGrade || previous !== updated) {
+              courseChanges.push([newGrade.name, previous, updated]);
+            }
           }
         }
       }
@@ -45,12 +47,13 @@ export const trackCourseDiff = (
         continue;
       }
 
-      courseChanges = newCourse.grades.map((grade) => [
-        grade.name,
-        null,
-        grade.graderaw,
-      ]);
-      diffs.push({ c: newCourse.name, g: courseChanges });
+      courseChanges = newCourse.grades
+        .filter((grade) => grade.graderaw !== null)
+        .map((grade) => [grade.name, null, grade.graderaw]);
+
+      if (courseChanges.length > 0) {
+        diffs.push({ c: newCourse.name, g: courseChanges });
+      }
     }
   }
 
