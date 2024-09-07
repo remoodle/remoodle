@@ -72,11 +72,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <!-- {{ loadingCourse }}
-  {{ grades }} -->
-  <div class="p-6">
-    <Table v-if="grades">
-      <!-- <TableCaption>A list of your recent invoices.</TableCaption> -->
+  <template v-if="grades">
+    <Table>
       <TableHeader>
         <TableRow>
           <TableHead class="w-[300px]"> Grade Item </TableHead>
@@ -116,7 +113,7 @@ onMounted(async () => {
                 {{ item.name }}
               </component>
               <!-- <Link>
-              </Link> -->
+               </Link> -->
             </TableCell>
             <TableCell>
               {{ item.graderaw }}
@@ -132,13 +129,16 @@ onMounted(async () => {
         </template>
       </TableBody>
     </Table>
-    <!-- {{ grades }} -->
-    <!-- <div v-if="grades">
+  </template>
+
+  <!-- {{ loadingCourse }}
+  {{ grades }} -->
+  <!-- {{ grades }} -->
+  <!-- <div v-if="grades">
       <pre
         >{{ JSON.stringify(grades, null, 2) }}
   </pre
       >
    
     </div> -->
-  </div>
 </template>

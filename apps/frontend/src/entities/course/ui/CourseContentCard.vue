@@ -38,11 +38,7 @@ const moduleSorter = (a: CourseModule, b: CourseModule) => {
 </script>
 
 <template>
-  <div
-    v-show="content.visible === 1"
-    class="space-y-5"
-    :class="{ 'px-2 py-3': content.section === 0 }"
-  >
+  <div v-show="content.visible === 1" class="space-y-5">
     <a
       :id="`${content.id}`"
       :href="`#${content.id}`"

@@ -217,7 +217,7 @@ const { preferences } = storeToRefs(userStore);
     </template>
     <RoundedSection dense>
       <div
-        class="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0"
+        class="flex flex-col space-y-4 lg:flex-row lg:space-x-12 lg:space-y-0"
       >
         <aside class="mt-6 h-32 rounded-2xl border p-2 lg:h-fit lg:w-1/5">
           <ScrollArea class="h-full">
@@ -248,7 +248,7 @@ const { preferences } = storeToRefs(userStore);
             </nav>
           </ScrollArea>
         </aside>
-        <div class="flex-1">
+        <div class="flex-1 p-1 lg:p-5">
           <KeepAlive
             :include="['CourseOverview', 'CourseGrades', 'CourseAssignment']"
           >
