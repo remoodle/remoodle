@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/remoodle/core/compare/v0.3.0...v1.0.0) (2024-09-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* update php and roadrunner
+
+### Miscellaneous Chores
+
+* update php and roadrunner ([8ecfa4c](https://github.com/remoodle/core/commit/8ecfa4cc2e55b8d04791a563e6d2e7c94b458aa8))
+
 ## [0.3.0](https://github.com/remoodle/core/compare/v0.2.2...v0.3.0) (2024-09-07)
 
 
