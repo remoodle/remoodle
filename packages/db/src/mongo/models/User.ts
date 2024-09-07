@@ -43,7 +43,11 @@ const userSchema = new Schema<IUser, UserModel>(
     email: { type: String },
     telegramId: { type: Number },
     password: { type: String },
-    notificationSettings: { type: notificationSettingsSchema, required: true },
+    notificationSettings: {
+      type: notificationSettingsSchema,
+      default: {},
+      required: true,
+    },
   },
   {
     timestamps: true,
