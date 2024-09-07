@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/remoodle/core/compare/v0.2.2...v0.3.0) (2024-09-07)
+
+
+### Features
+
+* extend user's courses overall response ([aed3926](https://github.com/remoodle/core/commit/aed39267714a06b15f22eb16dbad555d3ea39a69))
+
+
+### Bug Fixes
+
+* add moodleToken, remove type ([#9](https://github.com/remoodle/core/issues/9)) ([3d0ea47](https://github.com/remoodle/core/commit/3d0ea474e4ff1809c0ecf102b92e2c4330ddc4c3))
+* course model constructor ([978a460](https://github.com/remoodle/core/commit/978a460c64e0626750729cdf144a1f1803b4dd02))
+* remove unused dependency ([b465901](https://github.com/remoodle/core/commit/b46590179f47dffd224ca347eb71f1914e24323d))
+
 ## [0.2.2](https://github.com/remoodle/core/compare/v0.2.1...v0.2.2) (2024-08-25)
 
 
