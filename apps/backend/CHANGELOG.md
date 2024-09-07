@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.0...remoodle/backend-v1.1.1) (2024-09-07)
+
+
+### Bug Fixes
+
+* log shit better ([accc197](https://github.com/remoodle/heresy/commit/accc197ac79ca1a22c4bd43b52e8a68873691162))
+
 ## [1.1.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.0.0...remoodle/backend-v1.1.0) (2024-09-07)
 
 
