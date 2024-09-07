@@ -2,6 +2,7 @@ import { HTTPException } from "hono/http-exception";
 import type { StatusCode } from "hono/utils/http-status";
 import type {
   Course,
+  CourseStatus,
   ActiveCourse,
   ExtendedCourse,
   Assignment,
@@ -99,16 +100,19 @@ export class RMC {
     });
   }
 
-  async v1_user_courses() {
-    return this.request<ActiveCourse[]>("v1/user/courses", {
+  async v1_user_courses(status: CourseStatus = "inprogress") {
+    return this.request<ActiveCourse[]>(`v1/user/courses?status=${status}`, {
       method: "GET",
     });
   }
 
-  async v1_user_courses_overall() {
-    return this.request<ExtendedCourse[]>("v1/user/courses/overall", {
-      method: "GET",
-    });
+  async v1_user_courses_overall(status: CourseStatus = "inprogress") {
+    return this.request<ExtendedCourse[]>(
+      `v1/user/courses/overall?status=${status}`,
+      {
+        method: "GET",
+      },
+    );
   }
 
   async v1_course_content(courseId: string, content?: string) {

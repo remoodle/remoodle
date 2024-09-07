@@ -42,6 +42,8 @@ export type Deadline = {
   };
 };
 
+export type CourseStatus = "inprogress" | "past" | "future";
+
 export type ActiveCourse = {
   course_id: number;
   name: string;
