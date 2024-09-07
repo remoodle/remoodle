@@ -1,8 +1,5 @@
 import { getTimeLeft } from "@remoodle/utils";
 
-const MINUTE = 60 * 1000;
-const HOUR = 60 * MINUTE;
-
 export const DEFAULT_THRESHOLDS = [
   "30 minutes",
   "1 hour",
@@ -50,7 +47,7 @@ const convertThresholds = (thresholds: string[]): number[] => {
 export const calculateRemainingTime = (
   dueDate: number,
   thresholds: string[],
-): [string | null, string | null] => {
+): [string, string] | [null, null] => {
   const thresholdsMs = convertThresholds(thresholds);
 
   const now = Date.now();
