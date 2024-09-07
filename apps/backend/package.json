@@ -17,6 +17,7 @@
     "@hono/zod-validator": "^0.2.2",
     "@remoodle/db": "workspace:*",
     "@remoodle/utils": "workspace:*",
+    "compare-versions": "^6.1.1",
     "dotenv": "^16.4.5",
     "envalid": "^8.0.0",
     "hono": "^4.5.5",
