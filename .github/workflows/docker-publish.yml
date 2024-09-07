@@ -38,7 +38,7 @@ jobs:
           fi
 
           DOCKER_TAG="${GITHUB_REF}"
-          VERSION_TAG="${GITHUB_REF}::${SHORT_SHA}"
+          VERSION_TAG="v${GITHUB_REF}::${SHORT_SHA}"
 
           echo IMAGE_ID=$IMAGE_ID
           echo DOCKER_TAG=$DOCKER_TAG
