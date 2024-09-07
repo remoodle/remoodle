@@ -28,7 +28,7 @@ class UserCoursesController extends BaseController
             response: $response,
             body: $this->userMoodleRepositoryFactory->create(
                 $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
-            )->getCourses($user->moodle_id, "", $status)
+            )->getCourses($user->moodle_id, $user->moodle_token, $status)
         );
     }
 

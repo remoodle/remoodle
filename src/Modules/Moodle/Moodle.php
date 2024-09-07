@@ -92,13 +92,33 @@ final class Moodle
      */
     public function getUserCourses(?CourseEnrolledClassification $classification = CourseEnrolledClassification::INPROGRESS): array
     {
-        $coursesRaw = $classification === null
-            ? array_merge(
-                $this->moodleWrapper->getEnrolledCoursesByTimelineClassification(CourseEnrolledClassification::FUTURE->value)["courses"],
-                $this->moodleWrapper->getEnrolledCoursesByTimelineClassification(CourseEnrolledClassification::INPROGRESS->value)["courses"],
-                $this->moodleWrapper->getEnrolledCoursesByTimelineClassification(CourseEnrolledClassification::PAST->value)["courses"],
-            )
-            : $this->moodleWrapper->getEnrolledCoursesByTimelineClassification($classification->value)["courses"];
+        if ($classification === null) {
+            $futureCourses = $this->moodleWrapper->getEnrolledCoursesByTimelineClassification(CourseEnrolledClassification::FUTURE->value)["courses"];
+            $inprogressCourses = $this->moodleWrapper->getEnrolledCoursesByTimelineClassification(CourseEnrolledClassification::INPROGRESS->value)["courses"];
+            $pastCourses = $this->moodleWrapper->getEnrolledCoursesByTimelineClassification(CourseEnrolledClassification::PAST->value)["courses"];
+
+            foreach ($futureCourses as &$futureCourse) {
+                $futureCourse['classification'] = CourseEnrolledClassification::FUTURE;
+            }
+
+            foreach ($inprogressCourses as &$inprogressCourse) {
+                $inprogressCourse['classification'] = CourseEnrolledClassification::INPROGRESS;
+            }
+
+            foreach ($pastCourses as &$pastCourse) {
+                $pastCourse['classification'] = CourseEnrolledClassification::PAST;
+            }
+
+            $coursesRaw = array_merge($futureCourses, $inprogressCourses, $pastCourses);
+        }
+
+        if ($classification !== null) {
+            $coursesRaw = $this->moodleWrapper->getEnrolledCoursesByTimelineClassification($classification->value)["courses"];
+
+            foreach ($coursesRaw as &$course) {
+                $course['classification'] = $classification;
+            }
+        }
         $courses = [];
 
         foreach ($coursesRaw as $course) {
@@ -109,7 +129,7 @@ final class Moodle
                 name: $course["fullname"] ?? $course["shortname"],
                 end_date: $course["startdate"],
                 start_date: $course["enddate"],
-                status: $classification,
+                status: $course['classification'],
             );
         }
 

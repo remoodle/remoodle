@@ -47,18 +47,17 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
     public function getCourses(int $moodleId, string $moodleToken, ?CourseEnrolledClassification $status = null): array
     {
         $courses = MoodleUser::query()
-        ->with([
-            "courses" => function ($query) {
-                $query->orderBy("course_id", "desc");
-            }
-        ])
-        ->where("moodle_id", $moodleId)
-        ->first()
-        ?->courses;
-
-        if ($status !== null) {
-            $courses = $courses->where("status", $status->value);
-        }
+            ->with([
+                "courses" => function ($query) use ($status) {
+                    $query->orderBy("course_id", "desc");
+                    if ($status !== null) {
+                        $query->where('status', $status->value);
+                    }
+                }
+            ])
+            ->where("moodle_id", $moodleId)
+            ->first()
+            ?->courses;
 
         $courses = $courses
         ->map(function (Course $course) {
@@ -74,9 +73,7 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
         })
         ->all();
 
-
         return $courses;
-
     }
 
     public function getCourseGrades(int $moodleId, string $moodleToken, int $courseId): array
