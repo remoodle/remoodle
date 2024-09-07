@@ -126,7 +126,11 @@ callbacksHandler.callbackQuery("grades", async (ctx) => {
 
   const [grades, _] = await request((client) =>
     client.v1.courses.$get(
-      {},
+      {
+        query: {
+          status: "inprogress",
+        },
+      },
       {
         headers: getAuthHeaders(userId),
       },
@@ -166,7 +170,11 @@ callbacksHandler.callbackQuery("back_to_grades", async (ctx) => {
 
   const [grades, _] = await request((client) =>
     client.v1.courses.$get(
-      {},
+      {
+        query: {
+          status: "inprogress",
+        },
+      },
       {
         headers: getAuthHeaders(userId),
       },
