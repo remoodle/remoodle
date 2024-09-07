@@ -6,6 +6,8 @@ services:
       dockerfile: ./Dockerfile
     env_file:
       - .env
+    environment:
+      - DATABASE_HOST=db
     command: sh -c "./vendor/bin/phinx migrate && ./rr serve -c .rr.yaml"
     depends_on:
       db:

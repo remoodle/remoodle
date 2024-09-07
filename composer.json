@@ -2,7 +2,7 @@
     "require": {
         "slim/slim": "^4.12",
         "spiral/roadrunner-cli": "^3@dev",
-        "spiral/roadrunner-http": "^3.3",
+        "spiral/roadrunner-http": "^3.5",
         "slim/psr7": "^1.6",
         "illuminate/database": "^10.42",
         "spiral/roadrunner-jobs": "^4.3",
@@ -15,6 +15,7 @@
         "resend/resend-php": "^0.11.0",
         "spiral/roadrunner-kv": "^4.0",
         "ext-igbinary": "*",
+        "ext-protobuf": "*",
         "phlib/encrypt": "^1.0",
         "moontoast/math": "^1.2",
         "thiagoprz/eloquent-composite-key": "^1.0",
@@ -22,7 +23,8 @@
         "symfony/var-dumper": "^7.0",
         "spiral/roadrunner-metrics": "^3.2",
         "spatie/php-cloneable": "^1.0",
-        "spiral/roadrunner-grpc": "^3.3"
+        "spiral/roadrunner-grpc": "^3.3",
+        "php": ">=8.3"
     },
     "autoload": {
         "psr-4": {
