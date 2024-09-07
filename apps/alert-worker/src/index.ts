@@ -1,7 +1,6 @@
 import type { MiddlewareHandler } from "hono";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { Telegram } from "@remoodle/utils";
