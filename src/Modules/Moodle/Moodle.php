@@ -337,7 +337,7 @@ final class Moodle
                             filename: $cousreModuleAttachment["filename"],
                             filepath: $this->issetOrNullArray($cousreModuleAttachment, "filepath"),
                             filesize: $this->issetOrNullArray($cousreModuleAttachment, "filesize"),
-                            fileurl: $cousreModuleAttachment["fileurl"],
+                            fileurl: $this->issetOrNullArray($cousreModuleAttachment, "fileurl"),
                             timecreated: $this->issetOrNullArray($cousreModuleAttachment, "timecreated"),
                             timemodified: $this->issetOrNullArray($cousreModuleAttachment, "timemodified"),
                             sortorder: $cousreModuleAttachment["sortorder"],

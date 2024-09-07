@@ -28,7 +28,7 @@ class CourseModuleAttachment
         public readonly string $filename,
         public readonly ?string $filepath,
         public readonly int $filesize,
-        public readonly string $fileurl,
+        public readonly ?string $fileurl,
         public readonly ?int $timecreated,
         public readonly ?int $timemodified,
         public readonly ?int $sortorder,
