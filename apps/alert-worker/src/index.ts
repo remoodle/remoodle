@@ -18,11 +18,11 @@ function authMiddleware(): MiddlewareHandler {
   };
 }
 
-const TopicEnum = z.enum(["users", "grafana"]);
+const zTopicType = z.enum(["users", "grafana"]);
 
-type FishEnum = z.infer<typeof TopicEnum>;
+type TopicType = z.infer<typeof zTopicType>;
 
-const TOPICS: Record<FishEnum, number> = {
+const TOPICS: Record<TopicType, number> = {
   users: 3,
   grafana: 5,
 } as const;
@@ -44,7 +44,7 @@ const app = new Hono<{
     zValidator(
       "json",
       z.object({
-        topic: TopicEnum,
+        topic: zTopicType,
         message: z.string(),
       }),
     ),
