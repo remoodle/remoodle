@@ -361,6 +361,16 @@ const commonProtectedRoutes = new Hono<{
       handle: user.handle,
       hasPassword: !!user.password,
       telegramId: user.telegramId,
+      notifications: {
+        telegram: {
+          enabled:
+            user.notificationSettings.telegram.deadlineReminders ||
+            user.notificationSettings.telegram.gradeUpdates,
+          gradeUpdates: user.notificationSettings.telegram.gradeUpdates,
+          deadlineReminders:
+            user.notificationSettings.telegram.deadlineReminders,
+        },
+      },
     });
   })
   .post(
@@ -370,12 +380,19 @@ const commonProtectedRoutes = new Hono<{
       z.object({
         handle: z.string().optional(),
         password: z.string().optional(),
+        telegramDeadlineReminders: z.boolean().optional(),
+        telegramGradeUpdates: z.boolean().optional(),
       }),
     ),
     async (ctx) => {
       const userId = ctx.get("userId");
 
-      const { handle, password } = ctx.req.valid("json");
+      const {
+        handle,
+        password,
+        telegramDeadlineReminders,
+        telegramGradeUpdates,
+      } = ctx.req.valid("json");
 
       try {
         const user = await db.user.findOne({ _id: userId });
@@ -404,6 +421,31 @@ const commonProtectedRoutes = new Hono<{
               $set: {
                 password: hashPassword(password),
               },
+            },
+          );
+        }
+
+        if (
+          telegramDeadlineReminders !== undefined ||
+          telegramGradeUpdates !== undefined
+        ) {
+          const notificationFields: { [key: string]: any } = {};
+
+          if (telegramGradeUpdates !== undefined) {
+            notificationFields["notificationSettings.telegram.gradeUpdates"] =
+              telegramGradeUpdates;
+          }
+
+          if (telegramDeadlineReminders !== undefined) {
+            notificationFields[
+              "notificationSettings.telegram.deadlineReminders"
+            ] = telegramDeadlineReminders;
+          }
+
+          await db.user.updateOne(
+            { _id: userId },
+            {
+              $set: notificationFields,
             },
           );
         }

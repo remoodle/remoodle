@@ -2,18 +2,36 @@ import type { Model } from "mongoose";
 import { Schema, model } from "mongoose";
 import { v7 as uuidv7 } from "uuid";
 
+type NotificationSettings = {
+  telegram: {
+    deadlineReminders: boolean;
+    gradeUpdates: boolean;
+  };
+};
+
 export type IUser = {
   _id: string;
   name: string;
   handle: string;
   moodleId: number;
   moodleToken: string;
+  notificationSettings: NotificationSettings;
   email?: string;
   telegramId?: number;
   password?: string;
 };
 
 type UserModel = Model<IUser>;
+
+const notificationSettingsSchema = new Schema<NotificationSettings>(
+  {
+    telegram: {
+      deadlineReminders: { type: Boolean, default: true },
+      gradeUpdates: { type: Boolean, default: true },
+    },
+  },
+  { _id: false },
+);
 
 const userSchema = new Schema<IUser, UserModel>(
   {
@@ -25,6 +43,7 @@ const userSchema = new Schema<IUser, UserModel>(
     email: { type: String },
     telegramId: { type: Number },
     password: { type: String },
+    notificationSettings: { type: notificationSettingsSchema, required: true },
   },
   {
     timestamps: true,
