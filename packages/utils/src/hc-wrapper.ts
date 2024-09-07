@@ -17,32 +17,40 @@ export const createHC = <A extends Hono<any, any, any>>(
   async function request<T, Z extends "json" | "text" = "json">(
     requestRPC: ClientFn<T, Z>,
   ): Promise<[T, null] | [null, APIError]> {
-    const response = await requestRPC(client);
+    try {
+      const response = await requestRPC(client);
 
-    const type = response.headers.get("Content-Type");
+      const type = response.headers.get("Content-Type");
 
-    let data: any;
-    if (type && type.includes("application/json")) {
-      data = await response.json();
-    } else {
-      data = await response.text();
-    }
+      let data: any;
+      if (type && type.includes("application/json")) {
+        data = await response.json();
+      } else {
+        data = await response.text();
+      }
 
-    if (!response.ok) {
-      const message =
-        type && type.includes("application/json")
-          ? (data as APIErrorResponse).error.message
-          : (data as string);
+      if (!response.ok) {
+        const message =
+          type && type.includes("application/json")
+            ? (data as APIErrorResponse).error.message
+            : (data as string);
 
+        const error: APIError = {
+          status: response.status,
+          message,
+        };
+
+        return [null, error];
+      }
+
+      return [data as T, null];
+    } catch (err: any) {
       const error: APIError = {
-        status: response.status,
-        message,
+        status: 500,
+        message: err.message || "Something went wrong",
       };
-
       return [null, error];
     }
-
-    return [data as T, null];
   }
 
   return { request };
