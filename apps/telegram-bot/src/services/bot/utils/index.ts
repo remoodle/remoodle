@@ -25,4 +25,17 @@ const getDeadlineText = (deadline: Deadline) => {
   return text;
 };
 
-export { getDeadlineText };
+const getGradeText = (grade: any) => {
+  let text = "";
+  if (!["category", "course"].includes(grade.itemtype)) {
+    text += `${grade.name} → ${grade.graderaw !== null ? grade.graderaw?.toFixed(2) : "None"}\n`;
+
+    if (grade.name === "Attendance") {
+      text += "\n";
+    }
+  }
+
+  return text;
+};
+
+export { getDeadlineText, getGradeText };

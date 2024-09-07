@@ -1,6 +1,6 @@
 import { Composer, InlineKeyboard } from "grammy";
 import { request, getAuthHeaders } from "../../../helpers/hc";
-import { getDeadlineText } from "../utils";
+import { getDeadlineText, getGradeText } from "../utils";
 import keyboards from "../keyboards";
 
 const callbacksHandler = new Composer();
@@ -154,7 +154,10 @@ callbacksHandler.callbackQuery("grades", async (ctx) => {
       .text(grade.name.split(" | ")[0], `course_${grade.course_id}`);
   });
 
-  gradesKeyboards.row().text("Back ←", "back_to_menu");
+  gradesKeyboards
+    .row()
+    .text("Back ←", "back_to_menu")
+    .text("Old courses", "old_grades");
 
   if (grades.length === 0) {
     await ctx.editMessageText("You have no grades 🥰", {
@@ -191,7 +194,7 @@ callbacksHandler.callbackQuery("back_to_grades", async (ctx) => {
     return;
   }
 
-  const gradesKeyboards = keyboards.grades;
+  const gradesKeyboards = new InlineKeyboard();
 
   grades.forEach((grade) => {
     gradesKeyboards
@@ -199,7 +202,10 @@ callbacksHandler.callbackQuery("back_to_grades", async (ctx) => {
       .text(grade.name.split(" | ")[0], `course_${grade.course_id}`);
   });
 
-  gradesKeyboards.row().text("Back ←", "back_to_menu");
+  gradesKeyboards
+    .row()
+    .text("Back ←", "back_to_menu")
+    .text("Old courses", "old_grades");
 
   await ctx.editMessageText("Your courses:", { reply_markup: gradesKeyboards });
 });
@@ -241,24 +247,82 @@ callbacksHandler.callbackQuery(/course_\d+/, async (ctx) => {
     ),
   );
 
+  const keyboard = keyboards.single_grade.clone();
+
   if (!grades || !course) {
     await ctx.editMessageText("Grades for this course are not available.", {
-      reply_markup: keyboards.single_grade.text(
-        "Refresh",
-        `refresh_grade_${courseId}`,
-      ),
+      reply_markup: keyboard.text("Refresh", `refresh_grade_${courseId}`),
     });
     return;
   }
 
-  console.log(course);
-  console.log(grades);
+  let message: string = `${course.name.split(" | ")[0]}\nTeacher: ${course.name.split(" | ")[1]}\n\n`;
 
-  // let message: string = `${course.name.split(" | ")[0]}\n${course.name.split(" | ")[1]}\n\n`;
+  grades.forEach((grade) => {
+    message += getGradeText(grade);
+  });
 
-  // grades.forEach((grade) => {
-  //   message += `${grade.name} → ${grade.graderaw}\n`;
-  // });
+  return await ctx.editMessageText(message, {
+    reply_markup: keyboard.text("Refresh", `refresh_grade_${courseId}`),
+  });
+});
+
+callbacksHandler.callbackQuery(/^refresh_grade_\d+/, async (ctx) => {
+  if (!ctx.from) {
+    return;
+  }
+
+  const userId = ctx.from.id;
+
+  const courseId = ctx.match[0].split("_")[2];
+
+  const [grades, _] = await request((client) =>
+    client.v1.course[":courseId"].grades.$get(
+      {
+        param: {
+          courseId: courseId,
+        },
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  const [course, __] = await request((client) =>
+    client.v1.course[":courseId"].$get(
+      {
+        param: {
+          courseId: courseId,
+        },
+        query: {
+          content: "0",
+        },
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  const keyboard = keyboards.single_grade.clone();
+
+  if (!grades || !course) {
+    await ctx.editMessageText("Grades for this course are not available.", {
+      reply_markup: keyboard.text("Refresh", `refresh_grade_${courseId}`),
+    });
+    return;
+  }
+
+  let message: string = `${course.name.split(" | ")[0]}\nTeacher: ${course.name.split(" | ")[1]}\n\n`;
+
+  grades.forEach((grade) => {
+    message += getGradeText(grade);
+  });
+
+  return await ctx.editMessageText(message, {
+    reply_markup: keyboard.text("Refresh", `refresh_grade_${courseId}`),
+  });
 });
 
 // Delete profile
