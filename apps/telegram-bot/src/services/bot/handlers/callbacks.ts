@@ -1,6 +1,6 @@
 import { Composer, InlineKeyboard } from "grammy";
 import { request, getAuthHeaders } from "../../../helpers/hc";
-import { getDeadlineText, getGradeText } from "../utils";
+import { getDeadlineText, getGradeText, calculateGrades } from "../utils";
 import keyboards from "../keyboards";
 
 const callbacksHandler = new Composer();
@@ -258,8 +258,10 @@ callbacksHandler.callbackQuery(/course_\d+/, async (ctx) => {
 
   let message: string = `${course.name.split(" | ")[0]}\nTeacher: ${course.name.split(" | ")[1]}\n\n`;
 
+  message += `${calculateGrades(grades)}`;
+
   grades.forEach((grade) => {
-    message += getGradeText(grade);
+    message += `${getGradeText(grade)}`;
   });
 
   return await ctx.editMessageText(message, {
@@ -324,6 +326,9 @@ callbacksHandler.callbackQuery(/^refresh_grade_\d+/, async (ctx) => {
     reply_markup: keyboard.text("Refresh", `refresh_grade_${courseId}`),
   });
 });
+
+// Old courses
+callbacksHandler.callbackQuery("old_grades", async (ctx) => {});
 
 // Delete profile
 callbacksHandler.callbackQuery("delete_profile", async (ctx) => {

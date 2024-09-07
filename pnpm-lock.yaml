@@ -301,6 +301,9 @@ importers:
       grammy:
         specifier: ^1.29.0
         version: 1.29.0
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.0(@types/node@20.14.15)
     devDependencies:
       '@remoodle/backend':
         specifier: workspace:*

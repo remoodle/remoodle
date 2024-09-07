@@ -38,4 +38,62 @@ const getGradeText = (grade: any) => {
   return text;
 };
 
-export { getDeadlineText, getGradeText };
+const getGPA = (total: number) => {
+  const grades: { [key: number]: number } = {
+    100: 4.0,
+    95: 4.0,
+    90: 3.67,
+    85: 3.33,
+    80: 3.0,
+    75: 2.67,
+    70: 2.33,
+    65: 2.0,
+    60: 1.67,
+    55: 1.33,
+    50: 1.0,
+  };
+
+  const grade = Math.floor(total / 5) * 5;
+  return grades[grade] ? grades[grade].toFixed(2) : "0.00";
+};
+
+const calculateGrades = (grades: any[]) => {
+  const regFinal = grades.find((grade) => grade.name === "Register Final");
+  const regMid = grades.find((grade) => grade.name === "Register Midterm");
+  const regEnd = grades.find((grade) => grade.name === "Register Endterm");
+  const regTerm = (regMid.graderaw + regEnd.graderaw) / 2;
+
+  if (regFinal.graderaw && regTerm && regMid.graderaw && regEnd.graderaw) {
+    const total =
+      regFinal.graderaw * 0.4 + regMid.graderaw * 0.3 + regEnd.graderaw * 0.3;
+    const text = `TOTAL: ${total.toFixed(2)}\nGPA: ${getGPA(total)}\n`;
+
+    if (total >= 50 && total < 70) {
+      return `No scholarship 😭\n${text}`;
+    } else if (total >= 70 && total < 90) {
+      return `Scholarship 🎉\n${text}`;
+    } else if (total >= 90) {
+      return `High scholarship 🎉🎉\n${text}`;
+    } else {
+      return `Retake 💀\n${text}`;
+    }
+  }
+
+  if (regTerm && regMid.graderaw && regEnd.graderaw && !regFinal.graderaw) {
+    let text = "";
+
+    const high = (90 - regTerm * 0.6) / 0.4;
+    const scholarship = (70 - regTerm * 0.6) / 0.4;
+    const retake = (50 - regTerm * 0.6) / 0.4;
+
+    text += `👹 Avoid retake: <b>final > ${retake <= 50.0 ? "50.0" : retake.toFixed(1)}</b>\n`;
+    text += `💚 Save scholarship: <b>final > ${scholarship <= 50 ? "50.0" : scholarship.toFixed(1)}</b>\n`;
+    text += `😈 High scholarship: ${high > 100 ? `<b>unreachable(${high.toFixed(1)})` : `<b>final > ${high.toFixed(1)}`}</b>\n`;
+
+    return text;
+  }
+
+  return "";
+};
+
+export { getDeadlineText, getGradeText, calculateGrades, getGPA };
