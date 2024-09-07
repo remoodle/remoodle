@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.0.0...remoodle/frontend-v1.1.0) (2024-09-07)
+
+
+### Features
+
+* notification settings ui ([f21b8ca](https://github.com/remoodle/heresy/commit/f21b8caa04a69aa63f7fc0daa0e52eedffe312a5))
+
+
+### Bug Fixes
+
+* margins and paddings ([bde3e85](https://github.com/remoodle/heresy/commit/bde3e85984d5e2e78b3698f3e3148491bb8013c7))
+
+
+### Code Refactoring
+
+* remove a lot of shit from frontend ([e6ddb33](https://github.com/remoodle/heresy/commit/e6ddb3320331a90efdb5626a1d536f4e746cbfef))
+
 ## [1.0.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.8.2...remoodle/frontend-v1.0.0) (2024-09-07)
 
 
