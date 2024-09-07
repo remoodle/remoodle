@@ -1,28 +1,18 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { storeToRefs } from "pinia";
-import { RoundedSection, PageWrapper } from "@/entities/page";
-import { useUserStore } from "@/shared/stores/user";
-import { RouterNav } from "@/shared/ui/router-nav";
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
-import { useToast } from "@/shared/ui/toast";
 import { Link } from "@/shared/ui/link";
-import type { Grade, CourseGradeItem } from "@remoodle/types";
+import type { CourseGradeItem } from "@remoodle/types";
 import { RouteName } from "@/shared/lib/routes";
-import {
-  createAsyncProcess,
-  isDefined,
-  splitCourseName,
-} from "@/shared/lib/helpers";
+import { createAsyncProcess } from "@/shared/lib/helpers";
 import { request, getAuthHeaders } from "@/shared/lib/hc";
 
 defineOptions({
@@ -34,8 +24,6 @@ const props = defineProps<{
   loadingCourse: boolean;
   assignmentIds: number[] | undefined;
 }>();
-
-const router = useRouter();
 
 const grades = ref<CourseGradeItem[]>();
 
@@ -130,15 +118,4 @@ onMounted(async () => {
       </TableBody>
     </Table>
   </template>
-
-  <!-- {{ loadingCourse }}
-  {{ grades }} -->
-  <!-- {{ grades }} -->
-  <!-- <div v-if="grades">
-      <pre
-        >{{ JSON.stringify(grades, null, 2) }}
-  </pre
-      >
-   
-    </div> -->
 </template>

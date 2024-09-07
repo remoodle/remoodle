@@ -6,7 +6,7 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { useToast } from "@/shared/ui/toast/use-toast";
-import { request, getAuthHeaders } from "@/shared/lib/hc";
+import { request } from "@/shared/lib/hc";
 import { createAsyncProcess, vFocus } from "@/shared/lib/helpers";
 import { telegram } from "@/shared/config";
 import { useUserStore } from "@/shared/stores/user";

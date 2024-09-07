@@ -1,55 +1,24 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
 import type { Assignment } from "@remoodle/types";
 import { FileIcon } from "@/entities/attachment";
-import { RouteName } from "@/shared/lib/routes";
 import { Link } from "@/shared/ui/link";
 import { Text } from "@/shared/ui/text";
-// import { toRoutePath } from "@/shared/lib/helpers";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/shared/ui/breadcrumb";
-import {
-  splitCourseName,
-  formatAssignmentName,
   filesize,
   formatDate,
   fromUnix,
   prepareFileURL,
-  getRelativeTime,
 } from "@/shared/lib/helpers";
 
 defineOptions({
   name: "CourseAssignment",
 });
 
-const props = defineProps<{
+defineProps<{
   assignment?: Assignment;
   loadingAssignments: boolean;
   token: string;
 }>();
-
-const route = useRoute();
-const router = useRouter();
-
-const assignmentName = ref("");
-
-onMounted(async () => {
-  // console.log("13");
-  // assignmentName.value = (route.query.assignmentName as string) || "";
-  // await router.replace({
-  //   query: {
-  //     ...router.currentRoute.value.query,
-  //     assignmentName: undefined,
-  //   },
-  // });
-});
 </script>
 
 <template>

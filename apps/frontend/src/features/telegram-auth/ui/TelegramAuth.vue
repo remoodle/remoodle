@@ -14,6 +14,7 @@ const props = withDefaults(
     requestAccess: "read",
     size: "large",
     userpic: true,
+    radius: undefined,
   },
 );
 

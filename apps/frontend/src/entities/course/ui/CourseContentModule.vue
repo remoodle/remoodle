@@ -6,7 +6,7 @@ import { Link } from "@/shared/ui/link";
 import { Text } from "@/shared/ui/text";
 import { filesize } from "@/shared/lib/helpers";
 
-const props = defineProps<{
+defineProps<{
   courseId: number;
   module: CourseModule;
   token: string;

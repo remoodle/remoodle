@@ -9,8 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/shared/ui/avatar";
-import { Picture } from "@/shared/ui/picture";
+import { Avatar } from "@/shared/ui/avatar";
 import { Logo } from "@/shared/ui/logo";
 import { useUserStore } from "@/shared/stores/user";
 import { RouteName } from "@/shared/lib/routes";
@@ -19,13 +18,6 @@ import MagicSearch from "./MagicSearch.vue";
 const route = useRoute();
 
 const userStore = useUserStore();
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("");
-}
 </script>
 
 <template>
@@ -45,7 +37,7 @@ function getInitials(name: string) {
       <div class="ml-auto inline-flex w-1/2 items-center justify-end">
         <DropdownMenu v-if="userStore.user" :modal="false">
           <DropdownMenuTrigger>
-            <Picture :name="userStore.user.moodleId" :size="36" />
+            <Avatar :name="userStore.user.moodleId" :size="36" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>

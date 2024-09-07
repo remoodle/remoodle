@@ -6,16 +6,10 @@ import { RoundedSection, PageWrapper } from "@/entities/page";
 import { useUserStore } from "@/shared/stores/user";
 import { RouterNav } from "@/shared/ui/router-nav";
 import { Link } from "@/shared/ui/link";
-import { Button } from "@/shared/ui/button";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { request, getAuthHeaders } from "@/shared/lib/hc";
-import {
-  createAsyncProcess,
-  isDefined,
-  insertIf,
-  cn,
-} from "@/shared/lib/helpers";
+import { createAsyncProcess, isDefined, cn } from "@/shared/lib/helpers";
 import type { Course, Assignment } from "@remoodle/types";
 import { useBreakpoints } from "@/shared/lib/use-breakpoints";
 import { RouteName } from "@/shared/lib/routes";
@@ -141,11 +135,7 @@ onMounted(async () => {
     courseName.value = route.query.courseName as string;
   }
 
-  await Promise.all([
-    loadCourse(),
-    loadAssignments(),
-    // ...insertIf(route.name === RouteName.Assignment, loadAssignments()),
-  ]);
+  await Promise.all([loadCourse(), loadAssignments()]);
 });
 
 onBeforeUnmount(() => {

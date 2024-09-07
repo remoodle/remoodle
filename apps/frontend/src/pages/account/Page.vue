@@ -6,7 +6,7 @@ import { RoundedSection, PageWrapper } from "@/entities/page";
 import { request, getAuthHeaders } from "@/shared/lib/hc";
 import { createAsyncProcess } from "@/shared/lib/helpers";
 import { useToast } from "@/shared/ui/toast";
-import { Picture } from "@/shared/ui/picture";
+import { Avatar } from "@/shared/ui/avatar";
 import { RouteName } from "@/shared/lib/routes";
 import AccountSidebar from "./ui/AccountSidebar.vue";
 import AccountProfilePage from "./AccountProfile.vue";
@@ -65,7 +65,7 @@ onMounted(async () => {
   <PageWrapper v-if="userStore.user && userStore.authorized">
     <template #title>
       <div class="flex items-center gap-4">
-        <Picture :name="userStore.user.moodleId" :size="56" />
+        <Avatar :name="userStore.user.moodleId" :size="56" />
         <div class="flex flex-col">
           {{ userStore.user.name }}
           <span class="text-sm text-muted-foreground">
