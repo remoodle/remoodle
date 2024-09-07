@@ -109,8 +109,6 @@ services:
       - shared
     env_file:
       - .env.core
-    ports:
-      - "8080:8080"
 
   backend:
     image: ghcr.io/remoodle/backend:0.2.14
