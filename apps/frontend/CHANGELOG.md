@@ -1,5 +1,71 @@
 # Changelog
 
+## [1.0.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.8.2...remoodle/frontend-v1.0.0) (2024-09-07)
+
+
+### Features
+
+* aaaa ([c85e357](https://github.com/remoodle/heresy/commit/c85e3574c0aeccd2945139b227a87c42c33eaac4))
+* **auth:** add telegram oauth ([2a4eb28](https://github.com/remoodle/heresy/commit/2a4eb28ec0743b5d72c635a54f7c69532d8bb4f3))
+* integrate otp connect ([2ce8f1d](https://github.com/remoodle/heresy/commit/2ce8f1dabe85c48b0218a59f03019579ddd9206c))
+* new db package new otp ([65c9a7b](https://github.com/remoodle/heresy/commit/65c9a7b8972e49683d3eb9b2a2a7f86d09ad2787))
+* qs shit ([73e2f7c](https://github.com/remoodle/heresy/commit/73e2f7ca4b9092d66223d95d63319a26a3872f41))
+* telegram notification ([2ea6231](https://github.com/remoodle/heresy/commit/2ea623108a21033522e1f72a1fa302d998cc3b9b))
+
+
+### Bug Fixes
+
+* change route name ([b64df57](https://github.com/remoodle/heresy/commit/b64df570a954db429d8aa235530885270b6795db))
+* dont shirk shit ([2ce74e9](https://github.com/remoodle/heresy/commit/2ce74e979e0cc0099342d9ef03cda76fabc7c961))
+* move backed to dev deps ([5e09d23](https://github.com/remoodle/heresy/commit/5e09d237f50e044d9c7f14e802642f87b4bfbf49))
+* otp telegram connection ([3cbc2fe](https://github.com/remoodle/heresy/commit/3cbc2fe4d3af89b902d3eb6073e66fc1edc6664c))
+* previews ([e81a88c](https://github.com/remoodle/heresy/commit/e81a88c207d1a0f7ef33c26393a635902c4a068d))
+* trigger deply ([0587389](https://github.com/remoodle/heresy/commit/05873892a260a211339a0c1053ae092cfbcd77e9))
+
+
+### Miscellaneous Chores
+
+* bump devtools ([4ce587a](https://github.com/remoodle/heresy/commit/4ce587ad56eed7e3a2ca91337b9c4ee34a52e132))
+* complete stale todos ([fa1b9db](https://github.com/remoodle/heresy/commit/fa1b9db77b5104e11f2225f489d4ab966d4730b5))
+* **frontend:** bump vue and vite ([afbad52](https://github.com/remoodle/heresy/commit/afbad52fe699cdc3843ca461a3eef63c048f813a))
+* move .nvmrc to root ([53d28b7](https://github.com/remoodle/heresy/commit/53d28b7bd5e70bb9d67f08ef0a320aa766fda42a))
+* **remoodle/backend:** bump backend version ([2f8ab4b](https://github.com/remoodle/heresy/commit/2f8ab4b894d6c9d118469dc0816a7d5dfc9c78dd))
+* repo stuff ([c991bfb](https://github.com/remoodle/heresy/commit/c991bfbcd1145a5a8fb3ecfb3fbb10e8026e773a))
+* setup envs ([5dee451](https://github.com/remoodle/heresy/commit/5dee45107889386b8348a04ff7237c5a48c6d880))
+* **trunk:** release  remoodle/frontend (deploy-as: release-0.5.0) ([#78](https://github.com/remoodle/heresy/issues/78)) ([c486731](https://github.com/remoodle/heresy/commit/c486731676163057ed11bebeb752d51b9a3f75c6))
+* **trunk:** release  remoodle/frontend (deploy-as: release-0.5.1) ([#89](https://github.com/remoodle/heresy/issues/89)) ([eed19a9](https://github.com/remoodle/heresy/commit/eed19a9114fe5e412c2d76f0dccc9cd81ccfc42e))
+* **trunk:** release  remoodle/frontend (deploy-as: release-0.5.2) ([#90](https://github.com/remoodle/heresy/issues/90)) ([3a201d0](https://github.com/remoodle/heresy/commit/3a201d06f8282b972c33c54ca0ed5a776590dbb0))
+* **trunk:** release  remoodle/frontend (deploy-as: release-0.5.3) ([#94](https://github.com/remoodle/heresy/issues/94)) ([cd9b582](https://github.com/remoodle/heresy/commit/cd9b582007c8e141e0b52da08395cb4566611e65))
+* **trunk:** release  remoodle/frontend (deploy-as: release-0.6.0) ([#95](https://github.com/remoodle/heresy/issues/95)) ([4adf1d9](https://github.com/remoodle/heresy/commit/4adf1d9c0daa74c5571fd565a513a041337529a2))
+* **trunk:** release  remoodle/frontend (deploy-as: release-0.7.0) ([#97](https://github.com/remoodle/heresy/issues/97)) ([77a5b83](https://github.com/remoodle/heresy/commit/77a5b83bbdd01631f2311ecbb931413d0b3791ff))
+* **trunk:** release  remoodle/frontend (deploy-as: release-0.8.0) ([#103](https://github.com/remoodle/heresy/issues/103)) ([216e86a](https://github.com/remoodle/heresy/commit/216e86a0737059046dcffd118b02e1080d759eea))
+* **trunk:** release  remoodle/frontend (deploy-as: release-0.8.1) ([#107](https://github.com/remoodle/heresy/issues/107)) ([c2e0aab](https://github.com/remoodle/heresy/commit/c2e0aab5b1503214196e66a8da81d5efd71a9dc8))
+* **trunk:** release  remoodle/frontend (deploy-as: release-0.8.2) ([#120](https://github.com/remoodle/heresy/issues/120)) ([f221b24](https://github.com/remoodle/heresy/commit/f221b242ac448f4d125ebcacc4709f7d2f85f451))
+
+
+### Code Refactoring
+
+* common rpc client ([db9eb3e](https://github.com/remoodle/heresy/commit/db9eb3e7b1f5ba023e066d2203be659620bc41be))
+* create hc-wrapper ([f699e6b](https://github.com/remoodle/heresy/commit/f699e6b5791b391fb95d507962bd0b0aa266af1c))
+* delayer api layer ([5ac8e92](https://github.com/remoodle/heresy/commit/5ac8e92142cdd2893947a4d3135626e5ecc71985))
+* flat lib folder ([0b8c91c](https://github.com/remoodle/heresy/commit/0b8c91cdcf1ef8b83a3d92fc3ef468fb79e95742))
+* **frontend:** get rid of providers ([e5d8df5](https://github.com/remoodle/heresy/commit/e5d8df53192fb10418b9d4c0554d71048b49bd95))
+* move logo to shared/ui ([0b77c96](https://github.com/remoodle/heresy/commit/0b77c9696466f14538ad0f1949be85cfc514ca58))
+* shared/types =&gt; shared/routes ([f9d8efd](https://github.com/remoodle/heresy/commit/f9d8efd85f8ed17de9cc001786dbafc53a6ee8fb))
+* shit ([89ebe97](https://github.com/remoodle/heresy/commit/89ebe97ea1dd4747ee2c76c66a2cf4b55d091ed1))
+
+
+### Build System
+
+* refactor vite config ([25ef96e](https://github.com/remoodle/heresy/commit/25ef96e3d9e1c1556a20a338d4bfdd3870beb3d7))
+
+
+### Continuous Integration
+
+* add ci ([c3b316b](https://github.com/remoodle/heresy/commit/c3b316b9e08f514ecab6a14956e6b4153dfd6de9))
+* mode envs ([90a3ea2](https://github.com/remoodle/heresy/commit/90a3ea2e244474e48c9427989e52a9fcae114cde))
+* simplify frontend ci ([374d55a](https://github.com/remoodle/heresy/commit/374d55a62aa5f656307e12170e5865bab2aa3852))
+
 ## [0.8.2](https://github.com/remoodle/heresy/compare/remoodle/frontend-v0.8.1...remoodle/frontend-v0.8.2) (2024-09-07)
 
 
