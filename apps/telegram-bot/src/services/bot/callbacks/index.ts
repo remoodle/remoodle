@@ -403,9 +403,12 @@ async function gradesPastCourses(ctx: Context) {
       .text("→", `old_grades_${page + 1}`);
   }
 
-  await ctx.editMessageText("Your past courses:", {
-    reply_markup: coursesKeyboards,
-  });
+  await ctx.editMessageText(
+    `Your past courses (${page}/${Math.ceil(rmcCourses.length / 10 + 1)}):`,
+    {
+      reply_markup: coursesKeyboards,
+    },
+  );
 }
 
 async function gradesPastCourse(ctx: Context) {
