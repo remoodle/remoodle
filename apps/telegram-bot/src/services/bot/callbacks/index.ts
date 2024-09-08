@@ -355,6 +355,7 @@ async function gradesPastCourses(ctx: Context) {
     ),
   );
 
+  // @ts-ignore
   rmcCourses = Object.entries(rmcCourses).map(([k, v]) => ({ ...v, id: k }));
 
   if (!rmcCourses) {
