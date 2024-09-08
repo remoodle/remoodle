@@ -3,6 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
+import { env } from "../../../config";
 import { db } from "../../../library/db";
 import type { IUser } from "../../../library/db";
 import { RMC } from "../../../library/rmc-sdk";
@@ -74,25 +75,20 @@ const authRoutes = new Hono<{
             ...(password && { password: hashPassword(password) }),
           })) as IUser;
 
-          if (telegramId) {
-            requestAlertWorker((client) =>
-              client.new.$post({
-                json: {
-                  topic: "users",
-                  message: `New Telegram user <b>${data.name}</b>`,
-                },
-              }),
-            );
-          } else {
-            requestAlertWorker((client) =>
-              client.new.$post({
-                json: {
-                  topic: "users",
-                  message: `New user <b>${data.name}</b>`,
-                },
-              }),
-            );
+          if (!user) {
+            throw new HTTPException(500, {
+              message: "Couldn't create user",
+            });
           }
+
+          requestAlertWorker((client) =>
+            client.new.$post({
+              json: {
+                topic: env.isProduction ? "users2" : "dev",
+                message: `New ${telegramId ? "Telegram" : "Regular"} user \n<b>${data.name}</b> \n<b>${data.moodle_id}</b>`,
+              },
+            }),
+          );
         } catch (error: any) {
           const [_data, _error] = await rmc.v1_delete_user();
           await db.user.deleteOne({ _id: user?._id });

@@ -1,29 +1,18 @@
-import type { MiddlewareHandler } from "hono";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
 import { Telegram } from "@remoodle/utils";
 
-function authMiddleware(): MiddlewareHandler {
-  return async (ctx, next) => {
-    const authorization = ctx.req.header("Authorization");
-
-    if (authorization !== `Bearer ${ctx.env.ALERT_POINT_TOKEN ?? "ALARMA"}`) {
-      return ctx.text("Forbidden", 403);
-    }
-
-    return await next();
-  };
-}
-
-const zTopicType = z.enum(["users", "grafana"]);
+const zTopicType = z.enum(["users", "users2", "dev", "errors"]);
 
 type TopicType = z.infer<typeof zTopicType>;
 
 const TOPICS: Record<TopicType, number> = {
-  users: 3,
-  grafana: 5,
+  users: 3, // deprecated
+  users2: 329,
+  dev: 327,
+  errors: 309,
 } as const;
 
 const app = new Hono<{
@@ -37,7 +26,15 @@ const app = new Hono<{
   };
 }>()
   .use("*", cors())
-  .use("*", authMiddleware())
+  .use("*", async (ctx, next) => {
+    const authorization = ctx.req.header("Authorization");
+
+    if (authorization !== `Bearer ${ctx.env.ALERT_POINT_TOKEN ?? "ALARMA"}`) {
+      return ctx.text("Forbidden", 403);
+    }
+
+    return await next();
+  })
   .post(
     "/new",
     zValidator(
@@ -58,39 +55,6 @@ const app = new Hono<{
       );
 
       const resp = await telegram.notify(message, {
-        topicId,
-        parseMode: "HTML",
-      });
-
-      if (resp.status !== 200) {
-        console.error(await resp.json());
-        return ctx.text(resp.statusText, 400);
-      }
-
-      return ctx.text("OK", 200);
-    },
-  )
-  .post(
-    "/webhook/grafana",
-    zValidator(
-      "json",
-      z.object({
-        title: z.string(),
-        message: z.string(),
-      }),
-    ),
-    async (ctx) => {
-      const { title, message } = ctx.req.valid("json");
-
-      const topics = ctx.get("topicsMap");
-      const topicId = topics.grafana;
-
-      const telegram = new Telegram(
-        ctx.env.TELEGRAM_BOT_TOKEN,
-        ctx.env.TELEGRAM_CHAT_ID,
-      );
-
-      const resp = await telegram.notify(`<b>${title}</b>\n${message}`, {
         topicId,
         parseMode: "HTML",
       });
