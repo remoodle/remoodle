@@ -57,21 +57,19 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
             ])
             ->where("moodle_id", $moodleId)
             ->first()
-            ?->courses;
-
-        $courses = $courses
-        ->map(function (Course $course) {
-            return new CourseEntity(
-                course_id: $course->course_id,
-                name: $course->name,
-                coursecategory: $course->coursecategory,
-                start_date: $course->start_date,
-                end_date: $course->end_date,
-                url: $course->url,
-                status: CourseEnrolledClassification::from($course->status)
-            );
-        })
-        ->all();
+            ?->courses
+            ->map(function (Course $course) {
+                return new CourseEntity(
+                    course_id: $course->course_id,
+                    name: $course->name,
+                    coursecategory: $course->coursecategory,
+                    start_date: $course->start_date,
+                    end_date: $course->end_date,
+                    url: $course->url,
+                    status: CourseEnrolledClassification::from($course->status)
+                );
+            })
+            ->all();
 
         return $courses;
     }

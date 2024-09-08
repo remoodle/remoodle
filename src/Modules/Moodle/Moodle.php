@@ -90,7 +90,7 @@ final class Moodle
      * @param \App\Modules\Moodle\Enums\CourseEnrolledClassification $classification
      * @return \App\Modules\Moodle\Entities\Course[]
      */
-    public function getUserCourses(?CourseEnrolledClassification $classification = CourseEnrolledClassification::INPROGRESS): array
+    public function getUserCourses(?CourseEnrolledClassification $classification = null): array
     {
         if ($classification === null) {
             $futureCourses = $this->moodleWrapper->getEnrolledCoursesByTimelineClassification(CourseEnrolledClassification::FUTURE->value)["courses"];
