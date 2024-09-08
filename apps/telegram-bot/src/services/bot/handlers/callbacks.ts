@@ -1,6 +1,11 @@
 import { Composer, InlineKeyboard } from "grammy";
 import { request, getAuthHeaders } from "../../../helpers/hc";
-import { getDeadlineText, getGradeText, calculateGrades } from "../utils";
+import {
+  getDeadlineText,
+  getGradeText,
+  calculateGrades,
+  getNotificationsKeyboard,
+} from "../utils";
 import keyboards from "../keyboards";
 
 const callbacksHandler = new Composer();
@@ -474,15 +479,87 @@ callbacksHandler.callbackQuery("notifications", async (ctx) => {
   }
   const userId = ctx.from.id;
 
-  const keyboard = new InlineKeyboard();
-  keyboard
-    .text(`Telegram Notifications`, "change_notifications_telegram")
-    .row()
-    .text(`Grades`, "change_notifications_grades")
-    .text(`Deadlines`, "change_notifications_deadlines")
-    .row()
-    .text("Back ←", "back_to_settings");
+  const [data, _] = await request((client) =>
+    client.v1.user.settings.$get(
+      {},
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  if (!data) {
+    return;
+  }
+
+  const settings = data.notifications.telegram;
+
+  await ctx.editMessageText("Notifications", {
+    reply_markup: getNotificationsKeyboard(settings),
+  });
 });
+
+callbacksHandler.callbackQuery(
+  /^change_notifications_(.+)_(.+)/,
+  async (ctx) => {
+    if (!ctx.from) {
+      return;
+    }
+
+    const userId = ctx.from.id;
+    const type = ctx.match[0].split("_")[2];
+    const value = ctx.match[0].split("_")[3];
+
+    const json: { [key: string]: boolean } = {};
+    if (type === "telegram") {
+      json["telegramDeadlineReminders"] = value === "on";
+      json["telegramGradeUpdates"] = value === "on";
+    } else if (type === "grades") {
+      json["telegramGradeUpdates"] = value === "on";
+    } else if (type === "deadlines") {
+      json["telegramDeadlineReminders"] = value === "on";
+    } else {
+      return;
+    }
+
+    const [_, error] = await request((client) =>
+      client.v1.user.settings.$post(
+        {
+          json: json,
+        },
+        {
+          headers: getAuthHeaders(userId),
+        },
+      ),
+    );
+
+    if (error) {
+      await ctx.editMessageText("An error occurred. Try again later.", {
+        reply_markup: new InlineKeyboard().text("Back ←", "back_to_settings"),
+      });
+      return;
+    }
+
+    const [data, __] = await request((client) =>
+      client.v1.user.settings.$get(
+        {},
+        {
+          headers: getAuthHeaders(userId),
+        },
+      ),
+    );
+
+    if (!data) {
+      return;
+    }
+
+    const settings = data.notifications.telegram;
+
+    await ctx.editMessageText("Notifications", {
+      reply_markup: getNotificationsKeyboard(settings),
+    });
+  },
+);
 
 // Delete profile
 callbacksHandler.callbackQuery("delete_profile", async (ctx) => {

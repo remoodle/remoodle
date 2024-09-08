@@ -1,5 +1,6 @@
 import { Deadline } from "@remoodle/types";
 import { getTimeLeft } from "@remoodle/utils";
+import { InlineKeyboard } from "grammy";
 
 const getDeadlineText = (deadline: Deadline) => {
   let text = "";
@@ -96,4 +97,43 @@ const calculateGrades = (grades: any[]) => {
   return "";
 };
 
-export { getDeadlineText, getGradeText, calculateGrades, getGPA };
+const getNotificationsKeyboard = (notifications: any) => {
+  const keyboard = new InlineKeyboard();
+
+  if (notifications.enabled) {
+    keyboard
+      .text(
+        `Telegram Notifications ${notifications.enabled ? "🔔" : "🔕"}`,
+        `change_notifications_telegram_${notifications.enabled ? "off" : "on"}`,
+      )
+      .row()
+      .text(
+        `Grades ${notifications.gradeUpdates ? "🔔" : "🔕"}`,
+        `change_notifications_grades_${notifications.gradeUpdates ? "off" : "on"}`,
+      )
+      .text(
+        `Deadlines ${notifications.deadlineReminders ? "🔔" : "🔕"}`,
+        `change_notifications_deadlines_${notifications.deadlineReminders ? "off" : "on"}`,
+      )
+      .row()
+      .text("Back ←", "back_to_settings");
+  } else {
+    keyboard
+      .text(
+        `Telegram Notifications ${notifications.enabled ? "🔔" : "🔕"}`,
+        `change_notifications_telegram_${notifications.enabled ? "off" : "on"}`,
+      )
+      .row()
+      .text("Back ←", "back_to_settings");
+  }
+
+  return keyboard;
+};
+
+export {
+  getDeadlineText,
+  getGradeText,
+  calculateGrades,
+  getGPA,
+  getNotificationsKeyboard,
+};
