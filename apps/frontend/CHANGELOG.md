@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.4...remoodle/frontend-v1.1.5) (2024-09-08)
+
+
+### Bug Fixes
+
+* add link to footer ([7bbbf54](https://github.com/remoodle/heresy/commit/7bbbf54a09923c51a7f18f2d719ab0d86657bc26))
+
 ## [1.1.4](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.3...remoodle/frontend-v1.1.4) (2024-09-08)
 
 
