@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Phinx\Db\Adapter\MysqlAdapter;
 use Phinx\Migration\AbstractMigration;
 
 final class CreateGradeTable extends AbstractMigration
@@ -36,7 +37,7 @@ final class CreateGradeTable extends AbstractMigration
             ->addColumn('grademax', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('feedbackformat', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('graderaw', 'float', ['null' => true])
-            ->addColumn('feedback', 'text', ['null' => true])
+            ->addColumn('feedback', 'text', ['null' => true, 'limit' => MysqlAdapter::TEXT_MEDIUM])
 
             ->addForeignKey('moodle_id', 'moodle_users', 'moodle_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addForeignKey('cmid', 'course_modules', 'cmid', ['delete' => 'CASCADE', 'update' => 'CASCADE'])

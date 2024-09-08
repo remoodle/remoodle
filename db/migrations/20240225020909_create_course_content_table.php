@@ -29,7 +29,7 @@ final class CreateCourseContentTable extends AbstractMigration
             ->addColumn('uservisible', 'boolean', ['null' => false])
             ->addColumn('summaryformat', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('hiddenbynumsections', 'integer', ['signed' => false, 'null' => false])
-            ->addColumn('summary', 'text', ['null' => true, 'limit' => MysqlAdapter::TEXT_LONG])
+            ->addColumn('summary', 'text', ['null' => true, 'limit' => MysqlAdapter::TEXT_MEDIUM])
             ->addColumn('section', 'integer', ['null' => false, 'signed' => false])
             ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->create();

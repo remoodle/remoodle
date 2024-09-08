@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Phinx\Db\Adapter\MysqlAdapter;
 use Phinx\Migration\AbstractMigration;
 
 final class CreateAssignmentTable extends AbstractMigration
@@ -31,7 +32,7 @@ final class CreateAssignmentTable extends AbstractMigration
             ->addColumn('allowsubmissionsfromdate', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('grade', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('introformat', 'integer', ['signed' => false, 'null' => false])
-            ->addColumn('intro', 'text', ['null' => true])
+            ->addColumn('intro', 'text', ['null' => true, 'limit' => MysqlAdapter::TEXT_MEDIUM])
 
             ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addIndex('cmid', [

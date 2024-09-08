@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Phinx\Db\Adapter\MysqlAdapter;
 use Phinx\Migration\AbstractMigration;
 
 final class CreateCourseModuleTable extends AbstractMigration
@@ -31,9 +32,9 @@ final class CreateCourseModuleTable extends AbstractMigration
             ->addColumn('noviewlink', 'boolean', ['null' => false])
             ->addColumn('visibleoncoursepage', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('uservisible', 'boolean', ['null' => false])
-            ->addColumn('url', 'text', ['null' => true])
+            ->addColumn('url', 'text', ['null' => true, 'limit' => MysqlAdapter::TEXT_MEDIUM])
             ->addColumn('completion', 'integer', ['signed' => false, 'null' => false])
-            ->addColumn('description', 'text', ['null' => false])
+            ->addColumn('description', 'text', ['null' => false, 'limit' => MysqlAdapter::TEXT_MEDIUM])
             ->addColumn('modicon', 'string', ['null' => false])
             ->addColumn('name', 'string', ['null' => false])
             ->addIndex(['course_id'], ['unique' => false])
