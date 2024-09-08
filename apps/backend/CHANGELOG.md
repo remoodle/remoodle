@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.1...remoodle/backend-v1.1.2) (2024-09-08)
+
+
+### Bug Fixes
+
+* **notifier:** exclude empty names ([51b4c92](https://github.com/remoodle/heresy/commit/51b4c92e08a784f29cab7448959b66e02de3fe35))
+* refactor alerts ([763a6d3](https://github.com/remoodle/heresy/commit/763a6d3acb0a660ccecb4333e8edc9694589da2d))
+
+
+### Code Refactoring
+
+* loosy tests ([3660b70](https://github.com/remoodle/heresy/commit/3660b701fb3a968c9bb1c35ca2876b5c655babc5))
+
 ## [1.1.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.0...remoodle/backend-v1.1.1) (2024-09-07)
 
 
