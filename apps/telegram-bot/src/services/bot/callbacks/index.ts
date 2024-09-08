@@ -10,7 +10,7 @@ import keyboards from "../keyboards";
 
 // Menu buttons
 async function others(ctx: Context) {
-  await ctx.editMessageText("Other", { reply_markup: keyboards.others });
+  await ctx.editMessageText("More", { reply_markup: keyboards.others });
 }
 
 async function settings(ctx: Context) {
