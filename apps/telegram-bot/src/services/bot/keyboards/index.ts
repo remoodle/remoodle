@@ -28,7 +28,7 @@ const keyboards = {
     .url("Docs", "https://ext.remoodle.app/docs")
     .row()
     .url("Privacy Policy", "https://ext.remoodle.app/privacy-policy")
-    .url("Terms of Service", "https://ext.remoodle.app/terms-of-service")
+    .text("Donate 💵", "donate")
     .row()
     .text("Back ←", "back_to_menu"),
 

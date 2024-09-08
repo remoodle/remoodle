@@ -52,4 +52,6 @@ callbacksHandler.callbackQuery("back_to_menu", callbacks.back.toMenu);
 callbacksHandler.callbackQuery("back_to_settings", callbacks.back.toSettings);
 callbacksHandler.callbackQuery("back_to_grades", callbacks.back.toGrades);
 
+callbacksHandler.callbackQuery("donate", callbacks.other.donate);
+
 export default callbacksHandler;
