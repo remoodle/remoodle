@@ -100,7 +100,7 @@ class UserCoursesController extends BaseController
         return $this->jsonResponse(
             response: $response,
             body: [
-                'courses' => $repository->getCourses(
+                $repository->getCourses(
                     $user->moodle_id,
                     $user->moodle_token,
                     CourseEnrolledClassification::INPROGRESS

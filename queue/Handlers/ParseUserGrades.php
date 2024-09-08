@@ -68,6 +68,10 @@ class ParseUserGrades extends BaseHandler
         $courseGradesUpsertArray = [];
 
         foreach ($courseGrades as $courseGrade) {
+            if ($courseGrade->itemtype === 'course' && $courseGrade->cmid === null || $courseGrade->name === '') {
+                $courseGrade = $courseGrade->with(name: 'Total');
+            }
+
             $courseGradesFiltered[] = $courseGrade;
             $courseGradesUpsertArray[] = (array) $courseGrade;
             if ($courseGrade->cmid === null) {

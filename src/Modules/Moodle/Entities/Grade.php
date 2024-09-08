@@ -6,9 +6,12 @@ namespace App\Modules\Moodle\Entities;
 
 use App\Modules\Moodle\Entities\Search\SearchTypeEnum;
 use App\Modules\Search\SearchableInterface;
+use Spatie\Cloneable\Cloneable;
 
 class Grade implements SearchableInterface
 {
+    use Cloneable;
+
     public function __construct(
         public readonly int $grade_id,
         public readonly int $course_id,
