@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.0...remoodle/frontend-v1.1.1) (2024-09-08)
+
+
+### Bug Fixes
+
+* add paddings ([92f5296](https://github.com/remoodle/heresy/commit/92f5296a45ae1679bd0a280812851c310dbf893e))
+* change preview url ([c1c41bb](https://github.com/remoodle/heresy/commit/c1c41bbe89c2cfd40bafb779d725d52b2b602aa7))
+
 ## [1.1.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.0.0...remoodle/frontend-v1.1.0) (2024-09-07)
 
 
