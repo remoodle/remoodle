@@ -3,7 +3,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: [self-hosted, linux, x64, vmi1641400]
+    runs-on: [self-hosted, linux, x64, vmi1641400, lg]
     steps:
       - name: Deploy
         run: |
