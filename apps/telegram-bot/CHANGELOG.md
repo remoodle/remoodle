@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.3.0...remoodle/telegram-bot-v0.4.0) (2024-09-08)
+
+
+### Features
+
+* add donation button ([270625a](https://github.com/remoodle/heresy/commit/270625a1e75c1460feb5eb52bcc35f1b0a995e96))
+
+
+### Miscellaneous Chores
+
+* remove webapps on docs and find token ([29c8843](https://github.com/remoodle/heresy/commit/29c88431960d976a280c421deb2b41ddb36d34b5))
+
 ## [0.3.0](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.2.1...remoodle/telegram-bot-v0.3.0) (2024-09-08)
 
 
