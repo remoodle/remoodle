@@ -54,8 +54,5 @@ jobs:
     runs-on: self-hosted
     needs: build-and-push
     steps:
-      - name: Deploy
-        run: |
-          cd ~/remoodle
-          docker compose pull && docker compose up -d
-          docker compose ps
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/deploy-stage

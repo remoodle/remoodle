@@ -47,3 +47,10 @@ jobs:
           docker build -f apps/telegram-bot/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG --build-arg VERSION_TAG=$VERSION_TAG
 
           docker push $IMAGE_ID:$DOCKER_TAG
+
+  deploy:
+    runs-on: self-hosted
+    needs: build-and-push
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/deploy-stage

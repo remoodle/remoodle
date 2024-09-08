@@ -1,0 +1,17 @@
+name: "Deploy to Self-Hosted Server"
+description: "Pulls the latest Docker images and deploys the application"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Change to application directory
+      run: cd ~/remoodle
+      shell: bash
+
+    - name: Pull latest Docker images and deploy
+      run: docker compose pull && docker compose up -d
+      shell: bash
+
+    - name: Display running containers
+      run: docker compose ps
+      shell: bash
