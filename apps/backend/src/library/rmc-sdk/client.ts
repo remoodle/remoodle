@@ -12,7 +12,7 @@ import type {
   MoodleUser,
   HealthResponse,
 } from "@remoodle/types";
-import { config } from "../../config";
+import { config, env } from "../../config";
 
 type Auth = { moodleId: number } | { moodleToken: string };
 
@@ -81,7 +81,7 @@ export class RMC {
       // eg "v0.3.1::123456"
       const version = response.headers.get("Version");
 
-      if (version && version.startsWith("v")) {
+      if (env.isProduction && version && version.startsWith("v")) {
         const semverVersion = version.slice(1).split("::")[0];
 
         if (compare(semverVersion, this.leastCompatibleVersion, "<")) {
