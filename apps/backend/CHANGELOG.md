@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.2...remoodle/backend-v1.1.3) (2024-09-08)
+
+
+### Bug Fixes
+
+* check compatible version on prod only ([dd84e05](https://github.com/remoodle/heresy/commit/dd84e05bc8878069b5c615b03c835788f7c56b57))
+
 ## [1.1.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.1...remoodle/backend-v1.1.2) (2024-09-08)
 
 
