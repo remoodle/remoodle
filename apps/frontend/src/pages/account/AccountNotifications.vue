@@ -146,6 +146,7 @@ watch(
     </template>
     <template v-else>
       <p class="text-sm text-muted-foreground">Telegram ID: Not connected</p>
+      <div class="py-2" />
       <template v-if="editingMode">
         <form @submit.prevent="verify()">
           <div class="flex max-w-sm items-center gap-2">
