@@ -616,7 +616,7 @@ async function deleteProfileYes(ctx: Context) {
 // Donate button
 async function donate(ctx: Context) {
   await ctx.reply(
-    "Our project, ReMoodle, is completely free to use and supported by donations.\nSupport us 💵 (click to copy)\n\n*Kaspi*  →  `4400430185734321`\n\n*Halyk*  →  `5522042707904355`",
+    "Our project, ReMoodle, is completely free to use and supported by donations.\nSupport us 💵 (click to copy)\n\n*Kaspi*  →  `4400430319119613`\n\n*Halyk*  →  `5522042707904355`",
     {
       parse_mode: "Markdown",
     },
