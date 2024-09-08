@@ -14,7 +14,7 @@ env:
 permissions: write-all
 
 jobs:
-  push:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -46,3 +46,7 @@ jobs:
           docker build . --file Dockerfile --tag $IMAGE_ID:$DOCKER_TAG --build-arg VERSION_TAG=$VERSION_TAG
 
           docker push $IMAGE_ID:$DOCKER_TAG
+
+  deploy:
+    needs: build-and-push
+    uses: remoodle/heresy/.github/workflows/deploy-stage.yml@trunk
