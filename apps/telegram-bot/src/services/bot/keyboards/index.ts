@@ -25,10 +25,10 @@ const keyboards = {
 
   others: new InlineKeyboard()
     .url("Contact Us", "https://t.me/remoodle")
-    .webApp("Docs", "https://ext.remoodle.app/docs")
+    .url("Docs", "https://ext.remoodle.app/docs")
     .row()
-    .webApp("Privacy Policy", "https://ext.remoodle.app/privacy-policy")
-    .webApp("Terms of Service", "https://ext.remoodle.app/terms-of-service")
+    .url("Privacy Policy", "https://ext.remoodle.app/privacy-policy")
+    .url("Terms of Service", "https://ext.remoodle.app/terms-of-service")
     .row()
     .text("Back ←", "back_to_menu"),
 
@@ -42,7 +42,7 @@ const keyboards = {
     .row()
     .text("Back ←", "back_to_menu"),
 
-  find_token: new InlineKeyboard().webApp(
+  find_token: new InlineKeyboard().url(
     "How to find your token",
     "https://ext.remoodle.app/find-token",
   ),
