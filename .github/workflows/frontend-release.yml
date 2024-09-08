@@ -45,10 +45,15 @@ jobs:
       - name: Install dependencies
         run: cd apps/frontend && pnpm install
 
-      - name: Build app
+      - name: Build app in "production" mode
         env:
           COMMIT_SHA: ${{ github.sha }}
         run: cd apps/frontend && pnpm build --mode="production"
+
+      - name: Build app in "preview" mode
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: cd apps/frontend && pnpm build --mode="preview" --outDir="dist-preview"
 
       - run: echo "ignore-workspace-root-check=true" >> .npmrc
 
@@ -57,7 +62,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ vars.CF_ACCOUNT_ID }}
-          command: pages deploy apps/frontend/dist --project-name="frontend-dev-svo" --branch="trunk"
+          command: pages deploy apps/frontend/dist-preview --project-name="frontend-dev-svo" --branch="trunk"
 
       - name: Deploy on production
         if: needs.release.outputs.release_created == 'true'
