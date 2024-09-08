@@ -55,6 +55,6 @@ jobs:
     steps:
       - name: Deploy
         run: |
-          cd remoodle
+          cd ~/remoodle
           docker compose pull && docker compose up -d
           docker compose ps
