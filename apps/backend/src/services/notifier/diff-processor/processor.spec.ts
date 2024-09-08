@@ -4,10 +4,6 @@ import type { GradeChangeDiff, DeadlineReminderDiff } from "./shims";
 import { trackCourseDiff, processDeadlines } from "./checker";
 import { formatCourseDiffs, formatDeadlineReminders } from "./formatter";
 
-export type DeadlineData = Deadline & {
-  notifications: Record<string, boolean>;
-};
-
 describe("grades notifications", () => {
   test("trackCourseDiff: default behavior", () => {
     const oldData: ExtendedCourse[] = [
@@ -118,6 +114,112 @@ describe("grades notifications", () => {
     });
   });
 
+  test("trackCourseDiff: handle empty grade names and null values", () => {
+    const oldData: ExtendedCourse[] = [];
+    const newData: ExtendedCourse[] = [
+      {
+        course_id: 1234,
+        name: "Research Methods and Tools | Omirgaliyev Ruslan",
+        coursecategory: "Some Category",
+        url: "https://example.com",
+        start_date: 1234567890,
+        end_date: 1234567899,
+        grades: [
+          {
+            id: 1,
+            grade_id: 1,
+            cmid: 10001,
+            name: "",
+            percentage: null,
+            itemtype: "mod",
+            itemmodule: "assign",
+            iteminstance: 20001,
+            grademin: 0,
+            grademax: 100,
+            graderaw: 0,
+            feedbackformat: 1,
+            feedback: "",
+          },
+          {
+            id: 2,
+            grade_id: 2,
+            cmid: 10002,
+            name: "Attendance",
+            percentage: null,
+            itemtype: "mod",
+            itemmodule: "assign",
+            iteminstance: 20002,
+            grademin: 0,
+            grademax: 100,
+            graderaw: 66.6667,
+            feedbackformat: 1,
+            feedback: "",
+          },
+          {
+            id: 3,
+            grade_id: 3,
+            cmid: 10003,
+            name: "",
+            percentage: null,
+            itemtype: "mod",
+            itemmodule: "assign",
+            iteminstance: 20003,
+            grademin: 0,
+            grademax: 100,
+            graderaw: 0,
+            feedbackformat: 1,
+            feedback: "",
+          },
+          {
+            id: 4,
+            grade_id: 4,
+            cmid: 10004,
+            name: "Register Term",
+            percentage: null,
+            itemtype: "mod",
+            itemmodule: "assign",
+            iteminstance: 20004,
+            grademin: 0,
+            grademax: 100,
+            graderaw: 0,
+            feedbackformat: 1,
+            feedback: "",
+          },
+          {
+            id: 5,
+            grade_id: 5,
+            cmid: 10005,
+            name: "Ignored Grade",
+            percentage: null,
+            itemtype: "mod",
+            itemmodule: "assign",
+            iteminstance: 20005,
+            grademin: 0,
+            grademax: 100,
+            graderaw: null,
+            feedbackformat: 1,
+            feedback: "",
+          },
+        ],
+      },
+    ];
+
+    const expected: GradeChangeDiff[] = [
+      {
+        c: "Research Methods and Tools | Omirgaliyev Ruslan",
+        g: [
+          ["Attendance", null, 66.6667],
+          ["Register Term", null, 0],
+        ],
+      },
+    ];
+
+    expect(trackCourseDiff(oldData, newData)).toStrictEqual({
+      diffs: expected,
+      hasDiff: true,
+    });
+  });
+
   test("formatCourseDiffs: single", () => {
     const diffs: GradeChangeDiff[] = [
       {
@@ -163,6 +265,10 @@ describe("grades notifications", () => {
     `);
   });
 });
+
+type DeadlineData = Deadline & {
+  notifications: Record<string, boolean>;
+};
 
 describe("deadlines notifications", () => {
   vi.setSystemTime(new Date("2024-09-15T12:24:00"));

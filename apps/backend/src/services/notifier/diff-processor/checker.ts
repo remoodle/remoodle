@@ -26,11 +26,16 @@ export const trackCourseDiff = (
 
       if (newCourse.grades) {
         for (const newGrade of newCourse.grades) {
+          // Skip grades with empty names
+          if (!newGrade.name.trim()) {
+            continue;
+          }
+
           const oldGrade = oldGradesMap.get(newGrade.grade_id);
-          const previous = oldGrade ? oldGrade.graderaw : null;
+          const previous = oldGrade?.graderaw ?? null;
           const updated = newGrade.graderaw;
 
-          // Skip if both previous and updated are null
+          // Only include changes where at least one value is non-null
           if (previous !== null || updated !== null) {
             if (!oldGrade || previous !== updated) {
               courseChanges.push([newGrade.name, previous, updated]);
@@ -48,7 +53,7 @@ export const trackCourseDiff = (
       }
 
       courseChanges = newCourse.grades
-        .filter((grade) => grade.graderaw !== null)
+        .filter((grade) => grade.name.trim() && grade.graderaw !== null)
         .map((grade) => [grade.name, null, grade.graderaw]);
 
       if (courseChanges.length > 0) {
