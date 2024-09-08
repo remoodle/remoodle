@@ -242,16 +242,16 @@ describe("calculateGradesFinal", () => {
 
 describe("calculateGPA", () => {
   test("should return gpa", () => {
-    expect(getGPA(100)).toMatchInlineSnapshot(`"4.00"`);
-    expect(getGPA(95)).toMatchInlineSnapshot(`"4.00"`);
-    expect(getGPA(90)).toMatchInlineSnapshot(`"3.67"`);
-    expect(getGPA(85)).toMatchInlineSnapshot(`"3.33"`);
-    expect(getGPA(80)).toMatchInlineSnapshot(`"3.00"`);
-    expect(getGPA(75)).toMatchInlineSnapshot(`"2.67"`);
-    expect(getGPA(70)).toMatchInlineSnapshot(`"2.33"`);
-    expect(getGPA(65)).toMatchInlineSnapshot(`"2.00"`);
-    expect(getGPA(60)).toMatchInlineSnapshot(`"1.67"`);
-    expect(getGPA(55)).toMatchInlineSnapshot(`"1.33"`);
-    expect(getGPA(50)).toMatchInlineSnapshot(`"1.00"`);
+    expect(getGPA(100)).toStrictEqual("4.00");
+    expect(getGPA(95)).toStrictEqual("4.00");
+    expect(getGPA(90)).toStrictEqual("3.67");
+    expect(getGPA(85)).toStrictEqual("3.33");
+    expect(getGPA(80)).toStrictEqual("3.00");
+    expect(getGPA(75)).toStrictEqual("2.67");
+    expect(getGPA(70)).toStrictEqual("2.33");
+    expect(getGPA(65)).toStrictEqual("2.00");
+    expect(getGPA(60)).toStrictEqual("1.67");
+    expect(getGPA(55)).toStrictEqual("1.33");
+    expect(getGPA(50)).toStrictEqual("1.00");
   });
 });
