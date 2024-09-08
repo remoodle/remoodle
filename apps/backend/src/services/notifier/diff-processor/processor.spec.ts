@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
+import { fromPartial } from "@total-typescript/shoehorn";
 import type { ExtendedCourse, Deadline } from "@remoodle/types";
 import type { GradeChangeDiff, DeadlineReminderDiff } from "./shims";
 import { trackCourseDiff, processDeadlines } from "./checker";
@@ -6,61 +7,33 @@ import { formatCourseDiffs, formatDeadlineReminders } from "./formatter";
 
 describe("grades notifications", () => {
   test("trackCourseDiff: default behavior", () => {
-    const oldData: ExtendedCourse[] = [
+    const oldData: ExtendedCourse[] = fromPartial([
       {
         course_id: 4496,
         name: "Introduction to SRE | Meirmanova Aigul",
-        coursecategory: "Trimester 3",
-        url: "https://moodle.astanait.edu.kz/course/view.php?id=4496",
-        start_date: 1719792000,
-        end_date: 1710720000,
         grades: [
           {
-            id: 3863,
             grade_id: 89083,
-            cmid: 131479,
             name: "Final exam documentation submission",
-            percentage: null,
-            itemtype: "mod",
-            itemmodule: "assign",
-            iteminstance: 40432,
-            grademin: 0,
-            grademax: 100,
-            feedbackformat: 0,
             graderaw: null,
-            feedback: "",
           },
         ],
       },
-    ];
+    ]);
 
-    const newData: ExtendedCourse[] = [
+    const newData: ExtendedCourse[] = fromPartial([
       {
         course_id: 4496,
         name: "Introduction to SRE | Meirmanova Aigul",
-        coursecategory: "Trimester 3",
-        url: "https://moodle.astanait.edu.kz/course/view.php?id=4496",
-        start_date: 1719792000,
-        end_date: 1710720000,
         grades: [
           {
-            id: 3863,
             grade_id: 89083,
-            cmid: 131479,
             name: "Final exam documentation submission",
-            percentage: null,
-            itemtype: "mod",
-            itemmodule: "assign",
-            iteminstance: 40432,
-            grademin: 0,
-            grademax: 100,
-            feedbackformat: 0,
             graderaw: 100,
-            feedback: "",
           },
         ],
       },
-    ];
+    ]);
 
     const diffs: GradeChangeDiff[] = [
       {
@@ -78,33 +51,19 @@ describe("grades notifications", () => {
   test("trackCourseDiff: do not include [_, null, null] diffs", () => {
     const oldData: ExtendedCourse[] = [];
 
-    const newData: ExtendedCourse[] = [
+    const newData: ExtendedCourse[] = fromPartial([
       {
         course_id: 4496,
         name: "Introduction to SRE | Meirmanova Aigul",
-        coursecategory: "Trimester 3",
-        url: "https://moodle.astanait.edu.kz/course/view.php?id=4496",
-        start_date: 1719792000,
-        end_date: 1710720000,
         grades: [
           {
-            id: 3863,
             grade_id: 89083,
-            cmid: 131479,
             name: "Final exam documentation submission",
-            percentage: null,
-            itemtype: "mod",
-            itemmodule: "assign",
-            iteminstance: 40432,
-            grademin: 0,
-            grademax: 100,
-            feedbackformat: 0,
             graderaw: null,
-            feedback: "",
           },
         ],
       },
-    ];
+    ]);
 
     const diffs: GradeChangeDiff[] = [];
 
@@ -116,93 +75,20 @@ describe("grades notifications", () => {
 
   test("trackCourseDiff: handle empty grade names and null values", () => {
     const oldData: ExtendedCourse[] = [];
-    const newData: ExtendedCourse[] = [
+
+    const newData: ExtendedCourse[] = fromPartial([
       {
         course_id: 1234,
         name: "Research Methods and Tools | Omirgaliyev Ruslan",
-        coursecategory: "Some Category",
-        url: "https://example.com",
-        start_date: 1234567890,
-        end_date: 1234567899,
         grades: [
-          {
-            id: 1,
-            grade_id: 1,
-            cmid: 10001,
-            name: "",
-            percentage: null,
-            itemtype: "mod",
-            itemmodule: "assign",
-            iteminstance: 20001,
-            grademin: 0,
-            grademax: 100,
-            graderaw: 0,
-            feedbackformat: 1,
-            feedback: "",
-          },
-          {
-            id: 2,
-            grade_id: 2,
-            cmid: 10002,
-            name: "Attendance",
-            percentage: null,
-            itemtype: "mod",
-            itemmodule: "assign",
-            iteminstance: 20002,
-            grademin: 0,
-            grademax: 100,
-            graderaw: 66.6667,
-            feedbackformat: 1,
-            feedback: "",
-          },
-          {
-            id: 3,
-            grade_id: 3,
-            cmid: 10003,
-            name: "",
-            percentage: null,
-            itemtype: "mod",
-            itemmodule: "assign",
-            iteminstance: 20003,
-            grademin: 0,
-            grademax: 100,
-            graderaw: 0,
-            feedbackformat: 1,
-            feedback: "",
-          },
-          {
-            id: 4,
-            grade_id: 4,
-            cmid: 10004,
-            name: "Register Term",
-            percentage: null,
-            itemtype: "mod",
-            itemmodule: "assign",
-            iteminstance: 20004,
-            grademin: 0,
-            grademax: 100,
-            graderaw: 0,
-            feedbackformat: 1,
-            feedback: "",
-          },
-          {
-            id: 5,
-            grade_id: 5,
-            cmid: 10005,
-            name: "Ignored Grade",
-            percentage: null,
-            itemtype: "mod",
-            itemmodule: "assign",
-            iteminstance: 20005,
-            grademin: 0,
-            grademax: 100,
-            graderaw: null,
-            feedbackformat: 1,
-            feedback: "",
-          },
+          { grade_id: 1, name: "", graderaw: 0 },
+          { grade_id: 2, name: "Attendance", graderaw: 66.6667 },
+          { grade_id: 3, name: "", graderaw: 0 },
+          { grade_id: 4, name: "Register Term", graderaw: 0 },
+          { grade_id: 5, name: "Ignored Grade", graderaw: null },
         ],
       },
-    ];
+    ]);
 
     const expected: GradeChangeDiff[] = [
       {
@@ -217,6 +103,30 @@ describe("grades notifications", () => {
     expect(trackCourseDiff(oldData, newData)).toStrictEqual({
       diffs: expected,
       hasDiff: true,
+    });
+  });
+
+  test("trackCourseDiff: handle all empty", () => {
+    const oldData: ExtendedCourse[] = [];
+
+    const newData: ExtendedCourse[] = fromPartial([
+      {
+        course_id: 1234,
+        name: "Research Methods and Tools | Omirgaliyev Ruslan",
+        grades: [
+          { grade_id: 1, name: "", graderaw: 0 },
+          { grade_id: 2, name: "", graderaw: 0 },
+          { grade_id: 3, name: "Ignored Grade", graderaw: null },
+          { grade_id: 5, name: "Ignored Grade", graderaw: null },
+        ],
+      },
+    ]);
+
+    const expected: GradeChangeDiff[] = [];
+
+    expect(trackCourseDiff(oldData, newData)).toStrictEqual({
+      diffs: expected,
+      hasDiff: false,
     });
   });
 
