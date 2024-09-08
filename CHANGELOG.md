@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1](https://github.com/remoodle/core/compare/v1.0.0...v1.0.1) (2024-09-08)
+
+
+### Bug Fixes
+
+* fix courses ([770d84b](https://github.com/remoodle/core/commit/770d84ba23d3876d913194e6fa48f6988048ab26))
+* key:value =&gt; array on past courses ([7e15abf](https://github.com/remoodle/core/commit/7e15abf13b4db7331ba1ce359a2063ea4af4355d))
+* make fileurl nullable ([#12](https://github.com/remoodle/core/issues/12)) ([ae23f53](https://github.com/remoodle/core/commit/ae23f539379758f9bc7d7fe92afe75b13ed24f35))
+
 ## [1.0.0](https://github.com/remoodle/core/compare/v0.3.0...v1.0.0) (2024-09-07)
 
 
