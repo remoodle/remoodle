@@ -467,6 +467,23 @@ callbacksHandler.callbackQuery(/past_course_\d+_\d+/, async (ctx) => {
   });
 });
 
+// Notifications
+callbacksHandler.callbackQuery("notifications", async (ctx) => {
+  if (!ctx.from) {
+    return;
+  }
+  const userId = ctx.from.id;
+
+  const keyboard = new InlineKeyboard();
+  keyboard
+    .text(`Telegram Notifications`, "change_notifications_telegram")
+    .row()
+    .text(`Grades`, "change_notifications_grades")
+    .text(`Deadlines`, "change_notifications_deadlines")
+    .row()
+    .text("Back ←", "back_to_settings");
+});
+
 // Delete profile
 callbacksHandler.callbackQuery("delete_profile", async (ctx) => {
   if (!ctx.from) {

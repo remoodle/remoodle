@@ -39,6 +39,8 @@ const keyboards = {
   settings: new InlineKeyboard()
     .text("Delete Profile", "delete_profile")
     .row()
+    .text("Notifications", "notifications")
+    .row()
     .text("Back ←", "back_to_menu"),
 
   find_token: new InlineKeyboard().webApp(
