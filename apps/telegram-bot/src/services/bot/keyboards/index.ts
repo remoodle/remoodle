@@ -4,15 +4,13 @@ const keyboards = {
   main: new InlineKeyboard()
     .text("Deadlines", "deadlines")
     .row()
-    .text("Grades", "grades")
+    .text("Courses", "grades")
     .row()
     .webApp("Map", "https://yuujiso.github.io/aitumap/")
     .webApp("Schedule", "https://remoodle.app")
     .row()
     .text("⚙️", "settings")
-    .text("Others", "others"),
-
-  grades: new InlineKeyboard(),
+    .text("More", "others"),
 
   single_grade: new InlineKeyboard().text("Back ←", "back_to_grades"),
 
@@ -39,7 +37,8 @@ const keyboards = {
     .text("No ❌", "back_to_settings"),
 
   settings: new InlineKeyboard()
-    .text("Delete Profile", "delete_profile")
+    .text("Notifications", "notifications")
+    .text("⚠️ Delete Profile ⚠️", "delete_profile")
     .row()
     .text("Back ←", "back_to_menu"),
 
