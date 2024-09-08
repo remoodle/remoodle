@@ -580,7 +580,7 @@ async function deleteProfile(ctx: Context) {
   }
 
   await ctx.editMessageText(
-    `Are you sure to delete your ReMoodle profile?\nThis action is irreversible and will delete all data related to you.`,
+    `Are you sure to delete your ReMoodle profile?\nThis action is irreversible and will remove all data related to you.`,
     {
       reply_markup: keyboards.delete_profile,
     },
