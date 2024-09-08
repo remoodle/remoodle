@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/remoodle/core/compare/v1.0.1...v1.0.2) (2024-09-08)
+
+
+### Bug Fixes
+
+* Medium text support for columns ([691634d](https://github.com/remoodle/core/commit/691634d416ed950cd91f5295681e72948557987d))
+* Total grades, fix online /coures/overall ([d8d75b3](https://github.com/remoodle/core/commit/d8d75b3e5e30e2f8bcc483a0bd7b9f009090877c))
+
 ## [1.0.1](https://github.com/remoodle/core/compare/v1.0.0...v1.0.1) (2024-09-08)
 
 
