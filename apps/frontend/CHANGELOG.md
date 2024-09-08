@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.1...remoodle/frontend-v1.1.2) (2024-09-08)
+
+
+### Bug Fixes
+
+* use stage on preview ([b49a1ce](https://github.com/remoodle/heresy/commit/b49a1ce675f50d0779351f115986cc06b29de6cd))
+
 ## [1.1.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.0...remoodle/frontend-v1.1.1) (2024-09-08)
 
 
