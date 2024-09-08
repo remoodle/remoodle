@@ -49,3 +49,12 @@ jobs:
           docker build -f apps/backend/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG --build-arg VERSION_TAG=$VERSION_TAG
 
           docker push $IMAGE_ID:$DOCKER_TAG
+
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Deploy
+        run: |
+          cd remoodle
+          docker compose pull && docker compose up -d
+          docker compose ps
