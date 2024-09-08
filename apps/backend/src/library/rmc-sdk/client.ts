@@ -68,8 +68,6 @@ export class RMC {
     try {
       const url = new URL(endpoint, this.host);
 
-      console.log(url.toString());
-
       const response = await fetch(url, {
         ...options,
         headers: {
