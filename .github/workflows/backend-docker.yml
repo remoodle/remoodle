@@ -51,4 +51,5 @@ jobs:
           docker push $IMAGE_ID:$DOCKER_TAG
 
   deploy:
+    needs: build-and-push
     uses: ./.github/workflows/deploy-stage.yml
