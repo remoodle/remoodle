@@ -355,9 +355,6 @@ async function gradesPastCourses(ctx: Context) {
     ),
   );
 
-  // @ts-ignore
-  rmcCourses = Object.entries(rmcCourses).map(([k, v]) => ({ ...v, id: k }));
-
   if (!rmcCourses) {
     await ctx.editMessageText("Past courses are not available.", {
       reply_markup: new InlineKeyboard().text("Back ←", "back_to_grades"),
