@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.2...remoodle/frontend-v1.1.3) (2024-09-08)
+
+
+### Bug Fixes
+
+* update shit ([ea0e30f](https://github.com/remoodle/heresy/commit/ea0e30ff39816ef95f5698406198c4269a950abd))
+
 ## [1.1.2](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.1...remoodle/frontend-v1.1.2) (2024-09-08)
 
 
