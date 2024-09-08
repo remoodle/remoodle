@@ -49,8 +49,5 @@ jobs:
           docker push $IMAGE_ID:$DOCKER_TAG
 
   deploy:
-    runs-on: self-hosted
     needs: build-and-push
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/deploy-stage
+    uses: ./.github/workflows/deploy-stage.yml
