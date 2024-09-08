@@ -37,9 +37,8 @@ const keyboards = {
     .text("No ❌", "back_to_settings"),
 
   settings: new InlineKeyboard()
-    .text("Delete Profile", "delete_profile")
-    .row()
     .text("Notifications", "notifications")
+    .text("⚠️ Delete Profile ⚠️", "delete_profile")
     .row()
     .text("Back ←", "back_to_menu"),
 
