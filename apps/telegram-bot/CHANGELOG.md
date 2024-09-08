@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.2.1...remoodle/telegram-bot-v0.3.0) (2024-09-08)
+
+
+### Features
+
+* add notifications and past courses ([#129](https://github.com/remoodle/heresy/issues/129)) ([3365e29](https://github.com/remoodle/heresy/commit/3365e292552785735303f86235b854ef31d33ff5))
+
 ## [0.2.1](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.2.0...remoodle/telegram-bot-v0.2.1) (2024-09-07)
 
 
