@@ -23,8 +23,9 @@ describe("calculateGrades", () => {
 
     expect(calculateGrades(grades)).toMatchInlineSnapshot(`
       "No scholarship 😭
-      TOTAL: 50.00
-      GPA: 1.00
+      <b>TOTAL  →  50.00</b>
+      <b>GPA  →  1.00</b>
+
       "
     `);
   });
@@ -50,8 +51,9 @@ describe("calculateGrades", () => {
 
     expect(calculateGrades(grades)).toMatchInlineSnapshot(`
       "Scholarship 🎉
-      TOTAL: 70.00
-      GPA: 2.33
+      <b>TOTAL  →  70.00</b>
+      <b>GPA  →  2.33</b>
+
       "
     `);
   });
@@ -77,8 +79,9 @@ describe("calculateGrades", () => {
 
     expect(calculateGrades(grades)).toMatchInlineSnapshot(`
       "High scholarship 🎉🎉
-      TOTAL: 95.50
-      GPA: 4.00
+      <b>TOTAL  →  95.50</b>
+      <b>GPA  →  4.00</b>
+
       "
     `);
   });
@@ -104,8 +107,9 @@ describe("calculateGrades", () => {
 
     expect(calculateGrades(grades)).toMatchInlineSnapshot(`
       "Retake 💀
-      TOTAL: 40.00
-      GPA: 0.00
+      <b>TOTAL  →  40.00</b>
+      <b>GPA  →  0.00</b>
+
       "
     `);
   });
