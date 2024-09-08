@@ -81,9 +81,9 @@ onMounted(run);
     </template>
     <div class="flex flex-col gap-3">
       <CourseListCard
-        v-for="course in toggledCourseCategories.flatMap(
-          (category) => (courses && courses[category]) || [],
-        )"
+        v-for="course in toggledCourseCategories
+          .filter(Boolean)
+          .flatMap((category) => (courses && courses[category]) || [])"
         :key="course.course_id"
         :course="course"
         :show-category="toggledCourseCategories.length > 1"
