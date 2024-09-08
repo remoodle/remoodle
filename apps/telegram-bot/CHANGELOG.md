@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.0...remoodle/telegram-bot-v0.4.1) (2024-09-08)
+
+
+### Bug Fixes
+
+* change card number in donate button ([2fc465a](https://github.com/remoodle/heresy/commit/2fc465ad712ed00cbd27d976ff411dfa63c24a6a))
+
 ## [0.4.0](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.3.0...remoodle/telegram-bot-v0.4.0) (2024-09-08)
 
 
