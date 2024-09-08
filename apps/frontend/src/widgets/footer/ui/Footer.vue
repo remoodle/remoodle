@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { Link } from "@/shared/ui/link";
 import { MonoLogo } from "@/shared/ui/logo";
+import { RouteName } from "@/shared/lib/routes";
 import { ThemeSwitcher } from "@/features/theme-switcher";
 import ClientVersion from "./ClientVersion.vue";
 
@@ -36,7 +38,9 @@ withDefaults(
     <footer
       class="container flex flex-wrap items-center justify-between gap-x-4 gap-y-3 py-6"
     >
-      <MonoLogo />
+      <Link :to="{ name: RouteName.Home }" hover>
+        <MonoLogo />
+      </Link>
       <div
         class="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t py-4"
       >
