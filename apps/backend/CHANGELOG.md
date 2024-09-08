@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.3...remoodle/backend-v1.1.4) (2024-09-08)
+
+
+### Miscellaneous Chores
+
+* remove console.log s ([f0329ff](https://github.com/remoodle/heresy/commit/f0329ffc47da206d625212997a1aab265a60a9d3))
+
 ## [1.1.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.2...remoodle/backend-v1.1.3) (2024-09-08)
 
 
