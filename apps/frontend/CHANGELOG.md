@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.6](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.5...remoodle/frontend-v1.1.6) (2024-09-09)
+
+
+### Bug Fixes
+
+* undefined course categories ([a92c8ca](https://github.com/remoodle/heresy/commit/a92c8ca594a04b264a1a7a97a084c4e374f13e92))
+
 ## [1.1.5](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.4...remoodle/frontend-v1.1.5) (2024-09-08)
 
 
