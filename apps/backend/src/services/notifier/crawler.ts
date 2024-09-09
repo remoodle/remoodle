@@ -185,14 +185,28 @@ export async function runCrawler() {
   console.log(`[crawler] Found ${users.length} users with Telegram ID`);
 
   for (const user of users) {
-    await courseCrawlerQueue.add("fetch-courses", {
-      userId: user._id,
-      moodleId: user.moodleId,
-    });
-    await deadlineCrawlerQueue.add("fetch-deadlines", {
-      userId: user._id,
-      moodleId: user.moodleId,
-    });
+    await courseCrawlerQueue.add(
+      "fetch-courses",
+      {
+        userId: user._id,
+        moodleId: user.moodleId,
+      },
+      {
+        removeOnComplete: true,
+        removeOnFail: true,
+      },
+    );
+    await deadlineCrawlerQueue.add(
+      "fetch-deadlines",
+      {
+        userId: user._id,
+        moodleId: user.moodleId,
+      },
+      {
+        removeOnComplete: true,
+        removeOnFail: true,
+      },
+    );
   }
 
   const t1 = performance.now();

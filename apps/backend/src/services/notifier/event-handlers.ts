@@ -28,7 +28,12 @@ const gradeChangeWorker = new Worker("grade-change", processGradeChangeEvent, {
 });
 
 export async function addGradeChangeJob(event: GradeChangeEvent) {
-  await gradeChangeQueue.add("grade-change", event);
+  await gradeChangeQueue.add("grade-change", event, {
+    removeOnComplete: true,
+    removeOnFail: {
+      age: 24 * 3600, // keep up to 24 hours
+    },
+  });
 }
 
 async function processGradeChangeEvent(job: Job<GradeChangeEvent>) {
@@ -75,7 +80,12 @@ const deadlineReminderWorker = new Worker(
 );
 
 export async function addDeadlineReminderJob(event: DeadlineReminderEvent) {
-  await deadlineReminderQueue.add("deadline-reminder", event);
+  await deadlineReminderQueue.add("deadline-reminder", event, {
+    removeOnComplete: true,
+    removeOnFail: {
+      age: 24 * 3600, // keep up to 24 hours
+    },
+  });
 }
 
 async function processDeadlineReminderEvent(job: Job<DeadlineReminderEvent>) {
