@@ -41,7 +41,7 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const preferences = useStorage(
-    getStorageKey("user-preferences"),
+    getStorageKey("user-preferences", 1.1),
     getDefaultPreferences(),
   );
 

@@ -38,8 +38,10 @@ const { run, loading, error } = createAsyncProcess(async () => {
 
   courses.value = partition(data, ({ coursecategory }) => coursecategory);
 
-  !toggledCourseCategories.value.length &&
-    toggledCourseCategories.value.push(...courseCategories.value);
+  if (courseCategories.value.length) {
+    !toggledCourseCategories.value.length &&
+      toggledCourseCategories.value.push(...courseCategories.value);
+  }
 });
 
 onMounted(run);
