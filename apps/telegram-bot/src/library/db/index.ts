@@ -1,6 +1,6 @@
-import { DB } from "@remoodle/db";
+import { createDB } from "@remoodle/db";
 import { config } from "../../config";
 
-export const db = new DB({
+export const db = createDB({
   redisURI: config.redis.uri,
 });

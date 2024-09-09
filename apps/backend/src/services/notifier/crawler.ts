@@ -1,5 +1,5 @@
+import { Queue, Worker, Job } from "bullmq";
 import { db } from "../../library/db";
-import type { MessageStream } from "../../library/db";
 import { RMC } from "../../library/rmc-sdk";
 import type {
   GradeChangeEvent,
@@ -11,191 +11,199 @@ import {
   DEFAULT_THRESHOLDS,
   DEFAULT_THRESHOLDS_NOTIFICATIONS,
 } from "./diff-processor/thresholds";
+import { addGradeChangeJob, addDeadlineReminderJob } from "./event-handlers";
 
-export const fetchCourses = async (messageStream: MessageStream) => {
-  const t0 = performance.now();
+// course crawler
 
-  console.log(`[crawler] Starting fetching courses`);
+const courseCrawlerQueue = new Queue("course-crawler", {
+  connection: db.redisConnection,
+});
 
-  const users = await db.user.find({
-    telegramId: { $exists: true },
-    moodleId: { $exists: true },
-    // TODO: Consider parsing only users with grade updates enabled
-    // notificationSettings: {
-    //   telegram: {
-    //     $elemMatch: {
-    //       gradeUpdates: true,
-    //     },
-    //   },
-    // },
-  });
+const courseWorker = new Worker("course-crawler", processFetchCoursesJob, {
+  connection: db.redisConnection,
+});
 
-  console.log(`[crawler] Found ${users.length} users with Telegram ID`);
+async function processFetchCoursesJob(
+  job: Job<{ userId: string; moodleId: number }>,
+) {
+  const { userId, moodleId } = job.data;
 
-  for (const user of users) {
-    try {
-      const rmc = new RMC({ moodleId: user.moodleId });
+  try {
+    const rmc = new RMC({ moodleId });
+    const [data, error] = await rmc.v1_user_courses_overall("inprogress");
 
-      const [data, error] = await rmc.v1_user_courses_overall("inprogress");
-
-      if (error) {
-        console.error(
-          `[crawler] Couldn't fetch courses for user ${user.name} (${user.moodleId})`,
-          error.message,
-          error.status,
-        );
-        continue;
-      }
-
-      // getting old course content
-      const currentCourse = await db.course.findOne({ userId: user._id });
-
-      // updating course content
-      await db.course.findOneAndUpdate(
-        { userId: user._id },
-        { $set: { data: data, fetchedAt: new Date() } },
-        { upsert: true, new: true },
+    if (error) {
+      console.error(
+        `[crawler] Couldn't fetch courses for user ${userId} (${moodleId})`,
+        error.message,
+        error.status,
       );
-
-      if (!currentCourse) {
-        continue;
-      }
-
-      // make sure that we have data to compare and create an event if smth changed
-      if (
-        Array.isArray(currentCourse.data) &&
-        currentCourse.data.length &&
-        Array.isArray(data) &&
-        data.length
-      ) {
-        const { diffs, hasDiff } = trackCourseDiff(currentCourse.data, data);
-
-        if (hasDiff) {
-          const event: GradeChangeEvent = {
-            userId: user._id,
-            moodleId: user.moodleId,
-            payload: diffs,
-          };
-
-          await messageStream.add("grade-change", JSON.stringify(event), {
-            maxlen: 10000,
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Error executing crawler:", error);
+      return;
     }
+
+    const currentCourse = await db.course.findOne({ userId });
+
+    await db.course.findOneAndUpdate(
+      { userId },
+      { $set: { data: data, fetchedAt: new Date() } },
+      { upsert: true, new: true },
+    );
+
+    if (!currentCourse) {
+      return;
+    }
+
+    if (
+      Array.isArray(currentCourse.data) &&
+      currentCourse.data.length &&
+      Array.isArray(data) &&
+      data.length
+    ) {
+      const { diffs, hasDiff } = trackCourseDiff(currentCourse.data, data);
+
+      if (hasDiff) {
+        const event: GradeChangeEvent = {
+          userId,
+          moodleId,
+          payload: diffs,
+        };
+
+        await addGradeChangeJob(event);
+      }
+    }
+  } catch (error) {
+    console.error("Error executing course crawler:", error);
   }
+}
 
-  const t1 = performance.now();
+courseWorker.on("error", (error) => {
+  console.error("Course Crawler Worker Error:", error);
+});
 
-  console.log(
-    `[crawler] Finished fetching courses, took ${t1 - t0} milliseconds.`,
-  );
-};
+// deadline crawler
 
-export const fetchDeadlines = async (messageStream: MessageStream) => {
-  const t0 = performance.now();
+const deadlineCrawlerQueue = new Queue("deadline-crawler", {
+  connection: db.redisConnection,
+});
 
-  console.log(`[crawler] Starting fetching deadlines`);
+const deadlineWorker = new Worker(
+  "deadline-crawler",
+  processFetchDeadlinesJob,
+  { connection: db.redisConnection },
+);
 
-  const users = await db.user.find({
-    telegramId: { $exists: true },
-    moodleId: { $exists: true },
-    // notificationSettings: {
-    //   telegram: {
-    //     $elemMatch: {
-    //       deadlineReminders: true,
-    //     },
-    //   },
-    // },
-  });
+async function processFetchDeadlinesJob(
+  job: Job<{ userId: string; moodleId: number }>,
+) {
+  const { userId, moodleId } = job.data;
 
-  console.log(`[crawler] Found ${users.length} users with Telegram ID`);
+  try {
+    const rmc = new RMC({ moodleId });
+    const [data, error] = await rmc.v1_user_deadlines();
 
-  for (const user of users) {
-    try {
-      const rmc = new RMC({ moodleId: user.moodleId });
+    if (error) {
+      console.error(
+        `[crawler] Couldn't fetch deadlines for user ${userId} (${moodleId})`,
+        error.message,
+        error.status,
+      );
+      return;
+    }
 
-      const [data, error] = await rmc.v1_user_deadlines();
+    const currentDeadlines = await db.deadline.findOne({ userId });
 
-      if (error) {
-        console.error(
-          `[crawler] Couldn't fetch deadlines for user ${user.name} (${user.moodleId})`,
-          error.message,
-          error.status,
-        );
-        continue;
-      }
+    const newDeadlinesData = data.map((deadline) => ({
+      ...deadline,
+      notifications:
+        currentDeadlines?.data.find((d) => d.event_id === deadline.event_id)
+          ?.notifications || DEFAULT_THRESHOLDS_NOTIFICATIONS,
+    }));
 
-      const currentDeadlines = await db.deadline.findOne({ userId: user._id });
+    await db.deadline.findOneAndUpdate(
+      { userId },
+      { $set: { data: newDeadlinesData, fetchedAt: new Date() } },
+      { upsert: true, new: true },
+    );
 
-      const newDeadlinesData = data.map((deadline) => ({
-        ...deadline,
-        notifications:
-          currentDeadlines?.data.find((d) => d.event_id === deadline.event_id)
-            ?.notifications || DEFAULT_THRESHOLDS_NOTIFICATIONS,
-      }));
+    if (!currentDeadlines) {
+      return;
+    }
 
-      await db.deadline.findOneAndUpdate(
-        { userId: user._id },
-        { $set: { data: newDeadlinesData, fetchedAt: new Date() } },
-        { upsert: true, new: true },
+    const deadlineReminders: DeadlineReminderDiff[] = processDeadlines(
+      newDeadlinesData,
+      DEFAULT_THRESHOLDS,
+    );
+
+    if (!deadlineReminders.length) {
+      return;
+    }
+
+    for (const reminder of deadlineReminders) {
+      const deadline = newDeadlinesData.find(
+        (d) => d.event_id === reminder.eid,
       );
 
-      if (!currentDeadlines) {
-        continue;
-      }
-
-      const deadlineReminders: DeadlineReminderDiff[] = processDeadlines(
-        newDeadlinesData,
-        DEFAULT_THRESHOLDS,
-      );
-
-      if (!deadlineReminders.length) {
-        continue;
-      }
-
-      for (const reminder of deadlineReminders) {
-        const deadline = newDeadlinesData.find(
-          (d) => d.event_id === reminder.eid,
-        );
-
-        if (!deadline) {
-          continue;
-        }
-
-        if (deadline) {
-          for (const [_name, _date, _remaining, threshold] of reminder.d) {
-            if (!deadline.notifications[threshold]) {
-              deadline.notifications[threshold] = true;
-            }
+      if (deadline) {
+        for (const [_name, _date, _remaining, threshold] of reminder.d) {
+          if (!deadline.notifications[threshold]) {
+            deadline.notifications[threshold] = true;
           }
         }
       }
-
-      await db.deadline.findOneAndUpdate(
-        { userId: user._id },
-        { $set: { data: newDeadlinesData } },
-      );
-
-      const event: DeadlineReminderEvent = {
-        userId: user._id,
-        moodleId: user.moodleId,
-        payload: deadlineReminders,
-      };
-
-      await messageStream.add("deadline-reminder", JSON.stringify(event), {
-        maxlen: 10000,
-      });
-    } catch (error) {
-      console.error("Error executing crawler:", error);
     }
+
+    await db.deadline.findOneAndUpdate(
+      { userId },
+      { $set: { data: newDeadlinesData } },
+    );
+
+    const event: DeadlineReminderEvent = {
+      userId,
+      moodleId,
+      payload: deadlineReminders,
+    };
+
+    await addDeadlineReminderJob(event);
+  } catch (error) {
+    console.error("Error executing deadline crawler:", error);
+  }
+}
+
+deadlineWorker.on("error", (error) => {
+  console.error("Deadline Crawler Worker Error:", error);
+});
+
+export async function runCrawler() {
+  console.log(`[crawler] Starting crawler`);
+  const t0 = performance.now();
+
+  const users = await db.user.find({
+    telegramId: { $exists: true },
+    moodleId: { $exists: true },
+  });
+
+  console.log(`[crawler] Found ${users.length} users with Telegram ID`);
+
+  for (const user of users) {
+    await courseCrawlerQueue.add("fetch-courses", {
+      userId: user._id,
+      moodleId: user.moodleId,
+    });
+    await deadlineCrawlerQueue.add("fetch-deadlines", {
+      userId: user._id,
+      moodleId: user.moodleId,
+    });
   }
 
   const t1 = performance.now();
-
   console.log(
-    `[crawler] Finished fetching deadlines, took ${t1 - t0} milliseconds.`,
+    `[crawler] Finished adding all jobs to queues, took ${t1 - t0} milliseconds.`,
   );
-};
+}
+
+export async function shutdownCrawler() {
+  await courseCrawlerQueue.close();
+  await deadlineCrawlerQueue.close();
+  await courseWorker.close();
+  await deadlineWorker.close();
+}
