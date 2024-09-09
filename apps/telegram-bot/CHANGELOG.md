@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.2](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.1...remoodle/telegram-bot-v0.4.2) (2024-09-09)
+
+
+### Bug Fixes
+
+* wording ([bbd06f6](https://github.com/remoodle/heresy/commit/bbd06f632b1181b1d895243e5f213001e727f0aa))
+* wording ([a0bea7a](https://github.com/remoodle/heresy/commit/a0bea7adfbe53c2d16b406204749043a74b553c4))
+
+
+### Code Refactoring
+
+* introduce bullmq ([8c501ec](https://github.com/remoodle/heresy/commit/8c501ec6781322c7f65e1220707a07e8e715401b))
+
 ## [0.4.1](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.0...remoodle/telegram-bot-v0.4.1) (2024-09-08)
 
 
