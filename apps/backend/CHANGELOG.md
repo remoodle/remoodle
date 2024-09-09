@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.4...remoodle/backend-v1.1.5) (2024-09-09)
+
+
+### Code Refactoring
+
+* introduce bullmq ([8c501ec](https://github.com/remoodle/heresy/commit/8c501ec6781322c7f65e1220707a07e8e715401b))
+
 ## [1.1.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.3...remoodle/backend-v1.1.4) (2024-09-08)
 
 
