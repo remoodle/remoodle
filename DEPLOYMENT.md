@@ -53,6 +53,7 @@ services:
   redis:
     image: redis:7.4.0
     restart: always
+    command: redis-server --maxmemory-policy noeviction
     volumes:
       - ./data/redis:/data
     ports:
