@@ -46,11 +46,6 @@ echo "$GH_PAT" | docker login ghcr.io -u USERNAME --password-stdin
         .env.core
 ```
 
-### Database
-
-docker exec -it db-redis-1 redis-cli XGROUP CREATE stream:grade-change notifier $ MKSTREAM
-docker exec -it db-redis-1 redis-cli XGROUP CREATE stream:deadline-reminder notifier $ MKSTREAM
-
 ##### docker-compose.yml
 
 ```yml
