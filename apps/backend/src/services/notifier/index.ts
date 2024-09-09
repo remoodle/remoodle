@@ -3,11 +3,15 @@ import { env } from "../../config";
 import { runCrawler, shutdownCrawler } from "./crawler";
 import { shutdownEventHandlers } from "./event-handlers";
 
+const gracefulShutdown = (signal: string) => {
+  shutdownCrawler(signal);
+  shutdownEventHandlers(signal);
+};
+
 export async function startNotifier() {
-  process.once("SIGINT", () => {
-    shutdownCrawler();
-    shutdownEventHandlers();
-  });
+  process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+
+  process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
   if (env.isProduction) {
     // wait for 30 seconds just in case

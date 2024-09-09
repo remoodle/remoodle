@@ -201,9 +201,11 @@ export async function runCrawler() {
   );
 }
 
-export async function shutdownCrawler() {
+export async function shutdownCrawler(signal: string) {
+  console.log(`Received ${signal}, closing crawler...`);
   await courseCrawlerQueue.close();
   await deadlineCrawlerQueue.close();
   await courseWorker.close();
   await deadlineWorker.close();
+  process.exit(0);
 }

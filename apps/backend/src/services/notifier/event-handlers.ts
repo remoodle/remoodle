@@ -112,9 +112,11 @@ deadlineReminderWorker.on("error", (error) => {
   console.error("Deadline Reminder Worker Error:", error);
 });
 
-export async function shutdownEventHandlers() {
+export async function shutdownEventHandlers(signal: string) {
+  console.log(`Received ${signal}, closing event handlers...`);
   await gradeChangeQueue.close();
   await deadlineReminderQueue.close();
   await gradeChangeWorker.close();
   await deadlineReminderWorker.close();
+  process.exit(0);
 }
