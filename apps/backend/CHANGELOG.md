@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.6](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.5...remoodle/backend-v1.1.6) (2024-09-09)
+
+
+### Bug Fixes
+
+* graceful shutdown ([037f7c3](https://github.com/remoodle/heresy/commit/037f7c3da24260332753c306107752243b01bb40))
+* remove on complete and fail ([8e99384](https://github.com/remoodle/heresy/commit/8e9938466aa2179f45e31d81726a77928f28a738))
+
 ## [1.1.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.4...remoodle/backend-v1.1.5) (2024-09-09)
 
 
