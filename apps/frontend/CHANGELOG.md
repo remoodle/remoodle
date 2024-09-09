@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.7](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.6...remoodle/frontend-v1.1.7) (2024-09-09)
+
+
+### Bug Fixes
+
+* change title ([903cb2b](https://github.com/remoodle/heresy/commit/903cb2b815e46769ea4786e587d6b770211c55a3))
+* trigger front ([4879ded](https://github.com/remoodle/heresy/commit/4879ded083dac98178325275c7d2eab73ea9d768))
+
 ## [1.1.6](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.5...remoodle/frontend-v1.1.6) (2024-09-09)
 
 
