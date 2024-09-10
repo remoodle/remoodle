@@ -19,46 +19,41 @@ export const trackCourseDiff = (
     const oldCourse = oldCoursesMap.get(newCourse.course_id);
     let courseChanges: [string, number | null, number | null][] = [];
 
-    if (oldCourse) {
-      const oldGradesMap = new Map(
-        oldCourse.grades?.map((grade) => [grade.grade_id, grade]),
-      );
+    const newGrades = newCourse.grades || [];
 
-      if (newCourse.grades) {
-        for (const newGrade of newCourse.grades) {
-          // Skip grades with empty names
-          if (!newGrade.name.trim()) {
-            continue;
-          }
-
-          const oldGrade = oldGradesMap.get(newGrade.grade_id);
-          const previous = oldGrade?.graderaw ?? null;
-          const updated = newGrade.graderaw;
-
-          // Only include changes where at least one value is non-null
-          if (previous !== null || updated !== null) {
-            if (!oldGrade || previous !== updated) {
-              courseChanges.push([newGrade.name, previous, updated]);
-            }
-          }
-        }
+    for (const newGrade of newGrades) {
+      if (!newGrade.name.trim()) {
+        continue; // Skip grades with empty names
       }
 
-      if (courseChanges.length > 0) {
-        diffs.push({ c: newCourse.name, g: courseChanges });
-      }
-    } else {
-      if (!newCourse.grades) {
+      const oldGrade = oldCourse
+        ? oldCoursesMap
+            .get(newCourse.course_id)
+            ?.grades?.find((g) => g.grade_id === newGrade.grade_id)
+        : undefined;
+      const previous = oldGrade?.graderaw ?? null;
+      const updated = newGrade.graderaw;
+
+      // Explicitly ignore differences between null and 0
+      if (
+        (previous === null && updated === 0) ||
+        (previous === 0 && updated === null)
+      ) {
         continue;
       }
 
-      courseChanges = newCourse.grades
-        .filter((grade) => grade.name.trim() && grade.graderaw !== null)
-        .map((grade) => [grade.name, null, grade.graderaw]);
-
-      if (courseChanges.length > 0) {
-        diffs.push({ c: newCourse.name, g: courseChanges });
+      // Ignore if both values are null
+      if (previous === null && updated === null) {
+        continue;
       }
+
+      if (!oldGrade || previous !== updated) {
+        courseChanges.push([newGrade.name, previous, updated]);
+      }
+    }
+
+    if (courseChanges.length > 0) {
+      diffs.push({ c: newCourse.name, g: courseChanges });
     }
   }
 

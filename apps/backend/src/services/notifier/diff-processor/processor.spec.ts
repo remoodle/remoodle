@@ -73,6 +73,36 @@ describe("grades notifications", () => {
     });
   });
 
+  test("trackCourseDiff: do not include [_, null, 0] diffs", () => {
+    const oldData: ExtendedCourse[] = [];
+
+    const newData: ExtendedCourse[] = fromPartial([
+      {
+        course_id: 4496,
+        name: "Introduction to SRE | Meirmanova Aigul",
+        grades: [
+          {
+            grade_id: 89083,
+            name: "Final exam documentation submission",
+            graderaw: null,
+          },
+          {
+            grade_id: 89084,
+            name: "Midterm",
+            graderaw: 0,
+          },
+        ],
+      },
+    ]);
+
+    const diffs: GradeChangeDiff[] = [];
+
+    expect(trackCourseDiff(oldData, newData)).toStrictEqual({
+      diffs,
+      hasDiff: false,
+    });
+  });
+
   test("trackCourseDiff: handle empty grade names and null values", () => {
     const oldData: ExtendedCourse[] = [];
 
@@ -93,10 +123,7 @@ describe("grades notifications", () => {
     const expected: GradeChangeDiff[] = [
       {
         c: "Research Methods and Tools | Omirgaliyev Ruslan",
-        g: [
-          ["Attendance", null, 66.6667],
-          ["Register Term", null, 0],
-        ],
+        g: [["Attendance", null, 66.6667]],
       },
     ];
 
@@ -141,8 +168,8 @@ describe("grades notifications", () => {
     expect(formatCourseDiffs(diffs)).toMatchInlineSnapshot(`
       "Updated grades:
 
-      Introduction to SRE:
-            Final exam documentation submission <b>null → 100</b>
+      📘 Introduction to SRE:
+        - Final exam documentation submission: <b>N/A → 100</b>
       "
     `);
   });
@@ -165,12 +192,12 @@ describe("grades notifications", () => {
     expect(formatCourseDiffs(diffs)).toMatchInlineSnapshot(`
       "Updated grades:
 
-      Course 1:
-            Midterm <b>null → 100</b>
+      📘 Course 1:
+        - Midterm: <b>N/A → 100</b>
 
-      Course 2:
-            Midterm <b>null → 100</b>
-            Endterm <b>null → 100</b>
+      📘 Course 2:
+        - Midterm: <b>N/A → 100</b>
+        - Endterm: <b>N/A → 100</b>
       "
     `);
   });
@@ -289,18 +316,27 @@ describe("deadlines notifications", () => {
       {
         eid: 515515,
         c: "Research Methods and Tools | Omirgaliyev Ruslan",
+        d: [
+          ["Assignment 1 is due", 1726426740000, "06:35:00", "12 hours"],
+          ["Assignment 2 is due", 1726426740000, "06:35:00", "12 hours"],
+        ],
+      },
+      {
+        eid: 515515,
+        c: "Writing | Barak Omaba",
         d: [["Assignment 1 is due", 1726426740000, "06:35:00", "12 hours"]],
       },
     ];
 
     expect(formatDeadlineReminders(diffs)).toMatchInlineSnapshot(`
-      "Upcoming deadlines:
+      "🔔 Upcoming deadlines 🔔
 
-        Research Methods and Tools | Omirgaliyev Ruslan:
-            Assignment 1 is due
-            Sunday, September 15, 2024 at 06:59 PM
-            Remaining: 06:35:00
-            ___threshold: 12 hours
+      🗓 Research Methods and Tools | Omirgaliyev Ruslan
+        - Assignment 1 is due: 06:35:00, Sun, Sep 15, 2024, 18:59
+        - Assignment 2 is due: 06:35:00, Sun, Sep 15, 2024, 18:59
+
+      🗓 Writing | Barak Omaba
+        - Assignment 1 is due: 06:35:00, Sun, Sep 15, 2024, 18:59
 
       "
     `);
