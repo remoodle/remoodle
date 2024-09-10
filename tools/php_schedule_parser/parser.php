@@ -12,23 +12,11 @@ const WEEK_DAYS = [
     'Wednesday',
     'Thursday',
     'Friday',
-    'Sunday',
-    'Saturday'
+    'Saturday',
+    'Sunday'
 ];
 const LESSON_TYPE_PRACTICE = 'practice';
 const LESSON_TYPE_LECTURE = 'lecture';
-
-$parser = new Parser();
-$pdf = $parser->parseFile(FILE_PATH);
-$text = $pdf->getText();
-// var_dump($pdf->extractXMPMetadata());
-$lines = explode("\n", $text);
-$groups = [];
-
-$currentGroup = null;
-$currentWeekDay = null;
-$prevIndex = null;
-$prevSeq = false;
 
 function extractDataFromString(string $data): array
 {
@@ -87,89 +75,6 @@ function extractDataFromString(string $data): array
     ];
 }
 
-for($I = 0; $I < count($lines); $I++) {
-    $line = $lines[$I];
-    if(strlen(trim($line)) < 1) {
-        continue;
-    }
-
-    $line = preg_replace('/[ ]{2,}|[\t]/', ' ', trim($line));
-    if(str_contains($line, "Group ")) {
-        $currentGroup = explode(" ", $line)[1];
-        $currentWeekDay = null;
-        $prevIndex = null;
-        continue;
-    }
-
-    foreach(WEEK_DAYS as $weekDay) {
-        if(str_contains($line, $weekDay) && count(explode(" ", $line)) === 1) {
-            $currentWeekDay = $weekDay;
-            continue 2;
-        }
-    }
-
-    if($currentWeekDay === null) {
-        continue;
-    }
-
-    $index = extractTime($line);
-    if($index === false && $prevIndex === null) {
-        continue;
-    }
-
-    if($index === false && $prevIndex !== null) {
-        $elemsL = [
-            'time' => $prevIndex,
-            'items' => []
-        ];
-        $elemsL['items'][] = $groups[$currentGroup][$currentWeekDay][$prevIndex];
-        $localI = $I;
-        $cc = 0;
-        $groups[$currentGroup][$currentWeekDay][$prevIndex] = [];
-        while(extractTime($lines[$localI]) === false) {
-            $localLine = trim($lines[$localI]);
-            if(strlen(($localLine)) < 1) {
-                $localI++;
-                continue;
-            }
-            $localLine = preg_replace('/[ ]{2,}|[\t]/', ' ', trim($localLine));
-
-            if($localLine === LESSON_TYPE_LECTURE || $localLine === LESSON_TYPE_PRACTICE) {
-                $cc++;
-            }
-            $elemsL['items'][] = $localLine;
-            $localI++;
-        }
-
-        if($cc === 0) {
-            $groups[$currentGroup][$currentWeekDay][$prevIndex] = trim(implode(" ", $elemsL['items']));
-        } else {
-            for($j = 0; $j < $cc; $j++) {
-                $groups[$currentGroup][$currentWeekDay][$prevIndex][] = trim(
-                    trim($elemsL['items'][0 + ($j)]) . ' ' .
-                    trim($elemsL['items'][(1 * $cc) + ($j)]) . ' ' .
-                    trim($elemsL['items'][(2 * $cc) + ($j)]) . ' ' .
-                    trim($elemsL['items'][(3 * $cc) + ($j)])
-                );
-            }
-        }
-        $prevSeq = !$prevSeq;
-        $I = $localI;
-        $prevIndex = null;
-        continue;
-    }
-
-    if($index !== false) {
-        $prevSeq = false;
-    }
-
-    if($currentGroup !== null && trim($line) !== '' && $index !== false) {
-        $prevIndex = $index;
-        $groups[$currentGroup][$currentWeekDay][$index] = trim(substr($line, 11));
-        $index = false;
-    }
-}
-
 function extractTime(string $line): string|false
 {
     if(strlen($line) < 12) {
@@ -189,23 +94,125 @@ function extractTime(string $line): string|false
     return false;
 }
 
-foreach($groups as $group => $weekRasp) {
-    foreach($weekRasp as $weekDay => $dayRasp) {
-        foreach($dayRasp as $time => $value) {
-            if(is_string($value)) {
-                $groups[$group][$weekDay][$time] = extractDataFromString($value);
+$parser = new Parser();
+$pdf = $parser->parseFile(FILE_PATH);
+$text = $pdf->getText();
+$lines = explode("\n", $text);
+
+$flatSchedule = [];
+$currentGroup = null;
+$currentWeekDay = null;
+$prevIndex = null;
+$prevSeq = false;
+
+for ($i = 0; $i < count($lines); $i++) {
+    $line = trim(preg_replace('/[ ]{2,}|[\t]/', ' ', $lines[$i]));
+    
+    if (strlen($line) < 1) {
+        continue;
+    }
+
+    if (str_contains($line, "Group ")) {
+        $currentGroup = explode(" ", $line)[1];
+        $currentWeekDay = null;
+        $prevIndex = null;
+        continue;
+    }
+
+    foreach (WEEK_DAYS as $weekDay) {
+        if (str_contains($line, $weekDay) && count(explode(" ", $line)) === 1) {
+            $currentWeekDay = $weekDay;
+            continue 2;
+        }
+    }
+
+    if ($currentWeekDay === null || $currentGroup === null) {
+        continue;
+    }
+
+    $index = extractTime($line);
+    if ($index === false && $prevIndex === null) {
+        continue;
+    }
+
+    if ($index === false && $prevIndex !== null) {
+        $elemsL = [
+            'time' => $prevIndex,
+            'items' => []
+        ];
+        $localI = $i;
+        $cc = 0;
+        while ($localI < count($lines) && extractTime($lines[$localI]) === false) {
+            $localLine = trim(preg_replace('/[ ]{2,}|[\t]/', ' ', $lines[$localI]));
+            if (strlen($localLine) < 1) {
+                $localI++;
                 continue;
             }
+            if ($localLine === LESSON_TYPE_LECTURE || $localLine === LESSON_TYPE_PRACTICE) {
+                $cc++;
+            }
+            $elemsL['items'][] = $localLine;
+            $localI++;
+        }
 
-            if(is_array($value)) {
-                $groups[$group][$weekDay][$time] = [];
-                foreach($value as $valueStr) {
-                    $groups[$group][$weekDay][$time][] = extractDataFromString($valueStr);
-                }
+        if ($cc === 0) {
+            $lessonInfo = extractDataFromString(implode(" ", $elemsL['items']));
+            list($startTime, $endTime) = explode('-', $elemsL['time']);
+            $flatSchedule[$currentGroup][] = [
+                'start' => "$currentWeekDay $startTime",
+                'end' => "$currentWeekDay $endTime",
+                'summary' => $lessonInfo['courseName'],
+                'description' => "Type: {$lessonInfo['type']}\nTeacher: {$lessonInfo['teacher']}",
+                'location' => $lessonInfo['isOnline'] ? 'Online' : $lessonInfo['cabinet'],
+                'url' => $lessonInfo['isOnline'] ? 'https://learn.astanait.edu.kz/' : ''
+            ];
+        } else {
+            for ($j = 0; $j < $cc; $j++) {
+                $lessonData = trim(
+                    (isset($elemsL['items'][0 + ($j)]) ? trim($elemsL['items'][0 + ($j)]) : '') . ' ' .
+                    (isset($elemsL['items'][(1 * $cc) + ($j)]) ? trim($elemsL['items'][(1 * $cc) + ($j)]) : '') . ' ' .
+                    (isset($elemsL['items'][(2 * $cc) + ($j)]) ? trim($elemsL['items'][(2 * $cc) + ($j)]) : '') . ' ' .
+                    (isset($elemsL['items'][(3 * $cc) + ($j)]) ? trim($elemsL['items'][(3 * $cc) + ($j)]) : '')
+                );
+                $lessonInfo = extractDataFromString($lessonData);
+                list($startTime, $endTime) = explode('-', $elemsL['time']);
+                $flatSchedule[$currentGroup][] = [
+                    'start' => "$currentWeekDay $startTime",
+                    'end' => "$currentWeekDay $endTime",
+                    'summary' => $lessonInfo['courseName'],
+                    'description' => "Type: {$lessonInfo['type']}\nTeacher: {$lessonInfo['teacher']}",
+                    'location' => $lessonInfo['isOnline'] ? 'Online' : $lessonInfo['cabinet'],
+                    'url' => $lessonInfo['isOnline'] ? 'https://learn.astanait.edu.kz/' : ''
+                ];
             }
         }
+        $prevSeq = !$prevSeq;
+        $i = $localI;
+        $prevIndex = null;
+        continue;
+    }
+
+    if ($index !== false) {
+        $prevSeq = false;
+    }
+
+    if ($currentGroup !== null && trim($line) !== '' && $index !== false) {
+        $prevIndex = $index;
+        $lessonData = trim(substr($line, 11));
+        $lessonInfo = extractDataFromString($lessonData);
+        list($startTime, $endTime) = explode('-', $index);
+        $flatSchedule[$currentGroup][] = [
+            'start' => "$currentWeekDay $startTime",
+            'end' => "$currentWeekDay $endTime",
+            'summary' => $lessonInfo['courseName'],
+            'description' => "Type: {$lessonInfo['type']}\nTeacher: {$lessonInfo['teacher']}",
+            'location' => $lessonInfo['isOnline'] ? 'Online' : $lessonInfo['cabinet'],
+            'url' => $lessonInfo['isOnline'] ? 'https://learn.astanait.edu.kz/' : ''
+        ];
+        $index = false;
     }
 }
 
-
-file_put_contents('data.json', str_replace("\t", " ", json_encode($groups, JSON_PRETTY_PRINT)));
+// Output the flat schedule for all groups
+file_put_contents('data.json', str_replace("\t", " ", json_encode($flatSchedule, JSON_PRETTY_PRINT)));
+echo json_encode($flatSchedule, JSON_PRETTY_PRINT);
