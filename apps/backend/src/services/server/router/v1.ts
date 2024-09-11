@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { env } from "../../../config";
 import { db } from "../../../library/db";
+import { requestAlertWorker } from "../../../library/hc";
 import type { IUser } from "../../../library/db";
 import { RMC } from "../../../library/rmc-sdk";
 
@@ -14,7 +15,6 @@ import {
   verifyTelegramData,
 } from "../helpers/crypto";
 import { issueTokens } from "../helpers/jwt";
-import { requestAlertWorker } from "../helpers/hc";
 
 import { authMiddleware } from "../middleware/auth";
 

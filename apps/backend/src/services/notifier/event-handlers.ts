@@ -1,5 +1,6 @@
 import { Queue, Worker, Job } from "bullmq";
 import { Telegram } from "@remoodle/utils";
+import { config } from "../../config";
 import { db } from "../../library/db";
 import type {
   GradeChangeEvent,
@@ -9,7 +10,6 @@ import {
   formatCourseDiffs,
   formatDeadlineReminders,
 } from "./diff-processor/formatter";
-import { config } from "../../config";
 
 export async function sendTelegramMessage(chatId: number, message: string) {
   const telegram = new Telegram(config.telegram.token, chatId);

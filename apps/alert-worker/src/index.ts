@@ -4,7 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { Telegram } from "@remoodle/utils";
 
-const zTopicType = z.enum(["users", "users2", "dev", "errors"]);
+const zTopicType = z.enum(["users", "users2", "dev", "errors", "notifier"]);
 
 type TopicType = z.infer<typeof zTopicType>;
 
@@ -13,6 +13,7 @@ const TOPICS: Record<TopicType, number> = {
   users2: 329,
   dev: 327,
   errors: 309,
+  notifier: 500,
 } as const;
 
 const app = new Hono<{
