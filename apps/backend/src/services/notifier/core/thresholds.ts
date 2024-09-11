@@ -1,22 +1,12 @@
 import { getTimeLeft } from "@remoodle/utils";
 
 export const DEFAULT_THRESHOLDS = [
-  "30 minutes",
-  "1 hour",
   "3 hours",
   "6 hours",
-  "12 hours",
   "1 day",
-
-  // "2 days",
-  // "3 days",
-  // "4 days",
-  // "5 days",
-  // "6 days",
-  // "7 days",
-  // "8 days",
-  // "9 days",
-];
+  "2 days",
+  "3 days",
+] as const;
 
 export const DEFAULT_THRESHOLDS_MAP = Object.fromEntries(
   DEFAULT_THRESHOLDS.map((value) => [value, false]),

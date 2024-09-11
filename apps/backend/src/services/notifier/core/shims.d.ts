@@ -12,9 +12,12 @@ export type GradeChangeEvent = {
 };
 
 export type DeadlineReminderDiff = {
+  // event id
   eid: number;
   // course name
   c: string;
+  // course id
+  cid: number;
   // [name, date, remaining, __threshold]
   d: [string, number, string, string][];
 };

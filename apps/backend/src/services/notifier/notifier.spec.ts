@@ -210,7 +210,7 @@ type DeadlineData = Deadline & {
 describe("deadlines notifications", () => {
   vi.setSystemTime(new Date("2024-09-15T12:24:00"));
 
-  test("processDeadlines", () => {
+  test("processDeadlines: default", () => {
     const deadlines: DeadlineData[] = [
       {
         course_id: 4911,
@@ -224,7 +224,10 @@ describe("deadlines notifications", () => {
           assignment_id: 43254,
           cmid: 139102,
           duedate: 1726426740, // Sun Sep 15 2024 18:59:00 GMT+0000
-          grade: 100,
+          grade: null,
+          gradeEntity: {
+            graderaw: null,
+          },
         },
         notifications: {},
       },
@@ -240,7 +243,10 @@ describe("deadlines notifications", () => {
           assignment_id: 43255,
           cmid: 139106,
           duedate: 1726167600,
-          grade: 100,
+          grade: null,
+          gradeEntity: {
+            graderaw: null,
+          },
         },
         notifications: {},
       },
@@ -248,6 +254,7 @@ describe("deadlines notifications", () => {
 
     const diff: DeadlineReminderDiff[] = [
       {
+        cid: 4911,
         eid: 515515,
         c: "Research Methods and Tools | Omirgaliyev Ruslan",
         d: [["Assignment 1 is due", 1726426740000, "06:35:00", "12 hours"]],
@@ -259,7 +266,169 @@ describe("deadlines notifications", () => {
     ).toStrictEqual(diff);
   });
 
-  test("not started thresholds", () => {
+  test("processDeadlines: should be able to group deadlines by course", () => {
+    const deadlines: DeadlineData[] = [
+      {
+        event_id: 515578,
+        timestart: 1726426740,
+        instance: 139106,
+        name: "practice 1 is due",
+        visible: false,
+        course_id: 4963,
+        course_name: "Computer Networks | Akerke Auelbayeva",
+        assignment: {
+          assignment_id: 43255,
+          cmid: 139106,
+          duedate: 1726426740, // Sun Sep 15 2024 18:59:00 GMT+0000
+          grade: null,
+          gradeEntity: {
+            graderaw: null,
+          },
+        },
+        notifications: {},
+      },
+      {
+        event_id: 123123,
+        timestart: 1726426740,
+        instance: 139106,
+        name: "practice 2 is due",
+        visible: false,
+        course_id: 4963,
+        course_name: "Computer Networks | Akerke Auelbayeva",
+        assignment: {
+          assignment_id: 43255,
+          cmid: 139106,
+          duedate: 1726426740,
+          grade: null,
+          gradeEntity: {
+            graderaw: null,
+          },
+        },
+        notifications: {},
+      },
+    ];
+
+    const diff: DeadlineReminderDiff[] = [
+      {
+        cid: 4963,
+        c: "Computer Networks | Akerke Auelbayeva",
+        d: [
+          ["practice 1 is due", 1726426740000, "06:35:00", "12 hours"],
+          ["practice 2 is due", 1726426740000, "06:35:00", "12 hours"],
+        ],
+        eid: 515578,
+      },
+    ];
+
+    expect(
+      processDeadlines(deadlines, ["6 hours", "12 hours", "24 hours"]),
+    ).toStrictEqual(diff);
+  });
+
+  test("processDeadlines: should sort deadlines by due date and exclude graded assignments", () => {
+    const deadlines: DeadlineData[] = [
+      {
+        event_id: 1,
+        course_name: "Course A",
+        name: "Assignment 1",
+        timestart: Math.floor(Date.now() / 1000) + 3600 * 10, // 10 hours from now
+        instance: 139102,
+        visible: true,
+        course_id: 1,
+        notifications: {},
+        assignment: {
+          assignment_id: 1,
+          cmid: 1,
+          duedate: 1726426740,
+          grade: 100,
+          gradeEntity: {
+            graderaw: 100,
+          },
+        },
+      },
+      {
+        event_id: 2,
+        course_name: "Course B",
+        name: "Assignment 2",
+        timestart: Math.floor(Date.now() / 1000) + 3600 * 8, // 8 hours from now
+        instance: 139102,
+        visible: true,
+        course_id: 2,
+        notifications: {},
+      },
+      {
+        event_id: 3,
+        course_name: "Course C",
+        name: "Assignment 3",
+        timestart: Math.floor(Date.now() / 1000) + 3600 * 12, // 12 hours from now
+        instance: 139102,
+        visible: true,
+        course_id: 3,
+        notifications: {},
+      },
+    ];
+
+    const thresholds = ["6 hours", "12 hours", "24 hours"];
+
+    const result = processDeadlines(deadlines, thresholds);
+
+    expect(result).toHaveLength(2);
+    expect(result[0].eid).toBe(2); // Assignment 2 should be first
+    expect(result[1].eid).toBe(3); // Assignment 3 should be second
+    expect(result.some((r) => r.eid === 1)).toBe(false); // Assignment 1 should be excluded
+  });
+
+  test("processDeadlines: should handle empty deadlines array", () => {
+    const deadlines: DeadlineData[] = [];
+
+    const thresholds = ["6 hours", "12 hours", "24 hours"];
+
+    const result = processDeadlines(deadlines, thresholds);
+    expect(result).toHaveLength(0);
+  });
+
+  test("processDeadlines: should handle all past deadlines", () => {
+    const deadlines: DeadlineData[] = [
+      {
+        event_id: 1,
+        course_name: "Course A",
+        name: "Past Assignment",
+        timestart: Math.floor(Date.now() / 1000) - 3600, // 1 hour ago
+        instance: 139102,
+        visible: true,
+        course_id: 1,
+        notifications: {},
+      },
+    ];
+
+    const thresholds = ["6 hours", "12 hours", "24 hours"];
+
+    const result = processDeadlines(deadlines, thresholds);
+
+    expect(result).toHaveLength(0);
+  });
+
+  test("processDeadlines: should not include deadlines with notifications already sent", () => {
+    const deadlines: DeadlineData[] = [
+      {
+        event_id: 1,
+        course_name: "Course A",
+        name: "Assignment 1",
+        timestart: Math.floor(Date.now() / 1000) + 3600 * 10, // 10 hours from now
+        instance: 139102,
+        visible: true,
+        course_id: 1,
+        notifications: { "12 hours": true },
+      },
+    ];
+
+    const thresholds = ["6 hours", "12 hours", "24 hours"];
+
+    const result = processDeadlines(deadlines, thresholds);
+    expect(result).toHaveLength(0);
+  });
+
+  test("processDeadlines: should handle not started thresholds", () => {
     const deadlines: DeadlineData[] = [
       {
         course_id: 4911,
@@ -273,7 +442,10 @@ describe("deadlines notifications", () => {
           assignment_id: 43254,
           cmid: 139102,
           duedate: 1726426740, // Sun Sep 15 2024 18:59:00 GMT+0000
-          grade: 100,
+          grade: null,
+          gradeEntity: {
+            graderaw: null,
+          },
         },
         notifications: {},
       },
@@ -284,36 +456,10 @@ describe("deadlines notifications", () => {
     expect(processDeadlines(deadlines, ["6 hours"])).toStrictEqual(diff);
   });
 
-  test("checked thresholds", () => {
-    const deadlines: DeadlineData[] = [
-      {
-        course_id: 4911,
-        course_name: "Research Methods and Tools | Omirgaliyev Ruslan",
-        event_id: 515515,
-        instance: 139102,
-        name: "Assignment 1 is due",
-        timestart: 1726426740,
-        visible: false,
-        assignment: {
-          assignment_id: 43254,
-          cmid: 139102,
-          duedate: 1726426740, // Sun Sep 15 2024 18:59:00 GMT+0000
-          grade: 100,
-        },
-        notifications: {
-          "12 hours": true,
-        },
-      },
-    ];
-
-    const diff: DeadlineReminderDiff[] = [];
-
-    expect(processDeadlines(deadlines, ["12 hours"])).toStrictEqual(diff);
-  });
-
-  test("formatDeadlineReminders", () => {
+  test("formatDeadlineReminders: multiple courses and deadlines", () => {
     const diffs: DeadlineReminderDiff[] = [
       {
+        cid: 4911,
         eid: 515515,
         c: "Research Methods and Tools | Omirgaliyev Ruslan",
         d: [
@@ -322,7 +468,8 @@ describe("deadlines notifications", () => {
         ],
       },
       {
-        eid: 515515,
+        cid: 4963,
+        eid: 34123,
         c: "Writing | Barak Omaba",
         d: [["Assignment 1 is due", 1726426740000, "06:35:00", "12 hours"]],
       },

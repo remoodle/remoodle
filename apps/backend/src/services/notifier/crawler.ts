@@ -1,6 +1,5 @@
 import { Queue, Worker, Job } from "bullmq";
 import { db } from "../../library/db";
-import { requestAlertWorker } from "../../library/hc";
 import { RMC } from "../../library/rmc-sdk";
 import type {
   GradeChangeEvent,

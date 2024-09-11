@@ -38,7 +38,10 @@ export type Deadline = {
     assignment_id: number;
     cmid: number;
     duedate: number;
-    grade: number;
+    grade: number | null;
+    gradeEntity: {
+      graderaw: number | null;
+    };
   };
 };
 
