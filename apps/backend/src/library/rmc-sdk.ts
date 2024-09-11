@@ -12,7 +12,7 @@ import type {
   MoodleUser,
   HealthResponse,
 } from "@remoodle/types";
-import { config, env } from "../../config";
+import { config, env } from "../config";
 
 type Auth = { moodleId: number } | { moodleToken: string };
 

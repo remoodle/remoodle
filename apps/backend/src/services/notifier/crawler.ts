@@ -6,13 +6,13 @@ import type {
   GradeChangeEvent,
   DeadlineReminderEvent,
   DeadlineReminderDiff,
-} from "./diff-processor/shims";
-import { trackCourseDiff, processDeadlines } from "./diff-processor/checker";
+} from "./core/shims";
+import { trackCourseDiff, processDeadlines } from "./core/checker";
 import {
   DEFAULT_THRESHOLDS,
   DEFAULT_THRESHOLDS_NOTIFICATIONS,
-} from "./diff-processor/thresholds";
-import { addGradeChangeJob, addDeadlineReminderJob } from "./event-handlers";
+} from "./core/thresholds";
+import { addGradeChangeJob, addDeadlineReminderJob } from "./events";
 
 // course crawler
 

@@ -1,7 +1,7 @@
 import cron from "node-cron";
 import { env } from "../../config";
 import { runCrawler, shutdownCrawler } from "./crawler";
-import { shutdownEventHandlers } from "./event-handlers";
+import { shutdownEventHandlers } from "./events";
 
 const gracefulShutdown = (signal: string) => {
   shutdownCrawler(signal);

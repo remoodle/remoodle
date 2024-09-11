@@ -3,10 +3,11 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
+import type { IUser } from "@remoodle/db";
+
 import { env } from "../../../config";
 import { db } from "../../../library/db";
 import { requestAlertWorker } from "../../../library/hc";
-import type { IUser } from "../../../library/db";
 import { RMC } from "../../../library/rmc-sdk";
 
 import {

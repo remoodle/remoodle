@@ -2,14 +2,8 @@ import { Queue, Worker, Job } from "bullmq";
 import { Telegram } from "@remoodle/utils";
 import { config } from "../../config";
 import { db } from "../../library/db";
-import type {
-  GradeChangeEvent,
-  DeadlineReminderEvent,
-} from "./diff-processor/shims";
-import {
-  formatCourseDiffs,
-  formatDeadlineReminders,
-} from "./diff-processor/formatter";
+import type { GradeChangeEvent, DeadlineReminderEvent } from "./core/shims";
+import { formatCourseDiffs, formatDeadlineReminders } from "./core/formatter";
 
 export async function sendTelegramMessage(chatId: number, message: string) {
   const telegram = new Telegram(config.telegram.token, chatId);
