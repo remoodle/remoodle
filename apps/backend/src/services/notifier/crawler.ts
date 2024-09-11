@@ -8,10 +8,7 @@ import type {
   DeadlineReminderDiff,
 } from "./core/shims";
 import { trackCourseDiff, processDeadlines } from "./core/checker";
-import {
-  DEFAULT_THRESHOLDS,
-  DEFAULT_THRESHOLDS_NOTIFICATIONS,
-} from "./core/thresholds";
+import { DEFAULT_THRESHOLDS, DEFAULT_THRESHOLDS_MAP } from "./core/thresholds";
 import { addGradeChangeJob, addDeadlineReminderJob } from "./events";
 
 // course crawler
@@ -117,7 +114,7 @@ async function processFetchDeadlinesJob(
       ...deadline,
       notifications:
         currentDeadlines?.data.find((d) => d.event_id === deadline.event_id)
-          ?.notifications || DEFAULT_THRESHOLDS_NOTIFICATIONS,
+          ?.notifications || DEFAULT_THRESHOLDS_MAP,
     }));
 
     await db.deadline.findOneAndUpdate(
