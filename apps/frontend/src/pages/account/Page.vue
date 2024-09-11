@@ -31,6 +31,7 @@ const settings = ref<{
       gradeUpdates: boolean;
       deadlineReminders: boolean;
     };
+    deadlineThresholds: string[];
   };
 }>();
 

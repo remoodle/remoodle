@@ -367,6 +367,7 @@ const commonProtectedRoutes = new Hono<{
           deadlineReminders:
             user.notificationSettings.telegram.deadlineReminders,
         },
+        deadlineThresholds: user.notificationSettings.deadlineThresholds,
       },
     });
   })
@@ -379,6 +380,7 @@ const commonProtectedRoutes = new Hono<{
         password: z.string().optional(),
         telegramDeadlineReminders: z.boolean().optional(),
         telegramGradeUpdates: z.boolean().optional(),
+        deadlineThresholds: z.array(z.string()).optional(),
       }),
     ),
     async (ctx) => {
@@ -389,6 +391,7 @@ const commonProtectedRoutes = new Hono<{
         password,
         telegramDeadlineReminders,
         telegramGradeUpdates,
+        deadlineThresholds,
       } = ctx.req.valid("json");
 
       try {
@@ -447,6 +450,11 @@ const commonProtectedRoutes = new Hono<{
             // if (!telegramDeadlineReminders) {
             //   await db.deadline.deleteMany({ userId });
             // }
+          }
+
+          if (deadlineThresholds !== undefined) {
+            notificationFields["notificationSettings.deadlineThresholds"] =
+              deadlineThresholds;
           }
 
           await db.user.updateOne(

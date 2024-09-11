@@ -7,7 +7,7 @@ import type {
   DeadlineReminderDiff,
 } from "./core/shims";
 import { trackCourseDiff, processDeadlines } from "./core/checker";
-import { DEFAULT_THRESHOLDS, DEFAULT_THRESHOLDS_MAP } from "./core/thresholds";
+import { createBlankThresholdsMap } from "./core/thresholds";
 import { addGradeChangeJob, addDeadlineReminderJob } from "./events";
 
 // course crawler
@@ -107,13 +107,21 @@ async function processFetchDeadlinesJob(
       return;
     }
 
+    const user = await db.user.findOne({ moodleId });
+
+    if (!user) {
+      throw new Error(`User not found for ${userId} (${moodleId})`);
+    }
+
+    const customThresholds = user.notificationSettings.deadlineThresholds;
+
     const currentDeadlines = await db.deadline.findOne({ userId });
 
     const newDeadlinesData = data.map((deadline) => ({
       ...deadline,
       notifications:
         currentDeadlines?.data.find((d) => d.event_id === deadline.event_id)
-          ?.notifications || DEFAULT_THRESHOLDS_MAP,
+          ?.notifications || createBlankThresholdsMap(customThresholds),
     }));
 
     await db.deadline.findOneAndUpdate(
@@ -128,7 +136,7 @@ async function processFetchDeadlinesJob(
 
     const deadlineReminders: DeadlineReminderDiff[] = processDeadlines(
       newDeadlinesData,
-      DEFAULT_THRESHOLDS,
+      customThresholds,
     );
 
     if (!deadlineReminders.length) {

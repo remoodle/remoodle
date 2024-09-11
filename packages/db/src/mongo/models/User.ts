@@ -2,11 +2,20 @@ import type { Model } from "mongoose";
 import { Schema, model } from "mongoose";
 import { v7 as uuidv7 } from "uuid";
 
+export const DEFAULT_THRESHOLDS = [
+  "3 hours",
+  "6 hours",
+  "1 day",
+  "2 days",
+  "3 days",
+];
+
 type NotificationSettings = {
   telegram: {
     deadlineReminders: boolean;
     gradeUpdates: boolean;
   };
+  deadlineThresholds: string[];
 };
 
 export type IUser = {
@@ -28,6 +37,11 @@ const notificationSettingsSchema = new Schema<NotificationSettings>(
     telegram: {
       deadlineReminders: { type: Boolean, default: true },
       gradeUpdates: { type: Boolean, default: true },
+    },
+    deadlineThresholds: {
+      type: [String],
+      default: DEFAULT_THRESHOLDS,
+      required: true,
     },
   },
   { _id: false },

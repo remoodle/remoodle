@@ -24,6 +24,7 @@ export const formatDeadlineReminders = (
 
   for (const diff of data) {
     message += `🗓 ${diff.c}\n`;
+
     for (const [name, date, remaining, _threshold] of diff.d) {
       const formattedDate = new Date(date).toLocaleString("en-US", {
         weekday: "short",

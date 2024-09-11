@@ -89,7 +89,7 @@ export const processDeadlines = (
       if (!reminderMap[course_id]) {
         reminderMap[course_id] = {
           cid: course_id,
-          eid: event_id, // This will be the event_id of the first deadline for this course
+          eid: event_id,
           c: course_name,
           d: [],
         };
@@ -98,5 +98,10 @@ export const processDeadlines = (
     }
   }
 
-  return Object.values(reminderMap);
+  // Sort the courses by their earliest deadline
+  return Object.values(reminderMap).sort((a, b) => {
+    const aEarliest = Math.min(...a.d.map((d) => d[1]));
+    const bEarliest = Math.min(...b.d.map((d) => d[1]));
+    return aEarliest - bEarliest;
+  });
 };
