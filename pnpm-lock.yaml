@@ -492,43 +492,6 @@ importers:
         specifier: ^5.5.3
         version: 5.5.4
 
-  tools/moodbot_transfer:
-    dependencies:
-      '@remoodle/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      bullmq:
-        specifier: ^5.12.14
-        version: 5.12.14
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
-      envalid:
-        specifier: ^8.0.0
-        version: 8.0.0
-      uuid:
-        specifier: ^10.0.0
-        version: 10.0.0
-    devDependencies:
-      '@remoodle/alert-worker':
-        specifier: workspace:*
-        version: link:../../apps/alert-worker
-      '@remoodle/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
-      '@remoodle/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-      '@types/node':
-        specifier: ^20.11.17
-        version: 20.14.15
-      tsx:
-        specifier: ^4.7.1
-        version: 4.17.0
-      typescript:
-        specifier: ^5.5.3
-        version: 5.5.4
-
 packages:
 
   '@alloc/quick-lru@5.2.0':
