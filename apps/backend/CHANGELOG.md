@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.0...remoodle/backend-v1.2.1) (2024-09-12)
+
+
+### Bug Fixes
+
+* bump lcv ([4c6c311](https://github.com/remoodle/heresy/commit/4c6c311caee8afa5d295e5dbec03b99debdc7db7))
+
 ## [1.2.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.7...remoodle/backend-v1.2.0) (2024-09-12)
 
 
