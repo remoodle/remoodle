@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.2.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.7...remoodle/frontend-v1.2.0) (2024-09-12)
+
+
+### Features
+
+* reminder thresholds settings ([a34b8a6](https://github.com/remoodle/heresy/commit/a34b8a6f261ca1cc9a6119a7f03b2c33d0424a79))
+
+
+### Bug Fixes
+
+* proper use of external urls ([77c7ab8](https://github.com/remoodle/heresy/commit/77c7ab8dafdbe56381bbc427f0ab5f73a17d541b))
+* wording ([36d9fe4](https://github.com/remoodle/heresy/commit/36d9fe47bfc02d18b366e63140ac3d41dfa4c660))
+* wrap app in config provider ([1caad80](https://github.com/remoodle/heresy/commit/1caad80088374a2d9b3213074819c64de2125a1c))
+
+
+### Miscellaneous Chores
+
+* replace boring avatars library ([38b107c](https://github.com/remoodle/heresy/commit/38b107cb5aea403b85cf580202ff2053b5e713b5))
+
+
+### Code Refactoring
+
+* frontend ([0e76f78](https://github.com/remoodle/heresy/commit/0e76f7804f9b1710b14068b17486ed8181af1892))
+* unified footer ([c65e352](https://github.com/remoodle/heresy/commit/c65e352ad33b7484bf0a7717673fdc80dcc0a108))
+
 ## [1.1.7](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.6...remoodle/frontend-v1.1.7) (2024-09-09)
 
 
