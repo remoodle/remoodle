@@ -140,12 +140,12 @@ const THRESHOLDS = {
               "
               id="gradeUpdates"
             />
-            <Label for="gradeUpdates">Telegram Grade Updates</Label>
+            <Label for="gradeUpdates">Telegram updates</Label>
           </div>
         </div>
 
         <div class="flex flex-col gap-3">
-          <span class="text-lg font-medium">Daeadlines</span>
+          <span class="text-lg font-medium">Deadlines</span>
           <div class="flex items-center space-x-2">
             <Switch
               :checked="notifications.telegram.deadlineReminders"
@@ -155,7 +155,7 @@ const THRESHOLDS = {
               "
               id="deadlineReminders"
             />
-            <Label for="deadlineReminders">Telegram Deadline Reminders</Label>
+            <Label for="deadlineReminders">Telegram reminders</Label>
           </div>
           <div class="py-0.5"></div>
           <div class="flex flex-row gap-x-16">
