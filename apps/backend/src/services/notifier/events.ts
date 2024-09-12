@@ -43,13 +43,12 @@ async function processGradeChangeEvent(job: Job<GradeChangeEvent>) {
 
   if (response.ok) {
     console.log(
-      `[grade-change] Sent notification to ${user.name} mid: ${user.moodleId} tgid: ${user.telegramId}`,
+      `[grade-change] Sent notification to ${user.name} (${user.moodleId})`,
       JSON.stringify(msg.payload),
     );
   } else {
     console.error(
-      `[grade-change] Failed to send notification to ${user.name} mid: ${user.moodleId} tgid: ${user.telegramId}`,
-      JSON.stringify(msg.payload),
+      `[grade-change] Failed to send notification to ${user.name} (${user.moodleId})`,
       response.statusText,
       response.status,
     );
@@ -98,13 +97,11 @@ async function processDeadlineReminderEvent(job: Job<DeadlineReminderEvent>) {
 
   if (response.ok) {
     console.log(
-      `[deadline-reminder] Sent notification to ${user.name} mid: ${user.moodleId} tgid: ${user.telegramId}`,
-      JSON.stringify(msg.payload),
+      `[deadline-reminder] Sent notification to ${user.name} (${user.moodleId})`,
     );
   } else {
     console.error(
-      `[deadline-reminder] Failed to send notification to ${user.name} mid: ${user.moodleId} tgid: ${user.telegramId}`,
-      JSON.stringify(msg.payload),
+      `[deadline-reminder] Failed to send notification to ${user.name} (${user.moodleId})`,
       response.statusText,
       response.status,
     );
