@@ -27,7 +27,10 @@ async function processFetchCoursesJob(
 
   try {
     const rmc = new RMC({ moodleId });
-    const [data, error] = await rmc.v1_user_courses_overall("inprogress");
+    const [data, error] = await rmc.v1_user_courses_overall({
+      status: "inprogress",
+      noOnline: true,
+    });
 
     if (error) {
       console.error(
@@ -96,7 +99,9 @@ async function processFetchDeadlinesJob(
 
   try {
     const rmc = new RMC({ moodleId });
-    const [data, error] = await rmc.v1_user_deadlines();
+    const [data, error] = await rmc.v1_user_deadlines({
+      noOnline: true,
+    });
 
     if (error) {
       console.error(

@@ -253,7 +253,7 @@ const commonProtectedRoutes = new Hono<{
       const moodleId = ctx.get("moodleId");
 
       const rmc = new RMC({ moodleId });
-      const [data, error] = await rmc.v1_user_courses(status);
+      const [data, error] = await rmc.v1_user_courses({ status });
 
       if (error) {
         throw error;
@@ -276,7 +276,9 @@ const commonProtectedRoutes = new Hono<{
       const moodleId = ctx.get("moodleId");
 
       const rmc = new RMC({ moodleId });
-      const [data, error] = await rmc.v1_user_courses_overall(status);
+      const [data, error] = await rmc.v1_user_courses_overall({
+        status,
+      });
 
       if (error) {
         throw error;

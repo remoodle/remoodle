@@ -139,21 +139,35 @@ export class RMC {
     });
   }
 
-  async v1_user_deadlines() {
-    return this.request<Deadline[]>("v1/user/deadlines", {
-      method: "GET",
-    });
+  async v1_user_deadlines(options?: { noOnline?: boolean }) {
+    return this.request<Deadline[]>(
+      "v1/user/deadlines" + qs({ noOnline: options?.noOnline?.toString() }),
+      {
+        method: "GET",
+      },
+    );
   }
 
-  async v1_user_courses(status?: z.infer<typeof RMC.zCourseType>) {
+  async v1_user_courses({
+    status,
+  }: {
+    status?: z.infer<typeof RMC.zCourseType>;
+  }) {
     return this.request<ActiveCourse[]>("v1/user/courses" + qs({ status }), {
       method: "GET",
     });
   }
 
-  async v1_user_courses_overall(status?: z.infer<typeof RMC.zCourseType>) {
+  async v1_user_courses_overall(options?: {
+    status?: z.infer<typeof RMC.zCourseType>;
+    noOnline?: boolean;
+  }) {
     return this.request<ExtendedCourse[]>(
-      "v1/user/courses/overall" + qs({ status }),
+      "v1/user/courses/overall" +
+        qs({
+          status: options?.status,
+          noOnline: options?.noOnline?.toString(),
+        }),
       {
         method: "GET",
       },
