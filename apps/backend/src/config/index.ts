@@ -11,6 +11,9 @@ export const env = cleanEnv(process.env, {
   SERVER_PORT: num({ default: 9000 }),
   SERVER_SECRET: str({ default: "aboba" }),
 
+  // every 10 minutes
+  CRAWLER_CRON: str({ default: "*/10 * * * *" }),
+
   CORE_SECRET: str({ default: "private-token" }),
   CORE_URL: str({ default: "http://127.0.0.1:8080" }),
 
@@ -59,6 +62,7 @@ export const config = {
     token: env.TELEGRAM_BOT_TOKEN,
   },
   notifications: {
+    crawlerCron: env.CRAWLER_CRON,
     maxThresholds: 10,
   },
   mongo: {
