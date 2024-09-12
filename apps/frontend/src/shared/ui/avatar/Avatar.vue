@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar } from "@boringer-avatars/vue3";
+import Avatar from "vue-boring-avatars";
 
 withDefaults(
   defineProps<{

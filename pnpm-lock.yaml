@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  '@boringer-avatars/vue3@0.2.1':
-    hash: 4xhdgqtqf4n4dblyj4txqei5ce
-    path: patches/@boringer-avatars__vue3@0.2.1.patch
-
 importers:
 
   .:
@@ -144,9 +139,6 @@ importers:
 
   apps/frontend:
     dependencies:
-      '@boringer-avatars/vue3':
-        specifier: ^0.2.1
-        version: 0.2.1(patch_hash=4xhdgqtqf4n4dblyj4txqei5ce)(vue@3.5.1(typescript@5.4.5))
       '@radix-icons/vue':
         specifier: ^1.0.0
         version: 1.0.0(vue@3.5.1(typescript@5.4.5))
@@ -192,6 +184,9 @@ importers:
       vue:
         specifier: ^3.5.1
         version: 3.5.1(typescript@5.4.5)
+      vue-boring-avatars:
+        specifier: ^1.4.0
+        version: 1.4.0
       vue-dompurify-html:
         specifier: ^5.0.1
         version: 5.1.0(vue@3.5.1(typescript@5.4.5))
@@ -659,11 +654,6 @@ packages:
   '@babel/types@7.25.2':
     resolution: {integrity: sha512-YTnYtra7W9e6/oAZEHj0bJehPRUlLH9/fbpT5LfB0NhQXyALCRkRs3zH9v07IYhkgpqX6Z78FnuccZr/l4Fs4Q==}
     engines: {node: '>=6.9.0'}
-
-  '@boringer-avatars/vue3@0.2.1':
-    resolution: {integrity: sha512-KzAfh31SDXToTvFL0tBNG5Ur+VzfD1PP4jmY5/GS+eIuObGTIAiUu9eiht0LjuAGI+0xCgnaEgsTrOx8H3vLOQ==}
-    peerDependencies:
-      vue: ^3.0.0
 
   '@cloudflare/kv-asset-handler@0.3.4':
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}
@@ -4538,6 +4528,9 @@ packages:
   vscode-uri@3.0.8:
     resolution: {integrity: sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==}
 
+  vue-boring-avatars@1.4.0:
+    resolution: {integrity: sha512-J1TpAKKteZXoQ+KqU894lPfEWF1YdybeIFnKg4KSyZT3r+lY4X+XtniBxTFEfoJXX8eI0pJErrjHmrGsO7n1fA==}
+
   vue-demi@0.14.10:
     resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
     engines: {node: '>=12'}
@@ -4927,10 +4920,6 @@ snapshots:
       '@babel/helper-string-parser': 7.24.8
       '@babel/helper-validator-identifier': 7.24.7
       to-fast-properties: 2.0.0
-
-  '@boringer-avatars/vue3@0.2.1(patch_hash=4xhdgqtqf4n4dblyj4txqei5ce)(vue@3.5.1(typescript@5.4.5))':
-    dependencies:
-      vue: 3.5.1(typescript@5.4.5)
 
   '@cloudflare/kv-asset-handler@0.3.4':
     dependencies:
@@ -9032,6 +9021,8 @@ snapshots:
       - terser
 
   vscode-uri@3.0.8: {}
+
+  vue-boring-avatars@1.4.0: {}
 
   vue-demi@0.14.10(vue@3.5.1(typescript@5.4.5)):
     dependencies:
