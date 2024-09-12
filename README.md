@@ -1,4 +1,4 @@
-# remoodle-services
+# remoodle core
 
 ReMoodle API Service
 
