@@ -33,7 +33,7 @@ const qs = (params: Record<string, string | undefined>) => {
 };
 
 export class RMC {
-  private leastCompatibleVersion = "0.3.0";
+  private leastCompatibleVersion = "1.1.0";
 
   private host: string;
   private secret: string;
