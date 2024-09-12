@@ -39,7 +39,7 @@ export type Deadline = {
     cmid: number;
     duedate: number;
     grade: number | null;
-    gradeEntity: {
+    gradeEntity?: {
       graderaw: number | null;
     };
   };

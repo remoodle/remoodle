@@ -73,7 +73,7 @@ export const processDeadlines = (
   const eligibleDeadlines = deadlines
     .filter(
       (deadline) =>
-        !deadline.assignment?.gradeEntity.graderaw &&
+        !deadline.assignment?.gradeEntity?.graderaw &&
         deadline.timestart * 1000 > now,
     )
     .sort((a, b) => a.timestart - b.timestart);
