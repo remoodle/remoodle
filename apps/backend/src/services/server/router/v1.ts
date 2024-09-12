@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import type { IUser } from "@remoodle/db";
 
-import { env } from "../../../config";
+import { config, env } from "../../../config";
 import { db } from "../../../library/db";
 import { requestAlertWorker } from "../../../library/hc";
 import { RMC } from "../../../library/rmc-sdk";
@@ -449,6 +449,14 @@ const commonProtectedRoutes = new Hono<{
           }
 
           if (deadlineThresholds !== undefined) {
+            if (
+              deadlineThresholds.length > config.notifications.maxThresholds
+            ) {
+              throw new HTTPException(400, {
+                message: "Too many thresholds",
+              });
+            }
+
             notificationFields["notificationSettings.deadlineThresholds"] =
               deadlineThresholds;
           }

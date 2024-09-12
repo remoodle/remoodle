@@ -58,6 +58,9 @@ export const config = {
   telegram: {
     token: env.TELEGRAM_BOT_TOKEN,
   },
+  notifications: {
+    maxThresholds: 10,
+  },
   mongo: {
     uri: env.MONGO_URI,
   },
