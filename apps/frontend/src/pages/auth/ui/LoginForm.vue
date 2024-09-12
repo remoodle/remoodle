@@ -8,7 +8,7 @@ import { Label } from "@/shared/ui/label";
 import { useToast } from "@/shared/ui/toast/use-toast";
 import { request } from "@/shared/lib/hc";
 import { createAsyncProcess, vFocus } from "@/shared/lib/helpers";
-import { telegram } from "@/shared/config";
+import { TELEGRAM_BOT_NAME } from "@/shared/config";
 import { useUserStore } from "@/shared/stores/user";
 import { RouteName } from "@/shared/lib/routes";
 import { TelegramAuth, type OnTelegramAuth } from "@/features/telegram-auth";
@@ -118,7 +118,7 @@ const handleTelegramAuth: OnTelegramAuth = async (user) => {
 
         <div class="mx-auto">
           <TelegramAuth
-            :telegram-login="telegram.bot"
+            :telegram-login="TELEGRAM_BOT_NAME"
             @callback="handleTelegramAuth"
           />
         </div>
