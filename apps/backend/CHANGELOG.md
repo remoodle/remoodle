@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.3...remoodle/backend-v1.2.4) (2024-09-12)
+
+
+### Bug Fixes
+
+* handle uncaughtException and unhandledRejection ([acc75cc](https://github.com/remoodle/heresy/commit/acc75ccb2e6032b58eca5d11f5f46e2d143ba37f))
+* readable logs ([d1ece43](https://github.com/remoodle/heresy/commit/d1ece43daf98ec2f5d8246ae374128bb447b991c))
+
 ## [1.2.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.2...remoodle/backend-v1.2.3) (2024-09-12)
 
 
