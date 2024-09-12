@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.1...remoodle/backend-v1.2.2) (2024-09-12)
+
+
+### Bug Fixes
+
+* dont break shit in production ([da97844](https://github.com/remoodle/heresy/commit/da97844ebb43290fa06d4de8e3a135f5f84bccb3))
+
 ## [1.2.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.0...remoodle/backend-v1.2.1) (2024-09-12)
 
 
