@@ -20,6 +20,6 @@ export const getTimeLeft = (date: number) => {
   const formattedSeconds = String(seconds).padStart(2, "0");
 
   return days > 0
-    ? `${days} days, ${formattedHours}:${formattedMinutes}:${formattedSeconds}`
+    ? `${days} ${days === 1 ? "day" : "days"}, ${formattedHours}:${formattedMinutes}:${formattedSeconds}`
     : `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 };
