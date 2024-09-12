@@ -6,11 +6,14 @@ import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { config } from "../../config";
 import { errorHandler } from "./middleware/error";
+import { versionHandler } from "./middleware/version";
 import { v1 } from "./router/v1";
 
 const api = new Hono();
 
 api.use("*", logger(), prettyJSON());
+
+api.use("*", versionHandler);
 
 api.use(
   "*",

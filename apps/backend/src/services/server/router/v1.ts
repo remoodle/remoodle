@@ -22,13 +22,9 @@ import { authMiddleware } from "../middleware/auth";
 const publicRoutes = new Hono().get("/health", async (ctx) => {
   const rmc = new RMC();
 
-  const [data, error] = await rmc.get_health();
+  const response = await rmc.get_health();
 
-  if (error) {
-    throw error;
-  }
-
-  return ctx.json(data);
+  return ctx.json(response);
 });
 
 const authRoutes = new Hono<{

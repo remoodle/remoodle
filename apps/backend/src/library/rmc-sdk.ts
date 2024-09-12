@@ -108,9 +108,17 @@ export class RMC {
   }
 
   async get_health() {
-    return this.request<HealthResponse>("health", {
-      method: "GET",
-    });
+    const res = await fetch(`${this.host}/health`);
+
+    const version = res.headers.get("Version");
+
+    const data = await res.json();
+
+    return {
+      status: res.status,
+      version,
+      data,
+    };
   }
 
   async v1_auth_register(payload: {
