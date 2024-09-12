@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.2.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.7...remoodle/backend-v1.2.0) (2024-09-12)
+
+
+### Features
+
+* noOnline support in crawler ([256826e](https://github.com/remoodle/heresy/commit/256826ee583f0a5d9cec2e5612752e6eb2d100d7))
+* reminder thresholds settings ([a34b8a6](https://github.com/remoodle/heresy/commit/a34b8a6f261ca1cc9a6119a7f03b2c33d0424a79))
+
+
+### Bug Fixes
+
+* **api:** add thresholds limit ([8c32b69](https://github.com/remoodle/heresy/commit/8c32b69bc362b49237cc5694c06d286ecad89f5b))
+* better formatting ([d48096d](https://github.com/remoodle/heresy/commit/d48096ddf696716e4ce2529d93291780ab3fabfd))
+* lower thresholds ([d9a004c](https://github.com/remoodle/heresy/commit/d9a004c970d46ffac0b528d109453fde854beaa2))
+* notifier ([507a107](https://github.com/remoodle/heresy/commit/507a107577437237076ead11218e613fdb8d432f))
+* versioning ([25779fa](https://github.com/remoodle/heresy/commit/25779faca0a5a3829b6b6e4a21d3eba0b2132e59))
+
+
+### Miscellaneous Chores
+
+* remove shit ([0124e28](https://github.com/remoodle/heresy/commit/0124e28b003b938069e1e26ff49601bbcaa784b7))
+
+
+### Code Refactoring
+
+* move hc to lib ([74eb9df](https://github.com/remoodle/heresy/commit/74eb9dfd1fe284bd09d3c55dfe68ff649fe25b22))
+* **notifier:** move files around ([c8d3869](https://github.com/remoodle/heresy/commit/c8d3869b14e9ed5b300474a81a8af156cc5cd79d))
+
 ## [1.1.7](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.6...remoodle/backend-v1.1.7) (2024-09-09)
 
 
