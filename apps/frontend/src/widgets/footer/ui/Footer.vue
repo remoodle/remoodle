@@ -3,6 +3,9 @@ import { Link } from "@/shared/ui/link";
 import { MonoLogo } from "@/shared/ui/logo";
 import { RouteName } from "@/shared/lib/routes";
 import { ThemeSwitcher } from "@/features/theme-switcher";
+import { Icon } from "@/shared/ui/icon";
+import { Button } from "@/shared/ui/button";
+import { TELEGRAM_CHAT_URL, TELEGRAM_BOT_URL } from "@/shared/config";
 import ClientVersion from "./ClientVersion.vue";
 
 withDefaults(
@@ -16,39 +19,58 @@ withDefaults(
 </script>
 
 <template>
-  <template v-if="slim">
-    <footer class="py-6">
-      <div class="mx-auto flex w-full items-center justify-center">
-        <ul
-          class="flex flex-wrap items-center justify-center gap-y-2 divide-secondary-foreground/50 leading-4 lg:divide-x-2 [&>*]:px-3"
-        >
-          <li>
-            <ClientVersion />
-          </li>
-          <li>
-            <ThemeSwitcher v-slot="{ theme, toggleTheme }">
-              <button @click="toggleTheme">{{ theme }}</button>
-            </ThemeSwitcher>
-          </li>
-        </ul>
-      </div>
-    </footer>
-  </template>
-  <template v-else>
-    <footer
-      class="container flex flex-wrap items-center justify-between gap-x-4 gap-y-3 py-6"
+  <div class="container" :class="[slim ? 'py-6' : 'py-6']">
+    <div
+      class="w-fit"
+      :class="{
+        'm-auto': slim,
+        'w-full border-t py-6': !slim,
+      }"
     >
-      <Link :to="{ name: RouteName.Home }" hover>
-        <MonoLogo />
-      </Link>
-      <div
-        class="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t py-4"
-      >
-        <div class="flex flex-wrap gap-2 text-muted-foreground">
-          <ClientVersion />
-        </div>
-        <ThemeSwitcher class="flex-none" />
+      <div v-if="!slim" class="mb-4">
+        <Link :to="{ name: RouteName.Home }" hover>
+          <MonoLogo />
+        </Link>
       </div>
-    </footer>
-  </template>
+
+      <div class="flex flex-col gap-4">
+        <div class="flex justify-between gap-12">
+          <div class="flex items-center gap-3">
+            <div class="flex flex-col items-center justify-center gap-0.5">
+              <Button
+                variant="secondary"
+                size="icon"
+                :as="Link"
+                :to="TELEGRAM_CHAT_URL"
+              >
+                <Icon class="h-6 w-6" name="telegram" />
+              </Button>
+              <span class="text-xs text-muted-foreground"> chat </span>
+            </div>
+
+            <div class="flex flex-col items-center justify-center gap-0.5">
+              <Button
+                variant="secondary"
+                size="icon"
+                :as="Link"
+                :to="TELEGRAM_BOT_URL"
+              >
+                <Icon class="h-6 w-6" name="telegram" />
+              </Button>
+              <span class="text-xs text-muted-foreground"> bot </span>
+            </div>
+          </div>
+
+          <div class="flex flex-col items-center justify-center gap-0.5">
+            <ThemeSwitcher class="flex-none" />
+            <span class="text-xs text-muted-foreground"> theme </span>
+          </div>
+        </div>
+
+        <span class="text-xs text-muted-foreground">
+          <ClientVersion />
+        </span>
+      </div>
+    </div>
+  </div>
 </template>
