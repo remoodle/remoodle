@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.2...remoodle/backend-v1.2.3) (2024-09-12)
+
+
+### Bug Fixes
+
+* configurable crawler cron ([02db3b6](https://github.com/remoodle/heresy/commit/02db3b666ce712bf01d274f6912092ac8a1a0962))
+
 ## [1.2.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.1...remoodle/backend-v1.2.2) (2024-09-12)
 
 
