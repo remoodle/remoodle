@@ -21,9 +21,21 @@ class UserCoursesController extends BaseController
     {
         /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute("user");
+
+        $noOnline = isset($request->getQueryParams()['noOnline'])
+            ? (bool) $request->getQueryParams()['noOnline']
+            : false
+        ;
+
         $status = isset($request->getQueryParams()['status'])
             ? CourseEnrolledClassification::from($request->getQueryParams()['status'])
-            : null;
+            : null
+        ;
+
+        if ($noOnline && !$user->initialized) {
+            throw new \Exception('Can\'t get data from database', 503);
+        }
+
         return $this->jsonResponse(
             response: $response,
             body: $this->userMoodleRepositoryFactory->create(
@@ -70,9 +82,20 @@ class UserCoursesController extends BaseController
     {
         /**@var \App\Models\MoodleUser */
         $user = $request->getAttribute("user");
+
+        $noOnline = isset($request->getQueryParams()['noOnline'])
+            ? (bool) $request->getQueryParams()['noOnline']
+            : false
+        ;
+
         $status = isset($request->getQueryParams()['status'])
             ? CourseEnrolledClassification::from($request->getQueryParams()['status'])
-            : null;
+            : null
+        ;
+
+        if ($noOnline && !$user->initialized) {
+            throw new \Exception('Can\'t get data from database', 503);
+        }
 
         if ($user->initialized) {
             $user->load([
@@ -99,19 +122,13 @@ class UserCoursesController extends BaseController
         $repository = $this->userMoodleRepositoryFactory->create(RepositoryTypes::MOODLE_API);
         return $this->jsonResponse(
             response: $response,
-            body: [
+            body:
                 $repository->getCourses(
                     $user->moodle_id,
                     $user->moodle_token,
                     CourseEnrolledClassification::INPROGRESS
                 ),
-            ]
         );
     }
-
-    // public function getEventByInstance(Request $request, Response $response): Response
-    // {
-
-    // }
 
 }

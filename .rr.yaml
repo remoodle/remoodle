@@ -83,22 +83,17 @@ kv:
     users:
         driver: memory
         config: {}
-    lemmetization:
-        driver: memory
-        config: {}
 service:
     kv_users_init:
         command: "php service/user_init.php"
-    search_put_kv_lemmetization:
-        command: "php service/load_lemetization.php"
     parse_user_courses_assignments:
         command: "php service/parse_user_courses_assignments.php"
         remain_after_exit: true
-        restart_sec: 3600
+        restart_sec: ${PARSE_COURSES_RESTART_SEC:-3600}
     parse_users_events_grades:
         command: "php service/parse_users_events_grades.php"
         remain_after_exit: true
-        restart_sec: 1800
+        restart_sec: ${PARSE_GRADES_RESTART_SEC:-1800}
 #   parse_grades_users:
 #       command: "php service/parse_grades_users.php"
 #       remain_after_exit: true

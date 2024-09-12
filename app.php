@@ -18,10 +18,8 @@ Config::loadConfigs();
 $container = require __DIR__ . "/bootstrap/container-laravel.php";
 $routes = require __DIR__ . "/routes/api.php";
 
-while ($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map") === null) {
-    sleep(1);
-}
-KeyValueLemmetization::bootstrap($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map"));
+
+KeyValueLemmetization::bootstrap(json_decode(file_get_contents(__DIR__ . '/service/files/lemmatizedMap.json'), true));
 
 $worker = $container->get(PSR7WorkerInterface::class);
 while (true) {

@@ -32,6 +32,7 @@ class ErrorMiddleware implements MiddlewareInterface
                 StatusCodeInterface::STATUS_CONFLICT => $this->responseFactory->createResponse(StatusCodeInterface::STATUS_CONFLICT),
                 StatusCodeInterface::STATUS_METHOD_NOT_ALLOWED => $this->responseFactory->createResponse(StatusCodeInterface::STATUS_METHOD_NOT_ALLOWED),
                 StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY => $this->responseFactory->createResponse(StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY),
+                StatusCodeInterface::STATUS_SERVICE_UNAVAILABLE => $this->responseFactory->createResponse(StatusCodeInterface::STATUS_SERVICE_UNAVAILABLE),
                 default => $this->responseFactory->createResponse(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR)
             };
         }

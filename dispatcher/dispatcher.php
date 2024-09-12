@@ -22,10 +22,8 @@ $container->bind(Connection::class, function () use ($capsule) {
     return $capsule->getConnection();
 });
 
-while ($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map") === null) {
-    sleep(1);
-}
-KeyValueLemmetization::bootstrap($container->get(Spiral\RoadRunner\KeyValue\Factory::class)->select('lemmetization')->get("lemme_map"));
+
+KeyValueLemmetization::bootstrap(json_decode(file_get_contents(__DIR__ . '/../service/files/lemmatizedMap.json'), true));
 
 /**@var Factory */
 $factory = $container->get(Factory::class);
