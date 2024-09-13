@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.7](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.6...remoodle/backend-v1.2.7) (2024-09-13)
+
+
+### Bug Fixes
+
+* formatter's timezone ([1e432d7](https://github.com/remoodle/heresy/commit/1e432d7d256005474f6e5eeb4d67421255ffbab2))
+
 ## [1.2.6](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.5...remoodle/backend-v1.2.6) (2024-09-13)
 
 
