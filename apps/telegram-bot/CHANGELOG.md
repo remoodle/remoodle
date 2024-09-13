@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.3](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.2...remoodle/telegram-bot-v0.4.3) (2024-09-13)
+
+
+### Bug Fixes
+
+* pagination on past courses ([fe3c443](https://github.com/remoodle/heresy/commit/fe3c443ffdd643d1946758481d1a3189976084f0))
+* specify timezone in deadline date ([d01b76c](https://github.com/remoodle/heresy/commit/d01b76c7350ffaccf587fdcab73218c665180dbf))
+
+
+### Miscellaneous Chores
+
+* add alert on schedule button ([b2c4959](https://github.com/remoodle/heresy/commit/b2c49590fc7f8614cf6d3baea1e9a19f1f725b7a))
+
 ## [0.4.2](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.1...remoodle/telegram-bot-v0.4.2) (2024-09-09)
 
 
