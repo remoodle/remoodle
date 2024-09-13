@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.7](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.6...remoodle/backend-v1.2.7) (2024-09-13)
+
+
+### Bug Fixes
+
+* formatter's timezone ([1e432d7](https://github.com/remoodle/heresy/commit/1e432d7d256005474f6e5eeb4d67421255ffbab2))
+* **notifications:** highlight and use · instead of - ([e34b52f](https://github.com/remoodle/heresy/commit/e34b52f36674d1ec7ee2482994634fde4f24eaed))
+* notifier tests ([9274c65](https://github.com/remoodle/heresy/commit/9274c65025b5073b8db10ef9a7763e5786260df9))
+* return missing log ([ea75dcc](https://github.com/remoodle/heresy/commit/ea75dccd0bd8188f092100694dc9d14910d7d304))
+
 ## [1.2.6](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.5...remoodle/backend-v1.2.6) (2024-09-13)
 
 
