@@ -370,6 +370,7 @@ async function gradesPastCourses(ctx: Context) {
   }
 
   let courses = rmcCourses.splice((page - 1) * 10, 10);
+  rmcCourses = rmcCourses.concat(courses);
 
   const coursesKeyboards = new InlineKeyboard();
 
@@ -382,7 +383,9 @@ async function gradesPastCourses(ctx: Context) {
       );
   });
 
-  if (page === 1) {
+  if (rmcCourses.length < 10) {
+    coursesKeyboards.row().text("Back", "back_to_grades");
+  } else if (page === 1) {
     coursesKeyboards
       .row()
       .text("Back", "back_to_grades")
@@ -401,7 +404,7 @@ async function gradesPastCourses(ctx: Context) {
   }
 
   await ctx.editMessageText(
-    `Your past courses (${page}/${Math.ceil(rmcCourses.length / 10 + 1)}):`,
+    `Your past courses (${page}/${Math.ceil(rmcCourses.length / 10)}):`,
     {
       reply_markup: coursesKeyboards,
     },
