@@ -452,7 +452,8 @@ const commonProtectedRoutes = new Hono<{
 
           if (deadlineThresholds !== undefined) {
             if (
-              deadlineThresholds.length > config.notifications.maxThresholds
+              deadlineThresholds.length >
+              config.notifications.maxDeadlineThresholds
             ) {
               throw new HTTPException(400, {
                 message: "Too many thresholds",

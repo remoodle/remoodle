@@ -13,7 +13,19 @@ export async function startNotifier() {
 
   process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
-  cron.schedule(config.notifications.crawlerCron, runCrawler, {
-    runOnInit: env.isDevelopment,
-  });
+  cron.schedule(
+    config.crawler.gradesCron,
+    () => runCrawler({ fetchCourses: true }),
+    {
+      runOnInit: env.isDevelopment,
+    },
+  );
+
+  cron.schedule(
+    config.crawler.deadlinesCron,
+    () => runCrawler({ fetchDeadlines: true }),
+    {
+      runOnInit: env.isDevelopment,
+    },
+  );
 }

@@ -1,6 +1,7 @@
 import { Queue, Worker, Job } from "bullmq";
 import { db } from "../../library/db";
 import { RMC } from "../../library/rmc-sdk";
+import { config } from "../../config";
 import type {
   GradeChangeEvent,
   DeadlineReminderEvent,
@@ -24,6 +25,7 @@ const courseCrawlerQueue = new Queue("course-crawler", {
 
 const courseWorker = new Worker("course-crawler", processFetchCoursesJob, {
   connection: db.redisConnection,
+  concurrency: config.crawler.concurrency,
 });
 
 async function processFetchCoursesJob(job: Job<JobData>) {
@@ -93,7 +95,10 @@ const deadlineCrawlerQueue = new Queue("deadline-crawler", {
 const deadlineWorker = new Worker(
   "deadline-crawler",
   processFetchDeadlinesJob,
-  { connection: db.redisConnection },
+  {
+    connection: db.redisConnection,
+    concurrency: config.crawler.concurrency,
+  },
 );
 
 async function processFetchDeadlinesJob(job: Job<JobData>) {
@@ -185,7 +190,10 @@ deadlineWorker.on("error", (error) => {
   console.error("Deadline Crawler Worker Error:", error);
 });
 
-export async function runCrawler() {
+export async function runCrawler(options: {
+  fetchDeadlines?: boolean;
+  fetchCourses?: boolean;
+}) {
   console.log(`[crawler] Starting crawler`);
   const t0 = performance.now();
 
@@ -203,14 +211,19 @@ export async function runCrawler() {
       moodleId: user.moodleId,
     };
 
-    await courseCrawlerQueue.add("fetch-courses", payload, {
-      removeOnComplete: true,
-      removeOnFail: true,
-    });
-    await deadlineCrawlerQueue.add("fetch-deadlines", payload, {
-      removeOnComplete: true,
-      removeOnFail: true,
-    });
+    if (options.fetchCourses) {
+      await courseCrawlerQueue.add("fetch-courses", payload, {
+        removeOnComplete: true,
+        removeOnFail: true,
+      });
+    }
+
+    if (options.fetchDeadlines) {
+      await deadlineCrawlerQueue.add("fetch-deadlines", payload, {
+        removeOnComplete: true,
+        removeOnFail: true,
+      });
+    }
   }
 
   const t1 = performance.now();

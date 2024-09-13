@@ -12,7 +12,10 @@ export const env = cleanEnv(process.env, {
   SERVER_SECRET: str({ default: "aboba" }),
 
   // every 10 minutes
-  CRAWLER_CRON: str({ default: "*/10 * * * *" }),
+  CRAWLER_GRADES_CRON: str({ default: "*/10 * * * *" }),
+  // every 40 minutes
+  CRAWLER_DEADLINES_CRON: str({ default: "*/40 * * * *" }),
+  CRAWLER_CONCURRENCY: num({ default: 1 }),
 
   CORE_SECRET: str({ default: "private-token" }),
   CORE_URL: str({ default: "http://127.0.0.1:8080" }),
@@ -61,9 +64,13 @@ export const config = {
   telegram: {
     token: env.TELEGRAM_BOT_TOKEN,
   },
+  crawler: {
+    gradesCron: env.CRAWLER_GRADES_CRON,
+    deadlinesCron: env.CRAWLER_DEADLINES_CRON,
+    concurrency: env.CRAWLER_CONCURRENCY,
+  },
   notifications: {
-    crawlerCron: env.CRAWLER_CRON,
-    maxThresholds: 10,
+    maxDeadlineThresholds: 10,
   },
   mongo: {
     uri: env.MONGO_URI,
