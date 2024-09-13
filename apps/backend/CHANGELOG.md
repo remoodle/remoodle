@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.6](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.5...remoodle/backend-v1.2.6) (2024-09-13)
+
+
+### Bug Fixes
+
+* fine tune crawler ([d6f60d2](https://github.com/remoodle/heresy/commit/d6f60d261ea804d0fc5dd5b5679a36e8e77b7fcd))
+
 ## [1.2.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.4...remoodle/backend-v1.2.5) (2024-09-13)
 
 
