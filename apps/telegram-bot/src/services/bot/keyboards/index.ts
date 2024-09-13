@@ -7,7 +7,8 @@ const keyboards = {
     .text("Courses", "grades")
     .row()
     .webApp("Map", "https://yuujiso.github.io/aitumap/")
-    .webApp("Schedule", "https://remoodle.app")
+    // .webApp("Schedule", "https://remoodle.app")
+    .text("Schedule", "schedule_coming_soon")
     .row()
     .text("⚙️", "settings")
     .text("More", "others"),

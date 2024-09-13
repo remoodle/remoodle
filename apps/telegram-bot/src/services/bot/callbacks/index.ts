@@ -623,6 +623,13 @@ async function donate(ctx: Context) {
   );
 }
 
+async function comingSoon(ctx: Context) {
+  await ctx.answerCallbackQuery({
+    text: "Schedules will be available very soon! Stay updated on our channel :D",
+    show_alert: true,
+  });
+}
+
 const callbacks = {
   menu: {
     others: others,
@@ -652,6 +659,7 @@ const callbacks = {
   },
   other: {
     donate: donate,
+    schedule: comingSoon,
   },
 };
 
