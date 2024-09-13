@@ -10,6 +10,12 @@ import { trackCourseDiff, processDeadlines } from "./core/checker";
 import { createBlankThresholdsMap } from "./core/thresholds";
 import { addGradeChangeJob, addDeadlineReminderJob } from "./events";
 
+type JobData = {
+  userId: string;
+  userName: string;
+  moodleId: number;
+};
+
 // course crawler
 
 const courseCrawlerQueue = new Queue("course-crawler", {
@@ -20,10 +26,8 @@ const courseWorker = new Worker("course-crawler", processFetchCoursesJob, {
   connection: db.redisConnection,
 });
 
-async function processFetchCoursesJob(
-  job: Job<{ userId: string; moodleId: number }>,
-) {
-  const { userId, moodleId } = job.data;
+async function processFetchCoursesJob(job: Job<JobData>) {
+  const { userId, userName, moodleId } = job.data;
 
   try {
     const rmc = new RMC({ moodleId });
@@ -34,7 +38,7 @@ async function processFetchCoursesJob(
 
     if (error) {
       console.error(
-        `[crawler] Couldn't fetch courses for user ${userId} (${moodleId})`,
+        `[crawler] Couldn't fetch courses for user ${userName} (${moodleId})`,
         error.message,
         error.status,
       );
@@ -92,10 +96,8 @@ const deadlineWorker = new Worker(
   { connection: db.redisConnection },
 );
 
-async function processFetchDeadlinesJob(
-  job: Job<{ userId: string; moodleId: number }>,
-) {
-  const { userId, moodleId } = job.data;
+async function processFetchDeadlinesJob(job: Job<JobData>) {
+  const { userId, userName, moodleId } = job.data;
 
   try {
     const rmc = new RMC({ moodleId });
@@ -105,7 +107,7 @@ async function processFetchDeadlinesJob(
 
     if (error) {
       console.error(
-        `[crawler] Couldn't fetch deadlines for user ${userId} (${moodleId})`,
+        `[crawler] Couldn't fetch deadlines for user ${userName} (${moodleId})`,
         error.message,
         error.status,
       );
@@ -195,28 +197,20 @@ export async function runCrawler() {
   console.log(`[crawler] Found ${users.length} users with Telegram ID`);
 
   for (const user of users) {
-    await courseCrawlerQueue.add(
-      "fetch-courses",
-      {
-        userId: user._id,
-        moodleId: user.moodleId,
-      },
-      {
-        removeOnComplete: true,
-        removeOnFail: true,
-      },
-    );
-    await deadlineCrawlerQueue.add(
-      "fetch-deadlines",
-      {
-        userId: user._id,
-        moodleId: user.moodleId,
-      },
-      {
-        removeOnComplete: true,
-        removeOnFail: true,
-      },
-    );
+    const payload: JobData = {
+      userId: user._id,
+      userName: user.name,
+      moodleId: user.moodleId,
+    };
+
+    await courseCrawlerQueue.add("fetch-courses", payload, {
+      removeOnComplete: true,
+      removeOnFail: true,
+    });
+    await deadlineCrawlerQueue.add("fetch-deadlines", payload, {
+      removeOnComplete: true,
+      removeOnFail: true,
+    });
   }
 
   const t1 = performance.now();
