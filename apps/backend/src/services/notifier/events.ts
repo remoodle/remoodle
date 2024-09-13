@@ -98,6 +98,7 @@ async function processDeadlineReminderEvent(job: Job<DeadlineReminderEvent>) {
   if (response.ok) {
     console.log(
       `[deadline-reminder] Sent notification to ${user.name} (${user.moodleId})`,
+      JSON.stringify(msg.payload),
     );
   } else {
     console.error(
