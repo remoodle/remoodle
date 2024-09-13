@@ -34,6 +34,7 @@ export const formatDeadlineReminders = (
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
+        timeZone: "Asia/Almaty",
       });
       message += `  - ${name}: ${remaining}, ${formattedDate}\n`;
     }
