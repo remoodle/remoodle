@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.4...remoodle/backend-v1.2.5) (2024-09-13)
+
+
+### Bug Fixes
+
+* better logs ([c42baa3](https://github.com/remoodle/heresy/commit/c42baa30f6dc44bf32d1146d988b38f2d11779c9))
+
 ## [1.2.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.3...remoodle/backend-v1.2.4) (2024-09-12)
 
 
