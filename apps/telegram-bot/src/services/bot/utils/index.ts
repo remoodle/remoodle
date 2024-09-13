@@ -16,6 +16,7 @@ const getDeadlineText = (deadline: Deadline) => {
       hour: "2-digit",
       minute: "2-digit",
       hour12: false,
+      timeZone: "Asia/Almaty",
     })
     .replace("24:00", "00:00");
   const timeLeft = `<b>${getTimeLeft(deadline.timestart)}</b>`;
