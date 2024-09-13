@@ -10,7 +10,7 @@ export const formatCourseDiffs = (data: GradeChangeDiff[]): string => {
       const [gradeName, previous, updated] = change;
       const displayPrevious = previous === null ? "N/A" : previous;
       const displayUpdated = updated === null ? "N/A" : updated;
-      message += `  - ${gradeName}: <b>${displayPrevious} → ${displayUpdated}</b>\n`;
+      message += `  · ${gradeName}: <b>${displayPrevious} → ${displayUpdated}</b>\n`;
     }
   }
 
@@ -36,7 +36,7 @@ export const formatDeadlineReminders = (
         hour12: false,
         timeZone: "Asia/Almaty",
       });
-      message += `  - ${name}: ${remaining}, ${formattedDate}\n`;
+      message += `  · ${name}: **${remaining}**, ${formattedDate}\n`;
     }
     message += "\n";
   }
