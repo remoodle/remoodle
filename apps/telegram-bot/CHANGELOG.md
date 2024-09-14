@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.4](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.3...remoodle/telegram-bot-v0.4.4) (2024-09-14)
+
+
+### Bug Fixes
+
+* correct past courses pagination ([185c5b6](https://github.com/remoodle/heresy/commit/185c5b609f8dd31836397ddb16dd122bf813c8f7))
+
+
+### Code Refactoring
+
+* simplify telegram bot architecture ([326526a](https://github.com/remoodle/heresy/commit/326526ae52534b7e6414916501bff9557f7ba08a))
+
 ## [0.4.3](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.2...remoodle/telegram-bot-v0.4.3) (2024-09-13)
 
 
