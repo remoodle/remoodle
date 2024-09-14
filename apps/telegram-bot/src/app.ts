@@ -12,7 +12,7 @@ function main(): void {
     bot.stop();
   });
 
-  console.log("💨 Bot is running");
+  console.log("Bot is running");
 
   bot.start();
 }
