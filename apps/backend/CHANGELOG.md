@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.8](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.7...remoodle/backend-v1.2.8) (2024-09-14)
+
+
+### Bug Fixes
+
+* eliminate crawler collisions ([a36e66a](https://github.com/remoodle/heresy/commit/a36e66a8e178970e1c74c3a71c94fd84b68aab3a))
+* proper formatting ([6e36625](https://github.com/remoodle/heresy/commit/6e3662594ce7c5d032eba43a89a0bb20d50d6df6))
+
 ## [1.2.7](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.6...remoodle/backend-v1.2.7) (2024-09-13)
 
 
