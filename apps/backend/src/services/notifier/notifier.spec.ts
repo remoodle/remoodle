@@ -169,7 +169,7 @@ describe("grades notifications", () => {
       "Updated grades:
 
       📘 Introduction to SRE:
-        · Final exam documentation submission: <b>N/A → 100</b>
+        • Final exam documentation submission: <b>N/A → 100</b>
       "
     `);
   });
@@ -193,11 +193,11 @@ describe("grades notifications", () => {
       "Updated grades:
 
       📘 Course 1:
-        · Midterm: <b>N/A → 100</b>
+        • Midterm: <b>N/A → 100</b>
 
       📘 Course 2:
-        · Midterm: <b>N/A → 100</b>
-        · Endterm: <b>N/A → 100</b>
+        • Midterm: <b>N/A → 100</b>
+        • Endterm: <b>N/A → 100</b>
       "
     `);
   });
@@ -479,11 +479,11 @@ describe("deadlines notifications", () => {
       "🔔 Upcoming deadlines 🔔
 
       🗓 Research Methods and Tools | Omirgaliyev Ruslan
-        · Assignment 1 is due: **06:35:00**, Sun, Sep 15, 2024, 23:59
-        · Assignment 2 is due: **06:35:00**, Sun, Sep 15, 2024, 23:59
+        • Assignment 1 is due: **06:35:00**, Sun, Sep 15, 2024, 23:59
+        • Assignment 2 is due: **06:35:00**, Sun, Sep 15, 2024, 23:59
 
       🗓 Writing | Barak Omaba
-        · Assignment 1 is due: **06:35:00**, Sun, Sep 15, 2024, 23:59
+        • Assignment 1 is due: **06:35:00**, Sun, Sep 15, 2024, 23:59
 
       "
     `);
