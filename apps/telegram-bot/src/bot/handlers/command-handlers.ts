@@ -1,8 +1,8 @@
 import { Context, InlineKeyboard } from "grammy";
-import { db } from "../../../library/db";
-import { request, getAuthHeaders } from "../../../helpers/hc";
+import { db } from "../../library/db";
+import { request, getAuthHeaders } from "../../library/hc";
 import { getDeadlineText } from "../utils";
-import keyboards from "../keyboards";
+import keyboards from "./keyboards";
 
 async function start(ctx: Context) {
   if (!ctx.message || !ctx.message.text || !ctx.from || !ctx.chat) {

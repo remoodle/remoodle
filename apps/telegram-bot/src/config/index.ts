@@ -7,8 +7,6 @@ export const env = cleanEnv(process.env, {
     default: "development",
   }),
 
-  SERVER_PORT: num({ default: 8888 }),
-
   TELEGRAM_BOT_TOKEN: str(),
 
   BACKEND_URL: str({ default: "http://localhost:9000" }),
@@ -21,9 +19,6 @@ export const config = {
   backend: {
     url: env.BACKEND_URL,
     secret: env.BACKEND_SECRET,
-  },
-  http: {
-    port: env.SERVER_PORT,
   },
   bot: {
     token: env.TELEGRAM_BOT_TOKEN,

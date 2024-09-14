@@ -26,8 +26,6 @@ RUN pnpm install --frozen-lockfile
 COPY --from=builder /app/out/full/ .
 RUN pnpm dlx turbo run build --filter=@remoodle/telegram-bot
 
-EXPOSE 8888
-
 RUN export TZ="Asia/Karachi" \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && echo $TZ > /etc/timezone

@@ -1,5 +1,11 @@
 import { Composer } from "grammy";
-import callbacks from "../callbacks";
+import callbacks from "./callback-handlers";
+import commands from "./command-handlers";
+
+const commandsHandler = new Composer();
+
+commandsHandler.command("start", commands.start);
+commandsHandler.command("deadlines", commands.deadlines);
 
 const callbacksHandler = new Composer();
 
@@ -59,4 +65,4 @@ callbacksHandler.callbackQuery(
   callbacks.other.schedule,
 );
 
-export default callbacksHandler;
+export { commandsHandler, callbacksHandler };

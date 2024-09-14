@@ -1,12 +1,12 @@
 import { InlineKeyboard, Context } from "grammy";
-import { request, getAuthHeaders } from "../../../helpers/hc";
+import { request, getAuthHeaders } from "../../library/hc";
 import {
   getDeadlineText,
   getGradeText,
   calculateGrades,
   getNotificationsKeyboard,
 } from "../utils";
-import keyboards from "../keyboards";
+import keyboards from "./keyboards";
 
 // Menu buttons
 async function others(ctx: Context) {

@@ -1,6 +1,5 @@
 import { Bot, Context, GrammyError, HttpError } from "grammy";
-import commandsHandler from "./handlers/commands";
-import callbacksHandler from "./handlers/callbacks";
+import { commandsHandler, callbacksHandler } from "./handlers";
 
 export function createBot(token: string) {
   const bot = new Bot<Context>(token);
