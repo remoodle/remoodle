@@ -339,7 +339,6 @@ async function gradesPastCourses(ctx: Context) {
   }
 
   const page = parseInt(ctx.match[0]?.split("_")[2]);
-
   const userId = ctx.from.id;
 
   let [rmcCourses, _] = await request((client) =>
@@ -369,8 +368,10 @@ async function gradesPastCourses(ctx: Context) {
     return;
   }
 
-  let courses = rmcCourses.splice((page - 1) * 10, 10);
-  rmcCourses = rmcCourses.concat(courses);
+  const totalPages = Math.ceil(rmcCourses.length / 10);
+  const startIndex = (page - 1) * 10;
+  const endIndex = startIndex + 10;
+  let courses = rmcCourses.slice(startIndex, endIndex);
 
   const coursesKeyboards = new InlineKeyboard();
 
@@ -383,32 +384,21 @@ async function gradesPastCourses(ctx: Context) {
       );
   });
 
-  if (rmcCourses.length < 10) {
-    coursesKeyboards.row().text("Back", "back_to_grades");
-  } else if (page === 1) {
-    coursesKeyboards
-      .row()
-      .text("Back", "back_to_grades")
-      .text("→", `old_grades_${page + 1}`);
-  } else if (page === rmcCourses.length / 10 + 1) {
-    coursesKeyboards
-      .row()
-      .text("Back", "back_to_grades")
-      .text("←", `old_grades_${page - 1}`);
-  } else {
-    coursesKeyboards
-      .row()
-      .text("Back", "back_to_grades")
-      .text("←", `old_grades_${page - 1}`)
-      .text("→", `old_grades_${page + 1}`);
+  coursesKeyboards.row();
+
+  if (page > 1) {
+    coursesKeyboards.text("←", `old_grades_${page - 1}`);
   }
 
-  await ctx.editMessageText(
-    `Your past courses (${page}/${Math.ceil(rmcCourses.length / 10)}):`,
-    {
-      reply_markup: coursesKeyboards,
-    },
-  );
+  coursesKeyboards.text("Back", "back_to_grades");
+
+  if (page < totalPages) {
+    coursesKeyboards.text("→", `old_grades_${page + 1}`);
+  }
+
+  await ctx.editMessageText(`Your past courses (${page}/${totalPages}):`, {
+    reply_markup: coursesKeyboards,
+  });
 }
 
 async function gradesPastCourse(ctx: Context) {
