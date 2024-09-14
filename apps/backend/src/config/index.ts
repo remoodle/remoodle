@@ -13,8 +13,8 @@ export const env = cleanEnv(process.env, {
 
   // every 10 minutes
   CRAWLER_GRADES_CRON: str({ default: "*/10 * * * *" }),
-  // every 40 minutes
-  CRAWLER_DEADLINES_CRON: str({ default: "*/40 * * * *" }),
+  // every 35 minutes
+  CRAWLER_DEADLINES_CRON: str({ default: "*/35 * * * *" }),
   CRAWLER_CONCURRENCY: num({ default: 1 }),
 
   CORE_SECRET: str({ default: "private-token" }),
