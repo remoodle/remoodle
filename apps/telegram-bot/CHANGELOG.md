@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.5](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.4...remoodle/telegram-bot-v0.4.5) (2024-09-14)
+
+
+### Bug Fixes
+
+* trigger ci to check if its working ([1f686fd](https://github.com/remoodle/heresy/commit/1f686fd44b8a6fbfb543c1b74bbd43db31a87686))
+
 ## [0.4.4](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.3...remoodle/telegram-bot-v0.4.4) (2024-09-14)
 
 
