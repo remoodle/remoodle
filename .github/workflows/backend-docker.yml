@@ -39,7 +39,7 @@ jobs:
 
           if [[ "${{ github.ref }}" =~ refs/tags/* ]]; then
             GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/.*v//')
-            echo "DEPLOY_PRODUCTION=true" >> $GITHUB_ENV
+            echo "DEPLOY_PRODUCTION='true'" >> $GITHUB_ENV
           else
             GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/refs\/heads\///' | sed -e 's/[\/-]/_/g')
           fi
