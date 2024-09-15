@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.11](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.10...remoodle/backend-v1.2.11) (2024-09-15)
+
+
+### Bug Fixes
+
+* ci ([ecf2239](https://github.com/remoodle/heresy/commit/ecf22399605342895522e72ee91cc9a6cfe19906))
+
 ## [1.2.10](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.9...remoodle/backend-v1.2.10) (2024-09-15)
 
 
