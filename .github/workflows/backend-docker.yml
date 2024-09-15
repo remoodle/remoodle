@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       docker_tag: ${{ steps.build-image.outputs.docker_tag }}
-      deploy_production: ${{ steps.build-image.outputs.deploy_production }}
+      environment: ${{ steps.build-image.outputs.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,10 +36,11 @@ jobs:
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-8)
+          ENVIRONMENT="staging"
 
           if [[ "${{ github.ref }}" =~ refs/tags/* ]]; then
             GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/.*v//')
-            echo "deploy_production='true'" >> $GITHUB_OUTPUT
+            ENVIRONMENT="production"
           else
             GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/refs\/heads\///' | sed -e 's/[\/-]/_/g')
           fi
@@ -55,14 +56,16 @@ jobs:
           docker push $IMAGE_ID:$DOCKER_TAG
 
           echo "docker_tag=${DOCKER_TAG}" >> $GITHUB_OUTPUT
+          echo "environment=${ENVIRONMENT}" >> $GITHUB_OUTPUT
 
   deploy-stage:
     needs: build-and-push
+    if: needs.build-and-push.outputs.environment == 'staging'
     uses: ./.github/workflows/deploy-stage.yml
 
   deploy-production:
     needs: build-and-push
-    if: needs.build-and-push.outputs.deploy_production == 'true'
+    if: needs.build-and-push.outputs.environment == 'production'
     uses: ./.github/workflows/deploy-prod.yml
     with:
       image_name: backend
