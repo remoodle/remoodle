@@ -19,7 +19,8 @@ permissions: write-all
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
+    outputs:
+      DOCKER_TAG: ${{ steps.build-image.outputs.DOCKER_TAG }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,6 +29,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
 
       - name: Build image
+        id: build-image
         run: |
           IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
@@ -50,6 +52,17 @@ jobs:
 
           docker push $IMAGE_ID:$DOCKER_TAG
 
-  deploy:
+          echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_ENV
+
+  deploy-stage:
     needs: build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/trunk'
     uses: ./.github/workflows/deploy-stage.yml
+
+  deploy-production:
+    needs: build-and-push
+    if: github.event_name == 'release'
+    uses: ./.github/workflows/deploy-prod.yml
+    with:
+      image_name: backend
+      docker_tag: ${{ needs.build-and-push.outputs.DOCKER_TAG }}
