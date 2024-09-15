@@ -20,8 +20,8 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     outputs:
-      docker_tag: ${{ steps.build-image.outputs.DOCKER_TAG }}
-      deploy_production: ${{ steps.build-image.outputs.DEPLOY_PRODUCTION }}
+      docker_tag: ${{ steps.build-image.outputs.docker_tag }}
+      deploy_production: ${{ steps.build-image.outputs.deploy_production }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,7 +39,7 @@ jobs:
 
           if [[ "${{ github.ref }}" =~ refs/tags/* ]]; then
             GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/.*v//')
-            echo "deploy_production='true'" >> $GITHUB_ENV
+            echo "deploy_production='true'" >> $GITHUB_OUTPUT
           else
             GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/refs\/heads\///' | sed -e 's/[\/-]/_/g')
           fi
@@ -54,7 +54,7 @@ jobs:
 
           docker push $IMAGE_ID:$DOCKER_TAG
 
-          echo "docker_tag=${DOCKER_TAG}" >> $GITHUB_ENV
+          echo "docker_tag=${DOCKER_TAG}" >> $GITHUB_OUTPUT
 
   deploy-stage:
     needs: build-and-push
