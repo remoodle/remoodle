@@ -33,7 +33,7 @@ export type AppType = typeof routes;
 
 api.notFound(() => {
   throw new HTTPException(404, {
-    message: "?Route not found",
+    message: "Route not found",
   });
 });
 
