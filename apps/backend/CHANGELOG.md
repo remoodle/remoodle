@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.9](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.8...remoodle/backend-v1.2.9) (2024-09-15)
+
+
+### Bug Fixes
+
+* trigger ci ([3115b06](https://github.com/remoodle/heresy/commit/3115b0616a85ae8d49487f8b01ae916f3be922f7))
+
 ## [1.2.8](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.7...remoodle/backend-v1.2.8) (2024-09-14)
 
 
