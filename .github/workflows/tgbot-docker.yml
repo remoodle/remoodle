@@ -32,6 +32,8 @@ jobs:
           IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-8)
+
           if [[ "${{ github.ref }}" =~ refs/tags/* ]]; then
             GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/.*v//')
           else
