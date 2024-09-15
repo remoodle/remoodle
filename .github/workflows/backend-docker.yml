@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       DOCKER_TAG: ${{ steps.build-image.outputs.DOCKER_TAG }}
+      DEPLOY_PRODUCTION: ${{ steps.build-image.outputs.DEPLOY_PRODUCTION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,6 +39,7 @@ jobs:
 
           if [[ "${{ github.ref }}" =~ refs/tags/* ]]; then
             GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/.*v//')
+            echo "DEPLOY_PRODUCTION=true" >> $GITHUB_ENV
           else
             GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/refs\/heads\///' | sed -e 's/[\/-]/_/g')
           fi
@@ -56,12 +58,11 @@ jobs:
 
   deploy-stage:
     needs: build-and-push
-    if: github.event_name == 'push' && github.ref == 'refs/heads/trunk'
     uses: ./.github/workflows/deploy-stage.yml
 
   deploy-production:
     needs: build-and-push
-    if: github.event_name == 'release'
+    if: needs.build-and-push.outputs.DEPLOY_PRODUCTION == 'true'
     uses: ./.github/workflows/deploy-prod.yml
     with:
       image_name: backend
