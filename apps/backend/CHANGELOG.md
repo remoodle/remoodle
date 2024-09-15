@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.13](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.12...remoodle/backend-v1.2.13) (2024-09-15)
+
+
+### Continuous Integration
+
+* test ([c7d657c](https://github.com/remoodle/heresy/commit/c7d657cdd7033c3d4ab79ac920887ef55c9f6e16))
+
 ## [1.2.12](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.11...remoodle/backend-v1.2.12) (2024-09-15)
 
 
