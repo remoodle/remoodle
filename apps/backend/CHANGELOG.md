@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.14](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.13...remoodle/backend-v1.2.14) (2024-09-18)
+
+
+### Bug Fixes
+
+* change telegram formatting ([1cbdfc9](https://github.com/remoodle/heresy/commit/1cbdfc9dc843c5a6fd985455a3089632f3a8d916))
+
 ## [1.2.13](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.12...remoodle/backend-v1.2.13) (2024-09-15)
 
 
