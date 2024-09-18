@@ -36,7 +36,7 @@ export const formatDeadlineReminders = (
         hour12: false,
         timeZone: "Asia/Almaty",
       });
-      message += `  • ${name}: **${remaining}**, ${formattedDate}\n`;
+      message += `  • ${name}: <b>${remaining}</b>, ${formattedDate}\n`;
     }
     message += "\n";
   }

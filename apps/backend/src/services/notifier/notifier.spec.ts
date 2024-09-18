@@ -479,11 +479,11 @@ describe("deadlines notifications", () => {
       "🔔 Upcoming deadlines 🔔
 
       🗓 Research Methods and Tools | Omirgaliyev Ruslan
-        • Assignment 1 is due: **06:35:00**, Sun, Sep 15, 2024, 23:59
-        • Assignment 2 is due: **06:35:00**, Sun, Sep 15, 2024, 23:59
+        • Assignment 1 is due: <b>06:35:00</b>, Sun, Sep 15, 2024, 23:59
+        • Assignment 2 is due: <b>06:35:00</b>, Sun, Sep 15, 2024, 23:59
 
       🗓 Writing | Barak Omaba
-        • Assignment 1 is due: **06:35:00**, Sun, Sep 15, 2024, 23:59
+        • Assignment 1 is due: <b>06:35:00</b>, Sun, Sep 15, 2024, 23:59
 
       "
     `);
