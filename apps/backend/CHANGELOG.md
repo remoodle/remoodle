@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.15](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.14...remoodle/backend-v1.2.15) (2024-09-19)
+
+
+### Bug Fixes
+
+* **backend:** add deadlines sorting ([006c59a](https://github.com/remoodle/heresy/commit/006c59ad20f4f046f93def01d36896d509f8afbf))
+* omit extra step ([ad4f411](https://github.com/remoodle/heresy/commit/ad4f411eabd2db1d1e5d889d44dae77db67444cb))
+
 ## [1.2.14](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.13...remoodle/backend-v1.2.14) (2024-09-18)
 
 
