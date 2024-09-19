@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.0...remoodle/frontend-v1.2.1) (2024-09-19)
+
+
+### Bug Fixes
+
+* **backend:** add deadlines sorting ([006c59a](https://github.com/remoodle/heresy/commit/006c59ad20f4f046f93def01d36896d509f8afbf))
+
 ## [1.2.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.7...remoodle/frontend-v1.2.0) (2024-09-12)
 
 
