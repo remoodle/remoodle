@@ -140,12 +140,20 @@ export class RMC {
   }
 
   async v1_user_deadlines(options?: { noOnline?: boolean }) {
-    return this.request<Deadline[]>(
+    const response = await this.request<Deadline[]>(
       "v1/user/deadlines" + qs({ noOnline: options?.noOnline?.toString() }),
       {
         method: "GET",
       },
     );
+
+    const [data, error] = response;
+
+    if (data) {
+      data.sort((a, b) => a.timestart - b.timestart);
+    }
+
+    return [data, error];
   }
 
   async v1_user_courses({

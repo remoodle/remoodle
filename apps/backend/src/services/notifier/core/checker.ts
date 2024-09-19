@@ -70,13 +70,11 @@ export const processDeadlines = (
   const now = Date.now();
   const reminderMap: Record<number, DeadlineReminderDiff> = {};
 
-  const eligibleDeadlines = deadlines
-    .filter(
-      (deadline) =>
-        !deadline.assignment?.gradeEntity?.graderaw &&
-        deadline.timestart * 1000 > now,
-    )
-    .sort((a, b) => a.timestart - b.timestart);
+  const eligibleDeadlines = deadlines.filter(
+    (deadline) =>
+      !deadline.assignment?.gradeEntity?.graderaw &&
+      deadline.timestart * 1000 > now,
+  );
 
   for (const deadline of eligibleDeadlines) {
     const { event_id, course_id, course_name, name, timestart, notifications } =
@@ -98,10 +96,5 @@ export const processDeadlines = (
     }
   }
 
-  // Sort the courses by their earliest deadline
-  return Object.values(reminderMap).sort((a, b) => {
-    const aEarliest = Math.min(...a.d.map((d) => d[1]));
-    const bEarliest = Math.min(...b.d.map((d) => d[1]));
-    return aEarliest - bEarliest;
-  });
+  return Object.values(reminderMap);
 };
