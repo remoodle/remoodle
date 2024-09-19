@@ -147,13 +147,11 @@ export class RMC {
       },
     );
 
-    const [data, error] = response;
-
-    if (data) {
-      data.sort((a, b) => a.timestart - b.timestart);
+    if (response[0]) {
+      response[0].sort((a, b) => a.timestart - b.timestart);
     }
 
-    return [data, error];
+    return response;
   }
 
   async v1_user_courses({
