@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - "apps/frontend/**"
-      - ".github/workflows/frontend-preview.yml"
+      - ".github/workflows/remoodle-frontend-preview.yml"
     types:
       - opened
       - synchronize
