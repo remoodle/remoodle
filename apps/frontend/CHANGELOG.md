@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.2...remoodle/frontend-v1.2.3) (2024-09-20)
+
+
+### Bug Fixes
+
+* **frontend:** change app title ([428cb0d](https://github.com/remoodle/heresy/commit/428cb0d5225627fddbd0f7be26033e6587080d83))
+
 ## [1.2.2](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.1...remoodle/frontend-v1.2.2) (2024-09-20)
 
 
