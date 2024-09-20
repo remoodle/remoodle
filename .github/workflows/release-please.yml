@@ -3,8 +3,6 @@ name: "Release, please"
 on:
   push:
     branches: [trunk]
-    paths:
-      - ".github/workflows/release-please.yml"
 
 permissions:
   contents: write
