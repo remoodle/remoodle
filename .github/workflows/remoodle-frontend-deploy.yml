@@ -27,15 +27,26 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: "pnpm-lock.yaml"
 
+      - name: Determine environment
+        id: env
+        run: |
+          if [[ ${{ github.ref }} == refs/tags/* ]]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+
       - name: Install dependencies
         run: cd apps/frontend && pnpm install
 
       - name: Build app in "production" mode
+        if: steps.env.outputs.environment == 'production'
         env:
           COMMIT_SHA: ${{ github.sha }}
         run: cd apps/frontend && pnpm build --mode="production"
 
       - name: Build app in "preview" mode
+        if: steps.env.outputs.environment == 'staging'
         env:
           COMMIT_SHA: ${{ github.sha }}
         run: cd apps/frontend && pnpm build --mode="preview" --outDir="dist-preview"
@@ -43,6 +54,7 @@ jobs:
       - run: echo "ignore-workspace-root-check=true" >> .npmrc
 
       - name: Deploy on stage
+        if: steps.env.outputs.environment == 'staging'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
@@ -50,7 +62,7 @@ jobs:
           command: pages deploy apps/frontend/dist-preview --project-name="frontend-dev-svo" --branch="trunk"
 
       - name: Deploy on production
-        if: startsWith(github.ref, 'refs/tags/')
+        if: steps.env.outputs.environment == 'production'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
