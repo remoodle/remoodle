@@ -77,20 +77,20 @@ export class RMC {
       });
 
       // eg "v0.3.1::123456"
-      const version = response.headers.get("Version");
+      // const version = response.headers.get("Version");
 
-      if (env.isProduction && version && version.startsWith("v")) {
-        const semverVersion = version.slice(1).split("::")[0];
+      // if (env.isProduction && version && version.startsWith("v")) {
+      //   const semverVersion = version.slice(1).split("::")[0];
 
-        if (compare(semverVersion, this.leastCompatibleVersion, "<")) {
-          return [
-            null,
-            new HTTPException(400, {
-              message: `Version ${version} is not supported. Please upgrade to ${this.leastCompatibleVersion} or higher.`,
-            }),
-          ];
-        }
-      }
+      //   if (compare(semverVersion, this.leastCompatibleVersion, "<")) {
+      //     return [
+      //       null,
+      //       new HTTPException(400, {
+      //         message: `Version ${version} is not supported. Please upgrade to ${this.leastCompatibleVersion} or higher.`,
+      //       }),
+      //     ];
+      //   }
+      // }
 
       if (!response.ok) {
         return [
