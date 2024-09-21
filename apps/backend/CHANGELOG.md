@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.16](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.15...remoodle/backend-v1.2.16) (2024-09-21)
+
+
+### Bug Fixes
+
+* disable semver check ([ac60bcb](https://github.com/remoodle/heresy/commit/ac60bcbd5de2f4a09e2eea5c3b6771c6b23beaf4))
+
 ## [1.2.15](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.14...remoodle/backend-v1.2.15) (2024-09-19)
 
 
