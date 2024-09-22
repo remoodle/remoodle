@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { readFile, writeFile } from "node:fs/promises";
 
-import { Queue, Worker } from "bullmq";
+import { Queue, Worker, Job } from "bullmq";
 import { createDB } from "@remoodle/db";
 import { env } from "./config";
 
@@ -17,70 +17,84 @@ const registrationQueue = new Queue("user-registration", {
   connection: db.redisConnection,
 });
 
-async function registerUser(user: OutputUser): Promise<void> {
-  try {
-    const response = await fetch(`${env.API_URL}/v1/auth/register`, {
-      method: "POST",
-      headers: {
-        Authorization: `Telegram ${env.API_SECRET}::${user.telegramId}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        moodleToken: user.moodleToken,
-      }),
-    });
+type JobData = OutputUser & {};
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+async function registerUser(job: Job<JobData>): Promise<void> {
+  const user = job.data;
 
-    console.log(`User ${user.name} registered successfully`);
-  } catch (error) {
-    console.error(`Failed to register user ${user.name}:`, error);
-    throw error;
-  }
-}
+  const response = await fetch(`${env.API_URL}/v1/auth/register`, {
+    method: "POST",
+    headers: {
+      Authorization: `Telegram ${env.API_SECRET}::${user.telegramId}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      moodleToken: user.moodleToken,
+    }),
+  });
 
-async function processUsers() {
-  try {
-    const files = await readDir(outputDir);
-    console.log(files);
-
-    const file = files[0];
-
-    const data = await readFile(join(outputDir, file), "utf-8");
-
-    const users = JSON.parse(data) as OutputUser[];
-
-    console.log(users.length, "users to process");
-
-    for (let i = 0; i < users.length; i += BATCH_SIZE) {
-      const batch = users.slice(i, i + BATCH_SIZE);
-      await Promise.all(
-        batch.map((user) => registrationQueue.add("register", user))
-      );
-    }
-
-    console.log("All users queued for registration");
-  } catch (error) {
-    console.error("Error processing users:", error);
+  if (!response.ok) {
+    throw new Error(
+      `Failed to register user, HTTP error, status: ${response.status}`
+    );
   }
 }
 
 const worker = new Worker(
   "user-registration",
   async (job) => {
-    await registerUser(job.data);
+    await registerUser(job);
   },
   { connection: db.redisConnection }
 );
 
 worker.on("completed", (job) => {
-  console.log(`Job ${job.id} completed`);
+  const user = job.data;
+
+  console.log(`${job.id} | User ${user.name} registered successfully`);
 });
 
 worker.on("failed", (job, err) => {
-  console.error(`Job ${job?.id} failed:`, err);
+  const user = job?.data;
+
+  console.error(`${job?.id} | Failed to register user ${user?.name}:`, err);
 });
 
-processUsers();
+async function processUsers() {
+  const files = await readDir(outputDir);
+  console.log(files);
+
+  const file = files[0];
+
+  const data = await readFile(join(outputDir, file), "utf-8");
+
+  const users = JSON.parse(data) as OutputUser[];
+
+  console.log(users.length, "users to process");
+
+  for (let i = 0; i < users.length; i += BATCH_SIZE) {
+    const batch = users.slice(i, i + BATCH_SIZE);
+
+    await Promise.all(
+      batch.map((user) => {
+        let data: JobData = {
+          ...user,
+        };
+
+        registrationQueue.add("register", data);
+      })
+    );
+  }
+}
+
+const main = async () => {
+  try {
+    await processUsers();
+
+    console.log("All users queued for registration");
+  } catch (error) {
+    console.error("Error processing users:", error);
+  }
+};
+
+main();
