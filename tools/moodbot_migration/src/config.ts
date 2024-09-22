@@ -12,7 +12,7 @@ export const env = cleanEnv(process.env, {
 
 import { readFile, writeFile } from "node:fs/promises";
 import { readdir } from "node:fs";
-import { join } from "node:path";
+import { join, extname } from "node:path";
 
 export const inputDir = join(__dirname, "../data/input");
 export const outputDir = join(__dirname, "../data/output");
@@ -23,7 +23,10 @@ export function readDir(dir: string): Promise<string[]> {
       if (err) {
         reject(err);
       } else {
-        resolve(files);
+        const jsonFiles = files.filter(
+          (file) => extname(file).toLowerCase() === ".json"
+        );
+        resolve(jsonFiles);
       }
     });
   });
