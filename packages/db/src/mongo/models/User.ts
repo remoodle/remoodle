@@ -3,11 +3,11 @@ import { Schema, model } from "mongoose";
 import { v7 as uuidv7 } from "uuid";
 
 export const DEFAULT_THRESHOLDS = [
-  "3 hours",
-  "6 hours",
+  // "3 hours",
+  // "6 hours",
   "1 day",
-  "2 days",
-  "3 days",
+  // "2 days",
+  // "3 days",
 ];
 
 type NotificationSettings = {
@@ -23,7 +23,7 @@ export type IUser = {
   name: string;
   handle: string;
   moodleId: number;
-  moodleToken: string;
+  // moodleToken: string;
   notificationSettings: NotificationSettings;
   email?: string;
   telegramId?: number;
@@ -53,7 +53,7 @@ const userSchema = new Schema<IUser, UserModel>(
     name: { type: String, required: true },
     handle: { type: String, required: true, unique: true },
     moodleId: { type: Number, required: true, unique: true },
-    moodleToken: { type: String, required: true, unique: true },
+    // moodleToken: { type: String, required: true, unique: true },
     email: { type: String },
     telegramId: { type: Number },
     password: { type: String },

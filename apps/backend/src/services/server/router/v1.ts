@@ -50,52 +50,47 @@ const authRoutes = new Hono<{
 
       const telegramId = ctx.get("telegramId");
 
-      let user: IUser | null = await db.user.findOne({ moodleToken });
+      const [student, error] = await rmc.v1_auth_token(moodleToken);
 
-      if (!user) {
-        try {
-          const [data, error] = await rmc.v1_auth_register({
-            token: moodleToken,
-          });
+      if (error) {
+        throw new HTTPException(500, { message: error.message });
+      }
 
-          if (error) {
-            throw error;
-          }
+      console.log(student);
 
-          user = (await db.user.create({
-            moodleToken,
-            name: data.name,
-            moodleId: data.moodle_id,
-            handle: handle || data.username,
-            ...(telegramId && { telegramId }),
-            ...(data.email && { email: data.email }),
-            ...(password && { password: hashPassword(password) }),
-          })) as IUser;
+      let user: IUser | null = null;
 
-          if (!user) {
+      if (student) {
+        user = await db.user.findOne({ moodleId: student.moodle_id });
+
+        if (!user) {
+          try {
+            user = (await db.user.create({
+              // moodleToken,
+              name: student.name,
+              moodleId: student.moodle_id,
+              handle: handle || student.username,
+              ...(telegramId && { telegramId }),
+              ...(student.email && { email: student.email }),
+              ...(password && { password: hashPassword(password) }),
+            })) as IUser;
+
+            requestAlertWorker((client) =>
+              client.new.$post({
+                json: {
+                  topic: env.isProduction ? "users2" : "dev",
+                  message: `New ${telegramId ? "Telegram" : "Regular"} user \n<b>${student.name}</b> \n<b>${student.moodle_id}</b>`,
+                },
+              }),
+            );
+          } catch (error: any) {
+            const [_data, _error] = await rmc.v1_delete_user();
+
             throw new HTTPException(500, {
-              message: "Couldn't create user",
+              message: error.message,
             });
           }
-
-          requestAlertWorker((client) =>
-            client.new.$post({
-              json: {
-                topic: env.isProduction ? "users2" : "dev",
-                message: `New ${telegramId ? "Telegram" : "Regular"} user \n<b>${data.name}</b> \n<b>${data.moodle_id}</b>`,
-              },
-            }),
-          );
-        } catch (error: any) {
-          const [_data, _error] = await rmc.v1_delete_user();
-          await db.user.deleteOne({ _id: user?._id });
-
-          throw new HTTPException(500, {
-            message: error.message,
-          });
-        }
-      } else {
-        if (!user.telegramId && telegramId) {
+        } else if (!user.telegramId && telegramId) {
           await db.user.updateOne(
             { _id: user._id },
             {
@@ -107,11 +102,18 @@ const authRoutes = new Hono<{
         }
       }
 
+      if (!user) {
+        throw new HTTPException(401, { message: "Invalid token" });
+      }
+
       try {
         const { accessToken, refreshToken } = issueTokens(
           user._id,
           user.moodleId,
         );
+
+        // TODO: Sanitize this properly
+        user.password = "***";
 
         return ctx.json({
           user,
@@ -159,7 +161,8 @@ const authRoutes = new Hono<{
           user.moodleId,
         );
 
-        // user.password = "***";
+        // TODO: Sanitize this properly
+        user.password = "***";
 
         return ctx.json({
           user,
@@ -210,6 +213,9 @@ const authRoutes = new Hono<{
         user._id.toString(),
         user.moodleId,
       );
+
+      // TODO: Sanitize this properly
+      user.password = "***";
 
       return ctx.json({
         user,

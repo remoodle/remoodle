@@ -133,6 +133,15 @@ export class RMC {
     });
   }
 
+  async v1_auth_token(token: string) {
+    return this.request<MoodleUser>("v1/auth/token", {
+      method: "POST",
+      body: JSON.stringify({
+        token,
+      }),
+    });
+  }
+
   async v1_delete_user() {
     return this.request<"OK">("v1/user", {
       method: "DELETE",
