@@ -35,7 +35,7 @@ type UserModel = Model<IUser>;
 const notificationSettingsSchema = new Schema<NotificationSettings>(
   {
     telegram: {
-      deadlineReminders: { type: Boolean, default: true },
+      deadlineReminders: { type: Boolean, default: false },
       gradeUpdates: { type: Boolean, default: true },
     },
     deadlineThresholds: {
