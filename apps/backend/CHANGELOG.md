@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.18](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.17...remoodle/backend-v1.2.18) (2024-09-23)
+
+
+### Miscellaneous Chores
+
+* nun compare-versions ([587c6b0](https://github.com/remoodle/heresy/commit/587c6b0bee588297f89e94be5982fcf6f927cec8))
+
+
+### Code Refactoring
+
+* change queue names ([8911172](https://github.com/remoodle/heresy/commit/8911172c4cd2c58aa3488a6ab24f1e837fc0fa8b))
+* use bullmq repeatable instead of cron tasks ([8773de7](https://github.com/remoodle/heresy/commit/8773de7623f44b1bbfb6d5d91dcb0f5c6f7dd270))
+
 ## [1.2.17](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.16...remoodle/backend-v1.2.17) (2024-09-22)
 
 
