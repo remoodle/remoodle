@@ -34,8 +34,8 @@ const keyboards = {
     .text("Back ←", "back_to_menu"),
 
   delete_profile: new InlineKeyboard()
-    .text("Yes ✅", "delete_profile_yes")
-    .text("No ❌", "back_to_account"),
+    .text("Yes", "delete_profile_yes")
+    .text("Cancel", "back_to_account"),
 
   settings: new InlineKeyboard()
     .text("Notifications", "notifications")
