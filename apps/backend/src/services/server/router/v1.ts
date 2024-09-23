@@ -66,7 +66,6 @@ const authRoutes = new Hono<{
         if (!user) {
           try {
             user = (await db.user.create({
-              // moodleToken,
               name: student.name,
               moodleId: student.moodle_id,
               handle: handle || student.username,
