@@ -40,7 +40,7 @@ final class CreateGradeTable extends AbstractMigration
             ->addColumn('feedback', 'text', ['null' => true, 'limit' => MysqlAdapter::TEXT_MEDIUM])
 
             ->addForeignKey('moodle_id', 'moodle_users', 'moodle_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
-            ->addForeignKey('cmid', 'course_modules', 'cmid', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
+            // ->addForeignKey('cmid', 'course_modules', 'cmid', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addForeignKey('course_id', 'courses', 'course_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addIndex(['moodle_id'], ['unique' => false])
             ->addIndex(['cmid'], ['unique' => false])

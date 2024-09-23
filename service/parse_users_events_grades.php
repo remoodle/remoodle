@@ -9,6 +9,7 @@ use Queue\Payload\Payload;
 use Spiral\Goridge\RPC\RPC;
 use Spiral\RoadRunner\Jobs\Jobs;
 use Spiral\RoadRunner\Jobs\Task\Task;
+use Queue\Actions\Batch\Events\EventsBatchDto;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
@@ -21,18 +22,27 @@ $capsule->setAsGlobal();
 $capsule->bootEloquent();
 
 $jobs = new Jobs(RPC::create(Config::get("rpc.connection")));
-$queueEvents = $jobs->connect(JobsEnum::PARSE_EVENTS->value);
+$queueEvents = $jobs->connect(JobsEnum::BATCH_PARSE_EVENTS->value);
 $queueGrades = $jobs->connect(JobsEnum::PARSE_GRADES->value);
 
-$users = MoodleUser::all();
+$users = MoodleUser::where('initialized', true)->get();
 
-foreach($users as $user) {
+$chunks = [];
+foreach ($users->chunk(5)->all() as $chunk) {
+    $parts = [];
+    foreach ($chunk->all() as $user) {
+        $dto = new EventsBatchDto($user->moodle_token, $user->moodle_id);
+        $parts[] = $dto;
+    }
     $queueEvents->dispatch(
         $queueEvents->create(
             name: Task::class,
-            payload: (new Payload(JobsEnum::PARSE_EVENTS->value, $user))
+            payload: (new Payload(JobsEnum::BATCH_PARSE_EVENTS->value, $parts))
         )
     );
+}
+
+foreach ($users as $user) {
     $queueGrades->dispatch(
         $queueGrades->create(
             name: Task::class,

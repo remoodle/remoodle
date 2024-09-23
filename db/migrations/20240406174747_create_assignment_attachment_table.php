@@ -27,7 +27,7 @@ final class CreateAssignmentAttachmentTable extends AbstractMigration
             ->addColumn('filename', 'string', ['null' => false])
             ->addColumn('filepath', 'string', ['null' => false])
             ->addColumn('filesize', 'integer', ['signed' => false, 'null' => false])
-            ->addColumn('fileurl', 'string', ['null' => false])
+            ->addColumn('fileurl', 'string', ['null' => true])
             ->addColumn('timemodified', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('mimetype', 'string', ['null' => false])
             ->addColumn('isexternalfile', 'boolean', ['null' => false])

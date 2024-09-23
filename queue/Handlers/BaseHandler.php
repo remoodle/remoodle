@@ -65,13 +65,13 @@ abstract class BaseHandler implements HandlerInterface
         $payload = $this->getPayload();
         $next = $payload->next();
 
-        if($next === null) {
+        if ($next === null) {
             return;
         }
 
         $bus = $payload->bus();
         $headPayload = array_shift($bus);
-        foreach($bus as $busPayload) {
+        foreach ($bus as $busPayload) {
             $headPayload->add($busPayload);
         }
 

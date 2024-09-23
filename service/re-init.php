@@ -15,25 +15,22 @@ require_once __DIR__ . "/../vendor/autoload.php";
 Config::loadConfigs();
 
 $capsule = new Capsule();
+
 $capsule->addConnection(Config::get('eloquent'));
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
 
 $jobs = new Jobs(RPC::create(Config::get("rpc.connection")));
-$queue = $jobs->connect(JobsEnum::PARSE_COURSES->value);
+$queue = $jobs->connect(JobsEnum::SET_INITIALIZED->value);
 
-$users = MoodleUser::where('initialized', true)->get();
+$users = MoodleUser::where('initialized', false)->get();
 
 foreach ($users as $user) {
-    // $task = $queue->create(Task::class, (new Payload($queue->getName(), $user)));
-    // $queue->dispatch($task);
-    if ($user->initialized) {
+    if (!$user->initialized) {
         $queue->dispatch(
             $queue->create(
                 name: Task::class,
-                payload: (new Payload(JobsEnum::PARSE_COURSES->value, $user))
-                    ->add(new Payload(JobsEnum::PARSE_COURSE_CONTENTS->value, $user))
-                    ->add(new Payload(JobsEnum::PARSE_ASSIGNMENTS->value, $user))
+                payload: (new Payload(JobsEnum::SET_INITIALIZED->value, $user))
             )
         );
     }

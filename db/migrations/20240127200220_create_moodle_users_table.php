@@ -26,7 +26,7 @@ final class CreateMoodleUsersTable extends AbstractMigration
             ->addColumn('username', 'string', ['null' => false])
             ->addColumn('name', 'string', ['null' => false])
             ->addColumn('moodle_token', 'string', ['null' => false])
-            ->addColumn('initialized', 'string', ['null' => false, 'default' => false])
+            ->addColumn('initialized', 'boolean', ['null' => false, 'default' => false])
 
             ->addColumn('notify_method', 'enum', ['values' => ['get_update', 'webhook'], 'default' => 'get_update'])
             ->addColumn('webhook', 'string', ['null' => true])

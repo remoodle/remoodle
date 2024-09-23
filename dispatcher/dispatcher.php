@@ -46,6 +46,7 @@ while ($task = $consumer->waitTask()) {
 
     try {
         $handler->handle();
+        echo "Completed task " . $task->getPipeline() . PHP_EOL;
     } catch (\Throwable $th) {
         $task->fail($th);
         echo "\n" . $th->getMessage();

@@ -27,7 +27,7 @@ final class CreateCourseModuleAttachmentTable extends AbstractMigration
             ->addColumn("filename", "string", ["null" => false])
             ->addColumn("filepath", "string", ["null" => true])
             ->addColumn("filesize", "integer", ["null" => false, "signed" => false])
-            ->addColumn("fileurl", "text", ["null" => false])
+            ->addColumn("fileurl", "text", ["null" => true])
             ->addColumn("timecreated", "integer", ["null" => true, "signed" => false])
             ->addColumn("timemodified", "integer", ["null" => true, "signed" => false])
             ->addColumn("sortorder", "integer", ["null" => true, "signed" => false])

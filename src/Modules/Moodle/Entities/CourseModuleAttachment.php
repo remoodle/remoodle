@@ -12,7 +12,7 @@ class CourseModuleAttachment
      * @param string $filename
      * @param null|string $filepath
      * @param int $filesize
-     * @param string $fileurl
+     * @param null|string $fileurl
      * @param null|int $timecreated
      * @param null|int $timemodified
      * @param null|int $sortorder

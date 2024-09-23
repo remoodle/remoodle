@@ -38,34 +38,44 @@ logs:
     level: ${LOGS_LEVEL:-debug}
     # Encoding format can be "console" or "json" (last is preferred for production usage).
     encoding: ${LOGS_ENCODING:-console}
-
 jobs:
-    num_pollers: ${JOBS_NUM_POLLERS:-8}
+    num_pollers: ${JOBS_NUM_POLLERS:-9}
     timeout: 60
     pool:
-        num_workers: ${JOBS_NUM_WORKERS:-4}
+        num_workers: ${JOBS_NUM_WORKERS:-8}
         max_worker_memory: 100
         command: "php dispatcher/dispatcher.php"
     pipelines:
         user_parse_events:
+            priority: 4
             driver: memory
             config: {}
         user_parse_courses:
+            priority: 2
             driver: memory
             config: {}
         user_parse_grades:
+            priority: 4
             driver: memory
             config: {}
         notification_webhook:
+            priority: 4
             driver: memory
             config: {}
         user_set_initialized:
+            priority: 1
             driver: memory
             config: {}
         user_parse_assignments:
+            priority: 3
             driver: memory
             config: {}
         user_parse_courses_contents:
+            priority: 3
+            driver: memory
+            config: {}
+        user_parse_batch_events:
+            priority: 4
             driver: memory
             config: {}
     consume:
@@ -76,7 +86,8 @@ jobs:
             "user_parse_grades",
             "notification_webhook",
             "user_set_initialized",
-            'user_parse_assignments'
+            'user_parse_assignments',
+            'user_parse_batch_events'
         ]
 
 kv: 
@@ -86,17 +97,21 @@ kv:
 service:
     kv_users_init:
         command: "php service/user_init.php"
+    re_init:
+        command: "php service/re-init.php"
+        remain_after_exit: true
+        restart_sec: ${RE_INIT_RESTAR_SEC:-60}
     parse_user_courses_assignments:
         command: "php service/parse_user_courses_assignments.php"
         remain_after_exit: true
-        restart_sec: ${PARSE_COURSES_RESTART_SEC:-3600}
+        restart_sec: ${PARSE_COURSES_RESTART_SEC:-120}
     parse_users_events_grades:
         command: "php service/parse_users_events_grades.php"
         remain_after_exit: true
-        restart_sec: ${PARSE_GRADES_RESTART_SEC:-1800}
-#   parse_grades_users:
-#       command: "php service/parse_grades_users.php"
-#       remain_after_exit: true
-#       restart_sec: 10
+        restart_sec: ${PARSE_GRADES_RESTART_SEC:-60}
+    # parse_grades_users:
+    #     command: "php service/parse_grades_users.php"
+    #     remain_after_exit: true
+    #     restart_sec: 10
 metrics:
     address: "${SERVER_HOST:-0.0.0.0}:2112"

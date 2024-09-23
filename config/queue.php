@@ -8,6 +8,7 @@ use Queue\Handlers\ParseCourseContents;
 use Queue\Handlers\ParseUserAssignments;
 use Queue\Handlers\ParseUserCourses;
 use Queue\Handlers\ParseUserEvents;
+use Queue\Handlers\ParseUserEventsBatch;
 use Queue\Handlers\ParseUserGrades;
 
 return [
@@ -17,6 +18,7 @@ return [
         JobsEnum::PARSE_GRADES->value => ParseUserGrades::class,
         JobsEnum::PARSE_EVENTS->value => ParseUserEvents::class,
         JobsEnum::SET_INITIALIZED->value => InitializeUser::class,
-        JobsEnum::PARSE_ASSIGNMENTS->value => ParseUserAssignments::class
+        JobsEnum::PARSE_ASSIGNMENTS->value => ParseUserAssignments::class,
+        JobsEnum::BATCH_PARSE_EVENTS->value => ParseUserEventsBatch::class
     ]
 ];

@@ -40,6 +40,7 @@ return function (App $app) {
             $user->get("/deadlines", [UserCoursesController::class, "getDeadlines"]);
 
             $user->get("/courses", [UserCoursesController::class, "getCourses"]);
+            $user->get("/courses/overall-grades", [UserCoursesController::class, "getCoursesOverallGrades"]);
             $user->get("/courses/overall", [UserCoursesController::class, "getUserOverall"]);
 
             $user->get("/course/{course}/grades", [UserCoursesController::class, "getCourseGrades"])->add(CourseAssign::class); //grades

@@ -17,6 +17,27 @@ class UserCoursesController extends BaseController
     ) {
     }
 
+    public function getCoursesOverallGrades(Request $request, Response $response): Response
+    {
+        $user = $request->getAttribute("user");
+        $user->load([
+            'courses',
+            'courses.grades' => function ($query) use ($user) {
+                $query->whereNull('cmid')->where('moodle_id', $user->moodle_id);
+            }
+        ]);
+
+        foreach ($user->courses as $userCourse) {
+            $userCourse->grades->makeHidden(['laravel_through_key', 'moodle_id']);
+        }
+
+        return $this->jsonResponse(
+            $response,
+            200,
+            $user->courses
+        );
+    }
+
     public function getCourses(Request $request, Response $response): Response
     {
         /**@var \App\Models\MoodleUser */

@@ -92,16 +92,11 @@ class Auth
             $storage->set('m'.$user->moodle_id, $user->moodle_token);
 
 
-            $queue = $this->jobsFactory->createQueue(JobsEnum::PARSE_COURSES->value);
+            $queue = $this->jobsFactory->createQueue(JobsEnum::SET_INITIALIZED->value);
             $queue->dispatch(
                 $queue->create(
                     name: Task::class,
-                    payload: (new Payload(JobsEnum::PARSE_COURSES->value, $user))
-                        ->add(new Payload(JobsEnum::PARSE_COURSE_CONTENTS->value, $user))
-                        ->add(new Payload(JobsEnum::PARSE_GRADES->value, $user))
-                        ->add(new Payload(JobsEnum::PARSE_EVENTS->value, $user))
-                        ->add(new Payload(JobsEnum::PARSE_ASSIGNMENTS->value, $user))
-                        ->add(new Payload(JobsEnum::SET_INITIALIZED->value, $user))
+                    payload: (new Payload(JobsEnum::SET_INITIALIZED->value, $user))
                 )
             );
         } catch (\Throwable $th) {
