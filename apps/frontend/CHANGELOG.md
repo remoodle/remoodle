@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.3...remoodle/frontend-v1.2.4) (2024-09-23)
+
+
+### Bug Fixes
+
+* **frontend:** change production bot username ([#137](https://github.com/remoodle/heresy/issues/137)) ([7b3efd7](https://github.com/remoodle/heresy/commit/7b3efd778acbb72e670c6191ff30020723c93e2f))
+
 ## [1.2.3](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.2...remoodle/frontend-v1.2.3) (2024-09-20)
 
 
