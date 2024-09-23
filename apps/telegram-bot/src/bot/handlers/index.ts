@@ -57,6 +57,7 @@ callbacksHandler.callbackQuery(
 callbacksHandler.callbackQuery("back_to_menu", callbacks.back.toMenu);
 callbacksHandler.callbackQuery("back_to_settings", callbacks.back.toSettings);
 callbacksHandler.callbackQuery("back_to_grades", callbacks.back.toGrades);
+callbacksHandler.callbackQuery("back_to_account", callbacks.back.toAccount);
 
 // Extra
 callbacksHandler.callbackQuery("donate", callbacks.other.donate);
@@ -64,5 +65,6 @@ callbacksHandler.callbackQuery(
   "schedule_coming_soon",
   callbacks.other.schedule,
 );
+callbacksHandler.callbackQuery("account", callbacks.settings.account);
 
 export { commandsHandler, callbacksHandler };

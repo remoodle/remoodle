@@ -623,6 +623,68 @@ async function comingSoon(ctx: Context) {
   });
 }
 
+async function account(ctx: Context) {
+  if (!ctx.from) {
+    return;
+  }
+
+  const userId = ctx.from.id;
+
+  const [user, _] = await request((client) =>
+    client.v1.user.check.$get(
+      {},
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  return await ctx.editMessageText(
+    "ReMoodle Account\n\nHandle:   `" +
+      user?.handle +
+      "`\nName:   `" +
+      user?.name +
+      "`\nMoodleID:   `" +
+      user?.moodleId +
+      "`",
+    {
+      reply_markup: keyboards.account,
+      parse_mode: "Markdown",
+    },
+  );
+}
+
+async function backToAccount(ctx: Context) {
+  if (!ctx.from) {
+    return;
+  }
+
+  const userId = ctx.from.id;
+
+  const [user, _] = await request((client) =>
+    client.v1.user.check.$get(
+      {},
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  return await ctx.editMessageText(
+    "ReMoodle Account\n\nHandle:   `" +
+      user?.handle +
+      "`\nName:   `" +
+      user?.name +
+      "`\nMoodleID:   `" +
+      user?.moodleId +
+      "`",
+    {
+      reply_markup: keyboards.account,
+      parse_mode: "Markdown",
+    },
+  );
+}
+
 const callbacks = {
   menu: {
     others: others,
@@ -644,11 +706,13 @@ const callbacks = {
     changeNotifications: changeNotifications,
     deleteProfile: deleteProfile,
     deleteProfileYes: deleteProfileYes,
+    account: account,
   },
   back: {
     toMenu: backToMenu,
     toSettings: backToSettings,
     toGrades: backToGrades,
+    toAccount: backToAccount,
   },
   other: {
     donate: donate,

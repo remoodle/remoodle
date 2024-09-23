@@ -35,13 +35,18 @@ const keyboards = {
 
   delete_profile: new InlineKeyboard()
     .text("Yes ✅", "delete_profile_yes")
-    .text("No ❌", "back_to_settings"),
+    .text("No ❌", "back_to_account"),
 
   settings: new InlineKeyboard()
     .text("Notifications", "notifications")
-    .text("⚠️ Delete Profile ⚠️", "delete_profile")
+    .text("Account", "account")
     .row()
     .text("Back ←", "back_to_menu"),
+
+  account: new InlineKeyboard()
+    .text("⚠️ Delete Profile ⚠️", "delete_profile")
+    .row()
+    .text("Back ←", "back_to_settings"),
 
   find_token: new InlineKeyboard().url(
     "How to find your token",
