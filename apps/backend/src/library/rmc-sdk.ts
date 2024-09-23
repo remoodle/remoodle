@@ -1,6 +1,5 @@
 import { HTTPException } from "hono/http-exception";
 import type { StatusCode } from "hono/utils/http-status";
-import { compare } from "compare-versions";
 import { z } from "zod";
 import type {
   Course,
@@ -10,9 +9,8 @@ import type {
   CourseGradeItem,
   Deadline,
   MoodleUser,
-  HealthResponse,
 } from "@remoodle/types";
-import { config, env } from "../config";
+import { config } from "../config";
 
 type Auth = { moodleId: number } | { moodleToken: string };
 
@@ -33,8 +31,6 @@ const qs = (params: Record<string, string | undefined>) => {
 };
 
 export class RMC {
-  private leastCompatibleVersion = "1.1.0";
-
   private host: string;
   private secret: string;
   private auth?: Auth;
@@ -75,22 +71,6 @@ export class RMC {
           ...(this.auth && this.getAuthHeaders(this.auth)),
         },
       });
-
-      // eg "v0.3.1::123456"
-      // const version = response.headers.get("Version");
-
-      // if (env.isProduction && version && version.startsWith("v")) {
-      //   const semverVersion = version.slice(1).split("::")[0];
-
-      //   if (compare(semverVersion, this.leastCompatibleVersion, "<")) {
-      //     return [
-      //       null,
-      //       new HTTPException(400, {
-      //         message: `Version ${version} is not supported. Please upgrade to ${this.leastCompatibleVersion} or higher.`,
-      //       }),
-      //     ];
-      //   }
-      // }
 
       if (!response.ok) {
         return [

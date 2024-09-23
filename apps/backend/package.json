@@ -19,7 +19,6 @@
     "@remoodle/utils": "workspace:*",
     "@total-typescript/shoehorn": "^0.1.2",
     "bullmq": "^5.12.14",
-    "compare-versions": "^6.1.1",
     "dotenv": "^16.4.5",
     "envalid": "^8.0.0",
     "hono": "^4.5.5",
