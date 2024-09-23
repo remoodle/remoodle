@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/remoodle/core/compare/v1.1.0...v1.1.1) (2024-09-23)
+
+
+### Bug Fixes
+
+* introduce proper parsing logic (maybe) ([#18](https://github.com/remoodle/core/issues/18)) ([3667ef8](https://github.com/remoodle/core/commit/3667ef81debcc11878f98961cad69ce8fc5f72b8))
+
 ## [1.1.0](https://github.com/remoodle/core/compare/v1.0.2...v1.1.0) (2024-09-12)
 
 
