@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { watch } from "vue";
 import { RouterView, useRoute, useRouter } from "vue-router";
+import { ConfigProvider } from "radix-vue";
 import { useUserStore } from "@/shared/stores/user";
 import { useAppStore } from "@/shared/stores/app";
 import { RouteName } from "@/shared/lib/routes";
@@ -42,8 +43,10 @@ watch(
 </script>
 
 <template>
-  <div class="flex h-[100svh] flex-col">
-    <RouterView />
-  </div>
-  <Toaster />
+  <ConfigProvider :scroll-body="false">
+    <div class="flex h-[100svh] flex-col">
+      <RouterView />
+    </div>
+    <Toaster />
+  </ConfigProvider>
 </template>

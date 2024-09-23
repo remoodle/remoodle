@@ -32,10 +32,8 @@ const { run, loading, error } = createAsyncProcess(async () => {
     throw error;
   }
 
-  const sorted = data.sort((a, b) => a.timestart - b.timestart);
-
   deadlines.value = partition(
-    sorted,
+    data,
     ({ timestart }) => `${formatDate(fromUnix(timestart), "fullDate")}`,
   );
 });

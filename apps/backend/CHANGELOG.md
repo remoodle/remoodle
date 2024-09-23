@@ -1,5 +1,200 @@
 # Changelog
 
+## [1.2.18](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.17...remoodle/backend-v1.2.18) (2024-09-23)
+
+
+### Miscellaneous Chores
+
+* nun compare-versions ([587c6b0](https://github.com/remoodle/heresy/commit/587c6b0bee588297f89e94be5982fcf6f927cec8))
+
+
+### Code Refactoring
+
+* change queue names ([8911172](https://github.com/remoodle/heresy/commit/8911172c4cd2c58aa3488a6ab24f1e837fc0fa8b))
+* use bullmq repeatable instead of cron tasks ([8773de7](https://github.com/remoodle/heresy/commit/8773de7623f44b1bbfb6d5d91dcb0f5c6f7dd270))
+
+## [1.2.17](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.16...remoodle/backend-v1.2.17) (2024-09-22)
+
+
+### Bug Fixes
+
+* backend fixes ([bdc8614](https://github.com/remoodle/heresy/commit/bdc8614b9255a5563f6e92c6457779cdd0e62c3a))
+
+## [1.2.16](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.15...remoodle/backend-v1.2.16) (2024-09-21)
+
+
+### Bug Fixes
+
+* disable semver check ([ac60bcb](https://github.com/remoodle/heresy/commit/ac60bcbd5de2f4a09e2eea5c3b6771c6b23beaf4))
+
+## [1.2.15](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.14...remoodle/backend-v1.2.15) (2024-09-19)
+
+
+### Bug Fixes
+
+* **backend:** add deadlines sorting ([006c59a](https://github.com/remoodle/heresy/commit/006c59ad20f4f046f93def01d36896d509f8afbf))
+* omit extra step ([ad4f411](https://github.com/remoodle/heresy/commit/ad4f411eabd2db1d1e5d889d44dae77db67444cb))
+
+## [1.2.14](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.13...remoodle/backend-v1.2.14) (2024-09-18)
+
+
+### Bug Fixes
+
+* change telegram formatting ([1cbdfc9](https://github.com/remoodle/heresy/commit/1cbdfc9dc843c5a6fd985455a3089632f3a8d916))
+
+## [1.2.13](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.12...remoodle/backend-v1.2.13) (2024-09-15)
+
+
+### Continuous Integration
+
+* test ([c7d657c](https://github.com/remoodle/heresy/commit/c7d657cdd7033c3d4ab79ac920887ef55c9f6e16))
+
+## [1.2.12](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.11...remoodle/backend-v1.2.12) (2024-09-15)
+
+
+### Bug Fixes
+
+* shit ([309bb7c](https://github.com/remoodle/heresy/commit/309bb7c3acce3ea49c508d75adbba207e6cc76e7))
+
+## [1.2.11](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.10...remoodle/backend-v1.2.11) (2024-09-15)
+
+
+### Bug Fixes
+
+* ci ([ecf2239](https://github.com/remoodle/heresy/commit/ecf22399605342895522e72ee91cc9a6cfe19906))
+
+## [1.2.10](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.9...remoodle/backend-v1.2.10) (2024-09-15)
+
+
+### Bug Fixes
+
+* trigger ci ([ee1a8f0](https://github.com/remoodle/heresy/commit/ee1a8f018d020d9d1a8d2e70dad9446536e7e976))
+
+## [1.2.9](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.8...remoodle/backend-v1.2.9) (2024-09-15)
+
+
+### Bug Fixes
+
+* trigger ci ([3115b06](https://github.com/remoodle/heresy/commit/3115b0616a85ae8d49487f8b01ae916f3be922f7))
+
+## [1.2.8](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.7...remoodle/backend-v1.2.8) (2024-09-14)
+
+
+### Bug Fixes
+
+* eliminate crawler collisions ([a36e66a](https://github.com/remoodle/heresy/commit/a36e66a8e178970e1c74c3a71c94fd84b68aab3a))
+* proper formatting ([6e36625](https://github.com/remoodle/heresy/commit/6e3662594ce7c5d032eba43a89a0bb20d50d6df6))
+
+## [1.2.7](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.6...remoodle/backend-v1.2.7) (2024-09-13)
+
+
+### Bug Fixes
+
+* formatter's timezone ([1e432d7](https://github.com/remoodle/heresy/commit/1e432d7d256005474f6e5eeb4d67421255ffbab2))
+* **notifications:** highlight and use · instead of - ([e34b52f](https://github.com/remoodle/heresy/commit/e34b52f36674d1ec7ee2482994634fde4f24eaed))
+* notifier tests ([9274c65](https://github.com/remoodle/heresy/commit/9274c65025b5073b8db10ef9a7763e5786260df9))
+* return missing log ([ea75dcc](https://github.com/remoodle/heresy/commit/ea75dccd0bd8188f092100694dc9d14910d7d304))
+
+## [1.2.6](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.5...remoodle/backend-v1.2.6) (2024-09-13)
+
+
+### Bug Fixes
+
+* fine tune crawler ([d6f60d2](https://github.com/remoodle/heresy/commit/d6f60d261ea804d0fc5dd5b5679a36e8e77b7fcd))
+
+## [1.2.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.4...remoodle/backend-v1.2.5) (2024-09-13)
+
+
+### Bug Fixes
+
+* better logs ([c42baa3](https://github.com/remoodle/heresy/commit/c42baa30f6dc44bf32d1146d988b38f2d11779c9))
+
+## [1.2.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.3...remoodle/backend-v1.2.4) (2024-09-12)
+
+
+### Bug Fixes
+
+* handle uncaughtException and unhandledRejection ([acc75cc](https://github.com/remoodle/heresy/commit/acc75ccb2e6032b58eca5d11f5f46e2d143ba37f))
+* readable logs ([d1ece43](https://github.com/remoodle/heresy/commit/d1ece43daf98ec2f5d8246ae374128bb447b991c))
+
+## [1.2.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.2...remoodle/backend-v1.2.3) (2024-09-12)
+
+
+### Bug Fixes
+
+* configurable crawler cron ([02db3b6](https://github.com/remoodle/heresy/commit/02db3b666ce712bf01d274f6912092ac8a1a0962))
+
+## [1.2.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.1...remoodle/backend-v1.2.2) (2024-09-12)
+
+
+### Bug Fixes
+
+* dont break shit in production ([da97844](https://github.com/remoodle/heresy/commit/da97844ebb43290fa06d4de8e3a135f5f84bccb3))
+
+## [1.2.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.0...remoodle/backend-v1.2.1) (2024-09-12)
+
+
+### Bug Fixes
+
+* bump lcv ([4c6c311](https://github.com/remoodle/heresy/commit/4c6c311caee8afa5d295e5dbec03b99debdc7db7))
+
+## [1.2.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.7...remoodle/backend-v1.2.0) (2024-09-12)
+
+
+### Features
+
+* noOnline support in crawler ([256826e](https://github.com/remoodle/heresy/commit/256826ee583f0a5d9cec2e5612752e6eb2d100d7))
+* reminder thresholds settings ([a34b8a6](https://github.com/remoodle/heresy/commit/a34b8a6f261ca1cc9a6119a7f03b2c33d0424a79))
+
+
+### Bug Fixes
+
+* **api:** add thresholds limit ([8c32b69](https://github.com/remoodle/heresy/commit/8c32b69bc362b49237cc5694c06d286ecad89f5b))
+* better formatting ([d48096d](https://github.com/remoodle/heresy/commit/d48096ddf696716e4ce2529d93291780ab3fabfd))
+* lower thresholds ([d9a004c](https://github.com/remoodle/heresy/commit/d9a004c970d46ffac0b528d109453fde854beaa2))
+* notifier ([507a107](https://github.com/remoodle/heresy/commit/507a107577437237076ead11218e613fdb8d432f))
+* versioning ([25779fa](https://github.com/remoodle/heresy/commit/25779faca0a5a3829b6b6e4a21d3eba0b2132e59))
+
+
+### Miscellaneous Chores
+
+* remove shit ([0124e28](https://github.com/remoodle/heresy/commit/0124e28b003b938069e1e26ff49601bbcaa784b7))
+
+
+### Code Refactoring
+
+* move hc to lib ([74eb9df](https://github.com/remoodle/heresy/commit/74eb9dfd1fe284bd09d3c55dfe68ff649fe25b22))
+* **notifier:** move files around ([c8d3869](https://github.com/remoodle/heresy/commit/c8d3869b14e9ed5b300474a81a8af156cc5cd79d))
+
+## [1.1.7](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.6...remoodle/backend-v1.1.7) (2024-09-09)
+
+
+### Bug Fixes
+
+* trigger back ([538c4bc](https://github.com/remoodle/heresy/commit/538c4bcbf5e693d0f3d7c8d806c8e498aa6e99a0))
+
+## [1.1.6](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.5...remoodle/backend-v1.1.6) (2024-09-09)
+
+
+### Bug Fixes
+
+* graceful shutdown ([037f7c3](https://github.com/remoodle/heresy/commit/037f7c3da24260332753c306107752243b01bb40))
+* remove on complete and fail ([8e99384](https://github.com/remoodle/heresy/commit/8e9938466aa2179f45e31d81726a77928f28a738))
+
+## [1.1.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.4...remoodle/backend-v1.1.5) (2024-09-09)
+
+
+### Code Refactoring
+
+* introduce bullmq ([8c501ec](https://github.com/remoodle/heresy/commit/8c501ec6781322c7f65e1220707a07e8e715401b))
+
+## [1.1.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.3...remoodle/backend-v1.1.4) (2024-09-08)
+
+
+### Miscellaneous Chores
+
+* remove console.log s ([f0329ff](https://github.com/remoodle/heresy/commit/f0329ffc47da206d625212997a1aab265a60a9d3))
+
 ## [1.1.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.1.2...remoodle/backend-v1.1.3) (2024-09-08)
 
 

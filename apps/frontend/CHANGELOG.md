@@ -1,5 +1,85 @@
 # Changelog
 
+## [1.2.3](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.2...remoodle/frontend-v1.2.3) (2024-09-20)
+
+
+### Bug Fixes
+
+* **frontend:** change app title ([428cb0d](https://github.com/remoodle/heresy/commit/428cb0d5225627fddbd0f7be26033e6587080d83))
+
+## [1.2.2](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.1...remoodle/frontend-v1.2.2) (2024-09-20)
+
+
+### Bug Fixes
+
+* temporarily change production bot username ([9f5f69a](https://github.com/remoodle/heresy/commit/9f5f69ab273736f6a3a4d8d63b4788580ed25dab))
+
+## [1.2.1](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.0...remoodle/frontend-v1.2.1) (2024-09-19)
+
+
+### Bug Fixes
+
+* **backend:** add deadlines sorting ([006c59a](https://github.com/remoodle/heresy/commit/006c59ad20f4f046f93def01d36896d509f8afbf))
+
+## [1.2.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.7...remoodle/frontend-v1.2.0) (2024-09-12)
+
+
+### Features
+
+* reminder thresholds settings ([a34b8a6](https://github.com/remoodle/heresy/commit/a34b8a6f261ca1cc9a6119a7f03b2c33d0424a79))
+
+
+### Bug Fixes
+
+* proper use of external urls ([77c7ab8](https://github.com/remoodle/heresy/commit/77c7ab8dafdbe56381bbc427f0ab5f73a17d541b))
+* wording ([36d9fe4](https://github.com/remoodle/heresy/commit/36d9fe47bfc02d18b366e63140ac3d41dfa4c660))
+* wrap app in config provider ([1caad80](https://github.com/remoodle/heresy/commit/1caad80088374a2d9b3213074819c64de2125a1c))
+
+
+### Miscellaneous Chores
+
+* replace boring avatars library ([38b107c](https://github.com/remoodle/heresy/commit/38b107cb5aea403b85cf580202ff2053b5e713b5))
+
+
+### Code Refactoring
+
+* frontend ([0e76f78](https://github.com/remoodle/heresy/commit/0e76f7804f9b1710b14068b17486ed8181af1892))
+* unified footer ([c65e352](https://github.com/remoodle/heresy/commit/c65e352ad33b7484bf0a7717673fdc80dcc0a108))
+
+## [1.1.7](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.6...remoodle/frontend-v1.1.7) (2024-09-09)
+
+
+### Bug Fixes
+
+* change title ([903cb2b](https://github.com/remoodle/heresy/commit/903cb2b815e46769ea4786e587d6b770211c55a3))
+* trigger front ([4879ded](https://github.com/remoodle/heresy/commit/4879ded083dac98178325275c7d2eab73ea9d768))
+
+## [1.1.6](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.5...remoodle/frontend-v1.1.6) (2024-09-09)
+
+
+### Bug Fixes
+
+* undefined course categories ([a92c8ca](https://github.com/remoodle/heresy/commit/a92c8ca594a04b264a1a7a97a084c4e374f13e92))
+
+## [1.1.5](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.4...remoodle/frontend-v1.1.5) (2024-09-08)
+
+
+### Bug Fixes
+
+* add link to footer ([7bbbf54](https://github.com/remoodle/heresy/commit/7bbbf54a09923c51a7f18f2d719ab0d86657bc26))
+
+## [1.1.4](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.3...remoodle/frontend-v1.1.4) (2024-09-08)
+
+
+### Bug Fixes
+
+* filter undefined categories ([9cc4c4f](https://github.com/remoodle/heresy/commit/9cc4c4fe797dacc3d92e78543fd650db375bd986))
+
+
+### Miscellaneous Chores
+
+* remove console.log s ([f0329ff](https://github.com/remoodle/heresy/commit/f0329ffc47da206d625212997a1aab265a60a9d3))
+
 ## [1.1.3](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.1.2...remoodle/frontend-v1.1.3) (2024-09-08)
 
 

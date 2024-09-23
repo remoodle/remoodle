@@ -144,8 +144,6 @@ const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
       throw error;
     }
 
-    console.log(_);
-
     toast({
       title: "Account deleted",
     });

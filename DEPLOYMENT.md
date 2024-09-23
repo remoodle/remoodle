@@ -46,11 +46,6 @@ echo "$GH_PAT" | docker login ghcr.io -u USERNAME --password-stdin
         .env.core
 ```
 
-### Database
-
-docker exec -it db-redis-1 redis-cli XGROUP CREATE stream:grade-change notifier $ MKSTREAM
-docker exec -it db-redis-1 redis-cli XGROUP CREATE stream:deadline-reminder notifier $ MKSTREAM
-
 ##### docker-compose.yml
 
 ```yml
@@ -58,6 +53,7 @@ services:
   redis:
     image: redis:7.4.0
     restart: always
+    command: redis-server --maxmemory-policy noeviction
     volumes:
       - ./data/redis:/data
     ports:

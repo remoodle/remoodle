@@ -3,9 +3,11 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
-import { env } from "../../../config";
+import type { IUser } from "@remoodle/db";
+
+import { config, env } from "../../../config";
 import { db } from "../../../library/db";
-import type { IUser } from "../../../library/db";
+import { requestAlertWorker } from "../../../library/hc";
 import { RMC } from "../../../library/rmc-sdk";
 
 import {
@@ -14,20 +16,15 @@ import {
   verifyTelegramData,
 } from "../helpers/crypto";
 import { issueTokens } from "../helpers/jwt";
-import { requestAlertWorker } from "../helpers/hc";
 
 import { authMiddleware } from "../middleware/auth";
 
 const publicRoutes = new Hono().get("/health", async (ctx) => {
   const rmc = new RMC();
 
-  const [data, error] = await rmc.get_health();
+  const response = await rmc.get_health();
 
-  if (error) {
-    throw error;
-  }
-
-  return ctx.json(data);
+  return ctx.json(response);
 });
 
 const authRoutes = new Hono<{
@@ -53,52 +50,47 @@ const authRoutes = new Hono<{
 
       const telegramId = ctx.get("telegramId");
 
-      let user: IUser | null = await db.user.findOne({ moodleToken });
+      const [student, error] = await rmc.v1_auth_token(moodleToken);
 
-      if (!user) {
-        try {
-          const [data, error] = await rmc.v1_auth_register({
-            token: moodleToken,
-          });
+      if (error) {
+        throw new HTTPException(500, { message: error.message });
+      }
 
-          if (error) {
-            throw error;
-          }
+      console.log(student);
 
-          user = (await db.user.create({
-            moodleToken,
-            name: data.name,
-            moodleId: data.moodle_id,
-            handle: handle || data.username,
-            ...(telegramId && { telegramId }),
-            ...(data.email && { email: data.email }),
-            ...(password && { password: hashPassword(password) }),
-          })) as IUser;
+      let user: IUser | null = null;
 
-          if (!user) {
+      if (student) {
+        user = await db.user.findOne({ moodleId: student.moodle_id });
+
+        if (!user) {
+          try {
+            user = (await db.user.create({
+              // moodleToken,
+              name: student.name,
+              moodleId: student.moodle_id,
+              handle: handle || student.username,
+              ...(telegramId && { telegramId }),
+              ...(student.email && { email: student.email }),
+              ...(password && { password: hashPassword(password) }),
+            })) as IUser;
+
+            requestAlertWorker((client) =>
+              client.new.$post({
+                json: {
+                  topic: env.isProduction ? "users2" : "dev",
+                  message: `New ${telegramId ? "Telegram" : "Regular"} user \n<b>${student.name}</b> \n<b>${student.moodle_id}</b>`,
+                },
+              }),
+            );
+          } catch (error: any) {
+            const [_data, _error] = await rmc.v1_delete_user();
+
             throw new HTTPException(500, {
-              message: "Couldn't create user",
+              message: error.message,
             });
           }
-
-          requestAlertWorker((client) =>
-            client.new.$post({
-              json: {
-                topic: env.isProduction ? "users2" : "dev",
-                message: `New ${telegramId ? "Telegram" : "Regular"} user \n<b>${data.name}</b> \n<b>${data.moodle_id}</b>`,
-              },
-            }),
-          );
-        } catch (error: any) {
-          const [_data, _error] = await rmc.v1_delete_user();
-          await db.user.deleteOne({ _id: user?._id });
-
-          throw new HTTPException(500, {
-            message: error.message,
-          });
-        }
-      } else {
-        if (!user.telegramId && telegramId) {
+        } else if (!user.telegramId && telegramId) {
           await db.user.updateOne(
             { _id: user._id },
             {
@@ -110,11 +102,18 @@ const authRoutes = new Hono<{
         }
       }
 
+      if (!user) {
+        throw new HTTPException(401, { message: "Invalid token" });
+      }
+
       try {
         const { accessToken, refreshToken } = issueTokens(
           user._id,
           user.moodleId,
         );
+
+        // TODO: Sanitize this properly
+        user.password = "***";
 
         return ctx.json({
           user,
@@ -162,7 +161,8 @@ const authRoutes = new Hono<{
           user.moodleId,
         );
 
-        // user.password = "***";
+        // TODO: Sanitize this properly
+        user.password = "***";
 
         return ctx.json({
           user,
@@ -214,6 +214,9 @@ const authRoutes = new Hono<{
         user.moodleId,
       );
 
+      // TODO: Sanitize this properly
+      user.password = "***";
+
       return ctx.json({
         user,
         accessToken,
@@ -256,7 +259,7 @@ const commonProtectedRoutes = new Hono<{
       const moodleId = ctx.get("moodleId");
 
       const rmc = new RMC({ moodleId });
-      const [data, error] = await rmc.v1_user_courses(status);
+      const [data, error] = await rmc.v1_user_courses({ status });
 
       if (error) {
         throw error;
@@ -279,7 +282,9 @@ const commonProtectedRoutes = new Hono<{
       const moodleId = ctx.get("moodleId");
 
       const rmc = new RMC({ moodleId });
-      const [data, error] = await rmc.v1_user_courses_overall(status);
+      const [data, error] = await rmc.v1_user_courses_overall({
+        status,
+      });
 
       if (error) {
         throw error;
@@ -366,6 +371,7 @@ const commonProtectedRoutes = new Hono<{
           deadlineReminders:
             user.notificationSettings.telegram.deadlineReminders,
         },
+        deadlineThresholds: user.notificationSettings.deadlineThresholds,
       },
     });
   })
@@ -378,6 +384,7 @@ const commonProtectedRoutes = new Hono<{
         password: z.string().optional(),
         telegramDeadlineReminders: z.boolean().optional(),
         telegramGradeUpdates: z.boolean().optional(),
+        deadlineThresholds: z.array(z.string()).optional(),
       }),
     ),
     async (ctx) => {
@@ -388,6 +395,7 @@ const commonProtectedRoutes = new Hono<{
         password,
         telegramDeadlineReminders,
         telegramGradeUpdates,
+        deadlineThresholds,
       } = ctx.req.valid("json");
 
       try {
@@ -446,6 +454,20 @@ const commonProtectedRoutes = new Hono<{
             // if (!telegramDeadlineReminders) {
             //   await db.deadline.deleteMany({ userId });
             // }
+          }
+
+          if (deadlineThresholds !== undefined) {
+            if (
+              deadlineThresholds.length >
+              config.notifications.maxDeadlineThresholds
+            ) {
+              throw new HTTPException(400, {
+                message: "Too many thresholds",
+              });
+            }
+
+            notificationFields["notificationSettings.deadlineThresholds"] =
+              deadlineThresholds;
           }
 
           await db.user.updateOne(

@@ -1,0 +1,72 @@
+name: "[tgbot] Publish Docker image"
+
+on:
+  push:
+    branches: [trunk]
+    paths:
+      - "apps/telegram-bot/**"
+      - ".github/workflows/remoodle-tgbot-docker.yml"
+    tags:
+      - "remoodle/telegram-bot-*"
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: tgbot
+  REGISTRY: ghcr.io
+
+permissions: write-all
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    outputs:
+      docker_tag: ${{ steps.build-image.outputs.docker_tag }}
+      environment: ${{ steps.build-image.outputs.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+
+      - name: Build image
+        id: build-image
+        run: |
+          IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-8)
+          ENVIRONMENT="staging"
+
+          if [[ "${{ github.ref }}" =~ refs/tags/* ]]; then
+            GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/.*v//')
+            ENVIRONMENT="production"
+          else
+            GITHUB_REF=$(echo "${{ github.ref }}" | sed -e 's/refs\/heads\///' | sed -e 's/[\/-]/_/g')
+          fi
+
+          DOCKER_TAG="${GITHUB_REF}"
+          VERSION_TAG="v${GITHUB_REF}::${SHORT_SHA}"
+
+          echo IMAGE_ID=$IMAGE_ID
+          echo DOCKER_TAG=$DOCKER_TAG
+
+          docker build -f apps/telegram-bot/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG --build-arg VERSION_TAG=$VERSION_TAG
+
+          docker push $IMAGE_ID:$DOCKER_TAG
+
+          echo "docker_tag=${DOCKER_TAG}" >> $GITHUB_OUTPUT
+          echo "environment=${ENVIRONMENT}" >> $GITHUB_OUTPUT
+
+  deploy-stage:
+    needs: build-and-push
+    if: needs.build-and-push.outputs.environment == 'staging'
+    uses: ./.github/workflows/deploy-stage.yml
+
+  deploy-production:
+    needs: build-and-push
+    if: needs.build-and-push.outputs.environment == 'production'
+    uses: ./.github/workflows/deploy-prod.yml
+    with:
+      image_name: tgbot
+      docker_tag: ${{ needs.build-and-push.outputs.docker_tag }}

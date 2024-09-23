@@ -14,7 +14,7 @@ const route = useRoute();
   <div
     class="container grid h-full grid-cols-1 flex-col items-center justify-center lg:max-w-none lg:px-0"
   >
-    <div></div>
+    <div class="py-5"></div>
     <div
       class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[420px]"
     >

@@ -1,5 +1,65 @@
 # Changelog
 
+## [0.4.6](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.5...remoodle/telegram-bot-v0.4.6) (2024-09-23)
+
+
+### Miscellaneous Chores
+
+* add account button ([a9e5b74](https://github.com/remoodle/heresy/commit/a9e5b74073e82d0dc4d05b6ce7ef6409ff7cc11a))
+* remove emoji on delete profile ([8c9bdac](https://github.com/remoodle/heresy/commit/8c9bdac739c350ec35e9e2c7cbe1d7585fed00af))
+
+## [0.4.5](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.4...remoodle/telegram-bot-v0.4.5) (2024-09-14)
+
+
+### Bug Fixes
+
+* trigger ci to check if its working ([1f686fd](https://github.com/remoodle/heresy/commit/1f686fd44b8a6fbfb543c1b74bbd43db31a87686))
+
+## [0.4.4](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.3...remoodle/telegram-bot-v0.4.4) (2024-09-14)
+
+
+### Bug Fixes
+
+* correct past courses pagination ([185c5b6](https://github.com/remoodle/heresy/commit/185c5b609f8dd31836397ddb16dd122bf813c8f7))
+
+
+### Code Refactoring
+
+* simplify telegram bot architecture ([326526a](https://github.com/remoodle/heresy/commit/326526ae52534b7e6414916501bff9557f7ba08a))
+
+## [0.4.3](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.2...remoodle/telegram-bot-v0.4.3) (2024-09-13)
+
+
+### Bug Fixes
+
+* pagination on past courses ([fe3c443](https://github.com/remoodle/heresy/commit/fe3c443ffdd643d1946758481d1a3189976084f0))
+* specify timezone in deadline date ([d01b76c](https://github.com/remoodle/heresy/commit/d01b76c7350ffaccf587fdcab73218c665180dbf))
+
+
+### Miscellaneous Chores
+
+* add alert on schedule button ([b2c4959](https://github.com/remoodle/heresy/commit/b2c49590fc7f8614cf6d3baea1e9a19f1f725b7a))
+
+## [0.4.2](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.1...remoodle/telegram-bot-v0.4.2) (2024-09-09)
+
+
+### Bug Fixes
+
+* wording ([bbd06f6](https://github.com/remoodle/heresy/commit/bbd06f632b1181b1d895243e5f213001e727f0aa))
+* wording ([a0bea7a](https://github.com/remoodle/heresy/commit/a0bea7adfbe53c2d16b406204749043a74b553c4))
+
+
+### Code Refactoring
+
+* introduce bullmq ([8c501ec](https://github.com/remoodle/heresy/commit/8c501ec6781322c7f65e1220707a07e8e715401b))
+
+## [0.4.1](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.0...remoodle/telegram-bot-v0.4.1) (2024-09-08)
+
+
+### Bug Fixes
+
+* change card number in donate button ([2fc465a](https://github.com/remoodle/heresy/commit/2fc465ad712ed00cbd27d976ff411dfa63c24a6a))
+
 ## [0.4.0](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.3.0...remoodle/telegram-bot-v0.4.0) (2024-09-08)
 
 

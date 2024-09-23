@@ -23,7 +23,7 @@ const props = withDefaults(
 );
 
 const isExternal = computed(
-  () => typeof props.to == "string" && props.to.startsWith("http"),
+  () => typeof props.to == "string" && !props.to.startsWith("/"),
 );
 
 const classes = computed(() => [

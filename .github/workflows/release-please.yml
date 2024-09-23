@@ -1,0 +1,27 @@
+name: "Release, please"
+
+on:
+  push:
+    branches: [trunk]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
+      - uses: googleapis/release-please-action@v4
+        with:
+          config-file: .release-please/config.json
+          manifest-file: .release-please/manifest.json
+          token: ${{ steps.app-token.outputs.token }}

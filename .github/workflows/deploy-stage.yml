@@ -1,0 +1,12 @@
+on:
+  workflow_call:
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, x64, cntb1]
+    steps:
+      - name: Deploy
+        run: |
+          cd ~/remoodle
+          docker compose pull && docker compose up -d
+          docker compose ps

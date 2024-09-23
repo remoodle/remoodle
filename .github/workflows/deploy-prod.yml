@@ -1,0 +1,24 @@
+on:
+  workflow_call:
+    inputs:
+      image_name:
+        type: string
+        required: true
+      docker_tag:
+        type: string
+        required: true
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, x64, nbg1]
+    steps:
+      - name: Bump version in docker-compose.yml
+        run: |
+          cd ~/remoodle
+          sed -i -E 's|(ghcr.io/remoodle/${{ inputs.image_name }}:).*|\1${{ inputs.docker_tag }}|' docker-compose.yml
+
+      - name: Deploy
+        run: |
+          cd ~/remoodle
+          docker compose pull && docker compose up -d
+          docker compose ps
