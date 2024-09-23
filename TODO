@@ -1,7 +1,0 @@
-- logger
-  https://github.com/unjs/consola
-
-- notifier notifications
-  (started processing, num of users, num of courses, num of deadlines)
-  finished, errored, time
-  user error notification
