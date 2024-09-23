@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.6](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.5...remoodle/telegram-bot-v0.4.6) (2024-09-23)
+
+
+### Miscellaneous Chores
+
+* add account button ([a9e5b74](https://github.com/remoodle/heresy/commit/a9e5b74073e82d0dc4d05b6ce7ef6409ff7cc11a))
+* remove emoji on delete profile ([8c9bdac](https://github.com/remoodle/heresy/commit/8c9bdac739c350ec35e9e2c7cbe1d7585fed00af))
+
 ## [0.4.5](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.4...remoodle/telegram-bot-v0.4.5) (2024-09-14)
 
 
