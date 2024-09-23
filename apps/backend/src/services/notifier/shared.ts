@@ -14,3 +14,11 @@ export type UserJobData = {
   userName: string;
   moodleId: number;
 };
+
+export const queues = {
+  tasks: "TasksQueue",
+  deadlinesCrawler: "DeadlinesCrawlerQueue",
+  deadlinesHandler: "DeadlinesHandlerQueue",
+  coursesCrawler: "CoursesCrawlerQueue",
+  coursesHandler: "CoursesHandlerQueue",
+};

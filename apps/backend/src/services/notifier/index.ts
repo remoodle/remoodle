@@ -1,7 +1,6 @@
 import { Queue, Worker, Job, JobsOptions } from "bullmq";
 import { db } from "../../library/db";
 import { config, env } from "../../config";
-import type { UserJobData } from "./shared";
 import {
   addCourseCrawlerJob,
   courseCrawlerQueue,
@@ -12,6 +11,8 @@ import {
   deadlineCrawlerQueue,
   deadlineWorker,
 } from "./deadline-reminders";
+import { queues } from "./shared";
+import type { UserJobData } from "./shared";
 
 type TaskData = {
   fetchDeadlines?: boolean;
@@ -47,15 +48,15 @@ export async function runTask(job: Job<TaskData>) {
     `[crawler] Finished adding all jobs for ${users.length} users to queues, took ${t1 - t0} milliseconds.`,
   );
 }
-export const taskWorker = new Worker("task-queue", runTask, {
+export const taskWorker = new Worker(queues.tasks, runTask, {
   connection: db.redisConnection,
 });
 
-export const taskQueue = new Queue("task-queue", {
+export const taskQueue = new Queue(queues.tasks, {
   connection: db.redisConnection,
 });
-const addTask = async (job: TaskData, options: JobsOptions) => {
-  await taskQueue.add("task-queue", job, options);
+const addTask = async (name: string, job: TaskData, options?: JobsOptions) => {
+  await taskQueue.add(name, job, options);
 };
 
 export const startNotifier = async () => {
@@ -64,10 +65,12 @@ export const startNotifier = async () => {
   }
 
   await addTask(
+    "fetch-courses",
     { fetchCourses: true },
     { repeat: { pattern: config.crawler.gradesCron } },
   );
   await addTask(
+    "fetch-deadlines",
     { fetchDeadlines: true },
     { repeat: { pattern: config.crawler.deadlinesCron } },
   );

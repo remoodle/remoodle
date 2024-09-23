@@ -5,7 +5,7 @@ import { config } from "../../config";
 import type { GradeChangeEvent } from "./core/shims";
 import { trackCourseDiff } from "./core/checker";
 import { formatCourseDiffs } from "./core/formatter";
-import { sendTelegramMessage } from "./shared";
+import { sendTelegramMessage, queues } from "./shared";
 import type { UserJobData } from "./shared";
 
 /*
@@ -37,23 +37,27 @@ async function processGradeChangeEvent(job: Job<GradeChangeEvent>) {
   }
 }
 export const gradeChangeWorker = new Worker(
-  "grade-change",
+  queues.coursesHandler,
   processGradeChangeEvent,
   {
     connection: db.redisConnection,
   },
 );
 
-export const gradeChangeQueue = new Queue("grade-change", {
+export const gradeChangeQueue = new Queue(queues.coursesHandler, {
   connection: db.redisConnection,
 });
 export async function addGradeChangeJob(event: GradeChangeEvent) {
-  await gradeChangeQueue.add("grade-change", event, {
-    removeOnComplete: true,
-    removeOnFail: {
-      age: 24 * 3600, // keep up to 24 hours
+  await gradeChangeQueue.add(
+    `${queues.coursesHandler}::${event.userId}`,
+    event,
+    {
+      removeOnComplete: true,
+      removeOnFail: {
+        age: 24 * 3600, // keep up to 24 hours
+      },
     },
-  });
+  );
 }
 
 /*
@@ -113,7 +117,7 @@ async function processFetchCoursesJob(job: Job<UserJobData>) {
   }
 }
 export const courseWorker = new Worker(
-  "course-crawler",
+  queues.coursesCrawler,
   processFetchCoursesJob,
   {
     connection: db.redisConnection,
@@ -121,12 +125,16 @@ export const courseWorker = new Worker(
   },
 );
 
-export const courseCrawlerQueue = new Queue("course-crawler", {
+export const courseCrawlerQueue = new Queue(queues.coursesCrawler, {
   connection: db.redisConnection,
 });
 export async function addCourseCrawlerJob(event: UserJobData) {
-  await courseCrawlerQueue.add("course-crawler", event, {
-    removeOnComplete: true,
-    removeOnFail: true,
-  });
+  await courseCrawlerQueue.add(
+    `${queues.coursesCrawler}::${event.userId}`,
+    event,
+    {
+      removeOnComplete: true,
+      removeOnFail: true,
+    },
+  );
 }

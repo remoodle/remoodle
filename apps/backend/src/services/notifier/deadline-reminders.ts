@@ -6,7 +6,7 @@ import type { DeadlineReminderEvent, DeadlineReminderDiff } from "./core/shims";
 import { processDeadlines } from "./core/checker";
 import { formatDeadlineReminders } from "./core/formatter";
 import { createBlankThresholdsMap } from "./core/thresholds";
-import { sendTelegramMessage } from "./shared";
+import { sendTelegramMessage, queues } from "./shared";
 import type { UserJobData } from "./shared";
 
 /*
@@ -41,21 +41,25 @@ async function processDeadlineReminderEvent(job: Job<DeadlineReminderEvent>) {
   }
 }
 export const deadlineReminderWorker = new Worker(
-  "deadline-reminder",
+  queues.deadlinesHandler,
   processDeadlineReminderEvent,
   { connection: db.redisConnection },
 );
 
-export const deadlineReminderQueue = new Queue("deadline-reminder", {
+export const deadlineReminderQueue = new Queue(queues.deadlinesHandler, {
   connection: db.redisConnection,
 });
 export async function addDeadlineReminderJob(event: DeadlineReminderEvent) {
-  await deadlineReminderQueue.add("deadline-reminder", event, {
-    removeOnComplete: true,
-    removeOnFail: {
-      age: 24 * 3600, // keep up to 24 hours
+  await deadlineReminderQueue.add(
+    `${queues.deadlinesHandler}::${event.userId}`,
+    event,
+    {
+      removeOnComplete: true,
+      removeOnFail: {
+        age: 24 * 3600, // keep up to 24 hours
+      },
     },
-  });
+  );
 }
 
 /*
@@ -146,7 +150,7 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
   }
 }
 export const deadlineWorker = new Worker(
-  "deadline-crawler",
+  queues.deadlinesCrawler,
   processFetchDeadlinesJob,
   {
     connection: db.redisConnection,
@@ -154,12 +158,16 @@ export const deadlineWorker = new Worker(
   },
 );
 
-export const deadlineCrawlerQueue = new Queue("deadline-crawler", {
+export const deadlineCrawlerQueue = new Queue(queues.deadlinesCrawler, {
   connection: db.redisConnection,
 });
 export async function addDeadlineCrawlerJob(event: UserJobData) {
-  await deadlineCrawlerQueue.add("deadline-crawler", event, {
-    removeOnComplete: true,
-    removeOnFail: true,
-  });
+  await deadlineCrawlerQueue.add(
+    `${queues.deadlinesCrawler}::${event.userId}`,
+    event,
+    {
+      removeOnComplete: true,
+      removeOnFail: true,
+    },
+  );
 }
