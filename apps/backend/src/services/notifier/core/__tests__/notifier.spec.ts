@@ -1,9 +1,9 @@
 import { describe, expect, test, vi } from "vitest";
 import { fromPartial } from "@total-typescript/shoehorn";
 import type { ExtendedCourse, Deadline } from "@remoodle/types";
-import type { GradeChangeDiff, DeadlineReminderDiff } from "./core/shims";
-import { trackCourseDiff, processDeadlines } from "./core/checker";
-import { formatCourseDiffs, formatDeadlineReminders } from "./core/formatter";
+import type { GradeChangeDiff, DeadlineReminderDiff } from "../shims";
+import { trackCourseDiff, processDeadlines } from "../checker";
+import { formatCourseDiffs, formatDeadlineReminders } from "../formatter";
 
 describe("grades notifications", () => {
   test("trackCourseDiff: default behavior", () => {

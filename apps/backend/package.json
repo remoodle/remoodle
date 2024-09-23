@@ -24,7 +24,6 @@
     "envalid": "^8.0.0",
     "hono": "^4.5.5",
     "jsonwebtoken": "^9.0.2",
-    "node-cron": "^3.0.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {
