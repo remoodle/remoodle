@@ -32,7 +32,10 @@ async function convertMoodbot() {
 
       return {
         name: user.full_name,
-        telegramId: Number(user.telegram_id),
+        telegramId:
+          typeof user.telegram_id === "object"
+            ? parseInt(user.telegram_id.$numberLong)
+            : user.telegram_id,
         moodleId: Number(user.moodle_id),
         moodleToken: decryptedToken,
       };

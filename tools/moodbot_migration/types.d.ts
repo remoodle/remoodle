@@ -1,5 +1,9 @@
 type InputUser = {
-  telegram_id: number;
+  telegram_id:
+    | number
+    | {
+        $numberLong: string;
+      };
   username: string;
   hashed_token: string;
   full_name: string;
