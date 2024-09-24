@@ -129,7 +129,7 @@ const canUpdatePassword = computed(() => {
 // const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
 //   async () => {
 //     const [_, error] = await request((client) =>
-//       client.v1.goodbye.$delete(
+//       client.v1.bye.$delete(
 //         {},
 //         {
 //           headers: getAuthHeaders(),

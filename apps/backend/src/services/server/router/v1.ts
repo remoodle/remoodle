@@ -485,7 +485,7 @@ const commonProtectedRoutes = new Hono<{
       }
     },
   )
-  .delete("/goodbye", async (ctx) => {
+  .delete("/bye", async (ctx) => {
     const userId = ctx.get("userId");
 
     const user = await db.user.findOne({ _id: userId });

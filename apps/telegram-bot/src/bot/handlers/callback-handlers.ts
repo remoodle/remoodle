@@ -588,7 +588,7 @@ async function deleteProfileYes(ctx: Context) {
   const userId = ctx.from.id;
 
   const [_, error] = await request((client) =>
-    client.v1.goodbye.$delete(
+    client.v1.bye.$delete(
       {},
       {
         headers: getAuthHeaders(userId),
