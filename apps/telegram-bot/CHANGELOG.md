@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.7...remoodle/telegram-bot-v0.5.0) (2024-09-24)
+
+
+### Features
+
+* long polling =&gt; webhook ([#180](https://github.com/remoodle/heresy/issues/180)) ([8b91da1](https://github.com/remoodle/heresy/commit/8b91da177f7d1d7a320445bfe9cefe2661383ea3))
+
+
+### Code Refactoring
+
+* change webhook format ([66a0522](https://github.com/remoodle/heresy/commit/66a0522e30dec63d2e43a6e9dd3b6e18e479058d))
+
 ## [0.4.7](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.6...remoodle/telegram-bot-v0.4.7) (2024-09-24)
 
 
