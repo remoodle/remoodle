@@ -7,6 +7,11 @@
 
 * change route name ([88fdfa8](https://github.com/remoodle/heresy/commit/88fdfa85e9e061aba1b40b3c605d7cac5da72674))
 
+
+### Miscellaneous Chores
+
+* **trunk:** release remoodle/telegram-bot 0.4.7 ([#183](https://github.com/remoodle/heresy/issues/183)) [manual] ([4000f7f](https://github.com/remoodle/heresy/commit/4000f7f08e4a08ce22a7c3cd096e2820a2b67888))
+
 ## [0.4.6](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.5...remoodle/telegram-bot-v0.4.6) (2024-09-23)
 
 
