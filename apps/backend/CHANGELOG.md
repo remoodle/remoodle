@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.19...remoodle/backend-v1.3.0) (2024-09-24)
+
+
+### Features
+
+* services split ([ab2fada](https://github.com/remoodle/heresy/commit/ab2fadaa19d028c80e5e04cacdcb8dc79f70353d))
+
+
+### Bug Fixes
+
+* add service logging ([3f13e29](https://github.com/remoodle/heresy/commit/3f13e29ec8b0f3e19325959eb59722a45c270557))
+* change route name ([88fdfa8](https://github.com/remoodle/heresy/commit/88fdfa85e9e061aba1b40b3c605d7cac5da72674))
+
 ## [1.2.19](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.18...remoodle/backend-v1.2.19) (2024-09-23)
 
 
