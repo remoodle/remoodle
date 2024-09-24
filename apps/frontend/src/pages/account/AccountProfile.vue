@@ -126,31 +126,31 @@ const canUpdatePassword = computed(() => {
   return isEmptyString(newPassword.value);
 });
 
-const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
-  async () => {
-    const [_, error] = await request((client) =>
-      client.v1.goodbye.$delete(
-        {},
-        {
-          headers: getAuthHeaders(),
-        },
-      ),
-    );
+// const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
+//   async () => {
+//     const [_, error] = await request((client) =>
+//       client.v1.goodbye.$delete(
+//         {},
+//         {
+//           headers: getAuthHeaders(),
+//         },
+//       ),
+//     );
 
-    if (error) {
-      toast({
-        title: error.message,
-      });
-      throw error;
-    }
+//     if (error) {
+//       toast({
+//         title: error.message,
+//       });
+//       throw error;
+//     }
 
-    toast({
-      title: "Account deleted",
-    });
+//     toast({
+//       title: "Account deleted",
+//     });
 
-    userStore.logout();
-  },
-);
+//     userStore.logout();
+//   },
+// );
 </script>
 
 <template>
@@ -251,7 +251,7 @@ const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
   </div>
 
   <Separator />
-
+  <!-- 
   <details>
     <summary>
       <span> Manage your data </span>
@@ -292,4 +292,5 @@ const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
       </Dialog>
     </div>
   </details>
+   -->
 </template>
