@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Queue\Actions;
 
 use App\Models\MoodleUser;
+use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use App\Modules\Moodle\Moodle;
 use Illuminate\Database\Connection;
 
@@ -21,10 +22,12 @@ class ParseCourseContents
         $moodle = Moodle::createFromToken($this->user->moodle_token, $this->user->moodle_id);
 
         $userCourses = $this->user
-            ->courses
+            ->courses()
+            ->where('status', CourseEnrolledClassification::INPROGRESS)
+            ->get()
             ->pluck('course_id')
-            ->all();
-
+            ->all()
+        ;
         $coursesContents = [];
         foreach ($userCourses as $userCourse) {
             $coursesContents[$userCourse] = $moodle->getCourseContent($userCourse);

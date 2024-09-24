@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Queue\Actions;
 
 use App\Models\MoodleUser;
+use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use App\Modules\Moodle\Moodle;
 use App\Modules\Search\SearchEngineInterface;
 use Illuminate\Database\Connection;
@@ -21,11 +22,9 @@ class ParseUserAssignments
     public function __invoke(): void
     {
         $moodle = Moodle::createFromToken($this->user->moodle_token, $this->user->moodle_id);
+        $courses = $this->user->courses()->where('status', CourseEnrolledClassification::INPROGRESS)->get();
         $assisgnments = $moodle->getCoursesAssignments(
-            ...($this->user
-            ->courses
-            ->pluck('course_id')
-            ->all())
+            ...($courses->pluck('course_id')->all())
         );
 
         $upsertAssignmentsArray = [];
