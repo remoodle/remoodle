@@ -22,12 +22,12 @@ function main(): void {
     bot.api.setWebhook(config.bot.webhook_url);
 
     serve(app).listen({ port: config.server.port }, () => {
-      console.log(`Server is running on port ${config.server.port}`);
+      console.log(`Bot is running using webhook on ${config.bot.webhook_url}`);
     });
+  } else {
+    console.log("Bot is running");
+    bot.start();
   }
-
-  console.log("Bot is running");
-  bot.start();
 }
 
 main();
