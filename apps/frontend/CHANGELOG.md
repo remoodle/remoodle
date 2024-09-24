@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.5](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.4...remoodle/frontend-v1.2.5) (2024-09-24)
+
+
+### Bug Fixes
+
+* add link to token guide ([35e95da](https://github.com/remoodle/heresy/commit/35e95da4cfdac88ddeb326a370f23732250fec8b))
+
 ## [1.2.4](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.3...remoodle/frontend-v1.2.4) (2024-09-23)
 
 
