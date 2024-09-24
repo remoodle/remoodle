@@ -250,11 +250,9 @@ async function gradesInProgressCourse(ctx: Context) {
     ),
   );
 
-  const keyboard = keyboards.single_grade.clone();
-
   if (!grades || !course) {
     await ctx.editMessageText("Grades for this course are not available.", {
-      reply_markup: keyboard.text("Refresh", `refresh_grade_${courseId}`),
+      reply_markup: keyboards.single_grade,
     });
     return;
   }
@@ -268,66 +266,7 @@ async function gradesInProgressCourse(ctx: Context) {
   });
 
   return await ctx.editMessageText(message, {
-    reply_markup: keyboard.text("Refresh", `refresh_grade_${courseId}`),
-    parse_mode: "HTML",
-  });
-}
-
-async function refreshCourse(ctx: Context) {
-  if (!ctx?.from || !ctx?.match) {
-    return;
-  }
-
-  const userId = ctx.from.id;
-
-  const courseId = ctx.match[0].split("_")[2];
-
-  const [grades, _] = await request((client) =>
-    client.v1.course[":courseId"].grades.$get(
-      {
-        param: {
-          courseId: courseId,
-        },
-      },
-      {
-        headers: getAuthHeaders(userId),
-      },
-    ),
-  );
-
-  const [course, __] = await request((client) =>
-    client.v1.course[":courseId"].$get(
-      {
-        param: {
-          courseId: courseId,
-        },
-        query: {
-          content: "0",
-        },
-      },
-      {
-        headers: getAuthHeaders(userId),
-      },
-    ),
-  );
-
-  const keyboard = keyboards.single_grade.clone();
-
-  if (!grades || !course) {
-    await ctx.editMessageText("Grades for this course are not available.", {
-      reply_markup: keyboard.text("Refresh", `refresh_grade_${courseId}`),
-    });
-    return;
-  }
-
-  let message: string = `${course.name.split(" | ")[0]}\nTeacher: ${course.name.split(" | ")[1]}\n\n`;
-
-  grades.forEach((grade) => {
-    message += getGradeText(grade);
-  });
-
-  return await ctx.editMessageText(message, {
-    reply_markup: keyboard.text("Refresh", `refresh_grade_${courseId}`),
+    reply_markup: keyboards.single_grade,
     parse_mode: "HTML",
   });
 }
@@ -697,7 +636,6 @@ const callbacks = {
   },
   grades: {
     inProgressCourse: gradesInProgressCourse,
-    refresh: refreshCourse,
     pastCourses: gradesPastCourses,
     pastCourse: gradesPastCourse,
   },

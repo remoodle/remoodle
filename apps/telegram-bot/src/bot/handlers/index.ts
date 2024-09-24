@@ -46,7 +46,7 @@ callbacksHandler.callbackQuery(
   /inprogress_course_\d+/,
   callbacks.grades.inProgressCourse,
 );
-callbacksHandler.callbackQuery(/^refresh_grade_\d+/, callbacks.grades.refresh);
+
 callbacksHandler.callbackQuery(/old_grades_\d+/, callbacks.grades.pastCourses);
 callbacksHandler.callbackQuery(
   /past_course_\d+_\d+/,
