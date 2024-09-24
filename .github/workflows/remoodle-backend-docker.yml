@@ -60,12 +60,12 @@ jobs:
 
   deploy-stage:
     needs: build-and-push
-    if: needs.build-and-push.outputs.environment == 'staging'
+    if: ${{ !contains(github.event.head_commit.message, '[manual]') && needs.build-and-push.outputs.environment == 'staging' }}
     uses: ./.github/workflows/deploy-stage.yml
 
   deploy-api-production:
     needs: build-and-push
-    if: needs.build-and-push.outputs.environment == 'production'
+    if: ${{ !contains(github.event.head_commit.message, '[manual]') && needs.build-and-push.outputs.environment == 'production' }}
     uses: ./.github/workflows/deploy-prod.yml
     with:
       image_name: api
@@ -73,7 +73,7 @@ jobs:
 
   deploy-notifier-production:
     needs: build-and-push
-    if: needs.build-and-push.outputs.environment == 'production'
+    if: ${{ !contains(github.event.head_commit.message, '[manual]') && needs.build-and-push.outputs.environment == 'production' }}
     uses: ./.github/workflows/deploy-prod.yml
     with:
       image_name: notifier
