@@ -8,6 +8,7 @@ export const env = cleanEnv(process.env, {
   }),
 
   TELEGRAM_BOT_TOKEN: str(),
+  TELEGRAM_WEBHOOK_URL: str({ default: "" }),
 
   BACKEND_URL: str({ default: "http://localhost:9000" }),
   BACKEND_SECRET: str({ default: "aboba" }),
@@ -24,6 +25,7 @@ export const config = {
   },
   bot: {
     token: env.TELEGRAM_BOT_TOKEN,
+    webhook_url: env.TELEGRAM_WEBHOOK_URL,
   },
   redis: {
     uri: env.REDIS_URI,
