@@ -16,7 +16,7 @@ function main(): void {
     bot.stop();
   });
 
-  if (config.bot.webhook_url.length > 0 && config.server.port) {
+  if (config.bot.webhook_url && config.server.port) {
     app.use("/webhook", webhookCallback(bot, "hono"));
     
     bot.api.setWebhook(config.bot.webhook_url);
