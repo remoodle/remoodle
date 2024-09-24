@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.6](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.5...remoodle/frontend-v1.2.6) (2024-09-24)
+
+
+### Bug Fixes
+
+* change route name ([88fdfa8](https://github.com/remoodle/heresy/commit/88fdfa85e9e061aba1b40b3c605d7cac5da72674))
+* hide account deletion from frontend ([e7d7c43](https://github.com/remoodle/heresy/commit/e7d7c43dc87078ed490bbe5166205c60295e7b58))
+
 ## [1.2.5](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.4...remoodle/frontend-v1.2.5) (2024-09-24)
 
 
