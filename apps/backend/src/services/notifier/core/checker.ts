@@ -1,5 +1,9 @@
 import type { ExtendedCourse, Deadline } from "@remoodle/types";
-import type { GradeChangeDiff, DeadlineReminderDiff } from "./shims";
+import type {
+  GradeChangeDiff,
+  DeadlineReminderDiff,
+  ProcessDeadlinesResult,
+} from "./shims";
 import { calculateRemainingTime } from "./thresholds";
 
 export const trackCourseDiff = (
@@ -66,11 +70,12 @@ export const trackCourseDiff = (
 export const processDeadlines = (
   deadlines: (Deadline & { notifications: Record<string, boolean> })[],
   thresholds: string[],
-): DeadlineReminderDiff[] => {
+): ProcessDeadlinesResult => {
   const now = Date.now();
   const reminderMap: Record<number, DeadlineReminderDiff> = {};
+  const markedDeadlines = [...deadlines];
 
-  const eligibleDeadlines = deadlines.filter(
+  const eligibleDeadlines = markedDeadlines.filter(
     (deadline) =>
       !deadline.assignment?.gradeEntity?.graderaw &&
       deadline.timestart * 1000 > now,
@@ -81,9 +86,16 @@ export const processDeadlines = (
       deadline;
     const dueDate = timestart * 1000; // Convert to milliseconds
 
-    const [remaining, threshold] = calculateRemainingTime(dueDate, thresholds);
+    const [remaining, applicableThreshold] = calculateRemainingTime(
+      dueDate,
+      thresholds,
+    );
 
-    if (remaining && threshold && !notifications[threshold]) {
+    if (
+      remaining &&
+      applicableThreshold &&
+      !notifications[applicableThreshold]
+    ) {
       if (!reminderMap[course_id]) {
         reminderMap[course_id] = {
           cid: course_id,
@@ -92,9 +104,29 @@ export const processDeadlines = (
           d: [],
         };
       }
-      reminderMap[course_id].d.push([name, dueDate, remaining, threshold]);
+      reminderMap[course_id].d.push([
+        name,
+        dueDate,
+        remaining,
+        applicableThreshold,
+      ]);
+
+      // Mark the notification as sent
+      deadline.notifications[applicableThreshold] = true;
     }
   }
 
-  return Object.values(reminderMap);
+  // Sort deadlines by date within each course
+  for (const reminder of Object.values(reminderMap)) {
+    reminder.d.sort((a, b) => a[1] - b[1]); // Sort by dueDate (index 1 in the array)
+  }
+
+  // Convert reminderMap to an array and sort courses by their earliest deadline
+  const reminders = Object.values(reminderMap).sort((a, b) => {
+    const aEarliestDeadline = a.d[0]?.[1] || Infinity;
+    const bEarliestDeadline = b.d[0]?.[1] || Infinity;
+    return aEarliestDeadline - bEarliestDeadline;
+  });
+
+  return { reminders, markedDeadlines };
 };

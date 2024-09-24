@@ -100,51 +100,27 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
           ?.notifications || createBlankThresholdsMap(customThresholds),
     }));
 
-    await db.deadline.findOneAndUpdate(
-      { userId },
-      { $set: { data: newDeadlinesData, fetchedAt: new Date() } },
-      { upsert: true, new: true },
-    );
-
-    if (!currentDeadlines) {
-      return;
-    }
-
-    const deadlineReminders: DeadlineReminderDiff[] = processDeadlines(
+    const { reminders, markedDeadlines } = processDeadlines(
       newDeadlinesData,
       customThresholds,
     );
 
-    if (!deadlineReminders.length) {
-      return;
-    }
-
-    for (const reminder of deadlineReminders) {
-      const deadline = newDeadlinesData.find(
-        (d) => d.event_id === reminder.eid,
-      );
-
-      if (deadline) {
-        for (const [_name, _date, _remaining, threshold] of reminder.d) {
-          if (!deadline.notifications[threshold]) {
-            deadline.notifications[threshold] = true;
-          }
-        }
-      }
-    }
-
+    // Update the database with the new deadlines data, including marked notifications
     await db.deadline.findOneAndUpdate(
       { userId },
-      { $set: { data: newDeadlinesData } },
+      { $set: { data: markedDeadlines, fetchedAt: new Date() } },
+      { upsert: true, new: true },
     );
 
-    const event: DeadlineReminderEvent = {
-      userId,
-      moodleId,
-      payload: deadlineReminders,
-    };
+    if (reminders.length > 0) {
+      const event: DeadlineReminderEvent = {
+        userId,
+        moodleId,
+        payload: reminders,
+      };
 
-    await addDeadlineReminderJob(event);
+      await addDeadlineReminderJob(event);
+    }
   } catch (error) {
     console.error("Error executing deadline crawler:", error);
   }

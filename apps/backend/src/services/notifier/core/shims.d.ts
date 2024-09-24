@@ -1,3 +1,5 @@
+import type { Deadline } from "@remoodle/types";
+
 export type GradeChangeDiff = {
   // course name
   c: string;
@@ -20,6 +22,11 @@ export type DeadlineReminderDiff = {
   cid: number;
   // [name, date, remaining, __threshold]
   d: [string, number, string, string][];
+};
+
+type ProcessDeadlinesResult = {
+  reminders: DeadlineReminderDiff[];
+  markedDeadlines: (Deadline & { notifications: Record<string, boolean> })[];
 };
 
 export type DeadlineReminderEvent = {
