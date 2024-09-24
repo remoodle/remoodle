@@ -40,6 +40,8 @@ api.notFound(() => {
 api.onError(errorHandler);
 
 export const startServer = () => {
+  console.log("Starting server...");
+
   serve(
     {
       hostname: config.http.host,

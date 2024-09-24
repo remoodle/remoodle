@@ -60,9 +60,7 @@ const addTask = async (name: string, job: TaskData, options?: JobsOptions) => {
 };
 
 export const startNotifier = async () => {
-  if (env.isProduction) {
-    await new Promise((resolve) => setTimeout(resolve, 30_000));
-  }
+  console.log("Starting notifier...");
 
   await addTask(
     "fetch-courses",
