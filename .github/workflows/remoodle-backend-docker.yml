@@ -63,10 +63,18 @@ jobs:
     if: needs.build-and-push.outputs.environment == 'staging'
     uses: ./.github/workflows/deploy-stage.yml
 
-  deploy-production:
+  deploy-api-production:
     needs: build-and-push
     if: needs.build-and-push.outputs.environment == 'production'
     uses: ./.github/workflows/deploy-prod.yml
     with:
-      image_name: backend
+      image_name: api
+      docker_tag: ${{ needs.build-and-push.outputs.docker_tag }}
+
+  deploy-notifier-production:
+    needs: build-and-push
+    if: needs.build-and-push.outputs.environment == 'production'
+    uses: ./.github/workflows/deploy-prod.yml
+    with:
+      image_name: notifier
       docker_tag: ${{ needs.build-and-push.outputs.docker_tag }}
