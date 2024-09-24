@@ -208,9 +208,9 @@ type DeadlineData = Deadline & {
 };
 
 describe("deadlines notifications", () => {
-  test("processDeadlines: default", () => {
-    vi.setSystemTime(new Date("2024-09-15T12:24:00"));
+  vi.setSystemTime(new Date("2024-09-15T12:24:00"));
 
+  test("processDeadlines: default", () => {
     const deadlines: DeadlineData[] = [
       {
         course_id: 4911,
@@ -252,32 +252,21 @@ describe("deadlines notifications", () => {
       },
     ];
 
-    const expected = {
-      reminders: [
-        {
-          cid: 4911,
-          eid: 515515,
-          c: "Research Methods and Tools | Omirgaliyev Ruslan",
-          d: [["Assignment 1 is due", 1726426740000, "06:35:00", "12 hours"]],
-        },
-      ],
-      markedDeadlines: [
-        {
-          ...deadlines[0],
-          notifications: { "12 hours": true },
-        },
-        deadlines[1],
-      ],
-    };
+    const diff: DeadlineReminderDiff[] = [
+      {
+        cid: 4911,
+        eid: 515515,
+        c: "Research Methods and Tools | Omirgaliyev Ruslan",
+        d: [["Assignment 1 is due", 1726426740000, "06:35:00", "12 hours"]],
+      },
+    ];
 
     expect(
       processDeadlines(deadlines, ["6 hours", "12 hours", "24 hours"]),
-    ).toStrictEqual(expected);
+    ).toStrictEqual(diff);
   });
 
   test("processDeadlines: should be able to group deadlines by course", () => {
-    vi.setSystemTime(new Date("2024-09-15T12:24:00"));
-
     const deadlines: DeadlineData[] = [
       {
         event_id: 515578,
@@ -319,38 +308,24 @@ describe("deadlines notifications", () => {
       },
     ];
 
-    const expected = {
-      reminders: [
-        {
-          cid: 4963,
-          c: "Computer Networks | Akerke Auelbayeva",
-          d: [
-            ["practice 1 is due", 1726426740000, "06:35:00", "12 hours"],
-            ["practice 2 is due", 1726426740000, "06:35:00", "12 hours"],
-          ],
-          eid: 515578,
-        },
-      ],
-      markedDeadlines: [
-        {
-          ...deadlines[0],
-          notifications: { "12 hours": true },
-        },
-        {
-          ...deadlines[1],
-          notifications: { "12 hours": true },
-        },
-      ],
-    };
+    const diff: DeadlineReminderDiff[] = [
+      {
+        cid: 4963,
+        c: "Computer Networks | Akerke Auelbayeva",
+        d: [
+          ["practice 1 is due", 1726426740000, "06:35:00", "12 hours"],
+          ["practice 2 is due", 1726426740000, "06:35:00", "12 hours"],
+        ],
+        eid: 515578,
+      },
+    ];
 
     expect(
       processDeadlines(deadlines, ["6 hours", "12 hours", "24 hours"]),
-    ).toStrictEqual(expected);
+    ).toStrictEqual(diff);
   });
 
   test("processDeadlines: should sort deadlines by due date and exclude graded assignments", () => {
-    vi.setSystemTime(new Date("2024-09-15T12:24:00"));
-
     const deadlines: DeadlineData[] = [
       {
         event_id: 1,
@@ -397,26 +372,22 @@ describe("deadlines notifications", () => {
 
     const result = processDeadlines(deadlines, thresholds);
 
-    expect(result.reminders).toHaveLength(2);
-    expect(result.reminders[0].eid).toBe(2); // Assignment 2 should be first
-    expect(result.reminders[1].eid).toBe(3); // Assignment 3 should be second
-    expect(result.reminders.some((r) => r.eid === 1)).toBe(false); // Assignment 1 should be excluded
-    expect(result.markedDeadlines).toHaveLength(3);
-    expect(result.markedDeadlines[1].notifications["12 hours"]).toBe(true);
-    expect(result.markedDeadlines[2].notifications["12 hours"]).toBe(true);
+    expect(result).toHaveLength(2);
+    expect(result[0].eid).toBe(2); // Assignment 2 should be first
+    expect(result[1].eid).toBe(3); // Assignment 3 should be second
+    expect(result.some((r) => r.eid === 1)).toBe(false); // Assignment 1 should be excluded
   });
 
   test("processDeadlines: should handle empty deadlines array", () => {
     const deadlines: DeadlineData[] = [];
+
     const thresholds = ["6 hours", "12 hours", "24 hours"];
+
     const result = processDeadlines(deadlines, thresholds);
-    expect(result.reminders).toHaveLength(0);
-    expect(result.markedDeadlines).toHaveLength(0);
+    expect(result).toHaveLength(0);
   });
 
   test("processDeadlines: should handle all past deadlines", () => {
-    vi.setSystemTime(new Date("2024-09-15T12:24:00"));
-
     const deadlines: DeadlineData[] = [
       {
         event_id: 1,
@@ -431,14 +402,13 @@ describe("deadlines notifications", () => {
     ];
 
     const thresholds = ["6 hours", "12 hours", "24 hours"];
+
     const result = processDeadlines(deadlines, thresholds);
-    expect(result.reminders).toHaveLength(0);
-    expect(result.markedDeadlines).toHaveLength(1);
+
+    expect(result).toHaveLength(0);
   });
 
   test("processDeadlines: should not include deadlines with notifications already sent", () => {
-    vi.setSystemTime(new Date("2024-09-15T12:24:00"));
-
     const deadlines: DeadlineData[] = [
       {
         event_id: 1,
@@ -453,14 +423,12 @@ describe("deadlines notifications", () => {
     ];
 
     const thresholds = ["6 hours", "12 hours", "24 hours"];
+
     const result = processDeadlines(deadlines, thresholds);
-    expect(result.reminders).toHaveLength(0);
-    expect(result.markedDeadlines).toHaveLength(1);
+    expect(result).toHaveLength(0);
   });
 
   test("processDeadlines: should handle not started thresholds", () => {
-    vi.setSystemTime(new Date("2024-09-15T12:24:00"));
-
     const deadlines: DeadlineData[] = [
       {
         course_id: 4911,
@@ -483,156 +451,9 @@ describe("deadlines notifications", () => {
       },
     ];
 
-    const result = processDeadlines(deadlines, ["6 hours"]);
-    expect(result.reminders).toHaveLength(0);
-    expect(result.markedDeadlines).toHaveLength(1);
-  });
+    const diff: DeadlineReminderDiff[] = [];
 
-  test("processDeadlines: should correctly process and group deadlines", () => {
-    vi.setSystemTime(new Date("2024-09-25T00:00:11"));
-
-    const deadlines: DeadlineData[] = [
-      {
-        event_id: 2,
-        course_id: 2,
-        course_name: "Machine Learning Algorithms | Ainur Mukashova",
-        name: "DATASET CHOICE",
-        timestart: 1727550000, // Sat, Sep 28, 2024, 24:00
-        instance: 2,
-        visible: true,
-        notifications: {},
-      },
-      {
-        event_id: 3,
-        course_id: 2,
-        course_name: "Machine Learning Algorithms | Ainur Mukashova",
-        name: "Word Embeddings",
-        timestart: 1727550000, // Sat, Sep 28, 2024, 24:00
-        instance: 3,
-        visible: true,
-        notifications: {},
-      },
-      {
-        event_id: 1,
-        course_id: 1,
-        course_name: "Computer Networks | Akerke Auelbayeva",
-        name: "Lab 4",
-        timestart: 1727636400, // Sun, Sep 29, 2024, 24:00
-        instance: 1,
-        visible: true,
-        notifications: {},
-      },
-      {
-        event_id: 4,
-        course_id: 2,
-        course_name: "Machine Learning Algorithms | Ainur Mukashova",
-        name: "LINEAR REGRESSION",
-        timestart: 1727636400, // Sun, Sep 29, 2024, 24:00
-        instance: 4,
-        visible: true,
-        notifications: {},
-      },
-    ];
-
-    const thresholds = ["1 day", "2 days", "3 days", "4 days", "5 days"];
-
-    const result = processDeadlines(deadlines, thresholds);
-
-    expect(result.reminders).toHaveLength(2); // Two courses
-
-    // Check Machine Learning Algorithms course (should be first due to earlier deadline)
-    expect(result.reminders[0].c).toBe(
-      "Machine Learning Algorithms | Ainur Mukashova",
-    );
-    expect(result.reminders[0].d).toHaveLength(3); // Three deadlines
-    expect(result.reminders[0].d[0][0]).toBe("DATASET CHOICE");
-    expect(result.reminders[0].d[0][3]).toBe("4 days");
-    expect(result.reminders[0].d[1][0]).toBe("Word Embeddings");
-    expect(result.reminders[0].d[1][3]).toBe("4 days");
-    expect(result.reminders[0].d[2][0]).toBe("LINEAR REGRESSION");
-    expect(result.reminders[0].d[2][3]).toBe("5 days");
-
-    // Check Computer Networks course (should be second due to later deadline)
-    expect(result.reminders[1].c).toBe("Computer Networks | Akerke Auelbayeva");
-    expect(result.reminders[1].d).toHaveLength(1); // One deadline
-    expect(result.reminders[1].d[0][0]).toBe("Lab 4");
-    expect(result.reminders[1].d[0][3]).toBe("5 days");
-
-    // Check marked deadlines
-    expect(result.markedDeadlines).toHaveLength(4);
-    expect(result.markedDeadlines[0].notifications["4 days"]).toBe(true);
-    expect(result.markedDeadlines[1].notifications["4 days"]).toBe(true);
-    expect(result.markedDeadlines[2].notifications["5 days"]).toBe(true);
-    expect(result.markedDeadlines[3].notifications["5 days"]).toBe(true);
-
-    // Check the order of deadlines within the Machine Learning Algorithms course
-    const mlDeadlines = result.reminders[0].d;
-    expect(mlDeadlines[0][1]).toBeLessThan(mlDeadlines[2][1]); // DATASET CHOICE before LINEAR REGRESSION
-    expect(mlDeadlines[1][1]).toBeLessThan(mlDeadlines[2][1]); // Word Embeddings before LINEAR REGRESSION
-  });
-
-  test("processDeadlines: should sort deadlines by date within each course", () => {
-    vi.setSystemTime(new Date("2024-09-25T00:00:11")); // Set to a specific time to ensure consistent results
-
-    const deadlines: DeadlineData[] = [
-      {
-        event_id: 2,
-        course_id: 2,
-        course_name: "Machine Learning Algorithms | Ainur Mukashova",
-        name: "DATASET CHOICE",
-        timestart: 1727550000, // Sat, Sep 28, 2024, 24:00
-        instance: 2,
-        visible: true,
-        notifications: {},
-      },
-      {
-        event_id: 3,
-        course_id: 2,
-        course_name: "Machine Learning Algorithms | Ainur Mukashova",
-        name: "Word Embeddings",
-        timestart: 1727550000, // Sat, Sep 28, 2024, 24:00
-        instance: 3,
-        visible: true,
-        notifications: {},
-      },
-      {
-        event_id: 1,
-        course_id: 1,
-        course_name: "Computer Networks | Akerke Auelbayeva",
-        name: "Lab 4",
-        timestart: 1727636400, // Sun, Sep 29, 2024, 24:00
-        instance: 1,
-        visible: true,
-        notifications: {},
-      },
-      {
-        event_id: 4,
-        course_id: 2,
-        course_name: "Machine Learning Algorithms | Ainur Mukashova",
-        name: "LINEAR REGRESSION",
-        timestart: 1727636400, // Sun, Sep 29, 2024, 24:00
-        instance: 4,
-        visible: true,
-        notifications: {},
-      },
-    ];
-
-    const thresholds = ["1 day", "2 days", "3 days", "4 days", "5 days"];
-
-    const result = processDeadlines(deadlines, thresholds);
-
-    console.log(result);
-
-    expect(result.reminders).toHaveLength(2); // Two courses
-
-    // Check Machine Learning Algorithms course (should be first due to earlier deadline)
-    expect(result.reminders[0].c).toBe(
-      "Machine Learning Algorithms | Ainur Mukashova",
-    );
-    expect(result.reminders[0].d).toHaveLength(3); // Three deadlines
-    expect(result.reminders[0].d[0][0]).toBe("DATASET CHOICE");
-    expect(result.reminders[0].d[1][0]).toBe("Word Embeddings");
-    expect(result.reminders[0].d[2][0]).toBe("LINEAR REGRESSION");
+    expect(processDeadlines(deadlines, ["6 hours"])).toStrictEqual(diff);
   });
 
   test("formatDeadlineReminders: multiple courses and deadlines", () => {
