@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.5.0...remoodle/telegram-bot-v0.5.1) (2024-09-24)
+
+
+### Bug Fixes
+
+* remove refresh for course grades ([78d29a9](https://github.com/remoodle/heresy/commit/78d29a96205279b20420c527e53d6e99992925bd))
+
 ## [0.5.0](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.4.7...remoodle/telegram-bot-v0.5.0) (2024-09-24)
 
 
