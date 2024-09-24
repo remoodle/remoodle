@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.3.0...remoodle/backend-v1.3.1) (2024-09-24)
+
+
+### Bug Fixes
+
+* mark group deadline reminders as notified ([1066f76](https://github.com/remoodle/heresy/commit/1066f76cf0d6816e510b63f710eae9922a80e68f))
+
+
+### Reverts
+
+* use old deadline reminders version ([4f12c10](https://github.com/remoodle/heresy/commit/4f12c10bd8c7de751961316bb11d66d906e9b7dc))
+
 ## [1.3.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.2.19...remoodle/backend-v1.3.0) (2024-09-24)
 
 
