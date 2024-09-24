@@ -4,9 +4,11 @@ import { cn } from "@/shared/lib/helpers";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
+import { Link } from "@/shared/ui/link";
 import { useToast } from "@/shared/ui/toast/use-toast";
 import { request } from "@/shared/lib/hc";
 import { createAsyncProcess, vFocus } from "@/shared/lib/helpers";
+import { EXTERNAL } from "@/shared/config";
 import { useUserStore } from "@/shared/stores/user";
 
 const userStore = useUserStore();
@@ -55,6 +57,13 @@ const { run: submit, loading } = createAsyncProcess(async () => {
               :disabled="loading"
               required
             />
+            <Link
+              class="text-sm text-muted-foreground"
+              :to="EXTERNAL.how_to_find_token"
+              hover
+            >
+              Where to find a Moodle Token?
+            </Link>
           </div>
         </div>
         <Button :disabled="loading"> Continue </Button>
