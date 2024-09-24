@@ -68,33 +68,32 @@ export const processDeadlines = (
   thresholds: string[],
 ): DeadlineReminderDiff[] => {
   const now = Date.now();
-  const reminderMap: Record<number, DeadlineReminderDiff> = {};
+  const reminders: DeadlineReminderDiff[] = [];
 
-  const eligibleDeadlines = deadlines.filter(
-    (deadline) =>
-      !deadline.assignment?.gradeEntity?.graderaw &&
-      deadline.timestart * 1000 > now,
-  );
-
-  for (const deadline of eligibleDeadlines) {
-    const { event_id, course_id, course_name, name, timestart, notifications } =
-      deadline;
+  for (const deadline of deadlines) {
+    const { event_id, course_name, name, timestart, notifications } = deadline;
     const dueDate = timestart * 1000; // Convert to milliseconds
+
+    if (dueDate <= now) {
+      continue; // Skip past deadlines
+    }
 
     const [remaining, threshold] = calculateRemainingTime(dueDate, thresholds);
 
     if (remaining && threshold && !notifications[threshold]) {
-      if (!reminderMap[course_id]) {
-        reminderMap[course_id] = {
-          cid: course_id,
+      const existingReminder = reminders.find((r) => r.eid === event_id);
+
+      if (existingReminder) {
+        existingReminder.d.push([name, dueDate, remaining, threshold]);
+      } else {
+        reminders.push({
           eid: event_id,
           c: course_name,
-          d: [],
-        };
+          d: [[name, dueDate, remaining, threshold]],
+        });
       }
-      reminderMap[course_id].d.push([name, dueDate, remaining, threshold]);
     }
   }
 
-  return Object.values(reminderMap);
+  return reminders;
 };
