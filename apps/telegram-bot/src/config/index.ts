@@ -1,4 +1,4 @@
-import { bool, cleanEnv, num, str } from "envalid";
+import { cleanEnv, num, str } from "envalid";
 import "dotenv/config";
 
 export const env = cleanEnv(process.env, {
@@ -8,7 +8,6 @@ export const env = cleanEnv(process.env, {
   }),
 
   TELEGRAM_BOT_TOKEN: str(),
-  TELEGRAM_IS_DEVELOPMENT: bool({ default: true }),
 
   BACKEND_URL: str({ default: "http://localhost:9000" }),
   BACKEND_SECRET: str({ default: "aboba" }),
@@ -25,7 +24,6 @@ export const config = {
   },
   bot: {
     token: env.TELEGRAM_BOT_TOKEN,
-    isDevelopment: env.TELEGRAM_IS_DEVELOPMENT,
   },
   redis: {
     uri: env.REDIS_URI,

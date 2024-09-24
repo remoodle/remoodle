@@ -1,4 +1,4 @@
-import { config } from "./config";
+import { env, config } from "./config";
 import { createBot } from "./bot";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
@@ -16,7 +16,7 @@ function main(): void {
     bot.stop();
   });
 
-  if (!config.bot.isDev) {
+  if (!env.isDevelopment) {
     app.use("/webhook", webhookCallback(bot, "hono"));
     serve(app).listen({ port: config.server.port }, () => {
       console.log(`Server is running on port ${config.server.port}`);
