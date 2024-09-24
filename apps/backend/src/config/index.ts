@@ -11,6 +11,8 @@ export const env = cleanEnv(process.env, {
   SERVER_PORT: num({ default: 9000 }),
   SERVER_SECRET: str({ default: "aboba" }),
 
+  SERVICES: str({ default: "api,notifier" }),
+
   // every 10 minutes
   CRAWLER_GRADES_CRON: str({ default: "*/10 * * * *" }),
   // every 35 minutes
@@ -41,6 +43,9 @@ export const env = cleanEnv(process.env, {
 });
 
 export const config = {
+  app: {
+    services: env.SERVICES.split(","),
+  },
   http: {
     host: env.SERVER_HOST,
     port: env.SERVER_PORT,

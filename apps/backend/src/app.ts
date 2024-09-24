@@ -1,8 +1,14 @@
+import { config } from "./config";
 import { startServer } from "./services/server";
 import { startNotifier } from "./services/notifier";
 
-startServer();
-startNotifier();
+if (config.app.services.includes("api")) {
+  startServer();
+}
+
+if (config.app.services.includes("notifier")) {
+  startNotifier();
+}
 
 process.on("uncaughtException", function (err) {
   console.error(err, "Uncaught exception");
