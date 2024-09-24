@@ -47,7 +47,7 @@ jobs:
         command: "php dispatcher/dispatcher.php"
     pipelines:
         user_parse_events:
-            priority: 4
+            priority: 3
             driver: memory
             config: {}
         user_parse_courses:
@@ -55,7 +55,7 @@ jobs:
             driver: memory
             config: {}
         user_parse_grades:
-            priority: 4
+            priority: 3
             driver: memory
             config: {}
         notification_webhook:
@@ -75,7 +75,7 @@ jobs:
             driver: memory
             config: {}
         user_parse_batch_events:
-            priority: 4
+            priority: 3
             driver: memory
             config: {}
     consume:
