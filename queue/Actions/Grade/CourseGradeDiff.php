@@ -12,7 +12,8 @@ final class CourseGradeDiff
      */
     public function __construct(
         public readonly string $course,
-        public readonly array $grades
+        public readonly array $grades,
+        public readonly int $courseId
     ) {
     }
 
@@ -20,6 +21,7 @@ final class CourseGradeDiff
     {
         return [
             'course' => $this->course,
+            'courseId' => $this->courseId,
             'grades' => array_map(
                 fn (GradeDiff $gf): array => $gf->toArray(),
                 $this->grades

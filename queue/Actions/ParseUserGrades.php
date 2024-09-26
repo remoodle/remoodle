@@ -53,13 +53,24 @@ class ParseUserGrades
             ...$courseIds
         );
 
+        ['update' => $update, 'insert' => $insert] = $this->getDbDiffs($userOldGrades, $courseGradesTotalUpsert);
         $this->connection->beginTransaction();
+
+        try {
+            $this->connection->table('grades')->insert(
+                array_map(fn (GradeEntity $ge): array => (array) $ge, $insert),
+            );
+            $this->connection->commit();
+        } catch (\Throwable $th) {
+            $this->connection->rollBack();
+            throw $th;
+        }
 
         try {
             $this->connection
                 ->table("grades")
                 ->upsert(
-                    array_map(fn (GradeEntity $ge): array => (array)$ge, $courseGradesTotalUpsert),
+                    array_map(fn (GradeEntity $ge): array => (array)$ge, $update),
                     ["moodle_id", "grade_id"],
                     ["percentage", "graderaw", "feedbackformat", "feedback"]
                 );
@@ -142,10 +153,46 @@ class ParseUserGrades
         foreach ($diffsByCourses as $courseId => $diffsByCourse) {
             $result[] = new CourseGradeDiff(
                 $userCourses[$courseId]->name,
-                $diffsByCourse
+                $diffsByCourse,
+                $courseId
             );
         }
 
         return $result;
+    }
+
+    /**
+     * @param array<int, GradeEntity> $oldGrades
+     * @param GradeEntity[] $newGrades
+     * @return array{update: GradeEntity[], insert: GradeEntity[]}
+     */
+    private function getDbDiffs(array $oldGrades, array $newGrades): array
+    {
+        $insert = [];
+        $update = [];
+        foreach ($newGrades as $newGrade) {
+            if (!isset($oldGrades[$newGrade->grade_id])) {
+                $insert[] = $newGrade;
+                continue;
+            }
+
+            $old = number_format((float)$oldGrades[$newGrade->grade_id]->graderaw, 2, '.', "");
+            $new = number_format((float)$newGrade->graderaw, 2, '.', "");
+
+            if (
+                ($newGrade->percentage !== $oldGrades[$newGrade->grade_id]->percentage) ||
+                ($old !== $new) ||
+                ($newGrade->feedbackformat !== $oldGrades[$newGrade->grade_id]->feedbackformat) ||
+                ($newGrade->feedback !== $oldGrades[$newGrade->grade_id]->feedback)
+            ) {
+                $update[] = $newGrade;
+                continue;
+            }
+        }
+
+        return [
+            'update' => $update,
+            'insert' => $insert
+        ];
     }
 }
