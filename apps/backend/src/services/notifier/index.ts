@@ -8,7 +8,7 @@ import {
 } from "./deadline-reminders";
 import { queues } from "./shared";
 import type { UserJobData } from "./shared";
-import { startServer } from "./webhook";
+import { startServer } from "./server";
 
 type TaskData = {
   fetchDeadlines?: boolean;
