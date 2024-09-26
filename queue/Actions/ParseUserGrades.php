@@ -54,30 +54,29 @@ class ParseUserGrades
         );
 
         ['update' => $update, 'insert' => $insert] = $this->getDbDiffs($userOldGrades, $courseGradesTotalUpsert);
-        $this->connection->beginTransaction();
 
-        try {
-            $this->connection->table('grades')->insert(
-                array_map(fn (GradeEntity $ge): array => (array) $ge, $insert),
-            );
-            $this->connection->commit();
-        } catch (\Throwable $th) {
-            $this->connection->rollBack();
-            throw $th;
+        if ($insert === []) {
+            try {
+                $this->connection->table('grades')->insert(
+                    array_map(fn (GradeEntity $ge): array => (array) $ge, $insert),
+                );
+            } catch (\Throwable $th) {
+                throw $th;
+            }
         }
 
-        try {
-            $this->connection
-                ->table("grades")
-                ->upsert(
-                    array_map(fn (GradeEntity $ge): array => (array)$ge, $update),
-                    ["moodle_id", "grade_id"],
-                    ["percentage", "graderaw", "feedbackformat", "feedback"]
-                );
-            $this->connection->commit();
-        } catch (\Throwable $th) {
-            $this->connection->rollBack();
-            throw $th;
+        if ($update === []) {
+            try {
+                $this->connection
+                    ->table("grades")
+                    ->upsert(
+                        array_map(fn (GradeEntity $ge): array => (array)$ge, $update),
+                        ["moodle_id", "grade_id"],
+                        ["percentage", "graderaw", "feedbackformat", "feedback"]
+                    );
+            } catch (\Throwable $th) {
+                throw $th;
+            }
         }
 
         if ($this->webhookPushEnabled) {
