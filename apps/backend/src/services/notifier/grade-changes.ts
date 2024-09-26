@@ -8,28 +8,33 @@ import { sendTelegramMessage, queues } from "./shared";
  * Handler
  */
 async function processGradeChangeEvent(job: Job<GradeChangeEvent>) {
-  const msg = job.data;
-  const user = await db.user.findOne({ moodleId: msg.moodleId });
+  try {
+    const msg = job.data;
+    const user = await db.user.findOne({ moodleId: msg.moodleId });
 
-  if (!user?.telegramId || !user.notificationSettings.telegram.gradeUpdates) {
-    return;
-  }
+    if (!user?.telegramId || !user.notificationSettings.telegram.gradeUpdates) {
+      return;
+    }
 
-  const text = formatCourseDiffs(msg.payload);
-  const response = await sendTelegramMessage(user.telegramId, text);
+    const text = formatCourseDiffs(msg.payload);
+    const response = await sendTelegramMessage(user.telegramId, text);
 
-  if (response.ok) {
-    console.log(
-      `[grade-change] Sent notification to ${user.name} (${user.moodleId})`,
-      JSON.stringify(msg.payload),
-    );
-  } else {
-    console.error(
-      `[grade-change] Failed to send notification to ${user.name} (${user.moodleId})`,
-      response.statusText,
-      response.status,
-    );
-    throw new Error("Failed to send Telegram message");
+    if (response.ok) {
+      console.log(
+        `[grade-change] Sent notification to ${user.name} (${user.moodleId})`,
+        JSON.stringify(msg.payload),
+      );
+    } else {
+      console.error(
+        `[grade-change] Failed to send notification to ${user.name} (${user.moodleId})`,
+        response.statusText,
+        response.status,
+      );
+      throw new Error("Failed to send Telegram message");
+    }
+  } catch (error: any) {
+    console.error(`Job ${job.name} failed with error ${error.message}`);
+    throw error;
   }
 }
 export const gradeChangeWorker = new Worker(

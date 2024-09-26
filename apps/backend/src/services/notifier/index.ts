@@ -16,29 +16,34 @@ type TaskData = {
 };
 
 export async function runTask(job: Job<TaskData>) {
-  const t0 = performance.now();
+  try {
+    const t0 = performance.now();
 
-  const users = await db.user.find({
-    telegramId: { $exists: true },
-    moodleId: { $exists: true },
-  });
+    const users = await db.user.find({
+      telegramId: { $exists: true },
+      moodleId: { $exists: true },
+    });
 
-  for (const user of users) {
-    const payload: UserJobData = {
-      userId: user._id,
-      userName: user.name,
-      moodleId: user.moodleId,
-    };
+    for (const user of users) {
+      const payload: UserJobData = {
+        userId: user._id,
+        userName: user.name,
+        moodleId: user.moodleId,
+      };
 
-    if (job.data?.fetchDeadlines) {
-      await addDeadlineCrawlerJob(payload);
+      if (job.data?.fetchDeadlines) {
+        await addDeadlineCrawlerJob(payload);
+      }
     }
-  }
 
-  const t1 = performance.now();
-  console.log(
-    `[crawler] Finished adding all jobs for ${users.length} users to queues, took ${t1 - t0} milliseconds.`,
-  );
+    const t1 = performance.now();
+    console.log(
+      `[crawler] Finished adding all jobs for ${users.length} users to queues, took ${t1 - t0} milliseconds.`,
+    );
+  } catch (error: any) {
+    console.error(`Job ${job.name} failed with error ${error.message}`);
+    throw error;
+  }
 }
 export const taskWorker = new Worker(queues.tasks, runTask, {
   connection: db.redisConnection,

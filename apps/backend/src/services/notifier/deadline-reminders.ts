@@ -13,31 +13,36 @@ import type { UserJobData } from "./shared";
  * Handler
  */
 async function processDeadlineReminderEvent(job: Job<DeadlineReminderEvent>) {
-  const msg = job.data;
-  const user = await db.user.findOne({ moodleId: msg.moodleId });
+  try {
+    const msg = job.data;
+    const user = await db.user.findOne({ moodleId: msg.moodleId });
 
-  if (
-    !user?.telegramId ||
-    !user.notificationSettings.telegram.deadlineReminders
-  ) {
-    return;
-  }
+    if (
+      !user?.telegramId ||
+      !user.notificationSettings.telegram.deadlineReminders
+    ) {
+      return;
+    }
 
-  const text = formatDeadlineReminders(msg.payload);
-  const response = await sendTelegramMessage(user.telegramId, text);
+    const text = formatDeadlineReminders(msg.payload);
+    const response = await sendTelegramMessage(user.telegramId, text);
 
-  if (response.ok) {
-    console.log(
-      `[deadline-reminder] Sent notification to ${user.name} (${user.moodleId})`,
-      JSON.stringify(msg.payload),
-    );
-  } else {
-    console.error(
-      `[deadline-reminder] Failed to send notification to ${user.name} (${user.moodleId})`,
-      response.statusText,
-      response.status,
-    );
-    throw new Error("Failed to send Telegram message");
+    if (response.ok) {
+      console.log(
+        `[deadline-reminder] Sent notification to ${user.name} (${user.moodleId})`,
+        JSON.stringify(msg.payload),
+      );
+    } else {
+      console.error(
+        `[deadline-reminder] Failed to send notification to ${user.name} (${user.moodleId})`,
+        response.statusText,
+        response.status,
+      );
+      throw new Error("Failed to send Telegram message");
+    }
+  } catch (error: any) {
+    console.error(`Job ${job.name} failed with error ${error.message}`);
+    throw error;
   }
 }
 export const deadlineReminderWorker = new Worker(
@@ -66,9 +71,9 @@ export async function addDeadlineReminderJob(event: DeadlineReminderEvent) {
  * Crawler
  */
 async function processFetchDeadlinesJob(job: Job<UserJobData>) {
-  const { userId, userName, moodleId } = job.data;
-
   try {
+    const { userId, userName, moodleId } = job.data;
+
     const rmc = new RMC({ moodleId });
     const [data, error] = await rmc.v1_user_deadlines({
       noOnline: true,
@@ -149,8 +154,9 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
     };
 
     await addDeadlineReminderJob(event);
-  } catch (error) {
-    console.error("Error executing deadline crawler:", error);
+  } catch (error: any) {
+    console.error(`Job ${job.name} failed with error ${error.message}`);
+    throw error;
   }
 }
 export const deadlineWorker = new Worker(
