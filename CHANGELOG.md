@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/remoodle/core/compare/v1.1.2...v1.1.3) (2024-09-24)
+
+
+### Bug Fixes
+
+* fix fatal ([fce4b41](https://github.com/remoodle/core/commit/fce4b411cb7ac95edfeb0cb099ad100833521879))
+
 ## [1.1.2](https://github.com/remoodle/core/compare/v1.1.1...v1.1.2) (2024-09-24)
 
 
