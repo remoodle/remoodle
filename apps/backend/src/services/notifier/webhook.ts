@@ -49,6 +49,8 @@ api.post(
   async (ctx) => {
     const { moodleId, payload } = ctx.req.valid("json");
 
+    console.log(moodleId, JSON.stringify(payload));
+
     try {
       await addGradeChangeJob({
         moodleId,
