@@ -49,14 +49,10 @@ export const gradeChangeQueue = new Queue(queues.gradesHandler, {
   connection: db.redisConnection,
 });
 export async function addGradeChangeJob(event: GradeChangeEvent) {
-  await gradeChangeQueue.add(
-    `${queues.gradesHandler}::${event.moodleId}`,
-    event,
-    {
-      // removeOnComplete: true,
-      removeOnFail: {
-        age: 24 * 3600, // keep up to 24 hours
-      },
+  await gradeChangeQueue.add("send grade notification", event, {
+    // removeOnComplete: true,
+    removeOnFail: {
+      age: 24 * 3600, // keep up to 24 hours
     },
-  );
+  });
 }

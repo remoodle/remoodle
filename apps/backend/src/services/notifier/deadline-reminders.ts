@@ -55,16 +55,12 @@ export const deadlineReminderQueue = new Queue(queues.deadlinesHandler, {
   connection: db.redisConnection,
 });
 export async function addDeadlineReminderJob(event: DeadlineReminderEvent) {
-  await deadlineReminderQueue.add(
-    `${queues.deadlinesHandler}::${event.moodleId}`,
-    event,
-    {
-      // removeOnComplete: true,
-      removeOnFail: {
-        age: 24 * 3600, // keep up to 24 hours
-      },
+  await deadlineReminderQueue.add("send deadline notification", event, {
+    // removeOnComplete: true,
+    removeOnFail: {
+      age: 24 * 3600, // keep up to 24 hours
     },
-  );
+  });
 }
 
 /*
@@ -159,7 +155,7 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
     throw error;
   }
 }
-export const deadlineWorker = new Worker(
+export const deadlineCrawlerWorker = new Worker(
   queues.deadlinesCrawler,
   processFetchDeadlinesJob,
   {
@@ -172,12 +168,8 @@ export const deadlineCrawlerQueue = new Queue(queues.deadlinesCrawler, {
   connection: db.redisConnection,
 });
 export async function addDeadlineCrawlerJob(event: UserJobData) {
-  await deadlineCrawlerQueue.add(
-    `${queues.deadlinesCrawler}::${event.userId}`,
-    event,
-    {
-      // removeOnComplete: true,
-      removeOnFail: true,
-    },
-  );
+  await deadlineCrawlerQueue.add("crawl deadlines", event, {
+    // removeOnComplete: true,
+    removeOnFail: true,
+  });
 }
