@@ -17,7 +17,14 @@ class ParseUserGrades extends BaseHandler
         $connection = $this->get(Connection::class);
         $user = $this->getPayload()->payload();
         $moodleWebservicesUrl = Config::get("moodle.webservice_url");
-        $this->action = new ActionsParseUserGrades($connection, $user, $moodleWebservicesUrl);
+        $this->action = new ActionsParseUserGrades(
+            $connection,
+            $user,
+            $moodleWebservicesUrl,
+            Config::get("webhook.url"),
+            Config::get("webhook.secret"),
+            Config::get("webhook.enabled")
+        );
     }
 
     protected function dispatch(): void

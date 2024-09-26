@@ -34,7 +34,14 @@ class InitializeUser extends BaseHandler
 
         $this->parseUserCourses = new ParseUserCourses($connection, $searchEngine, $user);
         $this->parserCourseContents = new ParseCourseContents($user, $connection);
-        $this->parseUserGrades = new ParseUserGrades($connection, $user, $moodleWebservicesUrl);
+        $this->parseUserGrades = new ParseUserGrades(
+            $connection,
+            $user,
+            $moodleWebservicesUrl,
+            Config::get("webhook.url"),
+            Config::get("webhook.secret"),
+            Config::get("webhook.enabled")
+        );
         $this->parseUserEvents = new ParseUserEvents($connection, $searchEngine, $user);
         $this->parseUserAssignments = new ParseUserAssignments($user, $connection, $searchEngine);
     }

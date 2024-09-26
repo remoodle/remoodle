@@ -58,7 +58,7 @@ final class GetGradesBatch
                         ? (int) $gradeitem['percentageformatted']
                         : null;
 
-                    $grades[] = (array)(new Grade(
+                    $grades[] = (new Grade(
                         grade_id: $gradeitem['id'],
                         course_id: $courseId,
                         cmid: $gradeitem['cmid'] ?? null,
