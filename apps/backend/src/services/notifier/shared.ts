@@ -19,6 +19,5 @@ export const queues = {
   tasks: "TasksQueue",
   deadlinesCrawler: "DeadlinesCrawlerQueue",
   deadlinesHandler: "DeadlinesHandlerQueue",
-  coursesCrawler: "CoursesCrawlerQueue",
-  coursesHandler: "CoursesHandlerQueue",
+  gradesHandler: "GradesHandlerQueue",
 };

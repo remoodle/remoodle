@@ -13,7 +13,7 @@ async function processGradeChangeEvent(job: Job<GradeChangeEvent>) {
     const user = await db.user.findOne({ moodleId: msg.moodleId });
 
     if (!user?.telegramId || !user.notificationSettings.telegram.gradeUpdates) {
-      return;
+      return job.remove();
     }
 
     const text = formatCourseDiffs(msg.payload);
@@ -38,22 +38,22 @@ async function processGradeChangeEvent(job: Job<GradeChangeEvent>) {
   }
 }
 export const gradeChangeWorker = new Worker(
-  queues.coursesHandler,
+  queues.gradesHandler,
   processGradeChangeEvent,
   {
     connection: db.redisConnection,
   },
 );
 
-export const gradeChangeQueue = new Queue(queues.coursesHandler, {
+export const gradeChangeQueue = new Queue(queues.gradesHandler, {
   connection: db.redisConnection,
 });
 export async function addGradeChangeJob(event: GradeChangeEvent) {
   await gradeChangeQueue.add(
-    `${queues.coursesHandler}::${event.moodleId}`,
+    `${queues.gradesHandler}::${event.moodleId}`,
     event,
     {
-      removeOnComplete: true,
+      // removeOnComplete: true,
       removeOnFail: {
         age: 24 * 3600, // keep up to 24 hours
       },

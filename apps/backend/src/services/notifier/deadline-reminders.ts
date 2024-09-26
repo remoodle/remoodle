@@ -21,7 +21,7 @@ async function processDeadlineReminderEvent(job: Job<DeadlineReminderEvent>) {
       !user?.telegramId ||
       !user.notificationSettings.telegram.deadlineReminders
     ) {
-      return;
+      return job.remove();
     }
 
     const text = formatDeadlineReminders(msg.payload);
@@ -59,7 +59,7 @@ export async function addDeadlineReminderJob(event: DeadlineReminderEvent) {
     `${queues.deadlinesHandler}::${event.moodleId}`,
     event,
     {
-      removeOnComplete: true,
+      // removeOnComplete: true,
       removeOnFail: {
         age: 24 * 3600, // keep up to 24 hours
       },
@@ -176,7 +176,7 @@ export async function addDeadlineCrawlerJob(event: UserJobData) {
     `${queues.deadlinesCrawler}::${event.userId}`,
     event,
     {
-      removeOnComplete: true,
+      // removeOnComplete: true,
       removeOnFail: true,
     },
   );

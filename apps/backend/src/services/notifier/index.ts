@@ -5,10 +5,10 @@ import {
   addDeadlineCrawlerJob,
   deadlineCrawlerQueue,
   deadlineWorker,
+  deadlineReminderQueue,
 } from "./deadline-reminders";
 import { queues } from "./shared";
 import type { UserJobData } from "./shared";
-import { startServer } from "./server";
 
 type TaskData = {
   fetchDeadlines?: boolean;
@@ -56,18 +56,6 @@ const addTask = async (name: string, job: TaskData, options?: JobsOptions) => {
   await taskQueue.add(name, job, options);
 };
 
-export const startNotifier = async () => {
-  console.log("Starting notifier...");
-
-  startServer();
-
-  await addTask(
-    "fetch-deadlines",
-    { fetchDeadlines: true },
-    { repeat: { pattern: config.crawler.deadlines.cron } },
-  );
-};
-
 export async function shutdownCrawler(signal: string) {
   console.log(`Received ${signal}, closing crawler...`);
 
@@ -83,3 +71,127 @@ export async function shutdownCrawler(signal: string) {
 process.on("SIGINT", () => shutdownCrawler("SIGINT"));
 
 process.on("SIGTERM", () => shutdownCrawler("SIGTERM"));
+
+// entry
+
+import { serve } from "@hono/node-server";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
+import { logger } from "hono/logger";
+
+import { createBullBoard } from "@bull-board/api";
+import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
+import { HonoAdapter } from "@bull-board/hono";
+import { serveStatic } from "@hono/node-server/serve-static";
+
+import { addGradeChangeJob, gradeChangeQueue } from "./grade-changes";
+
+const api = new Hono();
+
+const serverAdapter = new HonoAdapter(serveStatic);
+
+createBullBoard({
+  queues: [
+    new BullMQAdapter(gradeChangeQueue),
+    new BullMQAdapter(deadlineCrawlerQueue),
+    new BullMQAdapter(deadlineReminderQueue),
+    new BullMQAdapter(taskQueue),
+  ],
+  serverAdapter,
+});
+
+const basePath = "/ui";
+serverAdapter.setBasePath(basePath);
+
+api.route(basePath, serverAdapter.registerPlugin());
+
+api.use("*", logger());
+
+api.use(
+  "*",
+  cors({
+    origin: "*",
+    allowMethods: ["POST"],
+  }),
+);
+
+api.use("*", async (ctx, next) => {
+  const authorization = ctx.req.header("X-Remoodle-Webhook-Secret");
+
+  if (authorization !== config.notifier.secret) {
+    return ctx.text("Forbidden", 403);
+  }
+
+  return await next();
+});
+
+api.post(
+  "/webhook/grades",
+  zValidator(
+    "json",
+    z.object({
+      moodleId: z.number(),
+      payload: z.array(
+        z.object({
+          course: z.string(),
+          courseId: z.number(),
+          grades: z.array(
+            z.tuple([z.string(), z.number().nullable(), z.number().nullable()]),
+          ),
+        }),
+      ),
+    }),
+  ),
+  async (ctx) => {
+    const { moodleId, payload } = ctx.req.valid("json");
+
+    console.log(moodleId, JSON.stringify(payload));
+
+    try {
+      await addGradeChangeJob({
+        moodleId,
+        payload,
+      });
+    } catch (error: any) {
+      console.error("Error adding grade change job:", error);
+
+      return ctx.text(error.message, 500);
+    }
+
+    return ctx.text("OK", 200);
+  },
+);
+
+export const startServer = () => {
+  console.log("Starting server...");
+
+  serve(
+    {
+      hostname: config.notifier.host,
+      port: config.notifier.port,
+      fetch: api.fetch,
+    },
+    (info) => {
+      console.log(
+        `Crawler wehbook is running on http://${info.address}:${info.port}`,
+      );
+      console.log(
+        `For the UI of instance1, open http://localhost:${info.port}/ui`,
+      );
+    },
+  );
+};
+
+export const startNotifier = async () => {
+  console.log("Starting notifier...");
+
+  startServer();
+
+  await addTask(
+    "fetch-deadlines",
+    { fetchDeadlines: true },
+    { repeat: { pattern: config.crawler.deadlines.cron } },
+  );
+};
