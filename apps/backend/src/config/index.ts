@@ -13,11 +13,13 @@ export const env = cleanEnv(process.env, {
 
   SERVICES: str({ default: "api,notifier" }),
 
-  // every 10 minutes
-  CRAWLER_GRADES_CRON: str({ default: "*/10 * * * *" }),
   // every 35 minutes
   CRAWLER_DEADLINES_CRON: str({ default: "*/35 * * * *" }),
-  CRAWLER_CONCURRENCY: num({ default: 1 }),
+  CRAWLER_DEADLINES_CONCURRENCY: num({ default: 1 }),
+
+  NOTIFIER_HOST: str({ default: "0.0.0.0" }),
+  NOTIFIER_PORT: num({ default: 9001 }),
+  NOTIFIER_SECRET: str({ default: "cross-secret" }),
 
   CORE_SECRET: str({ default: "private-token" }),
   CORE_URL: str({ default: "http://127.0.0.1:8080" }),
@@ -69,10 +71,16 @@ export const config = {
   telegram: {
     token: env.TELEGRAM_BOT_TOKEN,
   },
+  notifier: {
+    host: env.NOTIFIER_HOST,
+    port: env.NOTIFIER_PORT,
+    secret: env.NOTIFIER_SECRET,
+  },
   crawler: {
-    gradesCron: env.CRAWLER_GRADES_CRON,
-    deadlinesCron: env.CRAWLER_DEADLINES_CRON,
-    concurrency: env.CRAWLER_CONCURRENCY,
+    deadlines: {
+      cron: env.CRAWLER_DEADLINES_CRON,
+      concurrency: env.CRAWLER_DEADLINES_CONCURRENCY,
+    },
   },
   notifications: {
     maxDeadlineThresholds: 10,

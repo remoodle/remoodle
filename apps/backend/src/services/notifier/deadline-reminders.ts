@@ -51,7 +51,7 @@ export const deadlineReminderQueue = new Queue(queues.deadlinesHandler, {
 });
 export async function addDeadlineReminderJob(event: DeadlineReminderEvent) {
   await deadlineReminderQueue.add(
-    `${queues.deadlinesHandler}::${event.userId}`,
+    `${queues.deadlinesHandler}::${event.moodleId}`,
     event,
     {
       removeOnComplete: true,
@@ -125,7 +125,12 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
       );
 
       if (deadline) {
-        for (const [_name, _date, _remaining, threshold] of reminder.d) {
+        for (const [
+          _name,
+          _date,
+          _remaining,
+          threshold,
+        ] of reminder.deadlines) {
           if (!deadline.notifications[threshold]) {
             deadline.notifications[threshold] = true;
           }
@@ -139,7 +144,6 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
     );
 
     const event: DeadlineReminderEvent = {
-      userId,
       moodleId,
       payload: deadlineReminders,
     };
@@ -154,7 +158,7 @@ export const deadlineWorker = new Worker(
   processFetchDeadlinesJob,
   {
     connection: db.redisConnection,
-    concurrency: config.crawler.concurrency,
+    concurrency: config.crawler.deadlines.concurrency,
   },
 );
 

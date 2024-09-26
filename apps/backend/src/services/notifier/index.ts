@@ -1,11 +1,6 @@
 import { Queue, Worker, Job, JobsOptions } from "bullmq";
 import { db } from "../../library/db";
-import { config, env } from "../../config";
-import {
-  addCourseCrawlerJob,
-  courseCrawlerQueue,
-  courseWorker,
-} from "./grade-changes";
+import { config } from "../../config";
 import {
   addDeadlineCrawlerJob,
   deadlineCrawlerQueue,
@@ -13,6 +8,7 @@ import {
 } from "./deadline-reminders";
 import { queues } from "./shared";
 import type { UserJobData } from "./shared";
+import { startServer } from "./webhook";
 
 type TaskData = {
   fetchDeadlines?: boolean;
@@ -33,10 +29,6 @@ export async function runTask(job: Job<TaskData>) {
       userName: user.name,
       moodleId: user.moodleId,
     };
-
-    if (job.data?.fetchCourses) {
-      await addCourseCrawlerJob(payload);
-    }
 
     if (job.data?.fetchDeadlines) {
       await addDeadlineCrawlerJob(payload);
@@ -62,23 +54,17 @@ const addTask = async (name: string, job: TaskData, options?: JobsOptions) => {
 export const startNotifier = async () => {
   console.log("Starting notifier...");
 
-  await addTask(
-    "fetch-courses",
-    { fetchCourses: true },
-    { repeat: { pattern: config.crawler.gradesCron } },
-  );
+  startServer();
+
   await addTask(
     "fetch-deadlines",
     { fetchDeadlines: true },
-    { repeat: { pattern: config.crawler.deadlinesCron } },
+    { repeat: { pattern: config.crawler.deadlines.cron } },
   );
 };
 
 export async function shutdownCrawler(signal: string) {
   console.log(`Received ${signal}, closing crawler...`);
-
-  await courseCrawlerQueue.close();
-  await courseWorker.close();
 
   await deadlineCrawlerQueue.close();
   await deadlineWorker.close();

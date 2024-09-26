@@ -4,8 +4,8 @@ export const formatCourseDiffs = (data: GradeChangeDiff[]): string => {
   let message = "Updated grades:\n";
 
   for (const diff of data) {
-    message += `\n📘 ${diff.c.split(" | ")[0]}:\n`;
-    const gradeChanges = diff.g;
+    message += `\n📘 ${diff.course.split(" | ")[0]}:\n`;
+    const gradeChanges = diff.grades;
     for (const change of gradeChanges) {
       const [gradeName, previous, updated] = change;
       const displayPrevious = previous === null ? "N/A" : previous;
@@ -23,9 +23,9 @@ export const formatDeadlineReminders = (
   let message = "🔔 Upcoming deadlines 🔔\n\n";
 
   for (const diff of data) {
-    message += `🗓 ${diff.c}\n`;
+    message += `🗓 ${diff.course}\n`;
 
-    for (const [name, date, remaining, _threshold] of diff.d) {
+    for (const [name, date, remaining, _threshold] of diff.deadlines) {
       const formattedDate = new Date(date).toLocaleString("en-US", {
         weekday: "short",
         month: "short",

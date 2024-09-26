@@ -1,67 +1,6 @@
-import type { ExtendedCourse, Deadline } from "@remoodle/types";
-import type { GradeChangeDiff, DeadlineReminderDiff } from "./shims";
+import type { Deadline } from "@remoodle/types";
+import type { DeadlineReminderDiff } from "./shims";
 import { calculateRemainingTime } from "./thresholds";
-
-export const trackCourseDiff = (
-  oldData: ExtendedCourse[],
-  newData: ExtendedCourse[],
-): {
-  hasDiff: boolean;
-  diffs: GradeChangeDiff[];
-} => {
-  const diffs: GradeChangeDiff[] = [];
-
-  const oldCoursesMap = new Map(
-    oldData.map((course) => [course.course_id, course]),
-  );
-
-  for (const newCourse of newData) {
-    const oldCourse = oldCoursesMap.get(newCourse.course_id);
-    let courseChanges: [string, number | null, number | null][] = [];
-
-    const newGrades = newCourse.grades || [];
-
-    for (const newGrade of newGrades) {
-      if (!newGrade.name.trim()) {
-        continue; // Skip grades with empty names
-      }
-
-      const oldGrade = oldCourse
-        ? oldCoursesMap
-            .get(newCourse.course_id)
-            ?.grades?.find((g) => g.grade_id === newGrade.grade_id)
-        : undefined;
-      const previous = oldGrade?.graderaw ?? null;
-      const updated = newGrade.graderaw;
-
-      // Explicitly ignore differences between null and 0
-      if (
-        (previous === null && updated === 0) ||
-        (previous === 0 && updated === null)
-      ) {
-        continue;
-      }
-
-      // Ignore if both values are null
-      if (previous === null && updated === null) {
-        continue;
-      }
-
-      if (!oldGrade || previous !== updated) {
-        courseChanges.push([newGrade.name, previous, updated]);
-      }
-    }
-
-    if (courseChanges.length > 0) {
-      diffs.push({ c: newCourse.name, g: courseChanges });
-    }
-  }
-
-  return {
-    diffs,
-    hasDiff: diffs.length > 0,
-  };
-};
 
 export const processDeadlines = (
   deadlines: (Deadline & { notifications: Record<string, boolean> })[],
@@ -84,12 +23,12 @@ export const processDeadlines = (
       const existingReminder = reminders.find((r) => r.eid === event_id);
 
       if (existingReminder) {
-        existingReminder.d.push([name, dueDate, remaining, threshold]);
+        existingReminder.deadlines.push([name, dueDate, remaining, threshold]);
       } else {
         reminders.push({
           eid: event_id,
-          c: course_name,
-          d: [[name, dueDate, remaining, threshold]],
+          course: course_name,
+          deadlines: [[name, dueDate, remaining, threshold]],
         });
       }
     }

@@ -1,12 +1,11 @@
 export type GradeChangeDiff = {
-  // course name
-  c: string;
+  course: string;
+  courseId: number;
   // [name, old, new]
-  g: [string, number | null, number | null][];
+  grades: [string, number | null, number | null][];
 };
 
 export type GradeChangeEvent = {
-  userId: string;
   moodleId: number;
   payload: GradeChangeDiff[];
 };
@@ -14,14 +13,12 @@ export type GradeChangeEvent = {
 export type DeadlineReminderDiff = {
   // event id
   eid: number;
-  // course name
-  c: string;
+  course: string;
   // [name, date, remaining, __threshold]
-  d: [string, number, string, string][];
+  deadlines: [string, number, string, string][];
 };
 
 export type DeadlineReminderEvent = {
-  userId: string;
   moodleId: number;
   payload: DeadlineReminderDiff[];
 };
