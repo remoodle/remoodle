@@ -1,3 +1,4 @@
+import { logger } from "./library/logger";
 import { config } from "./config";
 import { startServer } from "./services/server";
 import { startNotifier } from "./services/notifier";
@@ -11,9 +12,9 @@ if (config.app.services.includes("notifier")) {
 }
 
 process.on("uncaughtException", function (err) {
-  console.error(err, "Uncaught exception");
+  logger.common.fatal(err, "uncaught exception detected");
 });
 
 process.on("unhandledRejection", (reason, promise) => {
-  console.error({ promise, reason }, "Unhandled Rejection at: Promise");
+  logger.common.fatal({ promise, reason }, "unhandled Rejection at: Promise");
 });

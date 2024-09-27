@@ -2,11 +2,12 @@ import { Queue, Worker, Job } from "bullmq";
 import { db } from "../../library/db";
 import { RMC } from "../../library/rmc-sdk";
 import { config } from "../../config";
+import { logger } from "../../library/logger";
 import type { DeadlineReminderEvent, DeadlineReminderDiff } from "./core/shims";
 import { processDeadlines } from "./core/checker";
 import { formatDeadlineReminders } from "./core/formatter";
 import { createBlankThresholdsMap } from "./core/thresholds";
-import { sendTelegramMessage, queues } from "./shared";
+import { sendTelegramMessage, queues, jobOptions } from "./shared";
 import type { UserJobData } from "./shared";
 
 /*
@@ -28,20 +29,21 @@ async function processDeadlineReminderEvent(job: Job<DeadlineReminderEvent>) {
     const response = await sendTelegramMessage(user.telegramId, text);
 
     if (response.ok) {
-      console.log(
-        `[deadline-reminder] Sent notification to ${user.name} (${user.moodleId})`,
-        JSON.stringify(msg.payload),
+      logger.deadlines.info(
+        msg,
+        `Sent notification to ${user.name} (${user.moodleId})`,
       );
     } else {
-      console.error(
-        `[deadline-reminder] Failed to send notification to ${user.name} (${user.moodleId})`,
-        response.statusText,
-        response.status,
+      logger.deadlines.error(
+        {
+          status: response.status,
+          statusText: response.statusText,
+        },
+        `Failed to send notification to ${user.name} (${user.moodleId})`,
       );
-      throw new Error("Failed to send Telegram message");
     }
   } catch (error: any) {
-    console.error(`Job ${job.name} failed with error ${error.message}`);
+    logger.deadlines.error(error, `Job ${job.name} failed`);
     throw error;
   }
 }
@@ -55,12 +57,11 @@ export const deadlineReminderQueue = new Queue(queues.deadlinesHandler, {
   connection: db.redisConnection,
 });
 export async function addDeadlineReminderJob(event: DeadlineReminderEvent) {
-  await deadlineReminderQueue.add("send deadline notification", event, {
-    // removeOnComplete: true,
-    removeOnFail: {
-      age: 24 * 3600, // keep up to 24 hours
-    },
-  });
+  await deadlineReminderQueue.add(
+    "send deadline notification",
+    event,
+    jobOptions,
+  );
 }
 
 /*
@@ -76,12 +77,7 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
     });
 
     if (error) {
-      console.error(
-        `[crawler] Couldn't fetch deadlines for user ${userName} (${moodleId})`,
-        error.message,
-        error.status,
-      );
-      return;
+      throw new Error(error.message);
     }
 
     const user = await db.user.findOne({ moodleId });
@@ -151,7 +147,7 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
 
     await addDeadlineReminderJob(event);
   } catch (error: any) {
-    console.error(`Job ${job.name} failed with error ${error.message}`);
+    logger.deadlines.error(error, `Job ${job.name} failed`);
     throw error;
   }
 }
@@ -168,8 +164,5 @@ export const deadlineCrawlerQueue = new Queue(queues.deadlinesCrawler, {
   connection: db.redisConnection,
 });
 export async function addDeadlineCrawlerJob(event: UserJobData) {
-  await deadlineCrawlerQueue.add("crawl deadlines", event, {
-    // removeOnComplete: true,
-    removeOnFail: true,
-  });
+  await deadlineCrawlerQueue.add("crawl deadlines", event, jobOptions);
 }

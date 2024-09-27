@@ -1,5 +1,7 @@
 import { Queue, Worker, Job, JobsOptions } from "bullmq";
 import { db } from "../../library/db";
+import type { IUser } from "@remoodle/db";
+import { logger } from "../../library/logger";
 import { config } from "../../config";
 import { addDeadlineCrawlerJob } from "./deadline-reminders";
 import { queues } from "./shared";
@@ -7,33 +9,47 @@ import type { UserJobData } from "./shared";
 
 type TaskName = "fetch-deadlines";
 
-export async function runTask(job: Job) {
+const withUsers = async (callback: (users: IUser[]) => Promise<void>) => {
+  const users = await db.user.find({
+    telegramId: { $exists: true },
+    moodleId: { $exists: true },
+  });
+
+  await callback(users);
+};
+
+const fetchDeadlines = async (users: IUser[]) => {
+  const t0 = performance.now();
+
+  logger.scheduler.info(`Fetching deadlines for ${users.length} users`);
+
+  for (const user of users) {
+    const payload: UserJobData = {
+      userId: user._id,
+      userName: user.name,
+      moodleId: user.moodleId,
+    };
+
+    await addDeadlineCrawlerJob(payload);
+  }
+
+  const t1 = performance.now();
+  logger.scheduler.info(
+    `Finished adding all jobs for ${users.length} users, took ${t1 - t0} milliseconds.`,
+  );
+};
+
+export async function runTask(job: Job<any, any, TaskName>) {
   try {
-    const t0 = performance.now();
-
-    const users = await db.user.find({
-      telegramId: { $exists: true },
-      moodleId: { $exists: true },
-    });
-
-    for (const user of users) {
-      const payload: UserJobData = {
-        userId: user._id,
-        userName: user.name,
-        moodleId: user.moodleId,
-      };
-
-      if (job.name === "fetch-deadlines") {
-        await addDeadlineCrawlerJob(payload);
-      }
+    switch (job.name) {
+      case "fetch-deadlines":
+        await withUsers(fetchDeadlines);
+        break;
+      default:
+        logger.scheduler.warn(`Unknown task ${job.name}`);
     }
-
-    const t1 = performance.now();
-    console.log(
-      `[crawler] Finished adding all jobs for ${users.length} users to queues, took ${t1 - t0} milliseconds.`,
-    );
   } catch (error: any) {
-    console.error(`Job ${job.name} failed with error ${error.message}`);
+    logger.scheduler.error(error, `Job ${job.name} failed`);
     throw error;
   }
 }

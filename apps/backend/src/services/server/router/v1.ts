@@ -56,8 +56,6 @@ const authRoutes = new Hono<{
         throw new HTTPException(500, { message: error.message });
       }
 
-      console.log(student);
-
       let user: IUser | null = null;
 
       if (student) {

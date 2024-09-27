@@ -2,16 +2,17 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
-import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
+import { pinoLogger } from "hono-pino-logger";
 import { config } from "../../config";
+import { logger } from "../../library/logger";
 import { errorHandler } from "./middleware/error";
 import { versionHandler } from "./middleware/version";
 import { v1 } from "./router/v1";
 
 const api = new Hono();
 
-api.use("*", logger(), prettyJSON());
+api.use("*", pinoLogger(logger.api), prettyJSON());
 
 api.use("*", versionHandler);
 
@@ -40,7 +41,7 @@ api.notFound(() => {
 api.onError(errorHandler);
 
 export const startServer = () => {
-  console.log("Starting server...");
+  logger.api.info("Starting server...");
 
   serve(
     {
@@ -49,7 +50,9 @@ export const startServer = () => {
       fetch: api.fetch,
     },
     (info) => {
-      console.log(`Server is running on http://${info.address}:${info.port}`);
+      logger.api.info(
+        `Server is running on http://${info.address}:${info.port}`,
+      );
     },
   );
 };

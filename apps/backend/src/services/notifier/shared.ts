@@ -1,4 +1,5 @@
 import { Telegram } from "@remoodle/utils";
+import type { JobsOptions } from "bullmq";
 import { config } from "../../config";
 
 export async function sendTelegramMessage(chatId: number, message: string) {
@@ -20,4 +21,13 @@ export const queues = {
   deadlinesCrawler: "DeadlinesCrawlerQueue",
   deadlinesHandler: "DeadlinesHandlerQueue",
   gradesHandler: "GradesHandlerQueue",
+};
+
+export const jobOptions: JobsOptions = {
+  removeOnComplete: {
+    age: 24 * 3600, // keep up to 24 hours
+  },
+  removeOnFail: {
+    age: 24 * 3600, // keep up to 24 hours
+  },
 };

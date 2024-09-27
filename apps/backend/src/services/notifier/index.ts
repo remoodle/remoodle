@@ -1,15 +1,16 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { pinoLogger } from "hono-pino-logger";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { logger } from "hono/logger";
 import { createBullBoard } from "@bull-board/api";
 import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
 import { HonoAdapter } from "@bull-board/hono";
 import { serveStatic } from "@hono/node-server/serve-static";
 
 import { config } from "../../config";
+import { logger } from "../../library/logger";
 
 import {
   deadlineCrawlerWorker,
@@ -26,13 +27,15 @@ const api = new Hono();
 
 const serverAdapter = new HonoAdapter(serveStatic);
 
+const queues = [
+  gradeChangeQueue,
+  deadlineCrawlerQueue,
+  deadlineReminderQueue,
+  taskQueue,
+];
+
 createBullBoard({
-  queues: [
-    new BullMQAdapter(gradeChangeQueue),
-    new BullMQAdapter(deadlineCrawlerQueue),
-    new BullMQAdapter(deadlineReminderQueue),
-    new BullMQAdapter(taskQueue),
-  ],
+  queues: queues.map((queue) => new BullMQAdapter(queue)),
   serverAdapter,
 });
 
@@ -41,15 +44,58 @@ serverAdapter.setBasePath(basePath);
 
 api.route(basePath, serverAdapter.registerPlugin());
 
-api.use("*", logger());
+api.use("*", pinoLogger(logger.notifier));
 
 api.use(
   "*",
   cors({
     origin: "*",
-    allowMethods: ["POST"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
 );
+
+api.get("/health", async (ctx) => {
+  try {
+    const queues = [
+      gradeChangeQueue,
+      deadlineCrawlerQueue,
+      deadlineReminderQueue,
+      taskQueue,
+    ];
+
+    const queueStatuses = await Promise.all(
+      queues.map(async (queue) => {
+        try {
+          const client = await queue.client;
+          return client.status === "ready";
+        } catch (error) {
+          logger.notifier.error(error, `Error checking queue ${queue.name}:`);
+          return false;
+        }
+      }),
+    );
+
+    const allQueuesReady = queueStatuses.every((status) => status);
+
+    if (allQueuesReady) {
+      return ctx.json(
+        { status: "healthy", message: "All queues are ready" },
+        200,
+      );
+    } else {
+      return ctx.json(
+        { status: "unhealthy", message: "One or more queues are not ready" },
+        503,
+      );
+    }
+  } catch (error) {
+    logger.notifier.error(error, "Error in health check");
+    return ctx.json(
+      { status: "error", message: "Error checking queue health" },
+      500,
+    );
+  }
+});
 
 api.use("*", async (ctx, next) => {
   const authorization = ctx.req.header("X-Remoodle-Webhook-Secret");
@@ -81,7 +127,7 @@ api.post(
   async (ctx) => {
     const { moodleId, payload } = ctx.req.valid("json");
 
-    console.log(moodleId, JSON.stringify(payload));
+    logger.notifier.info(payload, `Received webhook for moodleId ${moodleId}`);
 
     try {
       await addGradeChangeJob({
@@ -89,7 +135,7 @@ api.post(
         payload,
       });
     } catch (error: any) {
-      console.error("Error adding grade change job:", error);
+      logger.notifier.error(error, "Error adding grade change job");
 
       return ctx.text(error.message, 500);
     }
@@ -99,7 +145,7 @@ api.post(
 );
 
 export const startServer = () => {
-  console.log("Starting server...");
+  logger.notifier.info("Starting server...");
 
   serve(
     {
@@ -108,25 +154,23 @@ export const startServer = () => {
       fetch: api.fetch,
     },
     (info) => {
-      console.log(
-        `[notifier] Server is running on http://${info.address}:${info.port}`,
+      logger.notifier.info(
+        `Server is running on http://${info.address}:${info.port}`,
       );
-      console.log(
-        `[notifier] For the UI, open http://localhost:${info.port}/ui`,
-      );
+      logger.notifier.info(`For the UI, open http://localhost:${info.port}/ui`);
     },
   );
 };
 
 export const startNotifier = async () => {
-  console.log("Starting notifier...");
+  logger.notifier.info("Starting notifier...");
 
   startScheduler();
   startServer();
 };
 
 export async function shutdownCrawler(signal: string) {
-  console.log(`Received ${signal}, closing crawler...`);
+  logger.notifier.info(`Received ${signal}, closing crawler...`);
 
   await deadlineCrawlerWorker.close();
   await deadlineCrawlerQueue.close();
