@@ -17,7 +17,7 @@ export type UserJobData = {
 };
 
 export const queues = {
-  tasks: "TasksQueue",
+  tasks: "SchedulerQueue",
   deadlinesCrawler: "DeadlinesCrawlerQueue",
   deadlinesHandler: "DeadlinesHandlerQueue",
   gradesHandler: "GradesHandlerQueue",
