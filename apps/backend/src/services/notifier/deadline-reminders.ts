@@ -84,7 +84,7 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
     const user = await db.user.findOne({ moodleId });
 
     if (!user) {
-      throw new Error(`User not found for ${userId} (${moodleId})`);
+      throw new Error(`User ${userName} not found for ${userId} (${moodleId})`);
     }
 
     const customThresholds = user.notificationSettings.deadlineThresholds;
