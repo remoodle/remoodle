@@ -38,10 +38,7 @@ createBullBoard({
   serverAdapter,
 });
 
-const basePath = "/ui";
-serverAdapter.setBasePath(basePath);
-
-api.route(basePath, serverAdapter.registerPlugin());
+api.route("/", serverAdapter.registerPlugin());
 
 api.use(
   "*",
