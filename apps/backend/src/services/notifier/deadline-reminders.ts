@@ -105,7 +105,7 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
     );
 
     if (!currentDeadlines) {
-      return { skipped: true, reason: "no current deadlines" };
+      return "no current deadlines";
     }
 
     const deadlineReminders: DeadlineReminderDiff[] = processDeadlines(
@@ -114,7 +114,7 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
     );
 
     if (!deadlineReminders.length) {
-      return { skipped: true, reason: "no deadline reminders" };
+      return "no deadline reminders";
     }
 
     for (const reminder of deadlineReminders) {

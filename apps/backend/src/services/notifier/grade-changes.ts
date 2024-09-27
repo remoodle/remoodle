@@ -18,7 +18,7 @@ async function processGradeChangeEvent(job: Job<GradeChangeEvent>) {
     }
 
     if (!user.notificationSettings.telegram.gradeUpdates) {
-      return { skipped: true, reason: "notifications disabled" };
+      return "notifications disabled";
     }
 
     const text = formatCourseDiffs(msg.payload);
