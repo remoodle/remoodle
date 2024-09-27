@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.4.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.3.1...remoodle/backend-v1.4.0) (2024-09-27)
+
+
+### Features
+
+* add pino logger ([753f31f](https://github.com/remoodle/heresy/commit/753f31faa8abe60ad26759a3bac8121a4253e231))
+* bullmq dashboard ([7caead0](https://github.com/remoodle/heresy/commit/7caead0862ce8ccbe875fd1e74d39dd05757703d))
+* remove grades crawler, add webhook, adapt smihs and config ([5d5aed5](https://github.com/remoodle/heresy/commit/5d5aed55354fc03d8fbaeababe8e80979a1e074a))
+
+
+### Bug Fixes
+
+* add 2 retries with exponential backoff ([a14ae89](https://github.com/remoodle/heresy/commit/a14ae89923758e7945e1a02a4791b0daf51a2dbc))
+* add skipped return value and error handling ([ca9c4b2](https://github.com/remoodle/heresy/commit/ca9c4b296db462052ae172bda8b48ac210dad30a))
+* change bull board base path ([1e9ef49](https://github.com/remoodle/heresy/commit/1e9ef4917127014527970cf8cd42e49c664c01f9))
+* change scheduler queue name ([feec90d](https://github.com/remoodle/heresy/commit/feec90d33bd8344d618dd11f3f535cfeb433db16))
+* disable logger for crawler ([ff6bca8](https://github.com/remoodle/heresy/commit/ff6bca8c8bb876d24d0c73af34fc9429ae51ab65))
+* enhance logs ([4916c2f](https://github.com/remoodle/heresy/commit/4916c2f2f87ff5fccdea7f664241797d6dadac51))
+* get rid of job.remove ([dc65016](https://github.com/remoodle/heresy/commit/dc650162ce24296f5e3708f158c739391be79d85))
+* pass options correctly ([69af8b2](https://github.com/remoodle/heresy/commit/69af8b29b57c482e14ef9d9b77fa639a69615829))
+* simplify return values ([d249aa7](https://github.com/remoodle/heresy/commit/d249aa7fcb5c523aa1ccf50dec52ba9b54b940ff))
+
+
+### Miscellaneous Chores
+
+* add queue error handlers ([0adaee4](https://github.com/remoodle/heresy/commit/0adaee4f762cecd4d75bc38f97eed73085920c97))
+* add temp log ([917d062](https://github.com/remoodle/heresy/commit/917d062af22a5ad3c5bf534e4d68cc945a40b5d4))
+* rename notifier server entry ([809c383](https://github.com/remoodle/heresy/commit/809c383e780959157011469b34b0daab16a2feb8))
+
+
+### Code Refactoring
+
+* introduce proper sheduler ([be15728](https://github.com/remoodle/heresy/commit/be15728cd46770182efb4361d47482e09c860101))
+
 ## [1.3.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.3.0...remoodle/backend-v1.3.1) (2024-09-24)
 
 
