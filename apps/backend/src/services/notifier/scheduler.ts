@@ -68,5 +68,10 @@ const addTask = async (name: TaskName, options?: JobsOptions) => {
 export const startScheduler = async () => {
   await addTask("fetch-deadlines", {
     repeat: { pattern: config.crawler.deadlines.cron },
+    attempts: 2,
+    backoff: {
+      type: "exponential",
+      delay: 1000,
+    },
   });
 };
