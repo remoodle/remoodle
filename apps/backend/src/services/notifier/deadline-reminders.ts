@@ -22,7 +22,7 @@ async function processDeadlineReminderEvent(job: Job<DeadlineReminderEvent>) {
       !user?.telegramId ||
       !user.notificationSettings.telegram.deadlineReminders
     ) {
-      return job.remove();
+      return;
     }
 
     const text = formatDeadlineReminders(msg.payload);

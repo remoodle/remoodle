@@ -14,7 +14,7 @@ async function processGradeChangeEvent(job: Job<GradeChangeEvent>) {
     const user = await db.user.findOne({ moodleId: msg.moodleId });
 
     if (!user?.telegramId || !user.notificationSettings.telegram.gradeUpdates) {
-      return job.remove();
+      return;
     }
 
     const text = formatCourseDiffs(msg.payload);
