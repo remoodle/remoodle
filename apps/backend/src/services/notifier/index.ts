@@ -1,7 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { pinoLogger } from "hono-pino-logger";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { createBullBoard } from "@bull-board/api";
@@ -43,8 +42,6 @@ const basePath = "/ui";
 serverAdapter.setBasePath(basePath);
 
 api.route(basePath, serverAdapter.registerPlugin());
-
-api.use("*", pinoLogger(logger.notifier));
 
 api.use(
   "*",
