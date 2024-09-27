@@ -18,11 +18,12 @@ async function processDeadlineReminderEvent(job: Job<DeadlineReminderEvent>) {
     const msg = job.data;
     const user = await db.user.findOne({ moodleId: msg.moodleId });
 
-    if (
-      !user?.telegramId ||
-      !user.notificationSettings.telegram.deadlineReminders
-    ) {
-      return;
+    if (!user?.telegramId) {
+      throw new Error(`User ${user} not found or not connected to Telegram`);
+    }
+
+    if (!user.notificationSettings.telegram.deadlineReminders) {
+      return { skipped: true, reason: "notifications disabled" };
     }
 
     const text = formatDeadlineReminders(msg.payload);
@@ -104,7 +105,7 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
     );
 
     if (!currentDeadlines) {
-      return;
+      return { skipped: true, reason: "no current deadlines" };
     }
 
     const deadlineReminders: DeadlineReminderDiff[] = processDeadlines(
@@ -113,7 +114,7 @@ async function processFetchDeadlinesJob(job: Job<UserJobData>) {
     );
 
     if (!deadlineReminders.length) {
-      return;
+      return { skipped: true, reason: "no deadline reminders" };
     }
 
     for (const reminder of deadlineReminders) {
