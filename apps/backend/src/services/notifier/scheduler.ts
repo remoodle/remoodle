@@ -62,7 +62,7 @@ export const taskQueue = new Queue(queues.tasks, {
 });
 
 const addTask = async (name: TaskName, options?: JobsOptions) => {
-  await taskQueue.add(name, options);
+  await taskQueue.add(name, {}, options);
 };
 
 export const startScheduler = async () => {
