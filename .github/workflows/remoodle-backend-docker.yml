@@ -68,7 +68,8 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[manual]') && needs.build-and-push.outputs.environment == 'production' }}
     uses: ./.github/workflows/deploy-prod.yml
     with:
-      image_name: api
+      image_name: backend
+      container_name: api
       docker_tag: ${{ needs.build-and-push.outputs.docker_tag }}
 
   deploy-notifier-production:
@@ -76,5 +77,6 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[manual]') && needs.build-and-push.outputs.environment == 'production' }}
     uses: ./.github/workflows/deploy-prod.yml
     with:
-      image_name: notifier
+      image_name: backend
+      container_name: notifier
       docker_tag: ${{ needs.build-and-push.outputs.docker_tag }}

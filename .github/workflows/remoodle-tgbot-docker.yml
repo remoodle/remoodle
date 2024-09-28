@@ -69,4 +69,5 @@ jobs:
     uses: ./.github/workflows/deploy-prod.yml
     with:
       image_name: tgbot
+      container_name: tgbot
       docker_tag: ${{ needs.build-and-push.outputs.docker_tag }}
