@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/remoodle/core/compare/v1.2.0...v1.2.1) (2024-09-28)
+
+
+### Bug Fixes
+
+* update events if diff ([fe21f6c](https://github.com/remoodle/core/commit/fe21f6c756f04e76408ea2d12c02f1868bd30aa4))
+
 ## [1.2.0](https://github.com/remoodle/core/compare/v1.1.3...v1.2.0) (2024-09-28)
 
 
