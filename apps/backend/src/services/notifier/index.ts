@@ -121,8 +121,6 @@ api.post(
   async (ctx) => {
     const { moodleId, payload } = ctx.req.valid("json");
 
-    logger.notifier.info(payload, `Received webhook for moodleId ${moodleId}`);
-
     try {
       await addGradeChangeJob({
         moodleId,
