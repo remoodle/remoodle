@@ -53,9 +53,11 @@ class ParseUserGrades
             ...$courseIds
         );
 
-        ['update' => $update, 'insert' => $insert] = $this->getDbDiffs($userOldGrades, $courseGradesTotalUpsert);
+        $data = $this->getDbDiffs($userOldGrades, $courseGradesTotalUpsert);
+        $insert = $data['insert'];
+        $update = $data['update'];
 
-        if ($insert === []) {
+        if ($insert !== []) {
             try {
                 $this->connection->table('grades')->insert(
                     array_map(fn (GradeEntity $ge): array => (array) $ge, $insert),
@@ -65,7 +67,7 @@ class ParseUserGrades
             }
         }
 
-        if ($update === []) {
+        if ($update !== []) {
             try {
                 $this->connection
                     ->table("grades")

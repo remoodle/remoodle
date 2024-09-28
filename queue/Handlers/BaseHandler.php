@@ -6,6 +6,7 @@ namespace Queue\Handlers;
 
 use App\Modules\Jobs\Factory;
 use App\Modules\Jobs\FactoryInterface;
+use Illuminate\Database\QueryException;
 use Psr\Container\ContainerInterface;
 use Queue\Payload\PayloadInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
@@ -88,6 +89,12 @@ abstract class BaseHandler implements HandlerInterface
     {
         try {
             $this->dispatch();
+        } catch (QueryException $e) {
+            if ((int)$e->getCode() === 40001 || (int)$e->getCode() === 1213) {
+                $this->receivedTask->fail('DEADLOCK!!! - restarting', true);
+            } else {
+                $this->receivedTask->fail($e);
+            }
         } catch (\Throwable $th) {
             $this->receivedTask->fail($th);
         }
@@ -95,6 +102,12 @@ abstract class BaseHandler implements HandlerInterface
         try {
             $this->handleBus();
             $this->receivedTask->complete();
+        } catch (QueryException $e) {
+            if ($e->getCode() === 40001 || $e->getCode() === 1213) {
+                $this->receivedTask->fail('DEADLOCK!!! - restarting', true);
+            } else {
+                $this->receivedTask->fail($e);
+            }
         } catch (\Throwable $th) {
             $this->receivedTask->fail($th);
         }

@@ -6,6 +6,7 @@ use App\Modules\Search\Lemmetizations\KeyValueLemmetization;
 use Core\Config;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Connection;
+use Illuminate\Database\QueryException;
 use Queue\HandlerFactory\Factory;
 use Spiral\RoadRunner\Jobs\Consumer;
 
@@ -46,10 +47,14 @@ while ($task = $consumer->waitTask()) {
 
     try {
         $handler->handle();
-        echo "Completed task " . $task->getPipeline() . PHP_EOL;
+    } catch (QueryException $e) {
+        if ($e->getCode() === 40001 || $e->getCode() === 1213) {
+            $task->fail('DEADLOCK!!! - restarting', true);
+        } else {
+            throw $e;
+        }
     } catch (\Throwable $th) {
         $task->fail($th);
-        echo "\n" . $th->getMessage();
     } finally {
         $capsule->getConnection()->disconnect();
     }
