@@ -154,13 +154,6 @@ export const startServer = () => {
   );
 };
 
-export const startNotifier = async () => {
-  logger.notifier.info("Starting notifier...");
-
-  startScheduler();
-  startServer();
-};
-
 export async function shutdownCrawler(signal: string) {
   logger.notifier.info(`Received ${signal}, closing crawler...`);
 
@@ -179,3 +172,12 @@ export async function shutdownCrawler(signal: string) {
 process.on("SIGINT", () => shutdownCrawler("SIGINT"));
 
 process.on("SIGTERM", () => shutdownCrawler("SIGTERM"));
+
+export const startNotifier = async () => {
+  logger.notifier.info("Starting notifier...");
+
+  startScheduler();
+  startServer();
+};
+
+startNotifier();

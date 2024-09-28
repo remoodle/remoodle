@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig(() => ({
-  entry: ["src/app.ts"],
+  entry: ["src/"],
   clean: true,
   format: ["cjs"],
   target: "node20",
