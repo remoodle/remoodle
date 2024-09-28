@@ -10,7 +10,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: [self-hosted, linux, x64, nbg1]
+    runs-on: [self-hosted, linux, x64, sylveon]
     steps:
       - name: Bump version in docker-compose.yml
         run: |
