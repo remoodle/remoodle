@@ -40,7 +40,7 @@ class InitializeUser extends BaseHandler
             $moodleWebservicesUrl,
             Config::get("webhook.url"),
             Config::get("webhook.secret"),
-            Config::get("webhook.enabled")
+            false
         );
         $this->parseUserEvents = new ParseUserEvents($connection, $searchEngine, $user);
         $this->parseUserAssignments = new ParseUserAssignments($user, $connection, $searchEngine);
