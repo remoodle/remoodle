@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.0...remoodle/backend-v1.4.1) (2024-09-28)
+
+
+### Miscellaneous Chores
+
+* remove webhook log ([ef31796](https://github.com/remoodle/heresy/commit/ef31796c87144e93ab8f429064d0ff43574cd3e3))
+
 ## [1.4.0](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.3.1...remoodle/backend-v1.4.0) (2024-09-27)
 
 
