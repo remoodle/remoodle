@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.2...remoodle/backend-v1.4.3) (2024-09-28)
+
+
+### Bug Fixes
+
+* dockerfile ([85d7e59](https://github.com/remoodle/heresy/commit/85d7e590231ce817df8a51f46eae7e05d275a089))
+* separate entrypoints ([7e9bf85](https://github.com/remoodle/heresy/commit/7e9bf85f205d597984df23c782a48bbe302a4c82))
+* update Dockerfile ([45e43dd](https://github.com/remoodle/heresy/commit/45e43dd015cc2a8d60d756285f70a6cce79ceaa9))
+
+
+### Miscellaneous Chores
+
+* sever =&gt; api ([34dcc04](https://github.com/remoodle/heresy/commit/34dcc049d407f88dd29752c98e3b14085db7c032))
+* update Dockerfile ([402e79e](https://github.com/remoodle/heresy/commit/402e79e234d7a094adb2a5c2e2091fdbe18b020b))
+
 ## [1.4.2](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.1...remoodle/backend-v1.4.2) (2024-09-28)
 
 
