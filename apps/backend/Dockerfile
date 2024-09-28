@@ -35,4 +35,4 @@ RUN export TZ="Asia/Karachi" \
 ARG VERSION_TAG
 ENV VERSION_TAG=$VERSION_TAG
 
-CMD node ./apps/backend/dist/$SERVICE_NAME/index.js
+CMD ["node", "./apps/backend/dist/$SERVICE_NAME/index.js"]
