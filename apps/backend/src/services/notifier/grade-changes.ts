@@ -13,8 +13,12 @@ async function processGradeChangeEvent(job: Job<GradeChangeEvent>) {
     const msg = job.data;
     const user = await db.user.findOne({ moodleId: msg.moodleId });
 
-    if (!user?.telegramId) {
-      throw new Error(`User ${user} not found or not connected to Telegram`);
+    if (!user) {
+      throw new Error(`user ${user} not found `);
+    }
+
+    if (!user.telegramId) {
+      return "user doesn't have telegramId";
     }
 
     if (!user.notificationSettings.telegram.gradeUpdates) {

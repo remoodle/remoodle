@@ -18,12 +18,16 @@ async function processDeadlineReminderEvent(job: Job<DeadlineReminderEvent>) {
     const msg = job.data;
     const user = await db.user.findOne({ moodleId: msg.moodleId });
 
-    if (!user?.telegramId) {
-      throw new Error(`User ${user} not found or not connected to Telegram`);
+    if (!user) {
+      throw new Error(`user ${user} not found `);
+    }
+
+    if (!user.telegramId) {
+      return "user doesn't have telegramId";
     }
 
     if (!user.notificationSettings.telegram.deadlineReminders) {
-      return { skipped: true, reason: "notifications disabled" };
+      return "notifications disabled";
     }
 
     const text = formatDeadlineReminders(msg.payload);
