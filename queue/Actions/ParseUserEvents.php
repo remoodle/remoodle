@@ -31,7 +31,7 @@ class ParseUserEvents
                 $event = (array)$event;
                 unset($event['assignment']);
                 return $event;
-            }, $userApiEvents), ["instance"]);
+            }, $userApiEvents), ["instance"], ['timestart', 'visible', 'name']);
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();
