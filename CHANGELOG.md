@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0](https://github.com/remoodle/core/compare/v1.1.3...v1.2.0) (2024-09-28)
+
+
+### Features
+
+* add grade diff webhook support ([156fe03](https://github.com/remoodle/core/commit/156fe03db42196cc5c192c61b2bb8f63a3846f08))
+
+
+### Bug Fixes
+
+* avoid deadlock and fix bug insert ([8636269](https://github.com/remoodle/core/commit/86362693eb8e550712b763e1e3a1e02f48856439))
+* fix deadlocks when grades upsert ([c3c5d1b](https://github.com/remoodle/core/commit/c3c5d1b83724b138f906bf9dab129ac042572fa0))
+* make queries atomic in parse grades ([3cc53fd](https://github.com/remoodle/core/commit/3cc53fd6d97a9e687ed6eec2e9c327205b60b5d7))
+* not send notification when initialize user ([f9b6df4](https://github.com/remoodle/core/commit/f9b6df4961b15573064351b7c4029c71a6b1a3ef))
+
 ## [1.1.3](https://github.com/remoodle/core/compare/v1.1.2...v1.1.3) (2024-09-24)
 
 
