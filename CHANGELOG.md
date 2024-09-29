@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/remoodle/core/compare/v1.2.3...v1.2.4) (2024-09-29)
+
+
+### Bug Fixes
+
+* revert temp hotfix ([ee63689](https://github.com/remoodle/core/commit/ee636895b5183d64b63a497204c97dc4ee4ebe1d))
+
 ## [1.2.3](https://github.com/remoodle/core/compare/v1.2.2...v1.2.3) (2024-09-29)
 
 
