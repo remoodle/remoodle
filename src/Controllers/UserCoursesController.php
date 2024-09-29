@@ -90,7 +90,7 @@ class UserCoursesController extends BaseController
         return $this->jsonResponse(
             response: $response,
             body: $this->userMoodleRepositoryFactory->create(
-                RepositoryTypes::MOODLE_API
+                $user->initialized ? RepositoryTypes::DATABASE : RepositoryTypes::MOODLE_API
             )->getDeadlines(
                 moodleId: $user->moodle_id,
                 moodleToken: $user->moodle_token,
