@@ -28,6 +28,11 @@ class ParseUserCourses
         [$courses, $coursesAssign] = $this->getUserCoursesAndAssigns($this->user->moodle_id, $moodle);
         $userCourseGroups = $moodle->getUserCoursesGroups();
 
+        $coursesIds = array_map(fn (Course $course): int => $course->course_id, $courses);
+        $userCourseGroups = array_filter($userCourseGroups, function (Group $group) use ($coursesIds) {
+            return in_array($group->course_id, $coursesIds);
+        });
+
         $this->connection->beginTransaction();
 
         try {
