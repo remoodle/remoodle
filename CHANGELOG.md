@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.3](https://github.com/remoodle/core/compare/v1.2.2...v1.2.3) (2024-09-29)
+
+
+### Bug Fixes
+
+* filter groups before inserting them ([d649396](https://github.com/remoodle/core/commit/d6493961aa217c49276e11c5f4307a58c02d2cd4))
+* proper events structure ([be4fcd4](https://github.com/remoodle/core/commit/be4fcd4e806deee354e0b1bd985da08959cde420))
+* set group_id 0 if null ([1c3b81f](https://github.com/remoodle/core/commit/1c3b81f8a724310a5755d69088d0d33d92fce989))
+
 ## [1.2.2](https://github.com/remoodle/core/compare/v1.2.1...v1.2.2) (2024-09-29)
 
 
