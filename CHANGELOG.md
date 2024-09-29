@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/remoodle/core/compare/v1.2.1...v1.2.2) (2024-09-29)
+
+
+### Bug Fixes
+
+* temp fix for deadlines ([f8f31b3](https://github.com/remoodle/core/commit/f8f31b355bca941b91aa5592d89ac9d272fef581))
+
 ## [1.2.1](https://github.com/remoodle/core/compare/v1.2.0...v1.2.1) (2024-09-28)
 
 
