@@ -199,7 +199,7 @@ final class Moodle
                 visible: (bool)$event['visible'],
                 course_name: $event["course"]["shortname"] ?? $event["course"]["fullname"],
                 course_id: $event['course']['id'],
-                group_id: $event['group_id']
+                group_id: $event['group_id'] ?? 0
             );
             $courses[$event['course']['id']] = true;
         }
