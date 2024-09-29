@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Modules\Moodle\BaseMoodleUser;
 use Core\Config;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -116,7 +117,19 @@ class MoodleUser extends ModelAbstract
         );
     }
 
-    public function events(): HasManyThrough
+    public function eventsGroups(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Event::class,
+            UserCourseGroup::class,
+            'moodle_id',
+            'group_id',
+            'moodle_id',
+            'group_id'
+        );
+    }
+
+    public function eventsCommon(): HasManyThrough
     {
         return $this->hasManyThrough(
             Event::class,
@@ -125,7 +138,17 @@ class MoodleUser extends ModelAbstract
             'course_id',
             'moodle_id',
             'course_id'
-        );
+        )->where('group_id', 0);
+    }
+
+    public function combinedEvents(): Collection
+    {
+        $eventsGroupsQuery = $this->eventsGroups()->toBase();
+        $eventsCommonQuery = $this->eventsCommon()->toBase();
+
+        $combinedQuery = $eventsGroupsQuery->union($eventsCommonQuery);
+
+        return Event::fromQuery($combinedQuery->toSql(), $combinedQuery->getBindings());
     }
 
     public function courseAssigns(): HasMany

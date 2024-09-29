@@ -24,17 +24,14 @@ class ParseUserEvents
         $moodle = Moodle::createFromToken($this->user->moodle_token, $this->user->moodle_id);
         $userApiEvents = $moodle->getDeadlines();
 
-        $this->connection->beginTransaction();
 
         try {
             $this->connection->table("events")->upsert(array_map(function (Event $event) {
                 $event = (array)$event;
                 unset($event['assignment']);
                 return $event;
-            }, $userApiEvents), ["instance"], ['timestart', 'visible', 'name']);
-            $this->connection->commit();
+            }, $userApiEvents), ["event_id"], ['timestart', 'visible', 'name']);
         } catch (\Throwable $th) {
-            $this->connection->rollBack();
             throw $th;
         }
     }

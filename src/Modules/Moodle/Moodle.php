@@ -13,10 +13,12 @@ use App\Modules\Moodle\Entities\CourseModuleCompletionData;
 use App\Modules\Moodle\Entities\CourseModuleDate;
 use App\Modules\Moodle\Entities\Event;
 use App\Modules\Moodle\Entities\Grade;
+use App\Modules\Moodle\Entities\Group;
 use App\Modules\Moodle\Entities\IntroAttachment;
 use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use Core\Config;
 use Fugikzl\MoodleWrapper\Moodle as MoodleWrapperMoodle;
+use Fugikzl\MoodleWrapper\Request;
 use GuzzleHttp\Client;
 
 /**
@@ -196,7 +198,8 @@ final class Moodle
                 timestart: $event['timestart'],
                 visible: (bool)$event['visible'],
                 course_name: $event["course"]["shortname"] ?? $event["course"]["fullname"],
-                course_id: $event['course']['id']
+                course_id: $event['course']['id'],
+                group_id: $event['group_id']
             );
             $courses[$event['course']['id']] = true;
         }
@@ -420,6 +423,31 @@ final class Moodle
         }
 
         return $courseContents;
+    }
+
+    /**
+     * @return Group[]
+     */
+    public function getUserCoursesGroups(): array
+    {
+        $request = new Request(
+            $this->token,
+            'core_group_get_course_user_groups',
+            Config::get('moodle.webservice_url'),
+        );
+
+        $data = $request->send();
+
+        return array_map(function (array $group): Group {
+            return new Group(
+                id: $group['id'],
+                course_id: $group['courseid'],
+                descriptionformat: $group['descriptionformat'],
+                idnumber: $group['idnumber'],
+                name: $group['name'],
+                description: $group['description'],
+            );
+        }, $data['groups']);
     }
 
     private function issetOrNullArray(array $object, string $key): mixed

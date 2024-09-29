@@ -25,9 +25,8 @@ final class ParseUserEventsBatch
     {
         $events = (new GetEventsBatch())->__invoke($this->moodleWebservicesUrl, ...$this->DTOs);
         $this->connection->beginTransaction();
-
         try {
-            $this->connection->table("events")->upsert($events, ["instance"]);
+            $this->connection->table("events")->upsert($events, ['grade_id'], ['timestart', 'visible', 'name']);
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();

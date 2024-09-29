@@ -26,6 +26,7 @@ class Event implements SearchableInterface
         public readonly bool $visible,
         public readonly int $course_id,
         public readonly string $course_name,
+        public readonly int $group_id,
         public readonly ?Assignment $assignment = null
     ) {
     }
@@ -44,7 +45,8 @@ class Event implements SearchableInterface
             visible: $this->visible,
             course_id: $this->course_id,
             course_name: $this->course_name,
-            assignment: $assignment
+            assignment: $assignment,
+            group_id: $this->group_id,
         );
     }
 

@@ -130,23 +130,31 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
      */
     public function getDeadlines(int $moodleId, string $moodleToken): array
     {
-        return MoodleUser::query()
+        $user = MoodleUser::query()
             ->with([
-                "events" => function ($query) {
+                "eventsCommon" => function ($query) {
                     $query->where("timestart", ">", time());
                 },
-                "events.assignment",
-                "events.assignment.relatedGrade" => function ($query) use ($moodleId) {
+                "eventsCommon.assignment",
+                "eventsCommon.assignment.relatedGrade" => function ($query) use ($moodleId) {
+                    $query->where("moodle_id", $moodleId);
+                },
+                "eventsGroups" => function ($query) {
+                    $query->where("timestart", ">", time());
+                },
+                "eventsGroups.assignment",
+                "eventsGroups.assignment.relatedGrade" => function ($query) use ($moodleId) {
                     $query->where("moodle_id", $moodleId);
                 },
             ])
             ->where("moodle_id", $moodleId)
-            ->first()
-            ?->events
-            ->map(function (Event $event) {
-                return $event->toEntity();
-            })
-            ->all();
+            ->first();
+
+        $events = array_merge($user->eventsGroups->all(), $user->eventsCommon->all());
+
+        return array_map(function (Event $event) {
+            return $event->toEntity();
+        }, $events);
     }
 
     public function getAssignmentByCmid(int $moodleId, string $moodleToken, int $cmid): AssignmentEntity

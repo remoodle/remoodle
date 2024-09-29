@@ -26,7 +26,8 @@ class Event extends ModelAbstract
         'name',
         'visible',
         'course_id',
-        'course_name'
+        'course_name',
+        'group_id'
     ];
 
     public function course(): BelongsTo
@@ -53,10 +54,11 @@ class Event extends ModelAbstract
             name: $this->name,
             instance: $this->instance,
             timestart: $this->timestart,
-            visible: (bool)$this->visible,
+            visible: (bool) $this->getAttribute('visible'),
             course_name: $this->course_name,
             course_id: $this->course_id,
-            assignment: $this->assignment?->toEntity()
+            assignment: $this->assignment?->toEntity(),
+            group_id: $this->group_id
         );
     }
 }

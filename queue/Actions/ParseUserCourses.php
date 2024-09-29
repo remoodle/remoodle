@@ -7,6 +7,7 @@ namespace Queue\Actions;
 use App\Models\MoodleUser;
 use App\Models\UserCourseAssign;
 use App\Modules\Moodle\Entities\Course;
+use App\Modules\Moodle\Entities\Group;
 use App\Modules\Moodle\Enums\CourseEnrolledClassification;
 use App\Modules\Moodle\Moodle;
 use App\Modules\Search\SearchEngineInterface;
@@ -25,6 +26,7 @@ class ParseUserCourses
     {
         $moodle = Moodle::createFromToken($this->user->moodle_token, $this->user->moodle_id);
         [$courses, $coursesAssign] = $this->getUserCoursesAndAssigns($this->user->moodle_id, $moodle);
+        $userCourseGroups = $moodle->getUserCoursesGroups();
 
         $this->connection->beginTransaction();
 
@@ -39,6 +41,17 @@ class ParseUserCourses
             $this->connection
                 ->table("user_course_assign")
                 ->upsert($coursesAssign, [ "course_id", "moodle_id"], ["classification"]);
+
+            $this->connection
+                ->table('course_groups')
+                ->upsert(array_map(fn (Group $group): array => (array)$group, $userCourseGroups), "group_id");
+
+            $this->connection
+                ->table('user_groups')
+                ->upsert(array_map(fn (Group $group): array => [
+                    'moodle_id' => $this->user->moodle_id,
+                    'group_id' => $group->id
+                ], $userCourseGroups), ["group_id", "moodle_id"]);
             $this->connection->commit();
         } catch (\Throwable $th) {
             $this->connection->rollBack();
