@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.6](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.5...remoodle/backend-v1.4.6) (2024-09-30)
+
+
+### Bug Fixes
+
+* strict limit rules ([6d24da3](https://github.com/remoodle/heresy/commit/6d24da3d6f51c6b38a9bbe32a9b1b36d5e76d8fd))
+
 ## [1.4.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.4...remoodle/backend-v1.4.5) (2024-09-30)
 
 
