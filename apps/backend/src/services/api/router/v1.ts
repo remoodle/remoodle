@@ -17,6 +17,7 @@ import {
 } from "../helpers/crypto";
 import { issueTokens } from "../helpers/jwt";
 
+import { defaultRules, rateLimiter } from "../middleware/ratelimit";
 import { authMiddleware } from "../middleware/auth";
 
 const publicRoutes = new Hono().get("/health", async (ctx) => {
@@ -35,6 +36,11 @@ const authRoutes = new Hono<{
   .use("*", authMiddleware(["Telegram"], false))
   .post(
     "/auth/register",
+    rateLimiter({
+      ...defaultRules,
+      windowMs: 1 * 60 * 60 * 1000, // 1 hour
+      limit: 10,
+    }),
     zValidator(
       "json",
       z.object({

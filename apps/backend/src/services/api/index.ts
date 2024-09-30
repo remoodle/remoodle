@@ -1,44 +1,19 @@
 import { serve } from "@hono/node-server";
-import { rateLimiter } from "hono-rate-limiter";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import { prettyJSON } from "hono/pretty-json";
 import { pinoLogger } from "hono-pino-logger";
 import { config } from "../../config";
-import { db } from "../../library/db";
 import { logger } from "../../library/logger";
+import { defaultRules, rateLimiter } from "./middleware/ratelimit";
 import { errorHandler } from "./middleware/error";
 import { versionHandler } from "./middleware/version";
 import { v1 } from "./router/v1";
 
 const api = new Hono();
 
-const limiter = rateLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
-  standardHeaders: "draft-6", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-  keyGenerator: (c) => {
-    // Check for Telegram bot authorization header
-    const authHeader = c.req.header("Authorization");
-    if (authHeader && authHeader.startsWith("Telegram ")) {
-      // Extract telegramId from the Authorization header
-      const [, payload] = authHeader.split(" ");
-      const [, telegramId] = payload.split("::");
-      return `telegram_bot_${telegramId}`;
-    }
-
-    // For web requests, use IP address or a fallback
-    const ip =
-      c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
-
-    // You can add additional checks here, e.g., for other trusted sources
-
-    return `web_${ip}`;
-  },
-});
-
-api.use("*", limiter);
+api.use("*", rateLimiter(defaultRules));
 
 api.use("*", pinoLogger(logger.api), prettyJSON());
 
