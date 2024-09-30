@@ -26,6 +26,7 @@
     "envalid": "^8.0.0",
     "hono": "^4.5.5",
     "hono-pino-logger": "^1.0.0",
+    "hono-rate-limiter": "^0.4.0",
     "jsonwebtoken": "^9.0.2",
     "pino": "^9.4.0",
     "zod": "^3.22.4"

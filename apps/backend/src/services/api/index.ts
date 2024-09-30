@@ -1,16 +1,28 @@
 import { serve } from "@hono/node-server";
+import { rateLimiter } from "hono-rate-limiter";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import { prettyJSON } from "hono/pretty-json";
 import { pinoLogger } from "hono-pino-logger";
 import { config } from "../../config";
+import { db } from "../../library/db";
 import { logger } from "../../library/logger";
 import { errorHandler } from "./middleware/error";
 import { versionHandler } from "./middleware/version";
 import { v1 } from "./router/v1";
 
 const api = new Hono();
+
+const limiter = rateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  standardHeaders: "draft-6", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  keyGenerator: (c) =>
+    c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "anon",
+});
+
+api.use("*", limiter);
 
 api.use("*", pinoLogger(logger.api), prettyJSON());
 

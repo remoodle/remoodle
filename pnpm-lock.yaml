@@ -90,6 +90,9 @@ importers:
       hono-pino-logger:
         specifier: ^1.0.0
         version: 1.0.0(hono@4.5.5)
+      hono-rate-limiter:
+        specifier: ^0.4.0
+        version: 0.4.0(hono@4.5.5)
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -2858,6 +2861,11 @@ packages:
     resolution: {integrity: sha512-h3gkcJ2N/Ptn48WcSdgg+Hjo8VSpoEZN2C8Ln75Hb99sqwmlha7tVXinf8ory/tMUiLfPe8hZ/iJqpIxFinduQ==}
     peerDependencies:
       hono: '>=4.*'
+
+  hono-rate-limiter@0.4.0:
+    resolution: {integrity: sha512-7RWU2HZvxPtfBrvjXKDiQ3F6ZH8k49JhxVkHquUz5UZKjauj5PrP29MvISykThtfpy4mGG6kqxFBHW1ed9wwnA==}
+    peerDependencies:
+      hono: ^4.1.1
 
   hono@4.5.5:
     resolution: {integrity: sha512-fXBXHqaVfimWofbelLXci8pZyIwBMkDIwCa4OwZvK+xVbEyYLELVP4DfbGaj1aEM6ZY3hHgs4qLvCO2ChkhgQw==}
@@ -7490,6 +7498,10 @@ snapshots:
     dependencies:
       hono: 4.5.5
       pino: 8.21.0
+
+  hono-rate-limiter@0.4.0(hono@4.5.5):
+    dependencies:
+      hono: 4.5.5
 
   hono@4.5.5: {}
 
