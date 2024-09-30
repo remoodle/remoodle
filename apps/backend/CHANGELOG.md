@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.5](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.4...remoodle/backend-v1.4.5) (2024-09-30)
+
+
+### Bug Fixes
+
+* update rate limiter ([acbef1c](https://github.com/remoodle/heresy/commit/acbef1cf9bf35664b0d721ba65d6effc1c4a5976))
+
 ## [1.4.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.3...remoodle/backend-v1.4.4) (2024-09-30)
 
 
