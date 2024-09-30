@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.4](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.3...remoodle/backend-v1.4.4) (2024-09-30)
+
+
+### Bug Fixes
+
+* add hono rate limiter ([e83c538](https://github.com/remoodle/heresy/commit/e83c538c546b91287848e6fd78124f008a757153))
+
 ## [1.4.3](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.2...remoodle/backend-v1.4.3) (2024-09-28)
 
 
