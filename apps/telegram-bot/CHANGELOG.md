@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.5.1...remoodle/telegram-bot-v0.5.2) (2024-10-01)
+
+
+### Bug Fixes
+
+* some basic stuff ([2db3427](https://github.com/remoodle/heresy/commit/2db34273ab7a11c14ed2b7e2a3aec5caa4bfe3d4))
+
 ## [0.5.1](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.5.0...remoodle/telegram-bot-v0.5.1) (2024-09-24)
 
 
