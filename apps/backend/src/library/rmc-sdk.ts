@@ -189,4 +189,10 @@ export class RMC {
       },
     );
   }
+
+  async v1_user_courses_overall_grades() {
+    return this.request<ExtendedCourse[]>(`v1/user/courses/overall-grades`, {
+      method: "GET",
+    });
+  }
 }
