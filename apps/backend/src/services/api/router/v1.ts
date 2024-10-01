@@ -334,11 +334,11 @@ const commonProtectedRoutes = new Hono<{
       return ctx.json(data);
     },
   )
-  .get("/course/overall-grades", async (ctx) => {
+  .get("/courses/grades/overall", async (ctx) => {
     const moodleId = ctx.get("moodleId");
 
     const rmc = new RMC({ moodleId });
-    const [data, error] = await rmc.v1_user_courses_overall();
+    const [data, error] = await rmc.v1_user_courses_overall_grades();
 
     if (error) {
       throw error;

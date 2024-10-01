@@ -823,12 +823,8 @@ async function totalGrades(ctx: Context) {
   const userId = ctx.from.id;
 
   const [coursesOverall, error] = await request((client) =>
-    client.v1.courses.overall.$get(
-      {
-        query: {
-          status: undefined,
-        },
-      },
+    client.v1.courses.grades.overall.$get(
+      {},
       {
         headers: getAuthHeaders(userId),
       },
