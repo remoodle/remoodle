@@ -50,7 +50,7 @@ async function start(ctx: Context) {
   }
 
   const [data, authError] = await request((client) =>
-    client.v1.auth.token.$post(
+    client.v1.auth.internal.telegram.token.register.$post(
       {
         json: {
           moodleToken: token,

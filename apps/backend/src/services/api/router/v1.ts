@@ -35,7 +35,7 @@ const authRoutes = new Hono<{
 }>()
   .use("*", authMiddleware(["Telegram"], false))
   .post(
-    "/auth/token",
+    "/auth/internal/telegram/token/register",
     rateLimiter({
       ...defaultRules,
       windowMs: 1 * 60 * 60 * 1000, // 1 hour
