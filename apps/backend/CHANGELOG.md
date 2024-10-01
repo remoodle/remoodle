@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.7](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.6...remoodle/backend-v1.4.7) (2024-10-01)
+
+
+### Bug Fixes
+
+* some basic stuff ([2db3427](https://github.com/remoodle/heresy/commit/2db34273ab7a11c14ed2b7e2a3aec5caa4bfe3d4))
+
 ## [1.4.6](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.5...remoodle/backend-v1.4.6) (2024-09-30)
 
 
