@@ -859,7 +859,7 @@ async function totalGrades(ctx: Context) {
   let result = "Total grades for all courses:\n\n";
 
   coursesOverall.forEach((course) => {
-    result += `${truncateString(course.name.split(" | ")[0], 21)}  →  *${Math.ceil(course?.grades?.find((grade) => grade.itemtype === "course")?.graderaw ?? 0)}*\n`;
+    result += `${truncateString(course.name, 21)}  →  *${Math.ceil(course?.grades?.find((grade) => grade.itemtype === "course")?.graderaw ?? 0)}*\n`;
   });
 
   await ctx.editMessageText(result, {
