@@ -7,6 +7,11 @@
 
 * some basic stuff ([2db3427](https://github.com/remoodle/heresy/commit/2db34273ab7a11c14ed2b7e2a3aec5caa4bfe3d4))
 
+
+### Miscellaneous Chores
+
+* **trunk:** release  remoodle/frontend (deploy-as: release-1.2.7) ([#195](https://github.com/remoodle/heresy/issues/195)) ([adec85a](https://github.com/remoodle/heresy/commit/adec85ab02830368c8b6f7ee5e944104edabd9c3))
+
 ## [1.2.6](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.5...remoodle/frontend-v1.2.6) (2024-09-24)
 
 
