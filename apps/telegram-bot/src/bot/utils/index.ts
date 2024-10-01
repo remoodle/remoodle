@@ -140,11 +140,48 @@ const getNotificationsKeyboard = (notifications: any) => {
   return keyboard;
 };
 
+const generateTotalGradesSortingKeyboard = (
+  sort_by: string,
+  sort_dir: string,
+) => {
+  const keyboard = new InlineKeyboard();
+
+  if (sort_by === "name") {
+    if (sort_dir === "asc") {
+      keyboard
+        .text("Sort Name ↓", "total_grades_name_desc")
+        .text("Sort Grade ↓", "total_grades_grade_desc")
+        .row();
+    } else {
+      keyboard
+        .text("Sort Name ↑", "total_grades_name_asc")
+        .text("Sort Grade ↓", "total_grades_grade_desc")
+        .row();
+    }
+  } else if (sort_by === "grade") {
+    if (sort_dir === "asc") {
+      keyboard
+        .text("Sort Name ↑", "total_grades_name_asc")
+        .text("Sort Grade ↓", "total_grades_grade_desc")
+        .row();
+    } else {
+      keyboard
+        .text("Sort Name ↑", "total_grades_name_asc")
+        .text("Sort Grade ↑", "total_grades_grade_asc")
+        .row();
+    }
+  }
+
+  keyboard.row().text("Back ←", "back_to_menu");
+  return keyboard;
+};
+
 export {
   getDeadlineText,
   getGradeText,
   calculateGrades,
   getGPA,
   getNotificationsKeyboard,
-  formatUnixtimestamp,
+  truncateString,
+  generateTotalGradesSortingKeyboard,
 };

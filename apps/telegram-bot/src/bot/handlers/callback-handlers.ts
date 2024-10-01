@@ -6,7 +6,8 @@ import {
   getGradeText,
   calculateGrades,
   getNotificationsKeyboard,
-  formatUnixtimestamp,
+  truncateString,
+  generateTotalGradesSortingKeyboard,
 } from "../utils";
 import keyboards from "./keyboards";
 
@@ -812,9 +813,12 @@ async function courseAssignmentById(ctx: Context) {
 }
 
 async function totalGrades(ctx: Context) {
-  if (!ctx.from) {
+  if (!ctx.from || !ctx.match) {
     return;
   }
+
+  const sortBy = ctx.match[0].split("_")[2];
+  const sortDir = ctx.match[0].split("_")[3];
 
   const userId = ctx.from.id;
 
@@ -836,17 +840,21 @@ async function totalGrades(ctx: Context) {
     return;
   }
 
-  const keyboard = new InlineKeyboard();
-
-  keyboard.text("Sort by name desc", "total_grades_name_desc");
-  keyboard.text("Sort by grade desc", "total_grades_grade_desc");
-  keyboard.text("Back ←", "back_to_menu");
+  const keyboard = generateTotalGradesSortingKeyboard(sortBy, sortDir);
 
   coursesOverall.sort((a, b) => {
-    if (a.name < b.name) {
-      return -1;
+    const direction = sortDir === "asc" ? 1 : -1;
+
+    if (sortBy === "name") {
+      return direction * a.name.localeCompare(b.name);
+    } else if (sortBy === "grade") {
+      const gradeA =
+        a.grades?.find((grade) => grade.itemtype === "course")?.graderaw ?? 0;
+      const gradeB =
+        b.grades?.find((grade) => grade.itemtype === "course")?.graderaw ?? 0;
+      return direction * (gradeA - gradeB);
     } else {
-      return 1;
+      return 0;
     }
   });
 

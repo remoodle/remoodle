@@ -10,7 +10,7 @@ const keyboards = {
     // .webApp("Schedule", "https://remoodle.app")
     .text("Schedule", "schedule_coming_soon")
     .row()
-    .text("Total Grades", "total_grades")
+    .text("Total Grades", "total_grades_name_asc")
     .row()
     .text("⚙️", "settings")
     .text("More", "others"),

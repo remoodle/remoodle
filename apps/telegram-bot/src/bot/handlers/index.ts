@@ -56,13 +56,8 @@ callbacksHandler.callbackQuery(
 );
 
 callbacksHandler.callbackQuery(
-  /course_assignments_\d+/,
-  callbacks.grades.assignments.course,
-);
-
-callbacksHandler.callbackQuery(
-  /assignment_\d+_\d+/,
-  callbacks.grades.assignments.assignment,
+  /^total_grades_(.+)_(.+)/,
+  callbacks.menu.totalGrades,
 );
 
 // Back buttons
