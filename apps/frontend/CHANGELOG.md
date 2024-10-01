@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.8](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.7...remoodle/frontend-v1.2.8) (2024-10-01)
+
+
+### Bug Fixes
+
+* jija ([36b92ce](https://github.com/remoodle/heresy/commit/36b92ce3b909cf710685525021cd2c05cb7c1f82))
+* trigger release ([edc98fe](https://github.com/remoodle/heresy/commit/edc98feecf8a24ea6131555a934e74a157c30fe2))
+
+
+### Miscellaneous Chores
+
+* **trunk:** release  remoodle/frontend (deploy-as: release-1.2.7) ([#198](https://github.com/remoodle/heresy/issues/198)) ([414664c](https://github.com/remoodle/heresy/commit/414664cca0dbf8791ce19bd8dc52394bb6dda5c2))
+
 ## [1.2.7](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.6...remoodle/frontend-v1.2.7) (2024-10-01)
 
 
