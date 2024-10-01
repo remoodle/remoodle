@@ -24,7 +24,7 @@ const { toast } = useToast();
 
 const { run: submit, loading } = createAsyncProcess(async () => {
   const [data, error] = await request((client) =>
-    client.v1.auth.register.$post({
+    client.v1.auth.token.$post({
       json: {
         moodleToken: form.value.token,
         ...(!isEmptyString(form.value.password) && {
