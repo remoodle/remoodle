@@ -836,7 +836,9 @@ async function totalGrades(ctx: Context) {
   );
 
   if (!coursesOverall || error) {
-    console.log("parasha", coursesOverall, error);
+    await ctx.editMessageText("An error occurred. Try again later.", {
+      reply_markup: new InlineKeyboard().text("Back ←", "back_to_menu"),
+    });
     return;
   }
 
