@@ -55,8 +55,6 @@ callbacksHandler.callbackQuery(
   callbacks.grades.pastCourse,
 );
 
-// Assignments
-
 callbacksHandler.callbackQuery(
   /course_assignments_\d+/,
   callbacks.grades.assignments.course,

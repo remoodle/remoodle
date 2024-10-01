@@ -811,12 +811,65 @@ async function courseAssignmentById(ctx: Context) {
   });
 }
 
+async function totalGrades(ctx: Context) {
+  if (!ctx.from) {
+    return;
+  }
+
+  const userId = ctx.from.id;
+
+  const [coursesOverall, error] = await request((client) =>
+    client.v1.courses.overall.$get(
+      {
+        query: {
+          status: undefined,
+        },
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  if (!coursesOverall || error) {
+    console.log("parasha", coursesOverall, error);
+    return;
+  }
+
+  const keyboard = new InlineKeyboard();
+
+  keyboard.text("Sort by name desc", "total_grades_name_desc");
+  keyboard.text("Sort by grade desc", "total_grades_grade_desc");
+  keyboard.text("Back ←", "back_to_menu");
+
+  coursesOverall.sort((a, b) => {
+    if (a.name < b.name) {
+      return -1;
+    } else {
+      return 1;
+    }
+  });
+
+  let result = "Total grades for all courses:\n\n";
+
+  coursesOverall.forEach((course) => {
+    result += `${truncateString(course.name.split(" | ")[0], 21)}  →  *${Math.ceil(course?.grades?.find((grade) => grade.itemtype === "course")?.graderaw ?? 0)}*\n`;
+  });
+
+  await ctx.editMessageText(result, {
+    reply_markup: keyboard,
+    parse_mode: "Markdown",
+  });
+  // pass
+}
+
 const callbacks = {
   menu: {
     others: others,
     settings: settings,
     deadlines: deadlines,
     grades: grades,
+    totalGrades: totalGrades,
   },
   deadlines: {
     refresh: refreshDeadlines,

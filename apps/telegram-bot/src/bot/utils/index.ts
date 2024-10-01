@@ -45,6 +45,10 @@ const getGradeText = (grade: any) => {
   return text;
 };
 
+const truncateString = (str: string, maxLength: number): string => {
+  return str.length > maxLength ? str.slice(0, maxLength - 3) + "..." : str;
+};
+
 const getGPA = (total: number) => {
   const grades: { [key: number]: number } = {
     100: 4.0,
