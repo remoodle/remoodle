@@ -1,8 +1,9 @@
 import { Composer } from "grammy";
 import callbacks from "./callback-handlers";
-import commands from "./command-handlers";
+import {commands} from "./command-handlers";
+import MyContext from "..";
 
-const commandsHandler = new Composer();
+const commandsHandler = new Composer<MyContext>();
 
 commandsHandler.command("start", commands.start);
 commandsHandler.command("deadlines", commands.deadlines);
