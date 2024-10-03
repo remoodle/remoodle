@@ -1,10 +1,6 @@
 import type { ContextWithSession } from "..";
 import { User } from "../../db/models/User";
 
-async function something(ctx: ContextWithSession) {
-  return;
-}
-
 async function registerFromGroup(ctx: ContextWithSession) {  
     if (!ctx.from?.id){
         return await ctx.answerCallbackQuery({
@@ -38,8 +34,7 @@ async function registerFromGroup(ctx: ContextWithSession) {
 }
 
 const callbacks = {
-  something: something,
-  registerFromGroup: registerFromGroup,
+  registerFromGroup: registerFromGroup
 };
 
 export default callbacks;

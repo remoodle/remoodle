@@ -2,8 +2,9 @@ import type { ContextWithSession } from "..";
 
 async function start(ctx: ContextWithSession) {
   if (!ctx.session.role) {
-    console.log("Only authorized people can use bot, bye");
+    return await ctx.reply("You are not registered. Please contact the admin.");
   }
+  
 }
 
 const commands = {

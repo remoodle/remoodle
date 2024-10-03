@@ -7,6 +7,7 @@ import {
   SessionFlavor,
 } from "grammy";
 import baseHandler from "./handlers";
+import { parseRole } from "./middlewares/parseRole";
 
 interface SessionData {
   role?: "admin" | "user" | null;
@@ -18,6 +19,7 @@ export function createBot(token: string) {
   const bot = new Bot<ContextWithSession>(token);
 
   bot.use(session({ initial: (): SessionData => ({ role: null }) }));
+  bot.use(parseRole);
   bot.use(baseHandler);
 
 
