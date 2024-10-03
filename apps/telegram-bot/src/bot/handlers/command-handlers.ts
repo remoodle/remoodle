@@ -33,7 +33,7 @@ async function start(ctx: MyContext) {
     });
     return;
   }
-  
+
   const token = ctx.message.text.split(" ")[1];
 
   if (token && token === "connect") {
@@ -42,14 +42,14 @@ async function start(ctx: MyContext) {
       `Your connection token is: ${token}\n\nPlease enter this token in the app to connect your Telegram account. This token will expire on ${expiryDate.toLocaleString()}`,
     );
   }
-  
+
   if (token) {
     return await Register(ctx, userId, token);
   }
 
   await ctx.reply(
     `Welcome to ReMoodle! ✨\nPlease send me your Moodle token to connect your Telegram account.`,
-    { reply_markup: keyboards.find_token }
+    { reply_markup: keyboards.find_token },
   );
 
   ctx.session.step = "awaiting_token";
@@ -71,7 +71,7 @@ async function handleToken(ctx: MyContext) {
   }
 }
 
-async function Register(ctx: MyContext ,userId: number, token: string) {
+async function Register(ctx: MyContext, userId: number, token: string) {
   const [data, authError] = await request((client) =>
     client.v1.auth.internal.telegram.token.register.$post(
       {
@@ -100,8 +100,6 @@ async function Register(ctx: MyContext ,userId: number, token: string) {
     // Reset the session step
     ctx.session.step = null;
   }
-
-
 }
 
 async function deadlines(ctx: MyContext) {
@@ -168,4 +166,4 @@ const commands = {
   deadlines: deadlines,
 };
 
-export {commands, handleToken};
+export { commands, handleToken };
