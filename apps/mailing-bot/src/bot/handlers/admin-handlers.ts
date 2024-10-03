@@ -1,7 +1,7 @@
 import { ContextWithSession } from "..";
 import { User } from "../../db/models/User";
 
-export async function register(ctx: ContextWithSession) {
+async function register(ctx: ContextWithSession) {
   if (ctx.chat?.type !== "private") {
     return sendRegistrationMessage(ctx)
     
@@ -39,6 +39,10 @@ async function sendRegistrationMessage(ctx: ContextWithSession) {
   });
 }
 
-async function registerUser(ctx: ContextWithSession) {
-  return await ctx.reply("Private registration process...");
-}
+const adminCommands = {
+  register: register,
+};
+
+export default adminCommands;
+
+
