@@ -1,7 +1,18 @@
-import { Bot, Context, GrammyError, HttpError } from "grammy";
+import { Bot, Context, GrammyError, HttpError, session, SessionFlavor } from "grammy";
+
+interface SessionData {
+  role?: "admin" | "user" | null;
+}
+
+export type ContextWithSession = Context & SessionFlavor<SessionData>;
+
+
 
 export function createBot(token: string) {
-  const bot = new Bot<Context>(token);
+  const bot = new Bot<ContextWithSession>(token);
+
+  bot.use(session({ initial: (): SessionData => ({ role: null }) }));
+
 
   // Add handlers here
 
