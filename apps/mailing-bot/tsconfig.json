@@ -1,0 +1,10 @@
+{
+    "extends": "@remoodle/tsconfig/base.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "types": ["node"],
+        "strict": true
+    },
+    "include": ["src", "index.d.ts", "tsup.config.ts"],
+    "exclude": ["node_modules", "dist"]
+}

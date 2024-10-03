@@ -297,6 +297,58 @@ importers:
         specifier: ^2.0.7
         version: 2.0.29(typescript@5.4.5)
 
+  apps/mailing-bot:
+    dependencies:
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      envalid:
+        specifier: ^8.0.0
+        version: 8.0.0
+      grammy:
+        specifier: ^1.29.0
+        version: 1.29.0
+      mongoose:
+        specifier: ^8.3.1
+        version: 8.5.2
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.0(@types/node@20.14.15)
+    devDependencies:
+      '@remoodle/backend':
+        specifier: workspace:*
+        version: link:../backend
+      '@remoodle/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@remoodle/prettier-config':
+        specifier: workspace:*
+        version: link:../../packages/prettier-config
+      '@remoodle/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@remoodle/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@types/node':
+        specifier: ^20.11.17
+        version: 20.14.15
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
+      tsup:
+        specifier: ^8.2.4
+        version: 8.2.4(jiti@1.21.6)(postcss@8.4.45)(tsx@4.17.0)(typescript@5.4.5)(yaml@2.5.0)
+      tsx:
+        specifier: ^4.7.1
+        version: 4.17.0
+      typescript:
+        specifier: ~5.4.3
+        version: 5.4.5
+
   apps/telegram-bot:
     dependencies:
       '@hono/node-server':
