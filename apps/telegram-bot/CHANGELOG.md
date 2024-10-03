@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.5.3...remoodle/telegram-bot-v0.6.0) (2024-10-03)
+
+
+### Features
+
+* token validation state ([#204](https://github.com/remoodle/heresy/issues/204)) ([f7eed9f](https://github.com/remoodle/heresy/commit/f7eed9f5b39949d1d2d2f335c973bbc9d8c01127))
+
 ## [0.5.3](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.5.2...remoodle/telegram-bot-v0.5.3) (2024-10-01)
 
 
