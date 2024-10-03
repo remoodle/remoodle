@@ -56,7 +56,6 @@ async function start(ctx: MyContext) {
 }
 
 async function handleToken(ctx: MyContext) {
-  console.log("handleToken");
   if (!ctx.message || !ctx.message.text || !ctx.from) {
     return;
   }
@@ -85,7 +84,6 @@ async function Register(ctx: MyContext ,userId: number, token: string) {
       },
     ),
   );
-  console.log(data, authError);
   if (authError) {
     // If the token is invalid, ask for the token again
     await ctx.reply("Your token is invalid. Please try again.");
