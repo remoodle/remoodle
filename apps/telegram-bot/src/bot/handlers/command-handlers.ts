@@ -3,7 +3,7 @@ import { db } from "../../library/db";
 import { request, getAuthHeaders } from "../../library/hc";
 import { getDeadlineText } from "../utils";
 import keyboards from "./keyboards";
-import { RegistrationContext } from "..";
+import type { RegistrationContext } from "..";
 
 async function start(ctx: RegistrationContext) {
   if (!ctx.message || !ctx.message.text || !ctx.from || !ctx.chat) {
