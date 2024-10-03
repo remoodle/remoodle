@@ -503,7 +503,7 @@ const commonProtectedRoutes = new Hono<{
     const rmc = new RMC({ moodleId: user.moodleId });
     const [_, error] = await rmc.v1_delete_user();
 
-    if (error) {
+    if (error && error.status !== 404) {
       throw error;
     }
 
