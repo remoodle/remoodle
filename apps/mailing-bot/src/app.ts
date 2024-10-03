@@ -1,7 +1,10 @@
 import { config } from "./config";
 import { createBot } from "./bot";
+import { createMongoDBConnection } from "./db/connection";
 
 function main(): void {
+  createMongoDBConnection(config.mongodb.uri);
+
   const bot = createBot(config.bot.token);
 
   process.once("SIGINT", () => {
@@ -12,7 +15,7 @@ function main(): void {
     bot.stop();
   });
 
-  console.log("Bot is running");
+  console.log("Mailing-bot is running");
   bot.start();
 }
 
