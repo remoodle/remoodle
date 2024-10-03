@@ -3,8 +3,9 @@ import { db } from "../../library/db";
 import { request, getAuthHeaders } from "../../library/hc";
 import { getDeadlineText } from "../utils";
 import keyboards from "./keyboards";
+import type { RegistrationContext } from "..";
 
-async function start(ctx: Context) {
+async function start(ctx: RegistrationContext) {
   if (!ctx.message || !ctx.message.text || !ctx.from || !ctx.chat) {
     return;
   }
@@ -26,6 +27,7 @@ async function start(ctx: Context) {
   );
 
   if (user && !error) {
+    // If the user is already registered, greet them
     await ctx.reply(`${user.name}`, {
       reply_markup: keyboards.main,
     });
@@ -41,14 +43,39 @@ async function start(ctx: Context) {
     );
   }
 
-  if (!token && error) {
-    await ctx.reply(
-      `Welcome to ReMoodle! ✨\nSend your Moodle token by typing\n\n<strong>/start YOUR_TOKEN</strong>`,
-      { parse_mode: "HTML", reply_markup: keyboards.find_token },
-    );
+  if (token) {
+    return await handleRegistration(ctx, userId, token);
+  }
+
+  await ctx.reply(
+    `Welcome to ReMoodle! ✨\nPlease send me your Moodle token to connect your Telegram account.`,
+    { reply_markup: keyboards.find_token },
+  );
+
+  ctx.session.step = "awaiting_token";
+}
+
+async function handleToken(ctx: RegistrationContext) {
+  if (!ctx.message || !ctx.message.text || !ctx.from) {
     return;
   }
 
+  const userId = ctx.from.id;
+
+  // Only proceed if we are awaiting the token
+  if (ctx.session.step === "awaiting_token") {
+    const token = ctx.message.text.trim();
+
+    // Call the API to register the token
+    await handleRegistration(ctx, userId, token);
+  }
+}
+
+async function handleRegistration(
+  ctx: RegistrationContext,
+  userId: number,
+  token: string,
+) {
   const [data, authError] = await request((client) =>
     client.v1.auth.internal.telegram.token.register.$post(
       {
@@ -61,22 +88,21 @@ async function start(ctx: Context) {
       },
     ),
   );
-
   if (authError) {
-    await ctx.reply("Your token is invalid. Try again!");
+    // If the token is invalid, ask for the token again
+    await ctx.reply("Your token is invalid. Please try again.");
     return;
   }
 
+  // Registration successful, greet the user
   if (data && !authError) {
     await ctx.reply(`You have registered successfully!`);
     await ctx.reply(`${data?.user.name}`, {
       reply_markup: keyboards.main,
     });
-  }
 
-  if (authError) {
-    console.log(authError);
-    await ctx.reply("An error occurred. Try again later.");
+    // Reset the session step
+    ctx.session.step = null;
   }
 }
 
@@ -144,4 +170,4 @@ const commands = {
   deadlines: deadlines,
 };
 
-export default commands;
+export { commands, handleToken };
