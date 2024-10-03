@@ -1,5 +1,6 @@
 import { cleanEnv, str } from "envalid";
 import "dotenv/config";
+import { a } from "vitest/dist/suite-IbNSsUWN.js";
 
 export const env = cleanEnv(process.env, {
   NODE_ENV: str({
@@ -9,6 +10,7 @@ export const env = cleanEnv(process.env, {
 
   TELEGRAM_BOT_TOKEN: str(),
   MONGO_URI: str({ default: "mongodb://localhost:27017/mailing-bot" }),
+  ADMIN_ID: str(),
 });
 
 export const config = {
@@ -17,5 +19,6 @@ export const config = {
   },
   bot: {
     token: env.TELEGRAM_BOT_TOKEN,
+    adminId: env.ADMIN_ID,
   },
 };
