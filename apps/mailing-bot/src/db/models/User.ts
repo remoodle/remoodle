@@ -12,8 +12,7 @@ const userSchema = new Schema<IUser & UserModel>(
   {
     telegramId: { type: Number, required: true, unique: true },
     role: { type: String, required: true },
-  },
-  { _id: false },
+  }
 );
 
 userSchema.index(

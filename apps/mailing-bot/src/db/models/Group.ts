@@ -15,7 +15,7 @@ const groupSchema = new Schema<IGroup & GroupModel>(
     telegramId: { type: Number, required: true, unique: true },
     ownerId: { type: Schema.Types.Number, ref: "User", required: true },
   },
-  { timestamps: true, _id: false },
+  { timestamps: true },
 );
 
 groupSchema.index(
