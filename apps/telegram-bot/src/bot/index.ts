@@ -9,15 +9,15 @@ import {
 import { commandsHandler, callbacksHandler } from "./handlers";
 import { handleToken } from "./handlers/command-handlers";
 
-interface MySession {
+interface RegistrationSession {
   step?: "awaiting_token" | null;
 }
 
-type MyContext = Context & SessionFlavor<MySession>;
+export type RegistrationContext = Context & SessionFlavor<RegistrationSession>;
 
 export function createBot(token: string) {
-  const bot = new Bot<MyContext>(token);
-  bot.use(session({ initial: (): MySession => ({ step: null }) }));
+  const bot = new Bot<RegistrationContext>(token);
+  bot.use(session({ initial: (): RegistrationSession => ({ step: null }) }));
 
   bot.use(commandsHandler);
   bot.use((ctx, next) => {
@@ -45,5 +45,3 @@ export function createBot(token: string) {
 
   return bot;
 }
-
-export default MyContext;

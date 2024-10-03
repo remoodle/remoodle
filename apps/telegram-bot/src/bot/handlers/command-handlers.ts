@@ -3,9 +3,9 @@ import { db } from "../../library/db";
 import { request, getAuthHeaders } from "../../library/hc";
 import { getDeadlineText } from "../utils";
 import keyboards from "./keyboards";
-import MyContext from "..";
+import { RegistrationContext } from "..";
 
-async function start(ctx: MyContext) {
+async function start(ctx: RegistrationContext) {
   if (!ctx.message || !ctx.message.text || !ctx.from || !ctx.chat) {
     return;
   }
@@ -44,7 +44,7 @@ async function start(ctx: MyContext) {
   }
 
   if (token) {
-    return await Register(ctx, userId, token);
+    return await handleRegistration(ctx, userId, token);
   }
 
   await ctx.reply(
@@ -55,7 +55,7 @@ async function start(ctx: MyContext) {
   ctx.session.step = "awaiting_token";
 }
 
-async function handleToken(ctx: MyContext) {
+async function handleToken(ctx: RegistrationContext) {
   if (!ctx.message || !ctx.message.text || !ctx.from) {
     return;
   }
@@ -67,11 +67,15 @@ async function handleToken(ctx: MyContext) {
     const token = ctx.message.text.trim();
 
     // Call the API to register the token
-    await Register(ctx, userId, token);
+    await handleRegistration(ctx, userId, token);
   }
 }
 
-async function Register(ctx: MyContext, userId: number, token: string) {
+async function handleRegistration(
+  ctx: RegistrationContext,
+  userId: number,
+  token: string,
+) {
   const [data, authError] = await request((client) =>
     client.v1.auth.internal.telegram.token.register.$post(
       {
@@ -102,7 +106,7 @@ async function Register(ctx: MyContext, userId: number, token: string) {
   }
 }
 
-async function deadlines(ctx: MyContext) {
+async function deadlines(ctx: Context) {
   if (!ctx.message || !ctx.message.text || !ctx.from || !ctx.chat) {
     return;
   }
