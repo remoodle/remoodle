@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.9](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.8...remoodle/backend-v1.4.9) (2024-10-03)
+
+
+### Bug Fixes
+
+* make it possible to delete ghost accounts ([e581f81](https://github.com/remoodle/heresy/commit/e581f81daf2943a5ce3b9411ccffde306f92bf9f))
+
 ## [1.4.8](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.7...remoodle/backend-v1.4.8) (2024-10-01)
 
 
