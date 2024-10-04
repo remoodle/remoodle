@@ -1,5 +1,7 @@
 import type { ContextWithSession } from "..";
+import { Group } from "../../db/models/Group";
 import { User } from "../../db/models/User";
+import { sendMessages } from "../utils/messageHelper";
 
 async function registerFromGroup(ctx: ContextWithSession) {  
     if (!ctx.from?.id){
@@ -33,8 +35,43 @@ async function registerFromGroup(ctx: ContextWithSession) {
 
 }
 
+async function cancelHandler(ctx: ContextWithSession) {
+    if (!ctx.chat?.id) {
+        return;
+    }
+    if (!ctx.session.isSending) {
+      return await ctx.reply("You are not sending any message."); 
+    }
+  
+    
+    if (ctx.message) {
+      await ctx.api.deleteMessage(ctx.chat.id, ctx.message.message_id);
+    }
+  
+    ctx.session.isSending = false;
+    ctx.session.messages = [];
+    await ctx.reply("Message sending canceled.");
+  }
+
+  async function approveHandler(ctx: ContextWithSession) {
+    if (!ctx.session.isSending) {
+      return; 
+    }
+    
+    const groups = await Group.find();
+    for (const group of groups) {
+      await sendMessages(ctx, group.telegramId);
+    }
+    ctx.session.isSending = false;
+    ctx.session.messages = [];
+
+}
+
 const callbacks = {
-  registerFromGroup: registerFromGroup
+    registerFromGroup: registerFromGroup,
+    cancel: cancelHandler,
+    approve: approveHandler
+
 };
 
 export default callbacks;

@@ -3,22 +3,36 @@ import {
   Context,
   GrammyError,
   HttpError,
+  InputFile,
   session,
   SessionFlavor,
 } from "grammy";
 import baseHandler from "./handlers";
 import { parseRole } from "./middlewares/parseRole";
 
+export type Message = 
+  | { type: "text"; content: string }
+  | { type: "photo"; content: { file: string; caption?: string } }
+  | { type: "document"; content: string }
+  | { type: "video"; content: string }
+  | { type: "sticker"; content: string }
+  | { type: "mediaGroup"; content: {files: string[]; caption?: string } };
+  
+
 interface SessionData {
   role?: "admin" | "user" | null;
+  isSending?: boolean;
+  messages?: Message[];
+  tempMessagesId?: number[];
 }
+
 
 export type ContextWithSession = Context & SessionFlavor<SessionData>;
 
 export function createBot(token: string) {
   const bot = new Bot<ContextWithSession>(token);
 
-  bot.use(session({ initial: (): SessionData => ({ role: null }) }));
+  bot.use(session({ initial: (): SessionData => ({ role: null, isSending: false }) }));
   bot.use(parseRole);
   bot.use(baseHandler);
 
