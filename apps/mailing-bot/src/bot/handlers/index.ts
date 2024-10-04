@@ -18,6 +18,7 @@ const callbackHandler = new Composer<ContextWithSession>();
 callbackHandler.callbackQuery("registerFromGroup", callbacks.registerFromGroup);
 callbackHandler.callbackQuery("cancel", callbacks.cancel);
 callbackHandler.callbackQuery("approve", callbacks.approve);
+callbackHandler.callbackQuery("messageReady", callbacks.messageReady);
 
 const adminHandler = new Composer<ContextWithSession>();
 

@@ -22,24 +22,55 @@ export async function sendMessages(ctx: ContextWithSession, chat_id: number) {
     if (!ctx.session.messages) {
         return;
     }
+
+    if (!ctx.session.tempMessagesId) {
+        ctx.session.tempMessagesId = [];
+    }
+    var messageIds = []
     for (const message of ctx.session.messages) {
+        let sentMessage;
+        
+
         switch (message.type) {
             case "text":
-                await ctx.api.sendMessage(chat_id, message.content);
+                sentMessage = await ctx.api.sendMessage(chat_id, message.content);
+                messageIds.push(sentMessage.message_id);
                 break;
             case "photo":
-                await ctx.api.sendPhoto(chat_id, message.content.file, { caption: message.content.caption });
+                sentMessage = await ctx.api.sendPhoto(chat_id, message.content.file, { caption: message.content.caption });
+                messageIds.push(sentMessage.message_id);
                 break;
             case "document":
-                await ctx.api.sendDocument(chat_id, message.content);
+                sentMessage = await ctx.api.sendDocument(chat_id, message.content);
+                messageIds.push(sentMessage.message_id);
                 break;
             case "video":
-                await ctx.api.sendVideo(chat_id, message.content);
+                sentMessage = await ctx.api.sendVideo(chat_id, message.content);
+                messageIds.push(sentMessage.message_id);
                 break;
             case "sticker":
-                await ctx.api.sendSticker(chat_id, message.content);
+                sentMessage = await ctx.api.sendSticker(chat_id, message.content);
+                messageIds.push(sentMessage.message_id);
                 break;
         }
+
+        // Если сообщение было успешно отправлено, сохраняем его message_id
+  
     }
-    
+    if (messageIds.length > 0) {
+        return messageIds;
+    }
+    return null;
+}
+
+export async function deleteTempMessages(ctx: ContextWithSession) {
+    if (!ctx.chat?.id) {
+        return;
+    }
+    if (ctx.session.tempMessagesId) {
+        for (const messageId of ctx.session.tempMessagesId) {
+            await ctx.api.deleteMessage(ctx.chat.id, messageId);
+        }
+        ctx.session.tempMessagesId = [];
+    }
 }

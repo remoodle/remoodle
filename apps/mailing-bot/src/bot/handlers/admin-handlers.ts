@@ -2,7 +2,7 @@ import { InlineKeyboard } from 'grammy';
 import { ContextWithSession } from "..";
 import { Group } from "../../db/models/Group";
 import { User } from "../../db/models/User";
-import { scanMessage, sendMessages } from "../utils/messageHelper";
+import { deleteTempMessages, scanMessage, sendMessages } from "../utils/messageHelper";
 
 async function register(ctx: ContextWithSession) {
   if (ctx.chat?.type !== "private") {
@@ -46,12 +46,11 @@ async function send(ctx: ContextWithSession) {
   if (ctx.chat?.type !== "private") {
     return await ctx.reply("This command is available only in private chat.");
   }
-  await ctx.reply("Вы вошли в режим рассылки. Отправьте сообщение, которое хотите отправить всем группам.");
+  const tempReply = await ctx.reply("Вы вошли в режим рассылки. Отправьте сообщение, которое хотите отправить всем группам.");
   ctx.session.isSending = true;
 }
 
 async function sendingHandler(ctx: ContextWithSession) {
-
   if (!ctx.session.isSending) {
     return;
   }
@@ -70,24 +69,25 @@ async function sendingHandler(ctx: ContextWithSession) {
     ctx.session.messages = [];
   }
   ctx.session.messages.push(message);
+
+  if (ctx.session.tempMessagesId) {
+    await deleteTempMessages(ctx);
+    ctx.session.tempMessagesId = [];
+  }
+  if (!ctx.session.tempMessagesId) {
+    ctx.session.tempMessagesId = [];
+  }
   
-  const cancelButton = { text: "❌", callback_data: "cancel" };
-  const approveButton = { text: "✅", callback_data: "approve" };
 
-  const inlineKeyboard = {
-    inline_keyboard: [
-      [cancelButton, cancelButton, cancelButton],
-      [cancelButton, approveButton, cancelButton],
-      [cancelButton, cancelButton, cancelButton],
-    ],
-  };
-
-  await sendMessages(ctx, ctx.chat.id);
-  await ctx.reply("Message is ready to send. Please approve it.", {
-    reply_markup: inlineKeyboard,
+  const tempReply = await ctx.reply("Message added to the list. Is it all?", {
+    reply_markup: new InlineKeyboard().text("Yes", "messageReady"),
   });
 
+  ctx.session.tempMessagesId.push(tempReply.message_id);
+  
 }
+
+
 
 
 
