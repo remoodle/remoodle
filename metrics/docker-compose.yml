@@ -12,21 +12,21 @@ services:
       - "--web.console.templates=/usr/share/prometheus/consoles"
       - "--web.enable-lifecycle"
     ports:
-      - 9090:9090
-    network_mode: "host"  
+      - 127.0.0.1:9090:9090
     restart: always
+
   grafana:
     image: grafana/grafana:latest
     depends_on:
       - prometheus  
     ports:
-      - 3000:3000
+      - 127.0.0.1:3000:3000
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/dashboards:/var/lib/grafana/dashboards
       - ./grafana/provisioning:/etc/grafana/provisioning
     env_file:
-      - config.monitoring
+      - .env
 volumes:
   prometheus_data: {}
   grafana_data: {}
