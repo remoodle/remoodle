@@ -24,7 +24,7 @@ class ParseUserGrades
         private string $moodleWebservicesUrl,
         private string $gradeChangeWebhookUrl,
         private string $gradeChangeCrossToken,
-        private bool $webhookPushEnabled
+        private bool $webhookPushEnabled,
     ) {
     }
 
@@ -93,7 +93,6 @@ class ParseUserGrades
                 $this->moodleUser->moodle_id,
                 $gradesDiff
             );
-
             $client = new Client(['verify' => false]);
             $client->post($this->gradeChangeWebhookUrl, [
                 'json' => $gradeChangePayload->toArray(),
@@ -128,7 +127,8 @@ class ParseUserGrades
                     $diffsByCourses[$newGrade->course_id][] = new GradeDiff(
                         $newGrade->name,
                         $oldGrades[$newGrade->grade_id]->graderaw,
-                        $newGrade->graderaw
+                        $newGrade->graderaw,
+                        $newGrade->grademax
                     );
                     $hasChanges = true;
                     continue;
@@ -141,7 +141,8 @@ class ParseUserGrades
                 $diffsByCourses[$newGrade->course_id][] = new GradeDiff(
                     $newGrade->name,
                     null,
-                    $newGrade->graderaw
+                    $newGrade->graderaw,
+                    $newGrade->grademax
                 );
                 $hasChanges = true;
             }

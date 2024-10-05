@@ -10,6 +10,7 @@ final class GradeDiff
         public readonly string $gradeName,
         public readonly ?float $old,
         public readonly ?float $new,
+        public readonly float $maxGrade
     ) {
     }
 
@@ -18,7 +19,8 @@ final class GradeDiff
         return [
             $this->gradeName,
             $this->old,
-            $this->new
+            $this->new,
+            $this->maxGrade
         ];
     }
 }
