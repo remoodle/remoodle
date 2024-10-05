@@ -112,7 +112,12 @@ api.post(
           course: z.string(),
           courseId: z.number(),
           grades: z.array(
-            z.tuple([z.string(), z.number().nullable(), z.number().nullable()]),
+            z.tuple([
+              z.string(),
+              z.number().nullable(),
+              z.number().nullable(),
+              z.number(),
+            ]),
           ),
         }),
       ),

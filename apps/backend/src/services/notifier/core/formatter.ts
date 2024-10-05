@@ -1,5 +1,17 @@
 import type { GradeChangeDiff, DeadlineReminderDiff } from "./shims";
 
+const formatGrade = (num: number | null) => {
+  if (num === null) {
+    return "N/A";
+  }
+
+  return num.toFixed(2).replace(/\.0+$/, "");
+};
+
+const formatPostfix = (max: number) => {
+  return max !== 100 ? ` (out of ${max})` : "";
+};
+
 export const formatCourseDiffs = (data: GradeChangeDiff[]): string => {
   let message = "Updated grades:\n";
 
@@ -7,10 +19,8 @@ export const formatCourseDiffs = (data: GradeChangeDiff[]): string => {
     message += `\n📘 ${diff.course.split(" | ")[0]}:\n`;
     const gradeChanges = diff.grades;
     for (const change of gradeChanges) {
-      const [gradeName, previous, updated] = change;
-      const displayPrevious = previous === null ? "N/A" : previous;
-      const displayUpdated = updated === null ? "N/A" : updated;
-      message += `  • ${gradeName}: <b>${displayPrevious} → ${displayUpdated}</b>\n`;
+      const [gradeName, previous, updated, max] = change;
+      message += `  • ${gradeName}: <b>${formatGrade(previous)} → ${formatGrade(updated)}</b>${formatPostfix(max)}\n`;
     }
   }
 

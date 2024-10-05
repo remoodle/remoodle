@@ -1,8 +1,8 @@
 export type GradeChangeDiff = {
   course: string;
   courseId: number;
-  // [name, old, new]
-  grades: [string, number | null, number | null][];
+  // [name, old, new, max]
+  grades: [string, number | null, number | null, number][];
 };
 
 export type GradeChangeEvent = {

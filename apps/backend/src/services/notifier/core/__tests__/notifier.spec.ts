@@ -10,7 +10,7 @@ describe("grades notifications", () => {
       {
         course: "Introduction to SRE | Meirmanova Aigul",
         courseId: 1234,
-        grades: [["Final exam documentation submission", null, 100]],
+        grades: [["Final exam documentation submission", null, 100, 100]],
       },
     ];
 
@@ -28,14 +28,14 @@ describe("grades notifications", () => {
       {
         course: "Course 1",
         courseId: 1,
-        grades: [["Midterm", null, 100]],
+        grades: [["Midterm", null, 100, 100]],
       },
       {
         course: "Course 2",
         courseId: 2,
         grades: [
-          ["Midterm", null, 100],
-          ["Endterm", null, 100],
+          ["Midterm", null, 92.85714, 100],
+          ["Endterm", null, 23, 50],
         ],
       },
     ];
@@ -47,8 +47,8 @@ describe("grades notifications", () => {
         • Midterm: <b>N/A → 100</b>
 
       📘 Course 2:
-        • Midterm: <b>N/A → 100</b>
-        • Endterm: <b>N/A → 100</b>
+        • Midterm: <b>N/A → 92.86</b>
+        • Endterm: <b>N/A → 23</b> (out of 50)
       "
     `);
   });
