@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/remoodle/core/compare/v1.2.4...v1.3.0) (2024-10-05)
+
+
+### Features
+
+* send maxgrade with grade change event payload ([255a8e6](https://github.com/remoodle/core/commit/255a8e6af8676cba03718ed9db54684519ed395c))
+
 ## [1.2.4](https://github.com/remoodle/core/compare/v1.2.3...v1.2.4) (2024-09-29)
 
 
