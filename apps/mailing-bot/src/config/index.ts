@@ -1,6 +1,5 @@
 import { cleanEnv, str } from "envalid";
 import "dotenv/config";
-import { a } from "vitest/dist/suite-IbNSsUWN.js";
 
 export const env = cleanEnv(process.env, {
   NODE_ENV: str({
