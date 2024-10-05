@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.10](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.9...remoodle/backend-v1.4.10) (2024-10-05)
+
+
+### Bug Fixes
+
+* **notifier:** add formatting and max grade support ([acdc658](https://github.com/remoodle/heresy/commit/acdc658d4f0d085022e1a48cb68ce1922a8df80c))
+
 ## [1.4.9](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.8...remoodle/backend-v1.4.9) (2024-10-03)
 
 
