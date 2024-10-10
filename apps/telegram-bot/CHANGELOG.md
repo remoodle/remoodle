@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.2](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.6.1...remoodle/telegram-bot-v0.6.2) (2024-10-10)
+
+
+### Bug Fixes
+
+* return padding ([289f0ba](https://github.com/remoodle/heresy/commit/289f0badb251a4c5f00f95793c279d168e4d5afc))
+
 ## [0.6.1](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.6.0...remoodle/telegram-bot-v0.6.1) (2024-10-10)
 
 
