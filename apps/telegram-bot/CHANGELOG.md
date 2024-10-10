@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.6.0...remoodle/telegram-bot-v0.6.1) (2024-10-10)
+
+
+### Bug Fixes
+
+* change relative time shit ([7003062](https://github.com/remoodle/heresy/commit/7003062d303bc2c475c22f0779ba2a6f0fa402d0))
+
 ## [0.6.0](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.5.3...remoodle/telegram-bot-v0.6.0) (2024-10-03)
 
 
