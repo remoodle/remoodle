@@ -3,7 +3,7 @@ import duration from "dayjs/plugin/duration";
 
 dayjs.extend(duration);
 
-export const getTimeFromNow = (date: number) => {
+export const getTimeLeft = (date: number) => {
   const currentTime = dayjs();
   const deadlineTime = dayjs(date);
   const timeDiff = deadlineTime.diff(currentTime);
@@ -16,6 +16,10 @@ export const getTimeFromNow = (date: number) => {
   const minutes = duration.minutes();
   const seconds = duration.seconds();
 
+  const formattedHours = String(hours).padStart(2, "0");
+  const formattedMinutes = String(minutes).padStart(2, "0");
+  const formattedSeconds = String(seconds).padStart(2, "0");
+
   const timeComponents = [];
 
   if (months > 0) {
@@ -26,11 +30,9 @@ export const getTimeFromNow = (date: number) => {
     timeComponents.push(`${days} ${days === 1 ? "day" : "days"}`);
   }
 
-  if (hours > 0 || minutes > 0 || seconds > 0) {
-    timeComponents.push(
-      `${hours}:${minutes}:${seconds.toString().padStart(2, "0")}`,
-    );
-  }
+  timeComponents.push(
+    `${formattedHours}:${formattedMinutes}:${formattedSeconds}`,
+  );
 
   return timeComponents.join(", ");
 };
