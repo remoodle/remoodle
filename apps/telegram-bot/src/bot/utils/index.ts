@@ -1,5 +1,5 @@
 import { Deadline } from "@remoodle/types";
-import { getTimeLeft } from "@remoodle/utils";
+import { getTimeFromNow } from "@remoodle/utils";
 import { InlineKeyboard } from "grammy";
 
 const getDeadlineText = (deadline: Deadline) => {
@@ -19,7 +19,7 @@ const getDeadlineText = (deadline: Deadline) => {
       timeZone: "Asia/Almaty",
     })
     .replace("24:00", "00:00");
-  const timeLeft = `<b>${getTimeLeft(deadline.timestart)}</b>`;
+  const timeLeft = `<b>${getTimeFromNow(deadline.timestart)}</b>`;
 
   text += isFiring ? "🔥  " : "📅  ";
   text += `<b>${deadline.name.slice(0, -7)}</b>  |  ${courseName}  |  Date → ${date}  |  Time left → ${timeLeft}\n`;
