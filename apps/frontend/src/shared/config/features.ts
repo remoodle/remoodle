@@ -1,6 +1,9 @@
 import { reactive } from "vue";
 
+const enableByDefault =
+  import.meta.env.MODE === "staging" || import.meta.env.DEV;
+
 export const features = reactive({
-  enableTokenAuth: !import.meta.env.PROD,
-  enableAccountDeletion: !import.meta.env.PROD,
+  enableTokenAuth: enableByDefault,
+  enableAccountDeletion: enableByDefault,
 });
