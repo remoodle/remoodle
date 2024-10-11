@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.8...remoodle/frontend-v1.3.0) (2024-10-11)
+
+
+### Features
+
+* add feature flags on frontend ([2a5d9aa](https://github.com/remoodle/heresy/commit/2a5d9aabeff554575914ab41806f28aa64a3856b))
+
+
+### Bug Fixes
+
+* enable feature flags on stage ([b673588](https://github.com/remoodle/heresy/commit/b6735884d967fe86bc4125895f065a2b53562dcc))
+* revert shit ([4d61084](https://github.com/remoodle/heresy/commit/4d61084c7bf3830c1c093fb15a2fd5e8a466654f))
+* test smth ([fe30f1f](https://github.com/remoodle/heresy/commit/fe30f1fb317d3a2cb66a75731c136e438652f106))
+
 ## [1.2.8](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.7...remoodle/frontend-v1.2.8) (2024-10-01)
 
 
