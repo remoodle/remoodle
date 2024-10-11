@@ -11,6 +11,7 @@ import { createAsyncProcess, vFocus } from "@/shared/lib/helpers";
 import { TELEGRAM_BOT_NAME } from "@/shared/config";
 import { useUserStore } from "@/shared/stores/user";
 import { RouteName } from "@/shared/lib/routes";
+import { features } from "@/shared/config/features";
 import { TelegramAuth, type OnTelegramAuth } from "@/features/telegram-auth";
 
 const userStore = useUserStore();
@@ -109,6 +110,7 @@ const handleTelegramAuth: OnTelegramAuth = async (user) => {
           </div>
         </div>
         <Button
+          v-if="features.enableTokenAuth"
           variant="outline"
           type="button"
           @click="router.push({ name: RouteName.Token })"

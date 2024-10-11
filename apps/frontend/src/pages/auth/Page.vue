@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from "vue";
 import { useRoute } from "vue-router";
 import { Footer } from "@/widgets/footer";
 import { RouteName } from "@/shared/lib/routes";
 import { Link } from "@/shared/ui/link";
-import TokenForm from "./ui/TokenForm.vue";
+import { features } from "@/shared/config/features";
 import LoginForm from "./ui/LoginForm.vue";
-import SignupForm from "./ui/SignupForm.vue";
+
+const TokenForm = defineAsyncComponent(() => import("./ui/TokenForm.vue"));
+const SignupForm = defineAsyncComponent(() => import("./ui/SignupForm.vue"));
 
 const route = useRoute();
 </script>
@@ -36,15 +39,24 @@ const route = useRoute();
         <template v-if="route.name === RouteName.Login">
           <LoginForm />
         </template>
-        <template v-if="route.name === RouteName.Token">
+        <template
+          v-if="features.enableTokenAuth && route.name === RouteName.Token"
+        >
           <TokenForm />
         </template>
-        <template v-else-if="route.name === RouteName.SignUp">
+        <template
+          v-else-if="
+            features.enableTokenAuth && route.name === RouteName.SignUp
+          "
+        >
           <SignupForm />
         </template>
       </div>
 
-      <p class="px-8 text-center text-sm text-muted-foreground">
+      <p
+        v-if="features.enableTokenAuth"
+        class="px-8 text-center text-sm text-muted-foreground"
+      >
         {{
           route.name === RouteName.Login
             ? "Don't have an account?"

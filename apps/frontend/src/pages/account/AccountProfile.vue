@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, defineAsyncComponent } from "vue";
 import { useUserStore } from "@/shared/stores/user";
 import {
   Dialog,
@@ -18,6 +18,11 @@ import { Separator } from "@/shared/ui/separator";
 import { createAsyncProcess, isEmptyString } from "@/shared/lib/helpers";
 import { request, getAuthHeaders } from "@/shared/lib/hc";
 import { useToast } from "@/shared/ui/toast";
+import { features } from "@/shared/config/features";
+
+const AccountDeletion = defineAsyncComponent(
+  () => import("./ui/AccountDeletion.vue"),
+);
 
 const { toast } = useToast();
 
@@ -251,8 +256,10 @@ const canUpdatePassword = computed(() => {
   </div>
 
   <Separator />
-  <!-- 
-  <details>
+
+  <AccountDeletion v-if="features.enableAccountDeletion" />
+
+  <!-- <details>
     <summary>
       <span> Manage your data </span>
     </summary>
@@ -291,6 +298,5 @@ const canUpdatePassword = computed(() => {
         </DialogContent>
       </Dialog>
     </div>
-  </details>
-   -->
+  </details> -->
 </template>
