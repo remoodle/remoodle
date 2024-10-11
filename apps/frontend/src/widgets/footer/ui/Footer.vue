@@ -16,9 +16,14 @@ withDefaults(
     slim: false,
   },
 );
+
+const mode = import.meta.env.MODE;
+const prod = import.meta.env.PROD;
 </script>
 
 <template>
+  {{ mode }}
+  {{ prod }}
   <div class="container" :class="[slim ? 'py-6' : 'py-6']">
     <div
       class="w-fit"
