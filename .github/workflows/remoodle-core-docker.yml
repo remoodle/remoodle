@@ -51,7 +51,8 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo DOCKER_TAG=$DOCKER_TAG
 
-          docker build -f apps/core/Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG --build-arg VERSION_TAG=$VERSION_TAG
+          cd apps/core
+          docker build -f Dockerfile . --tag $IMAGE_ID:$DOCKER_TAG --build-arg VERSION_TAG=$VERSION_TAG
 
           docker push $IMAGE_ID:$DOCKER_TAG
 
