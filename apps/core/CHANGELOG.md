@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.1](https://github.com/rmchq/remoodle/compare/remoodle/core-v1.3.0...remoodle/core-v1.3.1) (2024-10-19)
+
+
+### Documentation
+
+* update readmes ([246ebbb](https://github.com/rmchq/remoodle/commit/246ebbbe4af1146bd7e3078dd4e5b93e195917c5))
+
+
+### Miscellaneous Chores
+
+* integrate core into release pipeline ([d2e4d74](https://github.com/rmchq/remoodle/commit/d2e4d7491e46190a2dac2b0e3f5c87c04292572a))
+
 ## [1.3.0](https://github.com/remoodle/core/compare/v1.2.4...v1.3.0) (2024-10-05)
 
 
