@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/rmchq/remoodle/compare/remoodle/core-v1.3.1...remoodle/core-v1.3.2) (2024-10-19)
+
+
+### Documentation
+
+* trigger release ([6df836f](https://github.com/rmchq/remoodle/commit/6df836fc6d7de5dc07a1f4b12d4d8032eeaaf4ea))
+
 ## [1.3.1](https://github.com/rmchq/remoodle/compare/remoodle/core-v1.3.0...remoodle/core-v1.3.1) (2024-10-19)
 
 
