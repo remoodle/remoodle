@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.0...remoodle/frontend-v1.3.1) (2024-10-19)
+
+
+### Miscellaneous Chores
+
+* **deps:** upgrade vue & vite ([92d8203](https://github.com/remoodle/remoodle/commit/92d82036fe5317ea8addaf57b7e67a356244a285))
+
 ## [1.3.0](https://github.com/remoodle/heresy/compare/remoodle/frontend-v1.2.8...remoodle/frontend-v1.3.0) (2024-10-11)
 
 
