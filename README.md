@@ -1,6 +1,6 @@
-# heresy
+# ReMoodle
 
-> sixth circle of hell
+Enhancing Moodle experience with care
 
 ## Development
 
