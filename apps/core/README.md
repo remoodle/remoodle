@@ -1,6 +1,6 @@
 # @remoodle/core
 
-ReMoodle Core API / Crawler service
+ReMoodle Core API service
 
 ## Getting Started
 
