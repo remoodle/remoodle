@@ -19,6 +19,7 @@ import { issueTokens } from "../helpers/jwt";
 
 import { defaultRules, rateLimiter } from "../middleware/ratelimit";
 import { authMiddleware } from "../middleware/auth";
+import { Deadline } from "@remoodle/types";
 
 const publicRoutes = new Hono().get("/health", async (ctx) => {
   const rmc = new RMC();
@@ -236,18 +237,57 @@ const commonProtectedRoutes = new Hono<{
   };
 }>()
   .use("*", authMiddleware())
-  .get("/deadlines", async (ctx) => {
-    const moodleId = ctx.get("moodleId");
+  .get(
+    "/deadlines",
+    zValidator(
+      "query",
+      z.object({
+        courseId: z.string().optional(),
+        daysLimit: z.string().optional(),
+      }),
+    ),
+    async (ctx) => {
+      const moodleId = ctx.get("moodleId");
+      const { courseId, daysLimit } = ctx.req.valid("query");
 
-    const rmc = new RMC({ moodleId });
-    const [data, error] = await rmc.v1_user_deadlines();
+      if (daysLimit && isNaN(parseInt(daysLimit))) {
+        throw new HTTPException(400, {
+          message: "Invalid daysLimit",
+        });
+      }
 
-    if (error) {
-      throw error;
-    }
+      if (courseId && isNaN(parseInt(courseId))) {
+        throw new HTTPException(400, {
+          message: "Invalid courseId",
+        });
+      }
 
-    return ctx.json(data);
-  })
+      const rmc = new RMC({ moodleId });
+      const [data, error] = await rmc.v1_user_deadlines();
+
+      if (error) {
+        throw error;
+      }
+
+      let result: Deadline[] = data;
+
+      if (courseId) {
+        result = result.filter(
+          (deadline) => deadline.course_id === parseInt(courseId),
+        );
+      }
+
+      if (daysLimit) {
+        const now = Date.now() / 1000;
+        result = result.filter(
+          (deadline) =>
+            deadline.timestart - now <= parseInt(daysLimit) * 24 * 60 * 60,
+        );
+      }
+
+      return ctx.json(result);
+    },
+  )
   .get(
     "/courses",
     zValidator(
