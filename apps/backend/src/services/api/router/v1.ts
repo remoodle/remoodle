@@ -19,7 +19,6 @@ import { issueTokens } from "../helpers/jwt";
 
 import { defaultRules, rateLimiter } from "../middleware/ratelimit";
 import { authMiddleware } from "../middleware/auth";
-import { Deadline } from "@remoodle/types";
 
 const publicRoutes = new Hono().get("/health", async (ctx) => {
   const rmc = new RMC();
@@ -269,23 +268,22 @@ const commonProtectedRoutes = new Hono<{
         throw error;
       }
 
-      let result: Deadline[] = data;
-
-      if (courseId) {
-        result = result.filter(
-          (deadline) => deadline.course_id === parseInt(courseId),
-        );
+      if (!data) {
+        return ctx.json([]);
       }
 
-      if (daysLimit) {
-        const now = Date.now() / 1000;
-        result = result.filter(
-          (deadline) =>
-            deadline.timestart - now <= parseInt(daysLimit) * 24 * 60 * 60,
-        );
-      }
+      return ctx.json(
+        data.filter((deadline) => {
+          const matchesCourse =
+            !courseId || deadline.course_id === parseInt(courseId);
+          const matchesTimeLimit =
+            !daysLimit ||
+            deadline.timestart - Date.now() / 1000 <=
+              parseInt(daysLimit) * 24 * 60 * 60;
 
-      return ctx.json(result);
+          return matchesCourse && matchesTimeLimit;
+        }),
+      );
     },
   )
   .get(
