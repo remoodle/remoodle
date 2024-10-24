@@ -158,7 +158,7 @@ async function deadlines(ctx: Context) {
 
   if (ctx.chat.type === "private") {
     await ctx.reply(text, {
-      reply_markup: short ? keyboards.single_deadline : undefined,
+      reply_markup: short ? undefined : keyboards.single_deadline,
       parse_mode: "HTML",
     });
   } else {

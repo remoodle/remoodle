@@ -789,6 +789,8 @@ async function courseAssignmentById(ctx: Context) {
 
   if (assignment.gradeEntity && assignment.gradeEntity.percentage) {
     text += `*Grade:* ${assignment.gradeEntity.percentage}%\n\n`;
+  } else {
+    text += "\n";
   }
 
   if (assignment.intro) {
