@@ -28,7 +28,9 @@ async function deadlines(ctx: Context) {
 
   const [deadlines, _] = await request((client) =>
     client.v1.deadlines.$get(
-      {},
+      {
+        query: {},
+      },
       {
         headers: getAuthHeaders(userId),
       },
@@ -93,7 +95,9 @@ async function refreshDeadlines(ctx: Context) {
 
   const [deadlines, _] = await request((client) =>
     client.v1.deadlines.$get(
-      {},
+      {
+        query: {},
+      },
       {
         headers: getAuthHeaders(userId),
       },

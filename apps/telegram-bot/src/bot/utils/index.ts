@@ -20,7 +20,7 @@ const getDeadlineText = (deadline: Deadline) => {
   let text = "";
   deadline.timestart *= 1000;
   const timeleft = deadline.timestart - Date.now();
-  const isFiring = timeleft < 10800; // 3 hours
+  const isFiring = timeleft / 60 / 60 / 1000 <= 3;
   const [courseName, _] = deadline.course_name.split(" | ");
 
   const date = formatUnixtimestamp(deadline.timestart);

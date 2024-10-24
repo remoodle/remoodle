@@ -1,4 +1,4 @@
-import { Context, InlineKeyboard } from "grammy";
+import { Context } from "grammy";
 import { db } from "../../library/db";
 import { request, getAuthHeaders } from "../../library/hc";
 import { getDeadlineText } from "../utils";
@@ -113,9 +113,15 @@ async function deadlines(ctx: Context) {
 
   const userId = ctx.from?.id;
 
+  const short = ctx.message.text.split(" ")[0] === "/ds";
+
   const [data, error] = await request((client) =>
     client.v1.deadlines.$get(
-      {},
+      {
+        query: {
+          daysLimit: short ? "2" : "14",
+        },
+      },
       {
         headers: getAuthHeaders(userId),
       },
@@ -131,7 +137,7 @@ async function deadlines(ctx: Context) {
         break;
       case "group":
         await ctx.reply(
-          "You are not connected to ReMoodle. Ask me in private.",
+          "You are not connected to ReMoodle. Ask me in private chat.",
         );
         break;
     }
@@ -142,21 +148,17 @@ async function deadlines(ctx: Context) {
   }
 
   if (data.length === 0) {
-    if (ctx.chat.type === "private") {
-      await ctx.reply("You have no active deadlines 🥰", {
-        reply_markup: new InlineKeyboard().text("Refresh", "refresh_deadlines"),
-      });
-    } else {
-      await ctx.reply("You have no active deadlines 🥰");
-    }
+    await ctx.reply("You have no active deadlines 🥰");
     return;
   }
 
-  const text = "Upcoming deadlines:\n\n" + data.map(getDeadlineText).join("\n");
+  const text =
+    `Upcoming deadlines${short ? " [2 days]" : ""}:\n\n` +
+    data.map(getDeadlineText).join("\n");
 
   if (ctx.chat.type === "private") {
     await ctx.reply(text, {
-      reply_markup: keyboards.single_deadline,
+      reply_markup: short ? keyboards.single_deadline : undefined,
       parse_mode: "HTML",
     });
   } else {

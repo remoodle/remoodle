@@ -236,18 +236,56 @@ const commonProtectedRoutes = new Hono<{
   };
 }>()
   .use("*", authMiddleware())
-  .get("/deadlines", async (ctx) => {
-    const moodleId = ctx.get("moodleId");
+  .get(
+    "/deadlines",
+    zValidator(
+      "query",
+      z.object({
+        courseId: z.string().optional(),
+        daysLimit: z.string().optional(),
+      }),
+    ),
+    async (ctx) => {
+      const moodleId = ctx.get("moodleId");
+      const { courseId, daysLimit } = ctx.req.valid("query");
 
-    const rmc = new RMC({ moodleId });
-    const [data, error] = await rmc.v1_user_deadlines();
+      if (daysLimit && isNaN(parseInt(daysLimit))) {
+        throw new HTTPException(400, {
+          message: "Invalid daysLimit",
+        });
+      }
 
-    if (error) {
-      throw error;
-    }
+      if (courseId && isNaN(parseInt(courseId))) {
+        throw new HTTPException(400, {
+          message: "Invalid courseId",
+        });
+      }
 
-    return ctx.json(data);
-  })
+      const rmc = new RMC({ moodleId });
+      const [data, error] = await rmc.v1_user_deadlines();
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data) {
+        return ctx.json([]);
+      }
+
+      return ctx.json(
+        data.filter((deadline) => {
+          const matchesCourse =
+            !courseId || deadline.course_id === parseInt(courseId);
+          const matchesTimeLimit =
+            !daysLimit ||
+            deadline.timestart - Date.now() / 1000 <=
+              parseInt(daysLimit) * 24 * 60 * 60;
+
+          return matchesCourse && matchesTimeLimit;
+        }),
+      );
+    },
+  )
   .get(
     "/courses",
     zValidator(
