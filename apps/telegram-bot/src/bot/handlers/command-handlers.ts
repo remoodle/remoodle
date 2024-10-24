@@ -137,7 +137,6 @@ async function deadlines(ctx: Context) {
     }
     return;
   } else if (error) {
-    console.log(error);
     await ctx.reply("An error occurred. Try again later.");
     return;
   }

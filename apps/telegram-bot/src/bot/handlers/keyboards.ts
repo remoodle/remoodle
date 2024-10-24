@@ -13,7 +13,7 @@ const keyboards = {
     .text("⚙️", "settings")
     .text("More", "others"),
 
-  single_grade: new InlineKeyboard().text("Back ←", "back_to_grades"),
+  single_grade: new InlineKeyboard().row().text("Back ←", "back_to_grades"),
 
   deadlines: new InlineKeyboard()
     .text("Back ←", "back_to_menu")
@@ -35,7 +35,7 @@ const keyboards = {
 
   delete_profile: new InlineKeyboard()
     .text("Yes", "delete_profile_yes")
-    .text("Cancel", "back_to_account"),
+    .text("Cancel", "account"),
 
   settings: new InlineKeyboard()
     .text("Notifications", "notifications")
@@ -46,7 +46,7 @@ const keyboards = {
   account: new InlineKeyboard()
     .text("⚠️ Delete Profile ⚠️", "delete_profile")
     .row()
-    .text("Back ←", "back_to_settings"),
+    .text("Back ←", "settings"),
 
   find_token: new InlineKeyboard().url(
     "How to find your token",

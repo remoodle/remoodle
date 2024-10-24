@@ -2,6 +2,20 @@ import { Deadline } from "@remoodle/types";
 import { getTimeLeft } from "@remoodle/utils";
 import { InlineKeyboard } from "grammy";
 
+const formatUnixtimestamp = (timestamp: number, showYear: boolean = false) => {
+  return new Date(timestamp * 1000)
+    .toLocaleString("en-US", {
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      year: showYear ? "numeric" : undefined,
+      hour12: false,
+      timeZone: "Asia/Almaty",
+    })
+    .replace("24:00", "00:00");
+};
+
 const getDeadlineText = (deadline: Deadline) => {
   let text = "";
   deadline.timestart *= 1000;
@@ -9,16 +23,7 @@ const getDeadlineText = (deadline: Deadline) => {
   const isFiring = timeleft < 10800; // 3 hours
   const [courseName, _] = deadline.course_name.split(" | ");
 
-  const date = new Date(deadline.timestart)
-    .toLocaleString("en-US", {
-      month: "short",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-      timeZone: "Asia/Almaty",
-    })
-    .replace("24:00", "00:00");
+  const date = formatUnixtimestamp(deadline.timestart);
   const timeLeft = `<b>${getTimeLeft(deadline.timestart)}</b>`;
 
   text += isFiring ? "🔥  " : "📅  ";
@@ -117,7 +122,7 @@ const getNotificationsKeyboard = (notifications: any) => {
         `change_notifications_deadlines_${notifications.deadlineReminders ? "off" : "on"}`,
       )
       .row()
-      .text("Back ←", "back_to_settings");
+      .text("Back ←", "settings");
   } else {
     keyboard
       .text(
@@ -125,7 +130,7 @@ const getNotificationsKeyboard = (notifications: any) => {
         `change_notifications_telegram_${notifications.enabled ? "off" : "on"}`,
       )
       .row()
-      .text("Back ←", "back_to_settings");
+      .text("Back ←", "settings");
   }
 
   return keyboard;
@@ -137,4 +142,5 @@ export {
   calculateGrades,
   getGPA,
   getNotificationsKeyboard,
+  formatUnixtimestamp,
 };

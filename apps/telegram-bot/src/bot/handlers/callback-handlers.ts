@@ -1,10 +1,12 @@
 import { InlineKeyboard, Context } from "grammy";
+import TurndownService from "turndown";
 import { request, getAuthHeaders } from "../../library/hc";
 import {
   getDeadlineText,
   getGradeText,
   calculateGrades,
   getNotificationsKeyboard,
+  formatUnixtimestamp,
 } from "../utils";
 import keyboards from "./keyboards";
 
@@ -78,10 +80,6 @@ async function backToMenu(ctx: Context) {
   await ctx.editMessageText(`${user.name}`, {
     reply_markup: keyboards.main,
   });
-}
-
-async function backToSettings(ctx: Context) {
-  await ctx.editMessageText("Settings", { reply_markup: keyboards.settings });
 }
 
 async function refreshDeadlines(ctx: Context) {
@@ -265,8 +263,13 @@ async function gradesInProgressCourse(ctx: Context) {
     message += `${getGradeText(grade)}`;
   });
 
+  const keyboard = new InlineKeyboard()
+    .text("Assignments", `course_assignments_${courseId}`)
+    .row()
+    .text("Back ←", "back_to_grades");
+
   return await ctx.editMessageText(message, {
-    reply_markup: keyboards.single_grade,
+    reply_markup: keyboard,
     parse_mode: "HTML",
   });
 }
@@ -464,7 +467,7 @@ async function changeNotifications(ctx: Context) {
 
   if (error) {
     await ctx.editMessageText("An error occurred. Try again later.", {
-      reply_markup: new InlineKeyboard().text("Back ←", "back_to_settings"),
+      reply_markup: new InlineKeyboard().text("Back ←", "settings"),
     });
     return;
   }
@@ -593,35 +596,213 @@ async function account(ctx: Context) {
   );
 }
 
-async function backToAccount(ctx: Context) {
-  if (!ctx.from) {
+async function courseAssignments(ctx: Context) {
+  if (!ctx.from || !ctx.match) {
     return;
   }
 
   const userId = ctx.from.id;
+  const courseId = ctx.match[0].split("_")[2];
 
-  const [user, _] = await request((client) =>
-    client.v1.user.check.$get(
-      {},
+  const [course, courseError] = await request((client) => {
+    return client.v1.course[":courseId"].$get(
+      {
+        param: {
+          courseId: courseId,
+        },
+        query: {
+          content: "0",
+        },
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    );
+  });
+
+  if (courseError) {
+    await ctx.editMessageText("Course error.", {
+      reply_markup: keyboards.single_grade,
+    });
+    return;
+  }
+
+  if (!course) {
+    await ctx.editMessageText("Course is not available.", {
+      reply_markup: keyboards.single_grade,
+    });
+    return;
+  }
+
+  const [assignments, assignmentsError] = await request((client) =>
+    client.v1.course[":courseId"].assignments.$get(
+      {
+        param: {
+          courseId: courseId,
+        },
+      },
       {
         headers: getAuthHeaders(userId),
       },
     ),
   );
 
-  return await ctx.editMessageText(
-    "ReMoodle Account\n\nHandle:   `" +
-      user?.handle +
-      "`\nName:   `" +
-      user?.name +
-      "`\nMoodleID:   `" +
-      user?.moodleId +
-      "`",
-    {
-      reply_markup: keyboards.account,
-      parse_mode: "Markdown",
-    },
+  if (assignmentsError && assignmentsError.status === 404) {
+    await ctx.editMessageText("Assignments were not found.", {
+      reply_markup: keyboards.single_grade,
+    });
+    return;
+  }
+
+  if (assignmentsError && assignmentsError.status === 401) {
+    await ctx.editMessageText("You are not connected to ReMoodle.", {
+      reply_markup: keyboards.single_grade,
+    });
+    return;
+  }
+
+  if (!assignments) {
+    await ctx.editMessageText("Assignments are not available.", {
+      reply_markup: keyboards.single_grade,
+    });
+    return;
+  }
+
+  const keyboard = new InlineKeyboard();
+
+  assignments.forEach((assignment) => {
+    keyboard
+      .row()
+      .text(
+        assignment.name,
+        `assignment_${assignment.course_id}_${assignment.assignment_id}`,
+      );
+  });
+
+  keyboard.row().text("Back ←", `inprogress_course_${courseId}`);
+
+  await ctx.editMessageText(`Assignments\n*${course.name}*`, {
+    reply_markup: keyboard,
+    parse_mode: "Markdown",
+  });
+}
+
+async function courseAssignmentById(ctx: Context) {
+  if (!ctx.from || !ctx.match) {
+    return;
+  }
+
+  const userId = ctx.from.id;
+  const courseId = ctx.match[0].split("_")[1];
+  const assignmentId = parseInt(ctx.match[0].split("_")[2]);
+  const keyboardBack = new InlineKeyboard().text(
+    "Back ←",
+    `course_assignments_${courseId}`,
   );
+
+  const [course, courseError] = await request((client) =>
+    client.v1.course[":courseId"].$get(
+      {
+        param: {
+          courseId: courseId,
+        },
+        query: {
+          content: "0",
+        },
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  if (courseError) {
+    await ctx.editMessageText("Course error.", {
+      reply_markup: keyboardBack,
+    });
+    return;
+  }
+
+  if (!course) {
+    await ctx.editMessageText("Course is not available.", {
+      reply_markup: keyboardBack,
+    });
+    return;
+  }
+
+  const [assignments, assignmentsError] = await request((client) =>
+    client.v1.course[":courseId"].assignments.$get(
+      {
+        param: {
+          courseId: courseId,
+        },
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  if (assignmentsError && assignmentsError.status === 404) {
+    await ctx.editMessageText("Assignments were not found.", {
+      reply_markup: keyboardBack,
+    });
+    return;
+  }
+
+  if (assignmentsError && assignmentsError.status === 401) {
+    await ctx.editMessageText("You are not connected to ReMoodle.", {
+      reply_markup: keyboardBack,
+    });
+    return;
+  }
+
+  if (!assignments) {
+    await ctx.editMessageText("Assignment is not available.", {
+      reply_markup: keyboardBack,
+    });
+    return;
+  }
+
+  const assignment = assignments.find(
+    (assignment) => assignment.assignment_id === assignmentId,
+  );
+
+  if (!assignment || !assignmentId) {
+    await ctx.editMessageText("Assignment is not available.", {
+      reply_markup: keyboardBack,
+    });
+    return;
+  }
+
+  let text = `*${assignment.name}*\n`;
+  text += `*${course.name}*\n\n`;
+
+  if (assignment.duedate && assignment.allowsubmissionsfromdate) {
+    text += `*Opened:* ${formatUnixtimestamp(assignment.allowsubmissionsfromdate, true)}\n`;
+    text += `*Due:* ${formatUnixtimestamp(assignment.duedate, true)}\n`;
+  }
+
+  if (assignment.gradeEntity && assignment.gradeEntity.percentage) {
+    text += `*Grade:* ${assignment.gradeEntity.percentage}%\n\n`;
+  }
+
+  if (assignment.intro) {
+    const turndownService = new TurndownService();
+    turndownService.remove(["script", "img", "iframe"]);
+    const markdownIntro = turndownService.turndown(assignment.intro);
+
+    if (assignment.intro.length > 700) {
+      text += `${markdownIntro.slice(0, 700)}...\n\n`;
+    } else {
+      text += `${markdownIntro}\n\n`;
+    }
+  }
+
+  return await ctx.editMessageText(text, {
+    reply_markup: keyboardBack,
+    parse_mode: "Markdown",
+  });
 }
 
 const callbacks = {
@@ -638,6 +819,10 @@ const callbacks = {
     inProgressCourse: gradesInProgressCourse,
     pastCourses: gradesPastCourses,
     pastCourse: gradesPastCourse,
+    assignments: {
+      course: courseAssignments,
+      assignment: courseAssignmentById,
+    },
   },
   settings: {
     notifications: notifications,
@@ -648,9 +833,7 @@ const callbacks = {
   },
   back: {
     toMenu: backToMenu,
-    toSettings: backToSettings,
     toGrades: backToGrades,
-    toAccount: backToAccount,
   },
   other: {
     donate: donate,
