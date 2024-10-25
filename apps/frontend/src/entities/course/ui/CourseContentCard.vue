@@ -50,13 +50,11 @@ const moduleSorter = (a: CourseModule, b: CourseModule) => {
     >
       {{ content.name }}
     </a>
-    <p v-show="content.summary">
-      <Text
-        v-if="content.summary.length"
-        :msg="content.summary"
-        class="prose text-foreground"
-      />
-    </p>
+    <Text
+      v-if="content.summary.length"
+      :msg="content.summary"
+      class="prose text-foreground"
+    />
     <ContentGrid>
       <template
         v-for="item in [...content.modules].sort(moduleSorter)"
