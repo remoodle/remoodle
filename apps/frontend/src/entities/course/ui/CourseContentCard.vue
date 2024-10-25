@@ -2,6 +2,7 @@
 import type { CourseContent, CourseModule } from "@remoodle/types";
 import CourseContentModule from "./CourseContentModule.vue";
 import ContentGrid from "./ContentGrid.vue";
+import { Text } from "@/shared/ui/text";
 
 defineProps<{
   courseId: number;
@@ -49,9 +50,11 @@ const moduleSorter = (a: CourseModule, b: CourseModule) => {
     >
       {{ content.name }}
     </a>
-    <p v-show="content.summary">
-      {{ content.summary }}
-    </p>
+    <Text
+      v-if="content.summary.length"
+      :msg="content.summary"
+      class="prose text-foreground"
+    />
     <ContentGrid>
       <template
         v-for="item in [...content.modules].sort(moduleSorter)"
