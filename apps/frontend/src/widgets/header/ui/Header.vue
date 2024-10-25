@@ -45,6 +45,9 @@ const userStore = useUserStore();
             <RouterLink :to="{ name: RouteName.Account }">
               <DropdownMenuItem> Account </DropdownMenuItem>
             </RouterLink>
+            <RouterLink :to="{ name: RouteName.Totals }">
+              <DropdownMenuItem> Total grades </DropdownMenuItem>
+            </RouterLink>
             <DropdownMenuItem @click="userStore.logout">
               Logout
             </DropdownMenuItem>

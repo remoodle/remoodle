@@ -13,4 +13,5 @@ export enum RouteName {
   Assignment = "assignment",
   Terms = "terms",
   Privacy = "privacy",
+  Totals = "totals",
 }

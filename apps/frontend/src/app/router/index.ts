@@ -7,6 +7,7 @@ import { useUserStore } from "@/shared/stores/user";
 import { RouteName } from "@/shared/lib/routes";
 import AuthPage from "@/pages/auth/Page.vue";
 import HomePage from "@/pages/home/Page.vue";
+import TotalsPage from "@/pages/totals/Page.vue";
 import NotFoundPage from "@/pages/404/Page.vue";
 import AccountPage from "@/pages/account/Page.vue";
 import CoursePage from "@/pages/course/Page.vue";
@@ -44,6 +45,12 @@ const routes: RouteRecordRaw[] = [
             component: AccountPage,
           },
         ],
+      },
+      {
+        path: "/totals",
+        name: RouteName.Totals,
+        meta: { auth: "required" },
+        component: TotalsPage,
       },
       {
         path: "course/:courseId",
