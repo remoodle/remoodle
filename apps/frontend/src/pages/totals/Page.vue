@@ -43,7 +43,6 @@ const { run: loadOverallGrades } = createAsyncProcess(async () => {
   }
 
   coursesOverallGrades.value = data;
-  console.log(coursesOverallGrades);
 });
 
 onMounted(async () => {
