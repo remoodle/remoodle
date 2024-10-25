@@ -21,7 +21,9 @@ const deadlines = ref<{
 const { run, loading, error } = createAsyncProcess(async () => {
   const [data, error] = await request((client) =>
     client.v1.deadlines.$get(
-      {},
+      {
+        query: {},
+      },
       {
         headers: getAuthHeaders(),
       },
