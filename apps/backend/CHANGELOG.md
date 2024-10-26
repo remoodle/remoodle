@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.4.10...remoodle/backend-v1.5.0) (2024-10-25)
+
+
+### Features
+
+* add days limit and filter by courseId for deadlines ([#223](https://github.com/remoodle/remoodle/issues/223)) ([9b7bf2e](https://github.com/remoodle/remoodle/commit/9b7bf2e9ad1462b5db4ebee75ad7f1fcc667d7a4))
+
 ## [1.4.10](https://github.com/remoodle/heresy/compare/remoodle/backend-v1.4.9...remoodle/backend-v1.4.10) (2024-10-05)
 
 
