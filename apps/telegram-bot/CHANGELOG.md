@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.7.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.6.2...remoodle/telegram-bot-v0.7.0) (2024-10-26)
+
+
+### Features
+
+* add days limit and filter by courseId for deadlines ([#223](https://github.com/remoodle/remoodle/issues/223)) ([9b7bf2e](https://github.com/remoodle/remoodle/commit/9b7bf2e9ad1462b5db4ebee75ad7f1fcc667d7a4))
+* assignments page ([#222](https://github.com/remoodle/remoodle/issues/222)) ([37fc1ca](https://github.com/remoodle/remoodle/commit/37fc1ca0c9247f25fea86de5ae394ef7073382d9))
+
+
+### Bug Fixes
+
+* ds and assignments text ([b22378c](https://github.com/remoodle/remoodle/commit/b22378c8b0f5185022909ceefe1e8d713f0871f9))
+* message not modified bug ([f39d784](https://github.com/remoodle/remoodle/commit/f39d7846617625b542c80d31d83b8e3981b62927))
+
 ## [0.6.2](https://github.com/remoodle/heresy/compare/remoodle/telegram-bot-v0.6.1...remoodle/telegram-bot-v0.6.2) (2024-10-10)
 
 
