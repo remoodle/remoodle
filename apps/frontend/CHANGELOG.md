@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.2](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.1...remoodle/frontend-v1.3.2) (2024-10-26)
+
+
+### Bug Fixes
+
+* output of html tags in course content ([#228](https://github.com/remoodle/remoodle/issues/228)) ([1e62b37](https://github.com/remoodle/remoodle/commit/1e62b37fa6d45eda4f5a354258022529680e389d))
+* type error ([c3c6ff7](https://github.com/remoodle/remoodle/commit/c3c6ff78383efaaba5c17027714f64bb7243e1ec))
+
 ## [1.3.1](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.0...remoodle/frontend-v1.3.1) (2024-10-19)
 
 
