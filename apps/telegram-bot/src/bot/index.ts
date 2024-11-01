@@ -36,7 +36,6 @@ export function createBot(token: string) {
     const e = err.error;
     if (e instanceof GrammyError) {
       console.error("Error in request:", e.description);
-      return;
     } else if (e instanceof HttpError) {
       console.error("Could not contact Telegram:", e);
     } else {
