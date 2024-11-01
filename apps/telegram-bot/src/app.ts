@@ -18,6 +18,14 @@ function main(): void {
   if (config.bot.webhook_host) {
     const app = new Hono();
 
+    app.onError((err, c) => {
+      console.error(
+        `[${new Date().toISOString()}] Error while handling request: `,
+        err.message,
+      );
+      return c.text("Internal Server Error", 500);
+    });
+
     app.use(webhookCallback(bot, "hono"));
 
     const url = new URL(config.bot.token, config.bot.webhook_host).toString();
