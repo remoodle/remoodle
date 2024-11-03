@@ -2,7 +2,7 @@ version: "3"
 
 rpc:
     enable: true
-    listen: "tcp://127.0.0.1:6001"
+    listen: ${RPC_CONNECTION:-tcp://0.0.0.0:6001}
 
 server:
     command: "php app.php"
@@ -100,7 +100,7 @@ service:
     re_init:
         command: "php service/re-init.php"
         remain_after_exit: true
-        restart_sec: ${RE_INIT_RESTAR_SEC:-60}
+        restart_sec: ${RE_INIT_RESTART_SEC:-60}
     parse_user_courses_assignments:
         command: "php service/parse_user_courses_assignments.php"
         remain_after_exit: true
@@ -109,6 +109,10 @@ service:
         command: "php service/parse_users_events_grades.php"
         remain_after_exit: true
         restart_sec: ${PARSE_GRADES_RESTART_SEC:-60}
+    export_metrics:
+        command: "php service/export_metrics.php"
+        remain_after_exit: true
+        restart_sec: 5
     # parse_grades_users:
     #     command: "php service/parse_grades_users.php"
     #     remain_after_exit: true
