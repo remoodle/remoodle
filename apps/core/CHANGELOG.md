@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/remoodle/remoodle/compare/remoodle/core-v1.3.2...remoodle/core-v1.4.0) (2024-11-03)
+
+
+### Features
+
+* add metrics for queue stats ([29aef04](https://github.com/remoodle/remoodle/commit/29aef04dc0ae0e177a0cb8b59080080b783c93bd))
+
 ## [1.3.2](https://github.com/rmchq/remoodle/compare/remoodle/core-v1.3.1...remoodle/core-v1.3.2) (2024-10-19)
 
 
