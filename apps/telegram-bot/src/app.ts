@@ -51,6 +51,22 @@ function main(): void {
       console.log(`Bot is running using webhook on ${url}`);
     });
   } else {
+    bot.use(async (ctx, next) => {
+      try {
+        await next();
+      } catch (err) {
+        console.error("Error in update processing:", err);
+
+        if (err instanceof GrammyError) {
+          logWithTimestamp("Error in update processing:", err);
+        } else if (err instanceof HttpError) {
+          logWithTimestamp("Could not contact Telegram:", err);
+        } else if (err instanceof Error) {
+          logWithTimestamp("Error in update processing:", err);
+        }
+      }
+    });
+
     console.log("Bot is running");
     bot.start();
   }
