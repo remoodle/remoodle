@@ -24,9 +24,17 @@ const formattedText = computed(() => {
 </script>
 
 <template>
-  <p
+  <!-- <p
     v-bind="$attrs"
     v-dompurify="formattedText"
     :class="{ 'whitespace-wrap break-words': wrap }"
-  />
+  /> -->
+  <div
+    v-bind="$attrs"
+    v-dompurify="formattedText"
+    v-html="formattedText"
+    :class="{
+      'whitespace-wrap break-words': wrap,
+    }"
+  ></div>
 </template>
