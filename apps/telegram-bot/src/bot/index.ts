@@ -8,6 +8,7 @@ import {
 } from "grammy";
 import { commandsHandler, callbacksHandler } from "./handlers";
 import { handleToken } from "./handlers/command-handlers";
+import { logWithTimestamp } from "./utils";
 
 interface RegistrationSession {
   step?: "awaiting_token" | null;
@@ -35,11 +36,11 @@ export function createBot(token: string) {
 
     const e = err.error;
     if (e instanceof GrammyError) {
-      console.error("Error in request:", e.description);
+      logWithTimestamp("Error in update processing:", e);
     } else if (e instanceof HttpError) {
-      console.error("Could not contact Telegram:", e);
-    } else {
-      console.error("Unknown error:", e);
+      logWithTimestamp("Could not contact Telegram:", e);
+    } else if (e instanceof Error) {
+      logWithTimestamp("Error in update processing:", e);
     }
   });
 

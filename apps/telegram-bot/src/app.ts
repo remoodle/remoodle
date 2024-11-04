@@ -3,6 +3,8 @@ import { createBot } from "./bot";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { webhookCallback } from "grammy";
+import { GrammyError, HttpError } from "grammy";
+import { logWithTimestamp } from "./bot/utils";
 
 function main(): void {
   const bot = createBot(config.bot.token);
@@ -19,14 +21,27 @@ function main(): void {
     const app = new Hono();
 
     app.onError((err, c) => {
-      console.error(
-        `[${new Date().toISOString()}] Error while handling request: `,
-        err.message,
-      );
+      logWithTimestamp("Error in Hono: ", err);
       return c.text("Internal Server Error", 500);
     });
 
     app.use(webhookCallback(bot, "hono"));
+
+    bot.use(async (ctx, next) => {
+      try {
+        await next();
+      } catch (err) {
+        console.error("Error in update processing:", err);
+
+        if (err instanceof GrammyError) {
+          logWithTimestamp("Error in update processing:", err);
+        } else if (err instanceof HttpError) {
+          logWithTimestamp("Could not contact Telegram:", err);
+        } else if (err instanceof Error) {
+          logWithTimestamp("Error in update processing:", err);
+        }
+      }
+    });
 
     const url = new URL(config.bot.token, config.bot.webhook_host).toString();
 

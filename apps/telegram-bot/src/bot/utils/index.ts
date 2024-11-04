@@ -1,6 +1,6 @@
 import { Deadline } from "@remoodle/types";
 import { getTimeLeft } from "@remoodle/utils";
-import { InlineKeyboard } from "grammy";
+import { InlineKeyboard, GrammyError, BotError, HttpError } from "grammy";
 
 const formatUnixtimestamp = (timestamp: number, showYear: boolean = false) => {
   return new Date(timestamp * 1000)
@@ -136,6 +136,13 @@ const getNotificationsKeyboard = (notifications: any) => {
   return keyboard;
 };
 
+function logWithTimestamp(
+  message: string,
+  error: BotError | HttpError | GrammyError | Error,
+) {
+  console.error(`[${new Date().toISOString()}] ${message}`, error);
+}
+
 export {
   getDeadlineText,
   getGradeText,
@@ -143,4 +150,5 @@ export {
   getGPA,
   getNotificationsKeyboard,
   formatUnixtimestamp,
+  logWithTimestamp,
 };
