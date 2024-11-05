@@ -139,12 +139,18 @@ class DatabaseUserMoodleRepository implements DatabaseUserMoodleRepositoryInterf
                 "eventsCommon.assignment.relatedGrade" => function ($query) use ($moodleId) {
                     $query->where("moodle_id", $moodleId);
                 },
+                'eventsCommon.assignment.submission' => function ($query) use ($moodleId) {
+                    $query->where('moodle_id', $moodleId);
+                },
                 "eventsGroups" => function ($query) {
                     $query->where("timestart", ">", time());
                 },
                 "eventsGroups.assignment",
                 "eventsGroups.assignment.relatedGrade" => function ($query) use ($moodleId) {
                     $query->where("moodle_id", $moodleId);
+                },
+                'eventsGroups.assignment.submission' => function ($query) use ($moodleId) {
+                    $query->where('moodle_id', $moodleId);
                 },
             ])
             ->where("moodle_id", $moodleId)

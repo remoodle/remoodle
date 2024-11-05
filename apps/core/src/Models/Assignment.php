@@ -104,4 +104,9 @@ class Assignment extends ModelAbstract
             gradeEntity: $this->relatedGrade?->toEntity()
         );
     }
+
+    public function submission(): HasOne
+    {
+        return $this->hasOne(UserAssignmentSubmission::class, 'assignment_id', 'assignment_id');
+    }
 }

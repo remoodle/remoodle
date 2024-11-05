@@ -20,6 +20,8 @@ use Core\Config;
 use Fugikzl\MoodleWrapper\Moodle as MoodleWrapperMoodle;
 use Fugikzl\MoodleWrapper\Request;
 use GuzzleHttp\Client;
+use Psr\Http\Message\ResponseInterface;
+use App\Modules\Moodle\Entities\UserAssignmentSubmission;
 
 /**
  * НЕ СТОИТ ЛЕЗТЬ В ЭТО!!!!!!!!!!!!!!
@@ -311,6 +313,50 @@ final class Moodle
         }
 
         return $assignments;
+    }
+
+    /**
+     * @param int $assignmentIds
+     * @return UserAssignmentSubmission[]
+     */
+    public function getAssignmentSubmissions(int ...$assignmentIds): array
+    {
+        $client = new Client(['verufy' => false]);
+        $requests = [];
+        $submissions = [];
+        foreach ($assignmentIds as $assignmentId) {
+            $promise = $client->requestAsync('POST', Config::get("moodle.webservice_url"), [
+                'query' => [
+                    'moodlewsrestformat' => 'json',
+                    'wstoken' => $this->token,
+                    'wsfunction' => 'mod_assign_get_submission_status',
+                    'assignid' => $assignmentId
+                ]
+            ]);
+            $promise->then(function (ResponseInterface $response) use (&$submissions, $assignmentId) {
+                $body = json_decode((string) $response->getBody(), true);
+                if (!isset($body['lastattempt'])) {
+                    return;
+                }
+                $submission = $body['lastattempt'];
+                $submissions[$assignmentId] = new UserAssignmentSubmission(
+                    timecreated: isset($submission['submission']) ? $submission['submission']['timecreated'] : null,
+                    timemodified: isset($submission['submission']) ? $submission['submission']['timemodified'] : null,
+                    submissionsenabled: $submission['submissionsenabled'],
+                    extensionduedate: $this->issetOrNullArray($submission, 'extensionduedate'),
+                    cansubmit: $submission['cansubmit'],
+                    graded: $submission['graded'],
+                    assignment_id: $assignmentId,
+                    submission_id: isset($submission['submission']) ? $submission['submission']['id'] : null,
+                    submitted: (isset($submission['submission']['status']) && $submission['submission']['status'] === 'submitted')
+                                ? true
+                                : false
+                );
+            });
+            $requests[] = $promise;
+        }
+        \GuzzleHttp\Promise\Utils::settle($requests)->wait();
+        return $submissions;
     }
 
     /**

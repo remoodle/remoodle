@@ -32,7 +32,8 @@ class Assignment implements SearchableInterface
         public readonly array $introattachments,
         public readonly int $introformat,
         public readonly ?string $intro = null,
-        public readonly ?Grade $gradeEntity = null
+        public readonly ?Grade $gradeEntity = null,
+        public readonly ?UserAssignmentSubmission $submissionEntity = null,
     ) {
     }
 
@@ -51,6 +52,7 @@ class Assignment implements SearchableInterface
             intro: $this->intro,
             introformat: $this->introformat,
             gradeEntity: $grade,
+            submissionEntity: $this->submissionEntity
         );
     }
 
