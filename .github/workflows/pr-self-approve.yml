@@ -1,9 +1,9 @@
-name: Auto Approve Pull Request
+name: Self Approve Pull Request
 on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: "Pull Request Number"
+        description: "PR Number"
         required: true
 
 permissions:
@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   approve:
+    if: contains('["notWhaleB", "wsehl"]', github.actor)
     runs-on: ubuntu-latest
     steps:
       - name: Approve Pull Request
@@ -25,12 +26,12 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber,
-              event: 'APPROVE'
+              event: 'APPROVE',
             });
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
-              body: 'Automatically approved by bot'
+              body: `Self-approved on behalf of ${{ github.actor }}`,
             });
