@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.5.0...remoodle/backend-v1.6.0) (2024-11-10)
+
+
+### Features
+
+* clear button under notification ([#244](https://github.com/remoodle/remoodle/issues/244)) ([b0ea261](https://github.com/remoodle/remoodle/commit/b0ea2618b7bee3fd186050e074e2bffef66fcf83))
+
 ## [1.5.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.4.10...remoodle/backend-v1.5.0) (2024-10-25)
 
 
