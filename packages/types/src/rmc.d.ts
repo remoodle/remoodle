@@ -42,6 +42,9 @@ export type Deadline = {
     gradeEntity?: {
       graderaw: number | null;
     };
+    submissionEntity?: {
+      submitted: boolean;
+    };
   };
 };
 
