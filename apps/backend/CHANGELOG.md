@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.6.1...remoodle/backend-v1.6.2) (2024-11-10)
+
+
+### Bug Fixes
+
+* handle wrong grade updates ([f53b4c3](https://github.com/remoodle/remoodle/commit/f53b4c356fef4e81d95306684e3b2abc3d24d0cf))
+
 ## [1.6.1](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.6.0...remoodle/backend-v1.6.1) (2024-11-10)
 
 
