@@ -56,7 +56,6 @@ callbacksHandler.callbackQuery(
 );
 
 // Assignments
-
 callbacksHandler.callbackQuery(
   /course_assignments_\d+/,
   callbacks.grades.assignments.course,
@@ -66,6 +65,9 @@ callbacksHandler.callbackQuery(
   /assignment_\d+_\d+/,
   callbacks.grades.assignments.assignment,
 );
+
+// Clear button
+callbacksHandler.callbackQuery("remove_message", callbacks.other.clearMessage);
 
 // Back buttons
 callbacksHandler.callbackQuery("back_to_menu", callbacks.back.toMenu);

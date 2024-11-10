@@ -12,6 +12,7 @@ export class Telegram {
     options?: {
       topicId?: string | number;
       parseMode?: "HTML" | "MarkdownV2";
+      replyMarkup?: Array<Array<{ text: string; callback_data: string }>>;
       disableLinkPreview?: boolean;
     },
   ) {
@@ -21,6 +22,7 @@ export class Telegram {
       topicId,
       parseMode = "HTML",
       disableLinkPreview = true,
+      replyMarkup,
     } = options || {};
 
     return fetch(telegramUrl, {
@@ -32,6 +34,9 @@ export class Telegram {
         chat_id: this.chatId,
         text: message,
         parse_mode: parseMode,
+        reply_markup: replyMarkup && {
+          inline_keyboard: replyMarkup,
+        },
         ...(topicId && {
           message_thread_id: topicId,
         }),

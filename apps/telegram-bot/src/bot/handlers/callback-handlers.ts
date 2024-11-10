@@ -811,6 +811,11 @@ async function courseAssignmentById(ctx: Context) {
   });
 }
 
+// Delete message (clear notification)
+async function clearMessage(ctx: Context) {
+  await ctx.deleteMessage();
+}
+
 const callbacks = {
   menu: {
     others: others,
@@ -844,6 +849,7 @@ const callbacks = {
   other: {
     donate: donate,
     schedule: comingSoon,
+    clearMessage: clearMessage,
   },
 };
 

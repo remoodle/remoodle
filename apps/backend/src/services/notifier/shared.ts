@@ -7,6 +7,14 @@ export async function sendTelegramMessage(chatId: number, message: string) {
 
   return await telegram.notify(message, {
     parseMode: "HTML",
+    replyMarkup: [
+      [
+        {
+          text: "Clear",
+          callback_data: "remove_message",
+        },
+      ]
+    ]
   });
 }
 
