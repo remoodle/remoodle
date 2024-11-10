@@ -101,6 +101,24 @@ api.use("*", async (ctx, next) => {
   return await next();
 });
 
+function areGradesEffectivelyEqual(
+  grade1: number | null,
+  grade2: number | null,
+): boolean {
+  if (grade1 === null || grade2 === null) {
+    return grade1 === grade2;
+  }
+
+  const str1 = grade1
+    .toFixed(5)
+    .substring(0, grade1.toString().indexOf(".") + 3);
+  const str2 = grade2
+    .toFixed(5)
+    .substring(0, grade2.toString().indexOf(".") + 3);
+
+  return str1 === str2;
+}
+
 api.post(
   "/webhook/grades",
   zValidator(
@@ -126,10 +144,24 @@ api.post(
   async (ctx) => {
     const { moodleId, payload } = ctx.req.valid("json");
 
+    const filteredPayload = payload
+      .map((course) => ({
+        ...course,
+        grades: course.grades.filter(
+          ([name, grade1, grade2]) =>
+            !areGradesEffectivelyEqual(grade1, grade2),
+        ),
+      }))
+      .filter((course) => course.grades.length > 0);
+
+    if (filteredPayload.length === 0) {
+      return ctx.text("No significant changes", 200);
+    }
+
     try {
       await addGradeChangeJob({
         moodleId,
-        payload,
+        payload: filteredPayload,
       });
     } catch (error: any) {
       logger.notifier.error(error, "Error adding grade change job");
