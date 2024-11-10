@@ -1,0 +1,39 @@
+name: Auto Approve Pull Request
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull Request Number"
+        required: true
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Approve Pull Request
+        run: |
+          PR_NUMBER=${{ github.event.inputs.pr_number }}
+          REPO="${{ github.repository }}"
+
+          # Approve the PR using GitHub API
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.CI_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${REPO}/pulls/${PR_NUMBER}/reviews" \
+            -d '{"event":"APPROVE"}'
+
+      - name: Add Approval Comment
+        run: |
+          PR_NUMBER=${{ github.event.inputs.pr_number }}
+          REPO="${{ github.repository }}"
+
+          # Add a comment to the PR
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.CI_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${REPO}/issues/${PR_NUMBER}/comments" \
+            -d '{"body":"Automatically approved by bot"}'
