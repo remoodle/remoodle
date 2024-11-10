@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/remoodle/remoodle/compare/remoodle/core-v1.4.0...remoodle/core-v1.5.0) (2024-11-10)
+
+
+### Features
+
+* submitted ([bab03dd](https://github.com/remoodle/remoodle/commit/bab03dd1539851b71c139ae0b8a7fc4665cdf15a))
+
 ## [1.4.0](https://github.com/remoodle/remoodle/compare/remoodle/core-v1.3.2...remoodle/core-v1.4.0) (2024-11-03)
 
 
