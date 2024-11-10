@@ -13,8 +13,8 @@ export async function sendTelegramMessage(chatId: number, message: string) {
           text: "Clear",
           callback_data: "remove_message",
         },
-      ]
-    ]
+      ],
+    ],
   });
 }
 
