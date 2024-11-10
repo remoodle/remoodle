@@ -23,7 +23,7 @@ export const processDeadlines = (
     // Skip graded and submitted deadlines
     if (
       assignment?.gradeEntity?.graderaw !== null ||
-      assignment.submissionEntity?.submitted
+      assignment?.submissionEntity?.submitted
     ) {
       continue;
     }
