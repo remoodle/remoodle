@@ -113,7 +113,7 @@ async function deadlines(ctx: Context) {
 
   const userId = ctx.from?.id;
 
-  const short = ctx.message.text.split(" ")[0] === "/ds";
+  const short = ctx.message.text.startsWith("/ds");
 
   const [data, error] = await request((client) =>
     client.v1.deadlines.$get(
@@ -148,7 +148,7 @@ async function deadlines(ctx: Context) {
   }
 
   if (data.length === 0) {
-    await ctx.reply("You have no active deadlines 🥰");
+    await ctx.reply(`You have no active deadlines ${short ? "in the next 2 days " : ""}🥰`);
     return;
   }
 
