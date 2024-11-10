@@ -119,7 +119,7 @@ async function deadlines(ctx: Context) {
     client.v1.deadlines.$get(
       {
         query: {
-          daysLimit: short ? "2" : "14",
+          daysLimit: short ? "2" : "21",
         },
       },
       {
