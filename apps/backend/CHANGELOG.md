@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.1](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.6.0...remoodle/backend-v1.6.1) (2024-11-10)
+
+
+### Bug Fixes
+
+* graded and submitted deadlines ([f695054](https://github.com/remoodle/remoodle/commit/f695054bb35224489833f713409b8af41049e5df))
+* more optionals ([b07dc40](https://github.com/remoodle/remoodle/commit/b07dc40af17f575a871b5fd6e040a35e96c6d3ef))
+
 ## [1.6.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.5.0...remoodle/backend-v1.6.0) (2024-11-10)
 
 
