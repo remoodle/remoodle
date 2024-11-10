@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.8.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.7.0...remoodle/telegram-bot-v0.8.0) (2024-11-10)
+
+
+### Features
+
+* clear button under notification ([#244](https://github.com/remoodle/remoodle/issues/244)) ([b0ea261](https://github.com/remoodle/remoodle/commit/b0ea2618b7bee3fd186050e074e2bffef66fcf83))
+
+
+### Bug Fixes
+
+* add error handler for webhook ([5456486](https://github.com/remoodle/remoodle/commit/5456486a0f62df6490b2a9a48fcb8356bfa5d909))
+* bot crashing ([#241](https://github.com/remoodle/remoodle/issues/241)) ([e275258](https://github.com/remoodle/remoodle/commit/e275258ced24ef6cb304ea8d71096037c9260d62))
+* bot umeraet ([c1ebfdc](https://github.com/remoodle/remoodle/commit/c1ebfdc8bba7254980b590bfd6afb2d70c52aa87))
+
+
+### Miscellaneous Chores
+
+* default deadlines 21 days ([c371e80](https://github.com/remoodle/remoodle/commit/c371e80634bdf37fbcc26cd87d1b1b1d53092da5))
+
+
+### Code Refactoring
+
+* bot try catch ([b580aa3](https://github.com/remoodle/remoodle/commit/b580aa3967bdcf2a4bbd04893ac0680c2eeda2f6))
+
 ## [0.7.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.6.2...remoodle/telegram-bot-v0.7.0) (2024-10-26)
 
 
