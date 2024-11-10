@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.1](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.8.0...remoodle/telegram-bot-v0.8.1) (2024-11-10)
+
+
+### Bug Fixes
+
+* ds command in groups ([ff41aa7](https://github.com/remoodle/remoodle/commit/ff41aa7a9243a3bba1245a4c76f44b59cbc6e01c))
+* lint ([4719ee5](https://github.com/remoodle/remoodle/commit/4719ee5e24cc3ce6ffebe313c43ca09d728d816a))
+
 ## [0.8.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.7.0...remoodle/telegram-bot-v0.8.0) (2024-11-10)
 
 
