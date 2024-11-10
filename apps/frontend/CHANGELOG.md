@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.2...remoodle/frontend-v1.3.3) (2024-11-10)
+
+
+### Bug Fixes
+
+* html moment ([#239](https://github.com/remoodle/remoodle/issues/239)) ([2ff8338](https://github.com/remoodle/remoodle/commit/2ff8338ad6173c31e7c9d25a669461d341eb6fd2))
+
 ## [1.3.2](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.1...remoodle/frontend-v1.3.2) (2024-10-26)
 
 
