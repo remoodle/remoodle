@@ -148,7 +148,9 @@ async function deadlines(ctx: Context) {
   }
 
   if (data.length === 0) {
-    await ctx.reply(`You have no active deadlines ${short ? "in the next 2 days " : ""}🥰`);
+    await ctx.reply(
+      `You have no active deadlines ${short ? "in the next 2 days " : ""}🥰`,
+    );
     return;
   }
 
