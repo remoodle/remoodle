@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.2](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.8.1...remoodle/telegram-bot-v0.8.2) (2024-11-11)
+
+
+### Bug Fixes
+
+* gagr ([0dd21e2](https://github.com/remoodle/remoodle/commit/0dd21e2b2ee68cd7886bf68328d3b720ccbdc0fc))
+* lint ([3c88fb7](https://github.com/remoodle/remoodle/commit/3c88fb7ae24f13678edd4ad7775065ec425904e7))
+
 ## [0.8.1](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.8.0...remoodle/telegram-bot-v0.8.1) (2024-11-10)
 
 
