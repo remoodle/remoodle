@@ -3,7 +3,6 @@ import { createBot } from "./bot";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { webhookCallback } from "grammy";
-import { GrammyError, HttpError } from "grammy";
 import { logWithTimestamp } from "./bot/utils";
 
 function main(): void {
@@ -27,22 +26,6 @@ function main(): void {
 
     app.use(webhookCallback(bot, "hono"));
 
-    bot.use(async (ctx, next) => {
-      try {
-        await next();
-      } catch (err) {
-        console.error("Error in update processing:", err);
-
-        if (err instanceof GrammyError) {
-          logWithTimestamp("Error in update processing:", err);
-        } else if (err instanceof HttpError) {
-          logWithTimestamp("Could not contact Telegram:", err);
-        } else if (err instanceof Error) {
-          logWithTimestamp("Error in update processing:", err);
-        }
-      }
-    });
-
     const url = new URL(config.bot.token, config.bot.webhook_host).toString();
 
     bot.api.setWebhook(url);
@@ -51,22 +34,6 @@ function main(): void {
       console.log(`Bot is running using webhook on ${url}`);
     });
   } else {
-    bot.use(async (ctx, next) => {
-      try {
-        await next();
-      } catch (err) {
-        console.error("Error in update processing:", err);
-
-        if (err instanceof GrammyError) {
-          logWithTimestamp("Error in update processing:", err);
-        } else if (err instanceof HttpError) {
-          logWithTimestamp("Could not contact Telegram:", err);
-        } else if (err instanceof Error) {
-          logWithTimestamp("Error in update processing:", err);
-        }
-      }
-    });
-
     console.log("Bot is running");
     bot.start();
   }

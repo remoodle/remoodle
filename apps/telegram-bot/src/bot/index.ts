@@ -1,6 +1,7 @@
-import { Bot, Context, session, SessionFlavor } from "grammy";
+import { Bot, Context, session, SessionFlavor, GrammyError, HttpError } from "grammy";
 import { commandsHandler, callbacksHandler } from "./handlers";
 import { handleToken } from "./handlers/command-handlers";
+import { logWithTimestamp } from "./utils";
 
 interface RegistrationSession {
   step?: "awaiting_token" | null;
@@ -19,6 +20,23 @@ export function createBot(token: string) {
     }
     return next();
   });
+
+  bot.use(async (ctx, next) => {
+    try {
+      await next();
+    } catch (err) {
+      console.error("Error in update processing:", err);
+
+      if (err instanceof GrammyError) {
+        logWithTimestamp("Error in update processing:", err);
+      } else if (err instanceof HttpError) {
+        logWithTimestamp("Could not contact Telegram:", err);
+      } else if (err instanceof Error) {
+        logWithTimestamp("Error in update processing:", err);
+      }
+    }
+  });
+
   bot.use(callbacksHandler);
 
   return bot;
