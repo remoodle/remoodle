@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/remoodle/remoodle/compare/remoodle/core-v1.5.0...remoodle/core-v1.5.1) (2024-11-11)
+
+
+### Bug Fixes
+
+* format grades in parse step ([#254](https://github.com/remoodle/remoodle/issues/254)) ([51051f0](https://github.com/remoodle/remoodle/commit/51051f0ec7538c6b81a06ec1190160b6f5fbd3b7))
+
 ## [1.5.0](https://github.com/remoodle/remoodle/compare/remoodle/core-v1.4.0...remoodle/core-v1.5.0) (2024-11-10)
 
 
