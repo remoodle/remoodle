@@ -56,7 +56,12 @@ final class GetGradesBatch
                     $gradeitem['percentageformatted'] = str_replace([' ', '%'], '', $gradeitem['percentageformatted']);
                     $grade = is_numeric($gradeitem['percentageformatted'])
                         ? (int) $gradeitem['percentageformatted']
-                        : null;
+                        : null
+                    ;
+
+                    if (isset($gradeitem['graderaw'])) {
+                        $gradeitem['graderaw'] = round((float) $gradeitem['graderaw'], 3);
+                    }
 
                     $grades[] = (new Grade(
                         grade_id: $gradeitem['id'],
