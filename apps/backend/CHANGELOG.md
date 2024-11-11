@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.3](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.6.2...remoodle/backend-v1.6.3) (2024-11-11)
+
+
+### Bug Fixes
+
+* remove shit ([1e6fb1f](https://github.com/remoodle/remoodle/commit/1e6fb1f59380b1a108d0ae5ce88bdd752d0f09e0))
+
 ## [1.6.2](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.6.1...remoodle/backend-v1.6.2) (2024-11-10)
 
 
