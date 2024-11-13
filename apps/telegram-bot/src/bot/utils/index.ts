@@ -3,7 +3,7 @@ import { getTimeLeft } from "@remoodle/utils";
 import { InlineKeyboard, GrammyError, BotError, HttpError } from "grammy";
 
 const formatUnixtimestamp = (timestamp: number, showYear: boolean = false) => {
-  return new Date(timestamp * 1000)
+  return new Date(timestamp)
     .toLocaleString("en-US", {
       month: "short",
       day: "2-digit",
