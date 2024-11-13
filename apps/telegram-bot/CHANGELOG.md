@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.3](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.8.2...remoodle/telegram-bot-v0.8.3) (2024-11-13)
+
+
+### Bug Fixes
+
+* deadlines date ([318c70f](https://github.com/remoodle/remoodle/commit/318c70f2fc26d928cb18523743113fe59fe41aa0))
+
 ## [0.8.2](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.8.1...remoodle/telegram-bot-v0.8.2) (2024-11-11)
 
 
