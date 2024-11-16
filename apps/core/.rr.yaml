@@ -94,6 +94,9 @@ kv:
     users:
         driver: memory
         config: {}
+    queue:
+        driver: memory
+        config: {}
 service:
     kv_users_init:
         command: "php service/user_init.php"

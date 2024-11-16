@@ -32,6 +32,7 @@ abstract class BaseHandler implements HandlerInterface
     }
 
     protected PayloadInterface $payload;
+    protected string $queue;
 
     /**
      * @param \Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface $receivedTask
@@ -43,6 +44,7 @@ abstract class BaseHandler implements HandlerInterface
         protected FactoryInterface $jobsFactory
     ) {
         $this->payload = igbinary_unserialize($this->receivedTask->getPayload());
+        $this->queue = $receivedTask->getPipeline() ?? $receivedTask->getQueue();
         $this->setup();
     }
 
@@ -57,6 +59,11 @@ abstract class BaseHandler implements HandlerInterface
     }
 
     protected function dispatch(): void
+    {
+
+    }
+
+    protected function after(): void
     {
 
     }
@@ -89,6 +96,10 @@ abstract class BaseHandler implements HandlerInterface
     {
         try {
             $this->dispatch();
+
+            if ($this->getPayload()->next() === null) {
+                $this->after();
+            }
         } catch (QueryException $e) {
             if ((int)$e->getCode() === 40001 || (int)$e->getCode() === 1213) {
                 $this->receivedTask->fail('DEADLOCK!!! - restarting', true);
