@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/remoodle/remoodle/compare/remoodle/core-v1.5.1...remoodle/core-v1.5.2) (2024-11-16)
+
+
+### Miscellaneous Chores
+
+* trigger actions ([d0e77c3](https://github.com/remoodle/remoodle/commit/d0e77c398ce031b41670112c7dc048ace9dff0f9))
+
 ## [1.5.1](https://github.com/remoodle/remoodle/compare/remoodle/core-v1.5.0...remoodle/core-v1.5.1) (2024-11-11)
 
 
