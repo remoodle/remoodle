@@ -10,6 +10,8 @@ use Spiral\Goridge\RPC\RPC;
 use Spiral\RoadRunner\Jobs\Jobs;
 use Spiral\RoadRunner\Jobs\Task\Task;
 use Queue\Actions\Batch\Events\EventsBatchDto;
+use Spiral\RoadRunner\KeyValue\Factory;
+use Spiral\RoadRunner\KeyValue\Serializer\IgbinarySerializer;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
@@ -27,7 +29,9 @@ $queueGrades = $jobs->connect(JobsEnum::PARSE_GRADES->value);
 
 $users = MoodleUser::where('initialized', true)->get();
 
-$chunks = [];
+$queueStorage = (new Factory(RPC::create(Config::get("rpc.connection"))))
+    ->withSerializer(new IgbinarySerializer())->select('queue');
+
 foreach ($users->chunk(5)->all() as $chunk) {
     $parts = [];
     foreach ($chunk->all() as $user) {
@@ -43,10 +47,16 @@ foreach ($users->chunk(5)->all() as $chunk) {
 }
 
 foreach ($users as $user) {
-    $queueGrades->dispatch(
-        $queueGrades->create(
-            name: Task::class,
-            payload: (new Payload(JobsEnum::PARSE_GRADES->value, $user))
-        )
-    );
+    if (! ($queueStorage->get(JobsEnum::PARSE_GRADES->value . $user->moodle_id, false))) {
+        $task = $queueGrades->dispatch(
+            $queueGrades->create(
+                name: Task::class,
+                payload: (new Payload(JobsEnum::PARSE_GRADES->value, $user))
+            )
+        );
+        $queueStorage->set(JobsEnum::PARSE_GRADES->value . $user->moodle_id, true, 3600);
+        echo '[LOCK] created for ' . $user->moodle_id . ' parse grades' . "\n";
+    } else {
+        echo '[LOCK] can\'t create due to lock ' . $user->moodle_id . ' parse grades' . "\n";
+    }
 }

@@ -23,8 +23,21 @@ class ParseUserGrades extends BaseHandler
             $moodleWebservicesUrl,
             Config::get("webhook.url"),
             Config::get("webhook.secret"),
-            Config::get("webhook.enabled")
+            Config::get("webhook.enabled"),
         );
+    }
+
+    protected function after(): void
+    {
+        $user = $this->getPayload()->payload();
+        $queueStorage = (new \Spiral\RoadRunner\KeyValue\Factory(
+            \Spiral\Goridge\RPC\RPC::create(Config::get("rpc.connection"))
+        ))->withSerializer(new \Spiral\RoadRunner\KeyValue\Serializer\IgbinarySerializer())->select('queue');
+
+        if (($queueStorage->get($this->queue . $user->moodle_id, true))) {
+            $queueStorage->set($this->queue . $user->moodle_id, false);
+            echo '[LOCK] released ' . $user->moodle_id . ' parse course contents' . "\n";
+        }
     }
 
     protected function dispatch(): void
