@@ -19,6 +19,7 @@ import { issueTokens } from "../helpers/jwt";
 
 import { defaultRules, rateLimiter } from "../middleware/ratelimit";
 import { authMiddleware } from "../middleware/auth";
+import { userGauge } from "../middleware/metrics";
 
 const publicRoutes = new Hono().get("/health", async (ctx) => {
   const rmc = new RMC();
@@ -93,6 +94,8 @@ const authRoutes = new Hono<{
               message: error.message,
             });
           }
+
+          userGauge.inc();
         } else if (!user.telegramId && telegramId) {
           await db.user.updateOne(
             { _id: user._id },
@@ -553,6 +556,8 @@ const commonProtectedRoutes = new Hono<{
         message: `Failed to delete user from the database ${error}`,
       });
     }
+
+    userGauge.dec();
 
     return ctx.json({ ok: true });
   })

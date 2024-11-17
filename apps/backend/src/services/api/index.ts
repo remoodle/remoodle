@@ -1,6 +1,4 @@
 import { serve } from "@hono/node-server";
-import { prometheus } from '@hono/prometheus';
-import { Counter, Registry } from 'prom-client'
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
@@ -10,19 +8,16 @@ import { pinoLogger } from "hono-pino-logger";
 import { config, env } from "../../config";
 import { logger } from "../../library/logger";
 import { defaultRules, rateLimiter } from "./middleware/ratelimit";
+import {
+  registerMetrics,
+  printMetrics,
+  initUserCounter,
+} from "./middleware/metrics";
 import { errorHandler } from "./middleware/error";
 import { versionHandler } from "./middleware/version";
 import { v1 } from "./router/v1";
 
 const api = new Hono();
-
-const registry = new Registry()
-const userCounter = new Counter({
-  'name': 'user_counter',
-  'help': 'Number of users',
-  'registers': [registry]
-});
-const { printMetrics, registerMetrics } = prometheus({ registry });
 
 if (env.isProduction) {
   api.use(csrf({ origin: "remoodle.app" }));
@@ -42,9 +37,8 @@ api.use(
   }),
 );
 
-api.use('*', registerMetrics);
-
-api.get('/metrics', printMetrics);
+api.use("*", registerMetrics);
+api.get("/metrics", printMetrics);
 
 api.get("/health", async (ctx) => {
   return ctx.json({ status: "ok" });
@@ -79,4 +73,5 @@ export const startServer = () => {
   );
 };
 
+initUserCounter();
 startServer();
