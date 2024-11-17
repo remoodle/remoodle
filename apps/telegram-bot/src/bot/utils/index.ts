@@ -81,10 +81,15 @@ const calculateGrades = (grades: Grade[]) => {
       : getGrade("Total");
     const text = `<b>TOTAL  →  ${total.toFixed(2)}</b>\n<b>GPA  →  ${getGPA(total)}</b>\n\n`;
 
-    if (total >= 90) return `High scholarship 🎉🎉\n${text}`;
-    if (total >= 70) return `Scholarship 🎉\n${text}`;
-    if (total >= 50) return `No scholarship 😭\n${text}`;
-    return `Retake 💀\n${text}`;
+    if (total >= 90) {  
+      return `High scholarship 🎉🎉\n${text}`;  
+    } else if (total >= 70) {  
+      return `Scholarship 🎉\n${text}`; 
+    } else if (total >= 50) {  
+      return `No scholarship 😭\n${text}`;  
+    } else {
+      return `Retake 💀\n${text}`;
+    }
   }
 
   else if (regTerm != 0 && regFinal == 0) {
