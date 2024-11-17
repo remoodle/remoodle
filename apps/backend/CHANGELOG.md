@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.6.3...remoodle/backend-v1.7.0) (2024-11-17)
+
+
+### Features
+
+* add metrics on backend ([#269](https://github.com/remoodle/remoodle/issues/269)) ([94a8585](https://github.com/remoodle/remoodle/commit/94a85854187666242c3f2a1b40118de2f4dbabd1))
+
+
+### Miscellaneous Chores
+
+* trigger actions ([d0e77c3](https://github.com/remoodle/remoodle/commit/d0e77c398ce031b41670112c7dc048ace9dff0f9))
+
 ## [1.6.3](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.6.2...remoodle/backend-v1.6.3) (2024-11-11)
 
 
