@@ -1,4 +1,4 @@
-import { Deadline } from "@remoodle/types";
+import { Deadline, Grade } from "@remoodle/types";
 import { getTimeLeft } from "@remoodle/utils";
 import { InlineKeyboard, GrammyError, BotError, HttpError } from "grammy";
 
@@ -32,7 +32,7 @@ const getDeadlineText = (deadline: Deadline) => {
   return text;
 };
 
-const getGradeText = (grade: any) => {
+const getGradeText = (grade: Grade) => {
   let text = "";
   if (!["category", "course"].includes(grade.itemtype)) {
     text += `${grade.name} → <b>${grade.graderaw !== null ? grade.graderaw?.toFixed(2) : "None"}</b>\n`;
@@ -64,46 +64,50 @@ const getGPA = (total: number) => {
   return grades[grade] ? grades[grade].toFixed(2) : "0.00";
 };
 
-const calculateGrades = (grades: any[]) => {
-  const regFinal = grades.find((grade) => grade.name === "Register Final");
-  const regMid = grades.find((grade) => grade.name === "Register Midterm");
-  const regEnd = grades.find((grade) => grade.name === "Register Endterm");
-  const regTerm = (regMid?.graderaw + regEnd?.graderaw) / 2;
+const calculateGrades = (grades: Grade[]) => {
+  const getGrade = (name: string) => 
+    grades.find(grade => grade.name === name)?.graderaw ?? 0;
 
-  if (regFinal?.graderaw && regTerm && regMid?.graderaw && regEnd?.graderaw) {
-    const total =
-      regFinal.graderaw * 0.4 + regMid.graderaw * 0.3 + regEnd.graderaw * 0.3;
+  const regFinal = getGrade("Register Final");
+  const regMid = getGrade("Register Midterm");
+  const regEnd = getGrade("Register Endterm");
+  const regTerm = (regMid + regEnd) / 2;
+  
+  if (regFinal != 0 && regTerm != 0) {
+    const totalGrade = getGrade("Total");
+    
+    const total = totalGrade == 0
+      ? regFinal * 0.4 + regMid * 0.3 + regEnd * 0.3
+      : getGrade("Total");
     const text = `<b>TOTAL  →  ${total.toFixed(2)}</b>\n<b>GPA  →  ${getGPA(total)}</b>\n\n`;
 
-    if (total >= 50 && total < 70) {
-      return `No scholarship 😭\n${text}`;
-    } else if (total >= 70 && total < 90) {
-      return `Scholarship 🎉\n${text}`;
-    } else if (total >= 90) {
-      return `High scholarship 🎉🎉\n${text}`;
-    } else {
-      return `Retake 💀\n${text}`;
-    }
+    if (total >= 90) return `High scholarship 🎉🎉\n${text}`;
+    if (total >= 70) return `Scholarship 🎉\n${text}`;
+    if (total >= 50) return `No scholarship 😭\n${text}`;
+    return `Retake 💀\n${text}`;
   }
 
-  if (regTerm && regMid.graderaw && regEnd.graderaw && !regFinal.graderaw) {
-    let text = "";
+  else if (regTerm != 0 && regFinal == 0) {
+    const calculateTarget = (target: number) => (target - regTerm * 0.6) / 0.4;
 
-    const high = (90 - regTerm * 0.6) / 0.4;
-    const scholarship = (70 - regTerm * 0.6) / 0.4;
-    const retake = (50 - regTerm * 0.6) / 0.4;
+    const high = calculateTarget(90);
+    const scholarship = calculateTarget(70);
+    const retake = calculateTarget(50);
 
-    text += `👹 Avoid retake: <b>final > ${retake <= 50.0 ? "50.0" : retake.toFixed(1)}</b>\n`;
-    text += `💚 Save scholarship: <b>final > ${scholarship <= 50 ? "50.0" : scholarship.toFixed(1)}</b>\n`;
-    text += `😈 High scholarship: ${high > 100 ? `<b>unreachable(${high.toFixed(1)})` : `<b>final > ${high.toFixed(1)}`}</b>\n`;
-
-    return text;
+    return [
+      `👹 Avoid retake: <b>final > ${retake <= 50.0 ? "50.0" : retake.toFixed(1)}</b>`,
+      `💚 Save scholarship: <b>final > ${scholarship <= 50 ? "50.0" : scholarship.toFixed(1)}</b>`,
+      `😈 High scholarship: ${high > 100 ? `<b>unreachable(${high.toFixed(1)})` : `<b>final > ${high.toFixed(1)}`}</b>`,
+      `\n`
+    ].join('\n');
   }
 
   return "";
 };
 
-const getNotificationsKeyboard = (notifications: any) => {
+const getNotificationsKeyboard = (notifications: {
+  enabled: boolean, gradeUpdates: boolean, deadlineReminders: boolean
+}) => {
   const keyboard = new InlineKeyboard();
 
   if (notifications.enabled) {
