@@ -1,23 +1,51 @@
 import { describe, expect, test } from "vitest";
 import { calculateGrades, getGPA } from ".";
+import { CourseGradeItem } from "@remoodle/types";
 
 describe("calculateGrades", () => {
   test("should return no scholarship", () => {
-    const grades = [
+    const grades: CourseGradeItem[] = [
       {
         name: "Register Midterm",
         graderaw: 50,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Endterm",
         graderaw: 50,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Final",
         graderaw: 50,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
     ];
 
@@ -36,16 +64,43 @@ describe("calculateGrades", () => {
         name: "Register Midterm",
         graderaw: 70,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Endterm",
         graderaw: 70,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Final",
         graderaw: 70,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
     ];
 
@@ -64,16 +119,43 @@ describe("calculateGrades", () => {
         name: "Register Midterm",
         graderaw: 90,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Endterm",
         graderaw: 95,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Final",
         graderaw: 100,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
     ];
 
@@ -92,16 +174,43 @@ describe("calculateGrades", () => {
         name: "Register Midterm",
         graderaw: 40,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Endterm",
         graderaw: 40,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Final",
         graderaw: 40,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
     ];
 
@@ -117,21 +226,47 @@ describe("calculateGrades", () => {
 
 describe("calculateGradesFinal", () => {
   test("should return scholarship > 50", () => {
-    const grades = [
+    const grades: CourseGradeItem[] = [
       {
         name: "Register Midterm",
         graderaw: 100,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Endterm",
         graderaw: 100,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Final",
-        graderaw: null,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
     ];
 
@@ -139,26 +274,53 @@ describe("calculateGradesFinal", () => {
       "👹 Avoid retake: <b>final > 50.0</b>
       💚 Save scholarship: <b>final > 50.0</b>
       😈 High scholarship: <b>final > 75.0</b>
+      
       "
     `);
   });
 
   test("should return high scholarship impossible", () => {
-    const grades = [
+    const grades: CourseGradeItem[] = [
       {
         name: "Register Midterm",
         graderaw: 60,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Endterm",
         graderaw: 60,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Final",
-        graderaw: null,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
     ];
 
@@ -166,50 +328,105 @@ describe("calculateGradesFinal", () => {
       "👹 Avoid retake: <b>final > 50.0</b>
       💚 Save scholarship: <b>final > 85.0</b>
       😈 High scholarship: <b>unreachable(135.0)</b>
+
       "
     `);
   });
 
   test("should return empty block", () => {
-    const grades = [
+    const grades: CourseGradeItem[] = [
       {
         name: "Register Midterm",
         graderaw: 60,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Endterm",
-        graderaw: null,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Final",
         graderaw: 60,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
     ];
 
     expect(calculateGrades(grades)).toMatchInlineSnapshot(`
-      ""
+      "Retake 💀
+      <b>TOTAL  →  42.00</b>
+      <b>GPA  →  0.00</b>
+      
+      "
     `);
   });
 
   test("should return empty block (all null)", () => {
-    const grades = [
+    const grades: CourseGradeItem[] = [
       {
         name: "Register Midterm",
-        graderaw: null,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Endterm",
-        graderaw: null,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Final",
-        graderaw: null,
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
     ];
 
@@ -223,14 +440,41 @@ describe("calculateGradesFinal", () => {
       {
         name: "Register Midterm",
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Endterm",
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
       {
         name: "Register Final",
         itemtype: "manual",
+        grade_id: 1,
+        grademax: 100,
+        grademin: 0,
+        iteminstance: 1,
+        itemmodule: "assign",
+        moodle_id: 1,
+        cmid: 1,
+        feedback: "",
+        feedbackformat: 1,
       },
     ];
 
