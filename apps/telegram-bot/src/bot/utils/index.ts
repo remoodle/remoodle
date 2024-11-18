@@ -86,7 +86,7 @@ const calculateGrades = (grades: CourseGradeItem[]) => {
       return `High scholarship 🎉🎉\n${text}`;
     } else if (total >= 70) {
       return `Scholarship 🎉\n${text}`;
-    } else if (total >= 0) {
+    } else if (total >= 50) {
       return `No scholarship 😭\n${text}`;
     } else {
       return `Retake 💀\n${text}`;
