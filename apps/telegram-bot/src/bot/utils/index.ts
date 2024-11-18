@@ -1,4 +1,4 @@
-import { Deadline, Grade } from "@remoodle/types";
+import { Deadline, CourseGradeItem } from "@remoodle/types";
 import { getTimeLeft } from "@remoodle/utils";
 import { InlineKeyboard, GrammyError, BotError, HttpError } from "grammy";
 
@@ -32,7 +32,7 @@ const getDeadlineText = (deadline: Deadline) => {
   return text;
 };
 
-const getGradeText = (grade: Grade) => {
+const getGradeText = (grade: CourseGradeItem) => {
   let text = "";
   if (!["category", "course"].includes(grade.itemtype)) {
     text += `${grade.name} → <b>${grade.graderaw !== null ? grade.graderaw?.toFixed(2) : "None"}</b>\n`;
@@ -64,7 +64,7 @@ const getGPA = (total: number) => {
   return grades[grade] ? grades[grade].toFixed(2) : "0.00";
 };
 
-const calculateGrades = (grades: Grade[]) => {
+const calculateGrades = (grades: CourseGradeItem[]) => {
   const getGrade = (name: string) => 
     grades.find(grade => grade.name === name)?.graderaw ?? 0;
 
