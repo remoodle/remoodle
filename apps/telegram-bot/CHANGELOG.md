@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.4](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.8.3...remoodle/telegram-bot-v0.8.4) (2024-11-18)
+
+
+### Bug Fixes
+
+* total calculation ([#272](https://github.com/remoodle/remoodle/issues/272)) ([bf3257a](https://github.com/remoodle/remoodle/commit/bf3257a737600675997ea7d01dccaf2c11701651))
+
+
+### Miscellaneous Chores
+
+* trigger actions ([d0e77c3](https://github.com/remoodle/remoodle/commit/d0e77c398ce031b41670112c7dc048ace9dff0f9))
+
 ## [0.8.3](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.8.2...remoodle/telegram-bot-v0.8.3) (2024-11-13)
 
 
