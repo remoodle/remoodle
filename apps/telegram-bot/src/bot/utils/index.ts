@@ -65,34 +65,33 @@ const getGPA = (total: number) => {
 };
 
 const calculateGrades = (grades: CourseGradeItem[]) => {
-  const getGrade = (name: string) => 
-    grades.find(grade => grade.name === name)?.graderaw ?? 0;
+  const getGrade = (name: string) =>
+    grades.find((grade) => grade.name === name)?.graderaw ?? 0;
 
   const regFinal = getGrade("Register Final");
   const regMid = getGrade("Register Midterm");
   const regEnd = getGrade("Register Endterm");
   const regTerm = (regMid + regEnd) / 2;
-  
-  if (regFinal != 0 && regTerm != 0) {
+
+  if (regFinal !== 0 && regTerm !== 0) {
     const totalGrade = getGrade("Total");
-    
-    const total = totalGrade == 0
-      ? regFinal * 0.4 + regMid * 0.3 + regEnd * 0.3
-      : getGrade("Total");
+
+    const total =
+      totalGrade === 0
+        ? regFinal * 0.4 + regMid * 0.3 + regEnd * 0.3
+        : getGrade("Total");
     const text = `<b>TOTAL  →  ${total.toFixed(2)}</b>\n<b>GPA  →  ${getGPA(total)}</b>\n\n`;
 
-    if (total >= 90) {  
-      return `High scholarship 🎉🎉\n${text}`;  
-    } else if (total >= 70) {  
-      return `Scholarship 🎉\n${text}`; 
-    } else if (total >= 50) {  
-      return `No scholarship 😭\n${text}`;  
+    if (total >= 90) {
+      return `High scholarship 🎉🎉\n${text}`;
+    } else if (total >= 70) {
+      return `Scholarship 🎉\n${text}`;
+    } else if (total >= 0) {
+      return `No scholarship 😭\n${text}`;
     } else {
       return `Retake 💀\n${text}`;
     }
-  }
-
-  else if (regTerm != 0 && regFinal == 0) {
+  } else if (regTerm !== 0 && regFinal === 0) {
     const calculateTarget = (target: number) => (target - regTerm * 0.6) / 0.4;
 
     const high = calculateTarget(90);
@@ -103,15 +102,17 @@ const calculateGrades = (grades: CourseGradeItem[]) => {
       `👹 Avoid retake: <b>final > ${retake <= 50.0 ? "50.0" : retake.toFixed(1)}</b>`,
       `💚 Save scholarship: <b>final > ${scholarship <= 50 ? "50.0" : scholarship.toFixed(1)}</b>`,
       `😈 High scholarship: ${high > 100 ? `<b>unreachable(${high.toFixed(1)})` : `<b>final > ${high.toFixed(1)}`}</b>`,
-      `\n`
-    ].join('\n');
+      `\n`,
+    ].join("\n");
   }
 
   return "";
 };
 
 const getNotificationsKeyboard = (notifications: {
-  enabled: boolean, gradeUpdates: boolean, deadlineReminders: boolean
+  enabled: boolean;
+  gradeUpdates: boolean;
+  deadlineReminders: boolean;
 }) => {
   const keyboard = new InlineKeyboard();
 
