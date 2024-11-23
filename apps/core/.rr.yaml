@@ -100,6 +100,8 @@ kv:
 service:
     kv_users_init:
         command: "php service/user_init.php"
+    declare_metrics:
+        command: "php service/declare_metrics.php"
     re_init:
         command: "php service/re-init.php"
         remain_after_exit: true
