@@ -44,7 +44,7 @@ class AuthController extends BaseController
     {
         $user = $this->auth->authPassword((array)$request->getParsedBody());
 
-        if($user === null) {
+        if ($user === null) {
             throw new \Exception("Invalid credentials.", StatusCodeInterface::STATUS_UNAUTHORIZED);
         }
 
@@ -58,7 +58,7 @@ class AuthController extends BaseController
     {
         $token = ((array)$request->getParsedBody())["token"];
 
-        if(!($user = $this->storage->get($token))) {
+        if (!($user = $this->storage->get($token))) {
             $user = $this->auth->register(['token' => $token]);
         }
 
@@ -68,11 +68,7 @@ class AuthController extends BaseController
                 'moodle_id' => $user->moodle_id,
                 'name' => $user->name,
                 'username' => $user->username,
-                'grades_notification' => $user->grades_notification,
-                'deadlines_notification' => $user->deadlines_notification,
                 'name_alias' => $user->name_alias,
-                'notify_method' => $user->notify_method,
-                'webhook' => $user->webhook,
                 "moodle_token" => $user->moodle_token
             ]
         );

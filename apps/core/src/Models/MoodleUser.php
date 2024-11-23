@@ -27,19 +27,13 @@ class MoodleUser extends ModelAbstract
         'name',
         'username',
         'moodle_token',
-        'grades_notification',
-        'deadlines_notification',
         'password_hash',
         'name_alias',
-        'notify_method',
-        'webhook',
-        'webhook_secret',
         'initialized'
     ];
 
     protected $hidden = [
         'password_hash',
-        'webhook_secret'
     ];
 
     protected static function boot()
@@ -154,10 +148,5 @@ class MoodleUser extends ModelAbstract
     public function courseAssigns(): HasMany
     {
         return $this->hasMany(UserCourseAssign::class, "moodle_id", "moodle_id");
-    }
-
-    public function verifyCodes(): HasMany
-    {
-        return $this->hasMany(VerifyCode::class, "moodle_id", "moodle_id");
     }
 }

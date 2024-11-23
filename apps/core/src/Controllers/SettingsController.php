@@ -33,11 +33,7 @@ class SettingsController extends BaseController
                 'moodle_id' => $user->moodle_id,
                 'name' => $user->name,
                 'username' => $user->username,
-                'grades_notification' => $user->grades_notification,
-                'deadlines_notification' => $user->deadlines_notification,
                 'name_alias' => $user->name_alias,
-                'notify_method' => $user->notify_method,
-                'webhook' => $user->webhook,
                 'has_password' => (bool)$user->password_hash
             ]
         );
@@ -56,8 +52,6 @@ class SettingsController extends BaseController
         $user->update([
             'name_alias' => $body['name_alias'] ?? $user->name_alias,
             'password_hash' => isset($body['password']) ? MoodleUser::hashPassword($body['password']) : $user->password_hash,
-            'deadlines_notification' => $body['deadlines_notification'] ?? $user->deadlines_notification,
-            'grades_notification' => $body['grades_notification'] ?? $user->grades_notification,
         ]);
 
         $this->kvStorage->set($user->moodle_token, $user);
@@ -65,7 +59,7 @@ class SettingsController extends BaseController
 
         return $this->jsonResponse(
             response: $response,
-            body: $user->makeHidden(['password_hash', 'webhook_secret'])
+            body: $user->makeHidden(['password_hash'])
         );
     }
 

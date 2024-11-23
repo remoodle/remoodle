@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Auth;
 
 use App\Models\MoodleUser;
-use App\Models\VerifyCode;
 use App\Modules\Auth\Enums\AuthOptions;
 use App\Modules\Jobs\Factory as JobsFactory;
 use App\Modules\Jobs\JobsEnum;
@@ -40,16 +39,6 @@ class Auth
 
         if ($user->password_hash !== null) {
             $authOptions[] = AuthOptions::PASSWORD->value;
-        }
-
-        if ($user->notify_method) {
-            if ($user->notify_method === "get_update") {
-                $authOptions[] = AuthOptions::CODE_CUSTOM->value;
-            }
-
-            if ($user->notify_method === "webhook" && $user->webhook) {
-                $authOptions[] = AuthOptions::CODE_CUSTOM->value;
-            }
         }
 
         return $authOptions;
