@@ -425,7 +425,7 @@ final class Moodle
                         state: $courseModuleArray["completiondata"]["state"],
                         timecompleted: $courseModuleArray["completiondata"]["timecompleted"],
                         valueused: $courseModuleArray["completiondata"]["valueused"],
-                        hascompletion: $courseModuleArray["completiondata"]["hascompletion"],
+                        hascompletion: (bool) $courseModuleArray["completiondata"]["hascompletion"],
                         isautomatic: $courseModuleArray["completiondata"]["isautomatic"],
                         istrackeduser: $courseModuleArray["completiondata"]["istrackeduser"],
                         uservisible: $courseModuleArray["completiondata"]["uservisible"],
