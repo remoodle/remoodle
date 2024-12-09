@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.5.3](https://github.com/remoodle/remoodle/compare/remoodle/core-v1.5.2...remoodle/core-v1.5.3) (2024-12-09)
+
+
+### Bug Fixes
+
+* delete dead code ([#278](https://github.com/remoodle/remoodle/issues/278)) ([7ae70ee](https://github.com/remoodle/remoodle/commit/7ae70eeb3cae3af245a288fcba9a1195625043b4))
+* kal ([#285](https://github.com/remoodle/remoodle/issues/285)) ([2579eb5](https://github.com/remoodle/remoodle/commit/2579eb583014826ff4eda8dc08926775892cfc09))
+* metrics declaration ([#279](https://github.com/remoodle/remoodle/issues/279)) ([ff447ed](https://github.com/remoodle/remoodle/commit/ff447ed2a2c1f8a7ce243847ac328fc59616c5b6))
+* Газок для course_groups.description ([#275](https://github.com/remoodle/remoodle/issues/275)) ([cfe3d14](https://github.com/remoodle/remoodle/commit/cfe3d140873458d9751f81700c5a43b8a7c95e90))
+
 ## [1.5.2](https://github.com/remoodle/remoodle/compare/remoodle/core-v1.5.1...remoodle/core-v1.5.2) (2024-11-16)
 
 
