@@ -30,7 +30,7 @@ $queueStorage = (new Factory(RPC::create(Config::get("rpc.connection"))))
 
 foreach ($users as $user) {
     if ($user->initialized) {
-        if (! ($queueStorage->get(JobsEnum::PARSE_COURSES->value . $user->moodle_id, false))) {
+        if (boolval($queueStorage->get(JobsEnum::PARSE_COURSES->value . $user->moodle_id, false)) === false) {
             $task = $queue->dispatch(
                 $queue->create(
                     name: Task::class,
@@ -40,8 +40,8 @@ foreach ($users as $user) {
                 )
             );
 
-            $queueStorage->set(JobsEnum::PARSE_COURSES->value . $user->moodle_id, true);
-            echo 'LOCK] created for ' . $user->moodle_id . ' parse courses' . "\n";
+            $queueStorage->set(JobsEnum::PARSE_COURSES->value . $user->moodle_id, true, 3600);
+            echo '[LOCK] created for ' . $user->moodle_id . ' parse courses' . "\n";
         } else {
             echo '[LOCK] can\'t create due to lock ' . $user->moodle_id . ' parse courses' . "\n";
         }

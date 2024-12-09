@@ -39,9 +39,11 @@ class ParseUserCourses
             UserCourseAssign::query()->where("moodle_id", $this->user->moodle_id)->update([
                 "classification" => CourseEnrolledClassification::PAST->value
             ]);
+            //TODO: classification should be only in user course assign
+            //currently we doing shit, see DatabaseUserMoodleRepository::getCourses()
             $this->connection
                 ->table("courses")
-                ->upsert(array_map(fn (Course $course) => (array)$course, $courses), "course_id");
+                ->upsert(array_map(fn (Course $course) => (array)$course, $courses), "course_id", ['status']);
 
             $this->connection
                 ->table("user_course_assign")

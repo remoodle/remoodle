@@ -28,8 +28,8 @@ class ParseUserCourses extends BaseHandler
             \Spiral\Goridge\RPC\RPC::create(Config::get("rpc.connection"))
         ))->withSerializer(new \Spiral\RoadRunner\KeyValue\Serializer\IgbinarySerializer())->select('queue');
 
-        if (($queueStorage->get($this->queue . $user->moodle_id, true))) {
-            $queueStorage->set($this->queue . $user->moodle_id, false);
+        if (boolval($queueStorage->get($this->queue . $user->moodle_id, true)) === true) {
+            $queueStorage->set($this->queue . $user->moodle_id, false, 3600);
             echo '[LOCK] released ' . $user->moodle_id . ' parse course contents' . "\n";
         }
     }
