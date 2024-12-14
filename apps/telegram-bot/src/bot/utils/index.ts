@@ -25,7 +25,7 @@ const getDeadlineText = (deadline: Deadline) => {
 
   const date = formatUnixtimestamp(deadline.timestart);
   const timeLeft = `<b>${getTimeLeft(deadline.timestart)}</b>`;
-  
+
   text += isFiring ? "🥶  " : "🎄  ";
   text += `<b>${deadline.name.slice(0, -7)}</b>  |  ${courseName}  |  Date → ${date}  |  Time left → ${timeLeft}\n`;
 
@@ -34,10 +34,29 @@ const getDeadlineText = (deadline: Deadline) => {
 
 const getGradeText = (grade: CourseGradeItem) => {
   // const emojis = "🥶🧊🍭🍫🎅🌲⛄️🤶🎄☃️🎁❄️🐍🇰🇿🤧🎆🎇"
-  const emojis = ["🥶", "🧊", "🍭", "🍫", "🎅", "🌲", "⛄️", "🤶", "🎄", "🎁", "🐍", "🇰🇿", "🤧", "🎆", "🎇"]
+  const emojis = [
+    "🥶",
+    "🧊",
+    "🍭",
+    "🍫",
+    "🎅",
+    "🌲",
+    "⛄️",
+    "🤶",
+    "🎄",
+    "🎁",
+    "🐍",
+    "🇰🇿",
+    "🤧",
+    "🎆",
+    "🎇",
+  ];
   let text = "";
   if (!["category", "course"].includes(grade.itemtype)) {
-    text += emojis[Math.floor(Math.random() * emojis.length)] + " " + `${grade.name} → <b>${grade.graderaw !== null ? grade.graderaw?.toFixed(2) : "None"}</b>\n`;
+    text +=
+      emojis[Math.floor(Math.random() * emojis.length)] +
+      " " +
+      `${grade.name} → <b>${grade.graderaw !== null ? grade.graderaw?.toFixed(2) : "None"}</b>\n`;
 
     if (grade.name === "Attendance") {
       text += "\n";

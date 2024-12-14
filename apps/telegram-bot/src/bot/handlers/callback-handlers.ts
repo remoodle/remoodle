@@ -152,12 +152,33 @@ async function grades(ctx: Context) {
   }
 
   const gradesKeyboards = new InlineKeyboard();
-  const emojis = ["🥶", "🧊", "🍭", "🍫", "🎅", "🌲", "⛄️", "🤶", "🎄", "🎁", "🐍", "🇰🇿", "🤧", "🎆", "🎇"]
+  const emojis = [
+    "🥶",
+    "🧊",
+    "🍭",
+    "🍫",
+    "🎅",
+    "🌲",
+    "⛄️",
+    "🤶",
+    "🎄",
+    "🎁",
+    "🐍",
+    "🇰🇿",
+    "🤧",
+    "🎆",
+    "🎇",
+  ];
 
   grades.forEach((grade) => {
     gradesKeyboards
       .row()
-      .text(emojis[Math.floor(Math.random() * emojis.length)] + " " + grade.name.split(" | ")[0], `inprogress_course_${grade.course_id}`);
+      .text(
+        emojis[Math.floor(Math.random() * emojis.length)] +
+          " " +
+          grade.name.split(" | ")[0],
+        `inprogress_course_${grade.course_id}`,
+      );
   });
 
   gradesKeyboards
