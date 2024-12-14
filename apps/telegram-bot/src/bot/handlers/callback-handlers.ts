@@ -79,7 +79,7 @@ async function backToMenu(ctx: Context) {
     return;
   }
 
-  await ctx.editMessageText(`${user.name}`, {
+  await ctx.editMessageText(`🎄 ${user.name}`, {
     reply_markup: keyboards.main,
   });
 }
