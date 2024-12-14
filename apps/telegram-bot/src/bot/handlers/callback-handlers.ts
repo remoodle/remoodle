@@ -793,7 +793,9 @@ async function courseAssignmentById(ctx: Context) {
     if (assignment.gradeEntity.feedback) {
       const turndownService = new TurndownService();
       turndownService.remove(["script", "table", "img", "iframe"]);
-      const markdownFeedback = turndownService.turndown(assignment.gradeEntity.feedback);
+      const markdownFeedback = turndownService.turndown(
+        assignment.gradeEntity.feedback,
+      );
 
       if (assignment.gradeEntity.feedback.length > 300) {
         text += `*Feedback:* ${markdownFeedback.slice(0, 700)}...\n\n`;
@@ -803,7 +805,6 @@ async function courseAssignmentById(ctx: Context) {
     } else {
       text += "\n";
     }
-
   } else {
     text += "\n";
   }
