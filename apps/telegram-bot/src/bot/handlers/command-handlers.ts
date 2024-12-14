@@ -13,7 +13,7 @@ async function start(ctx: RegistrationContext) {
   const userId = ctx.from.id;
 
   if (ctx.chat.type !== "private") {
-    await ctx.reply("This method is not allowed in groups!");
+    await ctx.reply("🥶 This method is not allowed in groups!");
     return;
   }
 
@@ -28,7 +28,7 @@ async function start(ctx: RegistrationContext) {
 
   if (user && !error) {
     // If the user is already registered, greet them
-    await ctx.reply(`${user.name}`, {
+    await ctx.reply(`🎄${user.name}`, {
       reply_markup: keyboards.main,
     });
     return;
@@ -39,7 +39,7 @@ async function start(ctx: RegistrationContext) {
   if (token && token === "connect") {
     const { token, expiryDate } = await db.telegramToken.set(userId);
     return await ctx.reply(
-      `Your connection token is: ${token}\n\nPlease enter this token in the app to connect your Telegram account. This token will expire on ${expiryDate.toLocaleString()}`,
+      `🎇 Your connection token is: ${token}\n\nPlease enter this token in the app to connect your Telegram account. This token will expire on ${expiryDate.toLocaleString()}`,
     );
   }
 
@@ -48,7 +48,7 @@ async function start(ctx: RegistrationContext) {
   }
 
   await ctx.reply(
-    `Welcome to ReMoodle! ✨\nPlease send me your Moodle token to connect your Telegram account.`,
+    `Welcome to ReMoodle! ❄️\nPlease send me your Moodle token to connect your Telegram account.`,
     { reply_markup: keyboards.find_token },
   );
 
@@ -90,13 +90,13 @@ async function handleRegistration(
   );
   if (authError) {
     // If the token is invalid, ask for the token again
-    await ctx.reply("Your token is invalid. Please try again.");
+    await ctx.reply("🎅 Your token is invalid. Please try again.");
     return;
   }
 
   // Registration successful, greet the user
   if (data && !authError) {
-    await ctx.reply(`You have registered successfully!`);
+    await ctx.reply(`🍭 You have registered successfully!`);
     await ctx.reply(`${data?.user.name}`, {
       reply_markup: keyboards.main,
     });
@@ -132,12 +132,12 @@ async function deadlines(ctx: Context) {
     switch (ctx.chat.type) {
       case "private":
         await ctx.reply(
-          "You are not connected to ReMoodle. Send /start to connect.",
+          "🎆 You are not connected to ReMoodle. Send /start to connect.",
         );
         break;
       case "group":
         await ctx.reply(
-          "You are not connected to ReMoodle. Ask me in private chat.",
+          "🎆 You are not connected to ReMoodle. Ask me in private chat.",
         );
         break;
     }
@@ -149,13 +149,13 @@ async function deadlines(ctx: Context) {
 
   if (data.length === 0) {
     await ctx.reply(
-      `You have no active deadlines ${short ? "in the next 2 days " : ""}🥰`,
+      `You have no active deadlines ${short ? "in the next 2 days " : ""}🎁`,
     );
     return;
   }
 
   const text =
-    `Upcoming deadlines${short ? " [2 days]" : ""}:\n\n` +
+    `🐍 Upcoming deadlines${short ? " [2 days]" : ""}:\n\n` +
     data.map(getDeadlineText).join("\n");
 
   if (ctx.chat.type === "private") {

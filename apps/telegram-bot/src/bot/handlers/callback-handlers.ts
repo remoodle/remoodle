@@ -42,14 +42,14 @@ async function deadlines(ctx: Context) {
   }
 
   if (deadlines.length === 0) {
-    await ctx.editMessageText("You have no active deadlines 🥰", {
+    await ctx.editMessageText("You have no active deadlines 🎁", {
       reply_markup: keyboards.deadlines,
     });
     return;
   }
 
   const text =
-    "Upcoming deadlines:\n\n" + deadlines.map(getDeadlineText).join("\n");
+    "🐍 Upcoming deadlines:\n\n" + deadlines.map(getDeadlineText).join("\n");
 
   await ctx.editMessageText(text, {
     parse_mode: "HTML",
@@ -109,7 +109,7 @@ async function refreshDeadlines(ctx: Context) {
   }
 
   if (deadlines.length === 0) {
-    await ctx.editMessageText("You have no active deadlines 🥰", {
+    await ctx.editMessageText("You have no active deadlines 🎁", {
       reply_markup:
         type === "menu" ? keyboards.deadlines : keyboards.single_deadline,
     });
@@ -117,7 +117,7 @@ async function refreshDeadlines(ctx: Context) {
   }
 
   const text =
-    "Upcoming deadlines:\n\n" + deadlines.map(getDeadlineText).join("\n");
+    "🐍 Upcoming deadlines:\n\n" + deadlines.map(getDeadlineText).join("\n");
 
   await ctx.editMessageText(text, {
     parse_mode: "HTML",
@@ -152,11 +152,12 @@ async function grades(ctx: Context) {
   }
 
   const gradesKeyboards = new InlineKeyboard();
+  const emojis = ["🥶", "🧊", "🍭", "🍫", "🎅", "🌲", "⛄️", "🤶", "🎄", "🎁", "🐍", "🇰🇿", "🤧", "🎆", "🎇"]
 
   grades.forEach((grade) => {
     gradesKeyboards
       .row()
-      .text(grade.name.split(" | ")[0], `inprogress_course_${grade.course_id}`);
+      .text(emojis[Math.floor(Math.random() * emojis.length)] + " " + grade.name.split(" | ")[0], `inprogress_course_${grade.course_id}`);
   });
 
   gradesKeyboards
@@ -268,9 +269,9 @@ async function gradesInProgressCourse(ctx: Context) {
   });
 
   const keyboard = new InlineKeyboard()
-    .text("Assignments", `course_assignments_${courseId}`)
+    .text("⛄️ Assignments ⛄️", `course_assignments_${courseId}`)
     .row()
-    .text("Back ←", "back_to_grades");
+    .text("Back ←", "grades");
 
   return await ctx.editMessageText(message, {
     reply_markup: keyboard,

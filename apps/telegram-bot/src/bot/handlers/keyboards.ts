@@ -2,16 +2,16 @@ import { InlineKeyboard } from "grammy";
 
 const keyboards = {
   main: new InlineKeyboard()
-    .text("Deadlines", "deadlines")
+    .text("❄️ Deadlines ❄️", "deadlines")
     .row()
-    .text("Courses", "grades")
+    .text("🥶 Courses 🥶", "grades")
     .row()
-    .webApp("Map", "https://yuujiso.github.io/aitumap/")
+    .webApp("⛄️ Map ⛄️", "https://yuujiso.github.io/aitumap/")
     // .webApp("Schedule", "https://remoodle.app")
-    .text("Schedule", "schedule_coming_soon")
+    .text("🤧 Schedule 🤧", "schedule_coming_soon")
     .row()
-    .text("⚙️", "settings")
-    .text("More", "others"),
+    .text("🍭", "settings")
+    .text("🎅 More 🎅", "others"),
 
   single_grade: new InlineKeyboard().row().text("Back ←", "back_to_grades"),
 
@@ -25,21 +25,20 @@ const keyboards = {
   ),
 
   others: new InlineKeyboard()
-    .url("Contact Us", "https://t.me/remoodle")
-    .url("Docs", "https://ext.remoodle.app/docs")
+    .url("🎄 Contact Us 🎄", "https://t.me/remoodle")
+    .url("⛄️ Docs ⛄️", "https://ext.remoodle.app/docs")
     .row()
-    .url("Privacy Policy", "https://ext.remoodle.app/privacy-policy")
-    .text("Donate 💵", "donate")
+    .text("🇰🇿 Donate 🇰🇿", "donate")
     .row()
     .text("Back ←", "back_to_menu"),
 
   delete_profile: new InlineKeyboard()
-    .text("Yes", "delete_profile_yes")
-    .text("Cancel", "account"),
+    .text("Yes 🥶", "delete_profile_yes")
+    .text("Cancel 🎄", "account"),
 
   settings: new InlineKeyboard()
-    .text("Notifications", "notifications")
-    .text("Account", "account")
+    .text("☃️ Notifications ☃️", "notifications")
+    .text("🤶 Account 🎅", "account")
     .row()
     .text("Back ←", "back_to_menu"),
 
