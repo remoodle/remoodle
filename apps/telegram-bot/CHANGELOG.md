@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.8.4...remoodle/telegram-bot-v0.9.0) (2024-12-15)
+
+
+### Features
+
+* add feedback to assignment grade ([#286](https://github.com/remoodle/remoodle/issues/286)) ([2217d6d](https://github.com/remoodle/remoodle/commit/2217d6de60c660b38c7e2aab471415b393fe97a8))
+* new year theme for bot (remove after NY) ([#288](https://github.com/remoodle/remoodle/issues/288)) ([ace7e54](https://github.com/remoodle/remoodle/commit/ace7e5490c7d6931d0da040d9bba3f0efbafb199))
+
 ## [0.8.4](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.8.3...remoodle/telegram-bot-v0.8.4) (2024-11-18)
 
 
