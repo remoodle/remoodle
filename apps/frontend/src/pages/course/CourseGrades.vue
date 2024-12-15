@@ -109,7 +109,7 @@ onMounted(async () => {
               {{ item.percentage }} %
             </TableCell>
             <TableCell> {{ item.grademin }} - {{ item.grademax }} </TableCell>
-            <TableCell class="text-center">
+            <TableCell class="text-left">
               {{ item.feedback }}
             </TableCell>
           </TableRow>
