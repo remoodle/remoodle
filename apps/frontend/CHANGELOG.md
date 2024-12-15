@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.4](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.3...remoodle/frontend-v1.3.4) (2024-12-15)
+
+
+### Bug Fixes
+
+* configurable api host ([db6ea61](https://github.com/remoodle/remoodle/commit/db6ea61c403e0ab7172be178bc61688e8091ad8b))
+* Grades table ([#280](https://github.com/remoodle/remoodle/issues/280)) ([f3f5237](https://github.com/remoodle/remoodle/commit/f3f52376c3408deba89dc1d6aec7894997c11656))
+
+
+### Miscellaneous Chores
+
+* trigger actions ([d0e77c3](https://github.com/remoodle/remoodle/commit/d0e77c398ce031b41670112c7dc048ace9dff0f9))
+
 ## [1.3.3](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.2...remoodle/frontend-v1.3.3) (2024-11-10)
 
 
