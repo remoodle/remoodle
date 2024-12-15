@@ -67,7 +67,7 @@ onMounted(async () => {
           <TableHead>Grade</TableHead>
           <TableHead>Percentage</TableHead>
           <TableHead class="min-w-16">Range</TableHead>
-          <TableHead class="text-center min-w-60"> Feedback </TableHead>
+          <TableHead class="min-w-60 text-center"> Feedback </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -105,9 +105,7 @@ onMounted(async () => {
             <TableCell>
               {{ item.graderaw }}
             </TableCell>
-            <TableCell>
-              {{ item.percentage }} %
-            </TableCell>
+            <TableCell> {{ item.percentage }} % </TableCell>
             <TableCell> {{ item.grademin }} - {{ item.grademax }} </TableCell>
             <TableCell class="text-left">
               {{ item.feedback }}
