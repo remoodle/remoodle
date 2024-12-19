@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.7.0...remoodle/backend-v1.7.1) (2024-12-19)
+
+
+### Code Refactoring
+
+* filter out irrelevant deadlines in rmc-sdk ([bd409c2](https://github.com/remoodle/remoodle/commit/bd409c2e77f90b66c89a8d389423687fd652aae4))
+
 ## [1.7.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.6.3...remoodle/backend-v1.7.0) (2024-11-17)
 
 
