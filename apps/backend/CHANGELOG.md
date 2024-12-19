@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.2](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.7.1...remoodle/backend-v1.7.2) (2024-12-19)
+
+
+### Bug Fixes
+
+* invert filter logic ([2c94dd2](https://github.com/remoodle/remoodle/commit/2c94dd271441c6262dfbd8ab47095ff5d58fbba9))
+
 ## [1.7.1](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.7.0...remoodle/backend-v1.7.1) (2024-12-19)
 
 
