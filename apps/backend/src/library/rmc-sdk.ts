@@ -140,13 +140,14 @@ export class RMC {
       response[0].sort((a, b) => a.timestart - b.timestart);
 
       response[0] = response[0].filter((deadline) => {
-        return (
-          deadline.assignment?.gradeEntity?.graderaw !== null ||
-          deadline.assignment?.submissionEntity?.submitted
-        );
-      });
+        if (deadline.assignment?.gradeEntity) {
+          return deadline.assignment?.gradeEntity?.graderaw === null;
+        }
 
-      response[0] = response[0].filter((deadline) => {
+        if (deadline.assignment?.submissionEntity) {
+          return !deadline.assignment?.submissionEntity?.submitted;
+        }
+
         return deadline.timestart * 1000 > Date.now();
       });
     }
