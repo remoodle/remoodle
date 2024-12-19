@@ -138,6 +138,17 @@ export class RMC {
 
     if (response[0]) {
       response[0].sort((a, b) => a.timestart - b.timestart);
+
+      response[0] = response[0].filter((deadline) => {
+        return (
+          deadline.assignment?.gradeEntity?.graderaw !== null ||
+          deadline.assignment?.submissionEntity?.submitted
+        );
+      });
+
+      response[0] = response[0].filter((deadline) => {
+        return deadline.timestart * 1000 > Date.now();
+      });
     }
 
     return response;

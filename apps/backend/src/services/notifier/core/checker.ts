@@ -10,27 +10,9 @@ export const processDeadlines = (
   const reminders: DeadlineReminderDiff[] = [];
 
   for (const deadline of deadlines) {
-    const {
-      event_id,
-      course_name,
-      name,
-      timestart,
-      notifications,
-      assignment,
-    } = deadline;
+    const { event_id, course_name, name, timestart, notifications } = deadline;
+
     const dueDate = timestart * 1000; // Convert to milliseconds
-
-    // Skip graded and submitted deadlines
-    if (
-      assignment?.gradeEntity?.graderaw !== null ||
-      assignment?.submissionEntity?.submitted
-    ) {
-      continue;
-    }
-
-    if (dueDate <= now) {
-      continue; // Skip past deadlines
-    }
 
     const [remaining, threshold] = calculateRemainingTime(dueDate, thresholds);
 
