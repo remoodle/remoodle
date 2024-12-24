@@ -10,7 +10,7 @@ const keyboards = {
     // .webApp("Schedule", "https://remoodle.app")
     .text("🤧 Schedule 🤧", "schedule_coming_soon")
     .row()
-    .text("🍭", "settings")
+    .text("⚙️", "settings")
     .text("🎅 More 🎅", "others"),
 
   single_grade: new InlineKeyboard().row().text("Back ←", "back_to_grades"),
