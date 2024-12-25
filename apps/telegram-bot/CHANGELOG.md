@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.9.0...remoodle/telegram-bot-v0.9.1) (2024-12-24)
+
+
+### Bug Fixes
+
+* settings button icon ([e5cae74](https://github.com/remoodle/remoodle/commit/e5cae74fca6624802eb37de876e56dd07ed92b77))
+
 ## [0.9.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.8.4...remoodle/telegram-bot-v0.9.0) (2024-12-15)
 
 
