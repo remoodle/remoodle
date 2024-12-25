@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.9.1...remoodle/telegram-bot-v0.10.0) (2024-12-25)
+
+
+### Features
+
+* add bot version ([b8b0fb0](https://github.com/remoodle/remoodle/commit/b8b0fb0e0e08875817c06e6ffd31b5b5bb5107af))
+
 ## [0.9.1](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.9.0...remoodle/telegram-bot-v0.9.1) (2024-12-24)
 
 
