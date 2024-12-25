@@ -614,7 +614,10 @@ async function account(ctx: Context) {
       user?.name +
       "`\nMoodleID:   `" +
       user?.moodleId +
-      "`",
+      "`\n\nBot version:   `" +
+      // eslint-disable-next-line
+      (process.env.VERSION_TAG || " ") +
+      "`\n",
     {
       reply_markup: keyboards.account,
       parse_mode: "Markdown",
