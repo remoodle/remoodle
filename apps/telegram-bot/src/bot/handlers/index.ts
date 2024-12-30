@@ -14,13 +14,13 @@ const callbacksHandler = new Composer();
 // Menu buttons
 callbacksHandler.callbackQuery("others", callbacks.menu.others);
 callbacksHandler.callbackQuery("settings", callbacks.menu.settings);
-callbacksHandler.callbackQuery("deadlines", callbacks.menu.deadlines);
+callbacksHandler.callbackQuery("deadlines", callbacks.other.notWorking);
 callbacksHandler.callbackQuery("grades", callbacks.menu.grades);
 
 // Deadlines buttons
 callbacksHandler.callbackQuery(
   /^refresh_deadlines_(.+)/,
-  callbacks.deadlines.refresh,
+  callbacks.other.notWorking,
 );
 
 // Settings buttons
