@@ -27,7 +27,6 @@ async function start(ctx: RegistrationContext) {
   );
 
   if (user && !error) {
-    // If the user is already registered, greet them
     await ctx.reply(`🎄 ${user.name}\n`, {
       reply_markup: keyboards.main,
       parse_mode: "MarkdownV2",
