@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.2](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.10.1...remoodle/telegram-bot-v0.10.2) (2024-12-30)
+
+
+### Bug Fixes
+
+* remove comment (trigger release) ([22ba49b](https://github.com/remoodle/remoodle/commit/22ba49b31831a70840508614ab1aa776092f5ced))
+
 ## [0.10.1](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.10.0...remoodle/telegram-bot-v0.10.1) (2024-12-30)
 
 
