@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.10.0...remoodle/telegram-bot-v0.10.1) (2024-12-30)
+
+
+### Miscellaneous Chores
+
+* remove deadlines feature (discard after fix) ([7966ae8](https://github.com/remoodle/remoodle/commit/7966ae8405a109f9955593d58bcedb87499e8a98))
+
 ## [0.10.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.9.1...remoodle/telegram-bot-v0.10.0) (2024-12-25)
 
 
