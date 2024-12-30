@@ -112,65 +112,61 @@ async function deadlines(ctx: Context) {
     return;
   }
 
-  await ctx.reply(
-    "This feature was disabled due to technical issues. We are working on it.",
+  const userId = ctx.from?.id;
+
+  const short = ctx.message.text.startsWith("/ds");
+
+  const [data, error] = await request((client) =>
+    client.v1.deadlines.$get(
+      {
+        query: {
+          daysLimit: short ? "2" : "21",
+        },
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
   );
 
-  // const userId = ctx.from?.id;
+  if (error && error.status === 401) {
+    switch (ctx.chat.type) {
+      case "private":
+        await ctx.reply(
+          "🎆 You are not connected to ReMoodle. Send /start to connect.",
+        );
+        break;
+      case "group":
+        await ctx.reply(
+          "🎆 You are not connected to ReMoodle. Ask me in private chat.",
+        );
+        break;
+    }
+    return;
+  } else if (error) {
+    await ctx.reply("An error occurred. Try again later.");
+    return;
+  }
 
-  // const short = ctx.message.text.startsWith("/ds");
+  if (data.length === 0) {
+    await ctx.reply(
+      `You have no active deadlines ${short ? "in the next 2 days " : ""}🎁`,
+    );
+    return;
+  }
 
-  // const [data, error] = await request((client) =>
-  //   client.v1.deadlines.$get(
-  //     {
-  //       query: {
-  //         daysLimit: short ? "2" : "21",
-  //       },
-  //     },
-  //     {
-  //       headers: getAuthHeaders(userId),
-  //     },
-  //   ),
-  // );
+  const text =
+    `🐍 Upcoming deadlines${short ? " [2 days]" : ""}:\n\n` +
+    data.map(getDeadlineText).join("\n");
 
-  // if (error && error.status === 401) {
-  //   switch (ctx.chat.type) {
-  //     case "private":
-  //       await ctx.reply(
-  //         "🎆 You are not connected to ReMoodle. Send /start to connect.",
-  //       );
-  //       break;
-  //     case "group":
-  //       await ctx.reply(
-  //         "🎆 You are not connected to ReMoodle. Ask me in private chat.",
-  //       );
-  //       break;
-  //   }
-  //   return;
-  // } else if (error) {
-  //   await ctx.reply("An error occurred. Try again later.");
-  //   return;
-  // }
-
-  // if (data.length === 0) {
-  //   await ctx.reply(
-  //     `You have no active deadlines ${short ? "in the next 2 days " : ""}🎁`,
-  //   );
-  //   return;
-  // }
-
-  // const text =
-  //   `🐍 Upcoming deadlines${short ? " [2 days]" : ""}:\n\n` +
-  //   data.map(getDeadlineText).join("\n");
-
-  // if (ctx.chat.type === "private") {
-  //   await ctx.reply(text, {
-  //     reply_markup: short ? undefined : keyboards.single_deadline,
-  //     parse_mode: "HTML",
-  //   });
-  // } else {
-  //   await ctx.reply(text, { parse_mode: "HTML" });
-  // }
+  if (ctx.chat.type === "private") {
+    await ctx.reply(text, {
+      reply_markup: short ? undefined : keyboards.single_deadline,
+      parse_mode: "HTML",
+    });
+  } else {
+    await ctx.reply(text, { parse_mode: "HTML" });
+  }
 }
 
 const commands = {

@@ -591,13 +591,6 @@ async function comingSoon(ctx: Context) {
   });
 }
 
-async function temporaryNotWorking(ctx: Context) {
-  await ctx.answerCallbackQuery({
-    text: "This feature was disabled due to technical issue. We are working on it. Contact us for more information if needed.",
-    show_alert: true,
-  });
-}
-
 async function account(ctx: Context) {
   if (!ctx.from) {
     return;
@@ -898,7 +891,6 @@ const callbacks = {
     donate: donate,
     schedule: comingSoon,
     clearMessage: clearMessage,
-    notWorking: temporaryNotWorking,
   },
 };
 
