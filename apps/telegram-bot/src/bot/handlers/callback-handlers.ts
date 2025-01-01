@@ -808,8 +808,8 @@ async function courseAssignmentById(ctx: Context) {
   text += `*${course.name}*\n\n`;
 
   if (assignment.duedate && assignment.allowsubmissionsfromdate) {
-    text += `*Opened:* ${formatUnixtimestamp(assignment.allowsubmissionsfromdate, true)}\n`;
-    text += `*Due:* ${formatUnixtimestamp(assignment.duedate, true)}\n`;
+    text += `*Opened:* ${formatUnixtimestamp(assignment.allowsubmissionsfromdate * 1000, true)}\n`;
+    text += `*Due:* ${formatUnixtimestamp(assignment.duedate * 1000, true)}\n`;
   }
 
   if (assignment.gradeEntity && assignment.gradeEntity.percentage) {
