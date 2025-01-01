@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.3](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.10.2...remoodle/telegram-bot-v0.10.3) (2025-01-01)
+
+
+### Bug Fixes
+
+* assignment dates ([a76d274](https://github.com/remoodle/remoodle/commit/a76d2742f6d586636ecc722a3991f86c1e1fbd81))
+
 ## [0.10.2](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.10.1...remoodle/telegram-bot-v0.10.2) (2024-12-30)
 
 
