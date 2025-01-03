@@ -3,7 +3,7 @@
   "apps/frontend+FILLER": "0.0.0",
   "apps/backend": "1.7.2",
   "apps/backend+FILLER": "0.0.0",
-  "apps/telegram-bot": "0.10.2",
+  "apps/telegram-bot": "0.10.3",
   "apps/telegram-bot+FILLER": "0.0.0",
   "apps/core": "1.5.3",
   "apps/core+FILLER": "0.0.0"
