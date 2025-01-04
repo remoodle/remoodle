@@ -11,20 +11,12 @@ import { onMounted } from "vue";
 
 const props = defineProps<{
   events: CalendarEvent[];
-  group?: string;
 }>();
 
 const config: CalendarConfig = {
   views: [createViewWeek(), createViewDay()],
-  events: [
-    {
-      id: 1,
-      title: "Coffee with John",
-      start: "2024-01-04 14:42",
-      end: "2024-01-04 15:35",
-    },
-  ],
-  locale: "en-US",
+  events: props.events,
+  locale: "en-GB",
   dayBoundaries: {
     start: "08:00",
     end: "21:00",
