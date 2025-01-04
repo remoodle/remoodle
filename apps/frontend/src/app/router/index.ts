@@ -10,6 +10,7 @@ import HomePage from "@/pages/home/Page.vue";
 import NotFoundPage from "@/pages/404/Page.vue";
 import AccountPage from "@/pages/account/Page.vue";
 import CoursePage from "@/pages/course/Page.vue";
+import SchedulePage from "@/pages/schedule/Page.vue";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
 
 declare module "vue-router" {
@@ -26,6 +27,11 @@ const routes: RouteRecordRaw[] = [
     component: DashboardLayout,
     children: [
       { path: "", name: RouteName.Home, component: HomePage },
+      {
+        path: "schedule",
+        name: RouteName.Schedule,
+        component: SchedulePage,
+      },
       {
         path: "/account",
         name: RouteName.Account,

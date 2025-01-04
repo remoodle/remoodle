@@ -2,6 +2,7 @@ export enum RouteName {
   Home = "home",
   Dashboard = "dashboard",
   Login = "login",
+  Schedule = "schedule",
   SignUp = "sign-up",
   Token = "token",
   NotFound = "404",
