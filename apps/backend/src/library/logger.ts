@@ -10,13 +10,12 @@ const pinoOptions: pino.LoggerOptions = {
   timestamp: pino.stdTimeFunctions.isoTime,
 };
 
-const rootLogger = pino(pinoOptions);
+const pinoLogger = pino(pinoOptions);
 
 export const logger = {
-  common: rootLogger.child({ module: "common" }),
-  api: rootLogger.child({ module: "api" }),
-  notifier: rootLogger.child({ module: "notifier" }),
-  scheduler: rootLogger.child({ module: "notifier::scheduler" }),
-  grades: rootLogger.child({ module: "notifier::grades" }),
-  deadlines: rootLogger.child({ module: "notifier::deadlines" }),
+  api: pinoLogger.child({ module: "api" }),
+  cluster: pinoLogger.child({ module: "cluster" }),
+  scheduler: pinoLogger.child({ module: "cluster::scheduler" }),
+  grades: pinoLogger.child({ module: "cluster::event::grades" }),
+  deadlines: pinoLogger.child({ module: "cluster::event::deadlines" }),
 };
