@@ -5,6 +5,7 @@
     "types": ["node"],
     "jsx": "react-jsx",
     "strict": true,
+    "verbatimModuleSyntax": true,
     "jsxImportSource": "hono/jsx"
   },
   "include": ["src", "index.ts", "tsup.config.ts"],

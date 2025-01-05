@@ -3,30 +3,26 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
-import type { IUser } from "@remoodle/db";
+import type { IUser, MoodleAssignment, MoodleGrade } from "@remoodle/types";
 
 import { config, env } from "../../../config";
 import { db } from "../../../library/db";
-import { requestAlertWorker } from "../../../library/hc";
-import { RMC } from "../../../library/rmc-sdk";
-
+import { deleteUser, getDeadlines } from "../../../core/wrapper";
+import { syncCourses, syncEvents } from "../../../core/sync";
+import { requestAlertWorker, requestCluster } from "../../../library/hc";
+import { Moodle } from "../../../library/moodle";
 import {
   hashPassword,
   verifyPassword,
   verifyTelegramData,
 } from "../helpers/crypto";
 import { issueTokens } from "../helpers/jwt";
-
 import { defaultRules, rateLimiter } from "../middleware/ratelimit";
 import { authMiddleware } from "../middleware/auth";
 import { userGauge } from "../middleware/metrics";
 
 const publicRoutes = new Hono().get("/health", async (ctx) => {
-  const rmc = new RMC();
-
-  const response = await rmc.get_health();
-
-  return ctx.json(response);
+  return ctx.json({ status: "ok" });
 });
 
 const authRoutes = new Hono<{
@@ -36,7 +32,7 @@ const authRoutes = new Hono<{
 }>()
   .use("*", authMiddleware(["Telegram"], false))
   .post(
-    "/auth/internal/telegram/token/register",
+    "/token",
     rateLimiter({
       ...defaultRules,
       windowMs: 1 * 60 * 60 * 1000, // 1 hour
@@ -53,63 +49,81 @@ const authRoutes = new Hono<{
     async (ctx) => {
       const { handle, moodleToken, password } = ctx.req.valid("json");
 
-      const rmc = new RMC({ moodleToken });
-
       const telegramId = ctx.get("telegramId");
 
-      const [student, error] = await rmc.v1_auth_token(moodleToken);
+      const client = new Moodle(moodleToken);
+
+      const [student, error] = await client.call(
+        "core_webservice_get_site_info",
+      );
 
       if (error) {
         throw new HTTPException(500, { message: error.message });
       }
 
-      let user: IUser | null = null;
+      const existingUser = await db.user.findOne({
+        moodleId: student.userid,
+      });
 
-      if (student) {
-        user = await db.user.findOne({ moodleId: student.moodle_id });
+      if (existingUser && !existingUser.telegramId && telegramId) {
+        await db.user.updateOne(
+          { _id: existingUser._id },
+          { $set: { telegramId } },
+        );
+      }
 
-        if (!user) {
+      if (!existingUser) {
+        try {
+          const newUser = (await db.user.create({
+            name: student.fullname,
+            username: student.username,
+            handle: handle || student.username,
+            moodleId: student.userid,
+            moodleToken,
+            ...(telegramId && { telegramId }),
+            ...(password && { password: hashPassword(password) }),
+          })) as IUser;
+
+          const { _id: userId } = newUser;
+
           try {
-            user = (await db.user.create({
-              name: student.name,
-              moodleId: student.moodle_id,
-              handle: handle || student.username,
-              ...(telegramId && { telegramId }),
-              ...(student.email && { email: student.email }),
-              ...(password && { password: hashPassword(password) }),
-            })) as IUser;
-
-            requestAlertWorker((client) =>
-              client.new.$post({
-                json: {
-                  topic: env.isProduction ? "users2" : "dev",
-                  message: `New ${telegramId ? "Telegram" : "Regular"} user \n<b>${student.name}</b> \n<b>${student.moodle_id}</b>`,
-                },
-              }),
-            );
+            await Promise.all([syncEvents(userId), syncCourses(userId)]);
           } catch (error: any) {
-            const [_data, _error] = await rmc.v1_delete_user();
-
+            await deleteUser(userId);
             throw new HTTPException(500, {
-              message: error.message,
+              message: "Failed to sync data: " + error.message,
             });
           }
 
           userGauge.inc();
-        } else if (!user.telegramId && telegramId) {
-          await db.user.updateOne(
-            { _id: user._id },
-            {
-              $set: {
-                telegramId,
+
+          await requestAlertWorker((client) =>
+            client.new.$post({
+              json: {
+                topic: env.isProduction ? "users2" : "dev",
+                message: `New ${telegramId ? "Telegram" : "Regular"} user \n<b>${student.fullname}</b> \n<b>${student.username}</b>`,
               },
-            },
+            }),
           );
+
+          await requestCluster((client) =>
+            client.user.$post({ json: { userId, moodleToken } }),
+          );
+        } catch (error: any) {
+          throw new HTTPException(500, {
+            message: "Failed to create user" + error,
+          });
         }
       }
 
+      const user: IUser | null = await db.user.findOne({
+        moodleId: student.userid,
+      });
+
       if (!user) {
-        throw new HTTPException(401, { message: "Invalid token" });
+        throw new HTTPException(404, {
+          message: "User not found",
+        });
       }
 
       try {
@@ -120,6 +134,7 @@ const authRoutes = new Hono<{
 
         // TODO: Sanitize this properly
         user.password = "***";
+        user.moodleToken = "***";
 
         return ctx.json({
           user,
@@ -134,7 +149,7 @@ const authRoutes = new Hono<{
     },
   )
   .post(
-    "/auth/login",
+    "/login",
     zValidator(
       "json",
       z.object({
@@ -169,6 +184,7 @@ const authRoutes = new Hono<{
 
         // TODO: Sanitize this properly
         user.password = "***";
+        user.moodleToken = "***";
 
         return ctx.json({
           user,
@@ -222,6 +238,7 @@ const authRoutes = new Hono<{
 
       // TODO: Sanitize this properly
       user.password = "***";
+      user.moodleToken = "***";
 
       return ctx.json({
         user,
@@ -231,14 +248,14 @@ const authRoutes = new Hono<{
     },
   );
 
-const commonProtectedRoutes = new Hono<{
+const userRoutes = new Hono<{
   Variables: {
     userId: string;
-    moodleId: number;
     telegramId: number;
   };
 }>()
   .use("*", authMiddleware())
+  .use("*", rateLimiter(defaultRules))
   .get(
     "/deadlines",
     zValidator(
@@ -249,44 +266,16 @@ const commonProtectedRoutes = new Hono<{
       }),
     ),
     async (ctx) => {
-      const moodleId = ctx.get("moodleId");
+      const userId = ctx.get("userId");
+
       const { courseId, daysLimit } = ctx.req.valid("query");
 
-      if (daysLimit && isNaN(parseInt(daysLimit))) {
-        throw new HTTPException(400, {
-          message: "Invalid daysLimit",
-        });
-      }
+      const deadlines = await getDeadlines(userId, {
+        courseId: courseId ? parseInt(courseId) : undefined,
+        daysLimit: daysLimit ? parseInt(daysLimit) : undefined,
+      });
 
-      if (courseId && isNaN(parseInt(courseId))) {
-        throw new HTTPException(400, {
-          message: "Invalid courseId",
-        });
-      }
-
-      const rmc = new RMC({ moodleId });
-      const [data, error] = await rmc.v1_user_deadlines();
-
-      if (error) {
-        throw error;
-      }
-
-      if (!data) {
-        return ctx.json([]);
-      }
-
-      return ctx.json(
-        data.filter((deadline) => {
-          const matchesCourse =
-            !courseId || deadline.course_id === parseInt(courseId);
-          const matchesTimeLimit =
-            !daysLimit ||
-            deadline.timestart - Date.now() / 1000 <=
-              parseInt(daysLimit) * 24 * 60 * 60;
-
-          return matchesCourse && matchesTimeLimit;
-        }),
-      );
+      return ctx.json(deadlines);
     },
   )
   .get(
@@ -294,22 +283,21 @@ const commonProtectedRoutes = new Hono<{
     zValidator(
       "query",
       z.object({
-        status: RMC.zCourseType.optional(),
+        status: Moodle.zCourseType.optional(),
       }),
     ),
     async (ctx) => {
       const { status } = ctx.req.valid("query");
 
-      const moodleId = ctx.get("moodleId");
+      const userId = ctx.get("userId");
 
-      const rmc = new RMC({ moodleId });
-      const [data, error] = await rmc.v1_user_courses({ status });
+      const courses = await db.course.find({
+        userId,
+        deleted: false,
+        ...(status && { classification: status }),
+      });
 
-      if (error) {
-        throw error;
-      }
-
-      return ctx.json(data);
+      return ctx.json(courses.map((course) => course.data));
     },
   )
   .get(
@@ -317,24 +305,34 @@ const commonProtectedRoutes = new Hono<{
     zValidator(
       "query",
       z.object({
-        status: RMC.zCourseType.optional(),
+        status: Moodle.zCourseType.optional(),
       }),
     ),
     async (ctx) => {
       const { status } = ctx.req.valid("query");
 
-      const moodleId = ctx.get("moodleId");
+      const userId = ctx.get("userId");
 
-      const rmc = new RMC({ moodleId });
-      const [data, error] = await rmc.v1_user_courses_overall({
-        status,
+      // TODO: MOVE TO WRAPPER
+      const courses = await db.course.find({
+        userId,
+        deleted: false,
+        ...(status && { classification: status }),
       });
 
-      if (error) {
-        throw error;
-      }
+      const grades = await db.grade.find({
+        userId,
+        courseId: { $in: courses.map((course) => course.data.id) },
+      });
 
-      return ctx.json(data);
+      return ctx.json(
+        courses.map((course) => ({
+          ...course.data,
+          grades: grades
+            .filter((grade) => grade.courseId === course.data.id)
+            .map((grade) => grade.data),
+        })),
+      );
     },
   )
   .get(
@@ -347,47 +345,118 @@ const commonProtectedRoutes = new Hono<{
     ),
     async (ctx) => {
       const courseId = ctx.req.param("courseId");
+
       const { content } = ctx.req.valid("query");
 
-      const moodleId = ctx.get("moodleId");
+      const userId = ctx.get("userId");
 
-      const rmc = new RMC({ moodleId });
-      const [data, error] = await rmc.v1_course_content(courseId, content);
+      const course = await db.course.findOne({
+        userId,
+        "data.id": parseInt(courseId),
+      });
 
-      if (error) {
-        throw error;
+      if (!course) {
+        throw new HTTPException(404, {
+          message: "Course not found",
+        });
       }
 
-      return ctx.json(data);
+      if (content === "1") {
+        const user = await db.user.findById(userId);
+
+        if (!user) {
+          throw new HTTPException(404, {
+            message: "User not found",
+          });
+        }
+
+        const client = new Moodle(user.moodleToken);
+        const [data, error] = await client.call("core_course_get_contents", {
+          courseid: parseInt(courseId),
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        return ctx.json({
+          ...course.data,
+          content: data,
+        });
+      }
+
+      return ctx.json({
+        ...course.data,
+      });
     },
   )
   .get("/course/:courseId/assignments", async (ctx) => {
     const courseId = ctx.req.param("courseId");
 
-    const moodleId = ctx.get("moodleId");
+    const userId = ctx.get("userId");
 
-    const rmc = new RMC({ moodleId });
-    const [data, error] = await rmc.v1_course_assignments(courseId);
+    const user = await db.user.findById(userId);
 
-    if (error) {
-      throw error;
+    if (!user) {
+      throw new HTTPException(404, {
+        message: "User not found",
+      });
     }
 
-    return ctx.json(data);
+    const client = new Moodle(user.moodleToken);
+
+    const [response, error] = await client.call("mod_assign_get_assignments", {
+      courseids: [parseInt(courseId)],
+      capabilities: ["mod/assign:submit"],
+    });
+
+    if (error) {
+      throw new HTTPException(500, { message: error.message });
+    }
+
+    return ctx.json(
+      response.courses
+        .map((course) => course.assignments)
+        .flatMap((a) => a) as MoodleAssignment[],
+    );
   })
   .get("/course/:courseId/grades", async (ctx) => {
     const courseId = ctx.req.param("courseId");
 
-    const moodleId = ctx.get("moodleId");
+    const userId = ctx.get("userId");
 
-    const rmc = new RMC({ moodleId });
-    const [data, error] = await rmc.v1_user_course_grades(courseId);
+    const grades = await db.grade.find({
+      userId,
+      courseId: parseInt(courseId),
+    });
 
-    if (error) {
-      throw error;
+    if (!grades.length) {
+      const user = await db.user.findById(userId);
+
+      if (!user) {
+        throw new HTTPException(404, {
+          message: "User not found",
+        });
+      }
+
+      const client = new Moodle(user.moodleToken);
+
+      const [response, error] = await client.call(
+        "gradereport_user_get_grade_items",
+        {
+          userid: user.moodleId,
+          courseid: parseInt(courseId),
+        },
+      );
+
+      if (error) {
+        throw new HTTPException(500, { message: error.message });
+      }
+
+      return ctx.json(response.usergrades[0].gradeitems as MoodleGrade[]);
     }
 
-    return ctx.json(data);
+    return ctx.json(grades.map((grade) => grade.data));
   })
   .get("/user/settings", async (ctx) => {
     const userId = ctx.get("userId");
@@ -482,22 +551,12 @@ const commonProtectedRoutes = new Hono<{
           if (telegramGradeUpdates !== undefined) {
             notificationFields["notificationSettings.telegram.gradeUpdates"] =
               telegramGradeUpdates;
-
-            // TODO: Consider removing courses for users with grade updates disabled
-            // if (!telegramGradeUpdates) {
-            //   await db.course.deleteMany({ userId });
-            // }
           }
 
           if (telegramDeadlineReminders !== undefined) {
             notificationFields[
               "notificationSettings.telegram.deadlineReminders"
             ] = telegramDeadlineReminders;
-
-            // TODO: Consider removing deadlines for users with deadline reminders disabled
-            // if (!telegramDeadlineReminders) {
-            //   await db.deadline.deleteMany({ userId });
-            // }
           }
 
           if (deadlineThresholds !== undefined) {
@@ -541,16 +600,8 @@ const commonProtectedRoutes = new Hono<{
       });
     }
 
-    const rmc = new RMC({ moodleId: user.moodleId });
-    const [_, error] = await rmc.v1_delete_user();
-
-    if (error && error.status !== 404) {
-      throw error;
-    }
-
     try {
-      await db.user.deleteOne({ _id: userId });
-      await db.deadline.deleteMany({ userId });
+      await deleteUser(userId);
     } catch (error) {
       throw new HTTPException(500, {
         message: `Failed to delete user from the database ${error}`,
@@ -620,5 +671,5 @@ const commonProtectedRoutes = new Hono<{
 
 export const v1 = new Hono()
   .route("/", publicRoutes)
-  .route("/", authRoutes)
-  .route("/", commonProtectedRoutes);
+  .route("/auth", authRoutes)
+  .route("/", userRoutes);

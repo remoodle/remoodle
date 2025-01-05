@@ -26,7 +26,6 @@ const handleTelegramAuth = async (ctx: Context, token: string) => {
   }
 
   ctx.set("userId", user._id);
-  ctx.set("moodleId", user.moodleId);
 };
 
 const handleJwtAuth = (ctx: Context, token: string) => {
@@ -50,7 +49,6 @@ const handleJwtAuth = (ctx: Context, token: string) => {
   }
 
   ctx.set("userId", payload.userId);
-  ctx.set("moodleId", payload.moodleId);
 };
 
 type AuthScheme = "Telegram" | "Bearer";
