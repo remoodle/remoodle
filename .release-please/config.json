@@ -64,10 +64,6 @@
     "apps/telegram-bot": {
       "release-type": "node",
       "package-name": "remoodle/telegram-bot"
-    },
-    "apps/core": {
-      "release-type": "php",
-      "package-name": "remoodle/core"
     }
   }
 }
