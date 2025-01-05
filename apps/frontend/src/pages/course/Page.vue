@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
+import type { Course, MoodleAssignment, MoodleGrade } from "@remoodle/types";
 import { RoundedSection, PageWrapper } from "@/entities/page";
 import { useUserStore } from "@/shared/stores/user";
 import { RouterNav } from "@/shared/ui/router-nav";
@@ -10,7 +11,6 @@ import { Skeleton } from "@/shared/ui/skeleton";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { request, getAuthHeaders } from "@/shared/lib/hc";
 import { createAsyncProcess, isDefined, cn } from "@/shared/lib/helpers";
-import type { Course, Assignment } from "@remoodle/types";
 import { useBreakpoints } from "@/shared/lib/use-breakpoints";
 import { RouteName } from "@/shared/lib/routes";
 import CourseOverview from "./CourseOverview.vue";
@@ -33,7 +33,7 @@ const updateCourse = (data: Course | undefined) => {
   course.value = data;
 
   if (data) {
-    courseName.value = data.name;
+    courseName.value = data.fullname;
   }
 };
 const {
@@ -77,8 +77,8 @@ const loadCourse = async () => {
   }
 };
 
-const assignments = ref<Assignment[]>();
-const updateAssignments = (data: Assignment[] | undefined) => {
+const assignments = ref<MoodleAssignment[]>();
+const updateAssignments = (data: MoodleAssignment[] | undefined) => {
   assignments.value = data;
 };
 const {
@@ -120,14 +120,34 @@ const loadAssignments = async () => {
     }, 100);
   }
 };
-const assignment = computed(() => {
-  if (!assignmentId.value) {
-    return undefined;
+
+const grades = ref<MoodleGrade[]>();
+
+const updateGrades = (data: MoodleGrade[] | undefined) => {
+  grades.value = data;
+};
+
+const {
+  run: loadGrades,
+  loading: loadingGrades,
+  error: gradesError,
+} = createAsyncProcess(async () => {
+  const [data, error] = await request((client) =>
+    client.v1.course[":courseId"].grades.$get(
+      {
+        param: { courseId: courseId.value },
+      },
+      {
+        headers: getAuthHeaders(),
+      },
+    ),
+  );
+
+  if (error) {
+    throw error;
   }
 
-  return assignments.value?.find(
-    (a) => `${a.assignment_id}` === assignmentId.value,
-  );
+  updateGrades(data);
 });
 
 onMounted(async () => {
@@ -135,7 +155,7 @@ onMounted(async () => {
     courseName.value = route.query.courseName as string;
   }
 
-  await Promise.all([loadCourse(), loadAssignments()]);
+  await Promise.all([loadCourse(), loadAssignments(), loadGrades()]);
 });
 
 onBeforeUnmount(() => {
@@ -143,8 +163,6 @@ onBeforeUnmount(() => {
 });
 
 const userStore = useUserStore();
-
-const { preferences } = storeToRefs(userStore);
 </script>
 
 <template>
@@ -160,49 +178,9 @@ const { preferences } = storeToRefs(userStore);
       </h1>
     </template>
     <template #island>
-      <!-- <nav
-        class="flex flex-row flex-nowrap gap-2 overflow-x-auto overflow-y-hidden rounded-2xl bg-background px-6 shadow"
-        style="-webkit-overflow-scrolling: touch"
-      >
-        <div
-          ref="elRouterNav"
-          class="flex h-14 w-full flex-row gap-x-3 [&>*]:relative [&>*]:flex [&>*]:h-full [&>*]:flex-shrink-0 [&>*]:items-center [&>*]:gap-1 [&>*]:px-2 [&>*]:no-underline [&>*]:before:absolute [&>*]:before:left-0 [&>*]:before:top-[95%] [&>*]:before:z-[0] [&>*]:before:hidden [&>*]:before:h-1 [&>*]:before:w-full [&>*]:before:rounded [&>*]:before:bg-primary [&>*]:before:content-[''] [&>.router-link-exact-active]:before:block"
-        >
-          <Link :to="{ name: RouteName.Course }"> Overview </Link>
-          <Link :to="{ name: RouteName.Grades }"> Grades </Link>
-          <Link
-            v-for="item in assignments"
-            :key="item.assignment_id"
-            :id="item.assignment_id"
-            class="max-w-36"
-            :to="{
-              name: RouteName.Assignment,
-              params: { courseId, assignmentId: item.assignment_id },
-            }"
-          >
-            <span class="line-clamp-2">
-              {{ item.name }}
-            </span>
-          </Link>
-        </div>
-      </nav> -->
       <RouterNav :bordered="false" padding rounded shadow>
         <Link :to="{ name: RouteName.Course }"> Overview </Link>
         <Link :to="{ name: RouteName.Grades }"> Grades </Link>
-        <!-- <Link
-          v-for="item in assignments"
-          :key="item.assignment_id"
-          :id="item.assignment_id"
-          class="max-w-36"
-          :to="{
-            name: RouteName.Assignment,
-            params: { courseId, assignmentId: item.assignment_id },
-          }"
-        >
-          <span class="line-clamp-2">
-            {{ item.name }}
-          </span>
-        </Link> -->
       </RouterNav>
     </template>
     <RoundedSection dense>
@@ -218,17 +196,17 @@ const { preferences } = storeToRefs(userStore);
               <template v-else-if="assignments?.length">
                 <Link
                   v-for="item in assignments"
-                  :key="item.assignment_id"
-                  :id="item.assignment_id"
+                  :key="item.cmid"
+                  :id="item.cmid"
                   :to="{
                     name: RouteName.Assignment,
-                    params: { courseId, assignmentId: item.assignment_id },
+                    params: { courseId, assignmentId: item.cmid },
                   }"
                   class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-muted"
                   :class="
                     cn(
                       'w-full justify-start text-left',
-                      assignmentId === `${item.assignment_id}` && 'bg-muted',
+                      assignmentId === `${item.cmid}` && 'bg-muted',
                     )
                   "
                 >
@@ -251,14 +229,15 @@ const { preferences } = storeToRefs(userStore);
             <template v-else-if="route.name === RouteName.Grades">
               <CourseGrades
                 :course-id="courseId"
-                :loading-course="loading"
-                :assignment-ids="assignments?.map((a) => a.assignment_id)"
+                :grades
+                :assignment-ids="assignments?.map((a) => a.cmid)"
               />
             </template>
             <template v-else-if="route.name === RouteName.Assignment">
               <CourseAssignment
-                :assignment="assignment"
-                :loading-assignments="loadingAssignments"
+                :assignment-id
+                :assignments
+                :grades
                 :token="userStore.accessToken"
               />
             </template>

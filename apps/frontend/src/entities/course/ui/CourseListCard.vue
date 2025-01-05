@@ -18,7 +18,7 @@ const props = defineProps<{
 }>();
 
 const splitted = computed(() => {
-  return splitCourseName(props.course.name);
+  return splitCourseName(props.course.fullname);
 });
 
 const attendance = computed(() => {
@@ -30,8 +30,8 @@ const attendance = computed(() => {
   <Link
     :to="{
       name: RouteName.Course,
-      params: { courseId: course.course_id },
-      query: { courseName: course.name },
+      params: { courseId: course.id },
+      query: { courseName: course.fullname },
     }"
     class="flex items-center justify-between gap-x-2 rounded-lg border p-3 text-left transition-all hover:bg-secondary"
   >
@@ -47,12 +47,12 @@ const attendance = computed(() => {
       </div>
     </div>
     <div v-if="course.grades" class="flex flex-none gap-1">
-      <TooltipProvider v-if="attendance?.percentage">
+      <TooltipProvider v-if="typeof attendance?.graderaw === 'number'">
         <Tooltip>
           <TooltipTrigger>
             <div class="flex items-center gap-2 rounded-md border p-1 md:p-2">
               <Icon name="people" class="h-4 w-4 flex-none md:h-5 md:w-5" />
-              {{ attendance.percentage }}%
+              {{ attendance.gradeformatted }}%
             </div>
           </TooltipTrigger>
           <TooltipContent>

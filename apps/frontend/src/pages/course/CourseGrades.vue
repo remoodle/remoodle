@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import type { MoodleGrade } from "@remoodle/types";
 import {
   Table,
   TableBody,
@@ -8,51 +8,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
-import { Text } from "@/shared/ui/text";
 import { Link } from "@/shared/ui/link";
-import type { CourseGradeItem } from "@remoodle/types";
 import { RouteName } from "@/shared/lib/routes";
-import { createAsyncProcess } from "@/shared/lib/helpers";
-import { request, getAuthHeaders } from "@/shared/lib/hc";
 
 defineOptions({
   name: "CourseGrades",
 });
 
-const props = defineProps<{
+defineProps<{
   courseId: string;
-  loadingCourse: boolean;
+  grades: MoodleGrade[] | undefined;
   assignmentIds: number[] | undefined;
 }>();
-
-const grades = ref<CourseGradeItem[]>();
-
-const updateGrade = (data: CourseGradeItem[] | undefined) => {
-  grades.value = data;
-};
-
-const { run: fetchGrades } = createAsyncProcess(async (id: string) => {
-  const [data, error] = await request((client) =>
-    client.v1.course[":courseId"].grades.$get(
-      {
-        param: { courseId: id },
-      },
-      {
-        headers: getAuthHeaders(),
-      },
-    ),
-  );
-
-  if (error) {
-    throw error;
-  }
-
-  updateGrade(data);
-});
-
-onMounted(async () => {
-  await fetchGrades(props.courseId);
-});
 </script>
 
 <template>
@@ -68,11 +35,10 @@ onMounted(async () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <template v-for="item in grades" :key="item.grade_id">
+        <template v-for="item in grades" :key="item.id">
           <TableRow
             v-if="item.itemtype !== 'category' && item.itemtype !== 'course'"
           >
-            <!-- {{ item }} -->
             <TableCell class="font-medium">
               <component
                 :is="
@@ -93,19 +59,16 @@ onMounted(async () => {
                 hover
                 underline
               >
-                <!-- {{ item }} -->
-                {{ item.name }}
+                {{ item.itemname }}
               </component>
-              <!-- <Link>
-               </Link> -->
             </TableCell>
             <TableCell>
               {{ item.graderaw }}
             </TableCell>
-            <TableCell> {{ item.percentage }} % </TableCell>
+            <TableCell> {{ item.gradeformatted }} % </TableCell>
             <TableCell> {{ item.grademin }} - {{ item.grademax }} </TableCell>
             <TableCell class="text-left">
-              <Text :msg="item.feedback.trim()" />
+              {{ item.feedback }}
             </TableCell>
           </TableRow>
         </template>

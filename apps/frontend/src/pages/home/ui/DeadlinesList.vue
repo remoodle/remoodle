@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import type { Deadline } from "@remoodle/types";
 import { Error } from "@/entities/page";
 import { DeadlineCard } from "@/entities/deadline";
 import { Skeleton } from "@/shared/ui/skeleton";
-import type { Deadline } from "@remoodle/types";
 import { request, getAuthHeaders } from "@/shared/lib/hc";
 import {
   createAsyncProcess,
@@ -64,7 +64,7 @@ onMounted(run);
         <div class="flex flex-col gap-2.5">
           <DeadlineCard
             v-for="deadline in list"
-            :key="deadline.event_id"
+            :key="deadline.id"
             :deadline="deadline"
           />
         </div>

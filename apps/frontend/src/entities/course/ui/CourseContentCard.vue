@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import type { CourseContent, CourseModule } from "@remoodle/types";
+import type {
+  MoodleCourseContent,
+  MoodleCourseContentModule,
+} from "@remoodle/types";
 import CourseContentModule from "./CourseContentModule.vue";
 import ContentGrid from "./ContentGrid.vue";
 import { Text } from "@/shared/ui/text";
 
 defineProps<{
   courseId: number;
-  content: CourseContent;
+  content: MoodleCourseContent;
   token: string;
 }>();
 
@@ -18,7 +21,14 @@ const getPriority = (modname: string): number => {
   return index === -1 ? order.length : index;
 };
 
-const moduleSorter = (a: CourseModule, b: CourseModule) => {
+const moduleSorter = (
+  a: MoodleCourseContentModule,
+  b: MoodleCourseContentModule,
+) => {
+  if (!a.modname || !b.modname) {
+    return 0;
+  }
+
   const priorityA = getPriority(a.modname);
   const priorityB = getPriority(b.modname);
 
