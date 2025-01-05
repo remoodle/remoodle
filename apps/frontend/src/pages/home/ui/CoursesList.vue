@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
+import type { ExtendedCourse } from "@remoodle/types";
 import { Error } from "@/entities/page";
 import { CourseListCard } from "@/entities/course";
 import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { Skeleton } from "@/shared/ui/skeleton";
-import type { ExtendedCourse } from "@remoodle/types";
 import { createAsyncProcess, isDefined, partition } from "@/shared/lib/helpers";
 import { request, getAuthHeaders } from "@/shared/lib/hc";
 
@@ -86,7 +86,7 @@ onMounted(run);
         v-for="course in toggledCourseCategories
           .filter(Boolean)
           .flatMap((category) => (courses && courses[category]) || [])"
-        :key="course.course_id"
+        :key="course.id"
         :course="course"
         :show-category="toggledCourseCategories.length > 1"
       />

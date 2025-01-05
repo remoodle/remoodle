@@ -2,8 +2,8 @@ import { computed } from "vue";
 import { defineStore } from "pinia";
 import { useStorage, StorageSerializers } from "@vueuse/core";
 import type { RemovableRef } from "@vueuse/core";
+import type { IUser } from "@remoodle/types";
 import { getStorageKey } from "@/shared/lib/helpers";
-import type { IUser } from "@remoodle/db";
 import { createAsyncProcess } from "@/shared/lib/helpers";
 import { request, getAuthHeaders } from "@/shared/lib/hc";
 

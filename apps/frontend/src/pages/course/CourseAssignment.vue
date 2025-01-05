@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Assignment } from "@remoodle/types";
+import { computed } from "vue";
+import type { MoodleAssignment, MoodleGrade } from "@remoodle/types";
 import { FileIcon } from "@/entities/attachment";
 import { Link } from "@/shared/ui/link";
 import { Text } from "@/shared/ui/text";
@@ -14,11 +15,28 @@ defineOptions({
   name: "CourseAssignment",
 });
 
-defineProps<{
-  assignment?: Assignment;
-  loadingAssignments: boolean;
+const props = defineProps<{
+  assignmentId?: string;
+  assignments?: MoodleAssignment[];
+  grades?: MoodleGrade[];
   token: string;
 }>();
+
+const assignment = computed(() => {
+  if (!props.assignmentId) {
+    return undefined;
+  }
+
+  return props.assignments?.find((a) => `${a.cmid}` === props.assignmentId);
+});
+
+const grade = computed(() => {
+  if (!props.assignmentId) {
+    return undefined;
+  }
+
+  return props.grades?.find((g) => g.cmid === props.assignmentId);
+});
 </script>
 
 <template>
@@ -42,10 +60,10 @@ defineProps<{
           {{ formatDate(fromUnix(assignment.duedate), "full") }}
         </span>
       </p>
-      <template v-if="assignment.gradeEntity">
-        <p v-if="assignment.gradeEntity.percentage">
+      <template v-if="grade">
+        <p v-if="grade.graderaw">
           <strong> Grade: </strong>
-          <span> {{ assignment.gradeEntity.percentage }}% </span>
+          <span> {{ grade.gradeformatted }}% </span>
         </p>
       </template>
     </div>

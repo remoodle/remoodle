@@ -230,9 +230,6 @@ importers:
       '@remoodle/backend':
         specifier: workspace:*
         version: link:../backend
-      '@remoodle/db':
-        specifier: workspace:*
-        version: link:../../packages/db
       '@remoodle/eslint-config':
         specifier: workspace:^
         version: link:../../packages/eslint-config

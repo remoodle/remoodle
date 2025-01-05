@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { prepareFileURL } from "@/shared/lib/helpers";
-import type { CourseModule } from "@remoodle/types";
+import type { MoodleCourseContentModule } from "@remoodle/types";
 import { RouteName } from "@/shared/lib/routes";
 import { Link } from "@/shared/ui/link";
 import { Text } from "@/shared/ui/text";
@@ -8,13 +8,12 @@ import { filesize } from "@/shared/lib/helpers";
 
 defineProps<{
   courseId: number;
-  module: CourseModule;
+  module: MoodleCourseContentModule;
   token: string;
 }>();
 </script>
 
 <template>
-  <!-- {{ module.modname }} -->
   <div class="space-y-1">
     <div
       class="flex items-center gap-2"
@@ -24,9 +23,11 @@ defineProps<{
         },
       ]"
     >
-      <!-- {{ module.uservisible }}
-      {{ module.visibleoncoursepage }} -->
-      <img :src="module.modicon" class="h-auto w-6 flex-none" />
+      <img
+        v-if="module.modicon"
+        :src="module.modicon"
+        class="h-auto w-6 flex-none"
+      />
       <span>
         <template v-if="module.url">
           <component
@@ -34,23 +35,20 @@ defineProps<{
               module.modname === 'assign' && module.uservisible ? Link : 'span'
             "
             :to="
-              module.contents?.length === 1
+              module.contents?.length === 1 && module.contents[0].fileurl
                 ? prepareFileURL(module.contents[0].fileurl, token)
                 : {
                     name: RouteName.Assignment,
                     params: {
                       courseId: courseId,
-                      assignmentId: module.instance,
+                      assignmentId: module.id,
                     },
                   }
             "
             hover
           >
-            {{ module.name }}
+            <Text v-if="module.name" :msg="module.name" />
           </component>
-        </template>
-        <template v-else>
-          <Text :msg="module.name" />
         </template>
       </span>
     </div>
@@ -69,10 +67,12 @@ defineProps<{
             <template v-if="item.type === 'url'">
               {{ item.fileurl }}
             </template>
-            <template v-else-if="item.type === 'file'">
+            <template v-else-if="item.type === 'file' && item.fileurl">
               <Link :to="prepareFileURL(item.fileurl, token)" hover underline>
-                {{ item.filename }},
-                {{ filesize(item.filesize) }}
+                {{ item.filename
+                }}<template v-if="item.filesize"
+                  >,{{ filesize(item.filesize) }}</template
+                >
               </Link>
             </template>
           </span>

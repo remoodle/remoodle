@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { MoodleCourseContent } from "@remoodle/types";
 import { CourseContentCard, ContentGrid } from "@/entities/course";
-import type { CourseContent } from "@remoodle/types";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { getRandomInt } from "@/shared/lib/helpers";
 import { useUserStore } from "@/shared/stores/user";
@@ -11,7 +11,7 @@ defineOptions({
 
 defineProps<{
   courseId: number;
-  content?: CourseContent[];
+  content?: MoodleCourseContent[];
 }>();
 
 const userStore = useUserStore();
