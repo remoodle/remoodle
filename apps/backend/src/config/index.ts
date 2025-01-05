@@ -7,29 +7,29 @@ export const env = cleanEnv(process.env, {
     default: "development",
   }),
 
+  TELEGRAM_BOT_TOKEN: str(),
+
+  MOODLE_URL: str({ default: "https://moodle.astanait.edu.kz" }),
+
+  MONGO_URI: str({ default: "mongodb://localhost:27017/remoodle-dev" }),
+  REDIS_URI: str({ default: "redis://localhost:6379" }),
+
   SERVER_HOST: str({ default: "0.0.0.0" }),
   SERVER_PORT: num({ default: 9000 }),
   SERVER_SECRET: str({ default: "aboba" }),
 
-  // every 35 minutes
-  CRAWLER_DEADLINES_CRON: str({ default: "*/35 * * * *" }),
-  CRAWLER_DEADLINES_CONCURRENCY: num({ default: 1 }),
-
-  NOTIFIER_HOST: str({ default: "0.0.0.0" }),
-  NOTIFIER_PORT: num({ default: 9001 }),
-  NOTIFIER_SECRET: str({ default: "cross-secret" }),
-
-  CORE_SECRET: str({ default: "private-token" }),
-  CORE_URL: str({ default: "http://127.0.0.1:8080" }),
+  CLUSTER_QUEUES_PRUNE: str({ default: "0" }),
+  CLUSTER_SCHEDULER_ENABLED: str({ default: "0" }),
+  CLUSTER_TASKS_CONFIG_PATH: str({ default: "/config.json" }),
+  CLUSTER_SERVER_ENABLED: str({ default: "1" }),
+  CLUSTER_SERVER_HOST: str({ default: "0.0.0.0" }),
+  CLUSTER_SERVER_PORT: num({ default: 9001 }),
+  CLUSTER_SERVER_URL: str({ default: "http://localhost:9001" }),
+  CLUSTER_SERVER_SECRET: str({ default: "fumo-fumo" }),
 
   ALERT_WORKER_URL: str({ default: "http://localhost:8787" }),
   ALERT_WORKER_SECRET: str({ default: "ALARMA" }),
-  ALERT_WORKER_ENABLED: str({ default: "1" }),
-
-  TELEGRAM_BOT_TOKEN: str(),
-
-  MONGO_URI: str({ default: "mongodb://localhost:27017/remoodle" }),
-  REDIS_URI: str({ default: "redis://localhost:6379" }),
+  ALERT_WORKER_ENABLED: str({ default: "0" }),
 
   AUTH_JWT_ALGORITHM: str({ default: "ES512" }),
   AUTH_JWT_PUBLIC_KEY: str({
@@ -48,34 +48,34 @@ export const config = {
     port: env.SERVER_PORT,
     secret: env.SERVER_SECRET,
   },
+  moodle: {
+    url: env.MOODLE_URL,
+  },
+  cluster: {
+    server: {
+      enabled: env.CLUSTER_SERVER_ENABLED === "1",
+      host: env.CLUSTER_SERVER_HOST,
+      port: env.CLUSTER_SERVER_PORT,
+      url: env.CLUSTER_SERVER_URL,
+      secret: env.CLUSTER_SERVER_SECRET,
+    },
+    tasks: {
+      configPath: env.CLUSTER_TASKS_CONFIG_PATH,
+    },
+    queues: {
+      prune: env.CLUSTER_QUEUES_PRUNE === "1",
+    },
+    scheduler: {
+      enabled: env.CLUSTER_SCHEDULER_ENABLED === "1",
+    },
+  },
   alert: {
     url: env.ALERT_WORKER_URL,
     secret: env.ALERT_WORKER_SECRET,
-    enabled: env.ALERT_WORKER_ENABLED,
-  },
-  core: {
-    secret: env.CORE_SECRET,
-    url: env.CORE_URL,
-  },
-  pbkdf2: {
-    digestAlg: "sha256",
-    keySize: 32,
-    iterations: 10000,
-    delimiter: "::",
+    enabled: env.ALERT_WORKER_ENABLED === "1",
   },
   telegram: {
     token: env.TELEGRAM_BOT_TOKEN,
-  },
-  notifier: {
-    host: env.NOTIFIER_HOST,
-    port: env.NOTIFIER_PORT,
-    secret: env.NOTIFIER_SECRET,
-  },
-  crawler: {
-    deadlines: {
-      cron: env.CRAWLER_DEADLINES_CRON,
-      concurrency: env.CRAWLER_DEADLINES_CONCURRENCY,
-    },
   },
   notifications: {
     maxDeadlineThresholds: 10,
@@ -85,6 +85,12 @@ export const config = {
   },
   redis: {
     uri: env.REDIS_URI,
+  },
+  pbkdf2: {
+    digestAlg: "sha256",
+    keySize: 32,
+    iterations: 10000,
+    delimiter: "::",
   },
   jwt: {
     algorithm: env.AUTH_JWT_ALGORITHM,

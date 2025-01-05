@@ -7,7 +7,6 @@ import { prettyJSON } from "hono/pretty-json";
 import { pinoLogger } from "hono-pino-logger";
 import { config, env } from "../../config";
 import { logger } from "../../library/logger";
-import { defaultRules, rateLimiter } from "./middleware/ratelimit";
 import {
   registerMetrics,
   printMetrics,
@@ -22,8 +21,6 @@ const api = new Hono();
 if (env.isProduction) {
   api.use(csrf({ origin: "remoodle.app" }));
 }
-
-api.use("*", rateLimiter(defaultRules));
 
 api.use("*", pinoLogger(logger.api), prettyJSON());
 

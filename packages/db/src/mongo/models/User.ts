@@ -1,6 +1,6 @@
-import type { Model } from "mongoose";
 import { Schema, model } from "mongoose";
 import { v7 as uuidv7 } from "uuid";
+import type { IUser, NotificationSettings } from "@remoodle/types";
 
 export const DEFAULT_THRESHOLDS = [
   // "3 hours",
@@ -9,28 +9,6 @@ export const DEFAULT_THRESHOLDS = [
   // "2 days",
   // "3 days",
 ];
-
-type NotificationSettings = {
-  telegram: {
-    deadlineReminders: boolean;
-    gradeUpdates: boolean;
-  };
-  deadlineThresholds: string[];
-};
-
-export type IUser = {
-  _id: string;
-  name: string;
-  handle: string;
-  moodleId: number;
-  // moodleToken: string;
-  notificationSettings: NotificationSettings;
-  email?: string;
-  telegramId?: number;
-  password?: string;
-};
-
-type UserModel = Model<IUser>;
 
 const notificationSettingsSchema = new Schema<NotificationSettings>(
   {
@@ -47,14 +25,15 @@ const notificationSettingsSchema = new Schema<NotificationSettings>(
   { _id: false },
 );
 
-const userSchema = new Schema<IUser, UserModel>(
+const userSchema = new Schema<IUser>(
   {
     _id: { type: String, default: uuidv7 },
     name: { type: String, required: true },
+    username: { type: String, required: true },
     handle: { type: String, required: true, unique: true },
     moodleId: { type: Number, required: true, unique: true },
-    // moodleToken: { type: String, required: true, unique: true },
-    email: { type: String },
+    moodleToken: { type: String, required: true, unique: true },
+    health: { type: Number, default: 7 },
     telegramId: { type: Number },
     password: { type: String },
     notificationSettings: {
@@ -63,22 +42,7 @@ const userSchema = new Schema<IUser, UserModel>(
       required: true,
     },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
-userSchema.index(
-  { telegramId: 1 },
-  { unique: true, partialFilterExpression: { telegramId: { $exists: true } } },
-);
-userSchema.index(
-  { email: 1 },
-  { unique: true, partialFilterExpression: { email: { $exists: true } } },
-);
-
-const User = model("User", userSchema);
-
-export type UserType = typeof User;
-
-export default User;
+export default model("User", userSchema);
