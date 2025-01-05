@@ -25,17 +25,25 @@ defineProps<{
   <div class="flex items-center justify-between gap-2">
     <div class="flex flex-col">
       <component
-        :is="deadline.assignment ? Link : 'span'"
-        :to="{
-          name: RouteName.Assignment,
-          params: {
-            courseId: deadline.course_id,
-            assignmentId: deadline.assignment?.assignment_id,
-          },
-          query: {
-            courseName: deadline.course_name,
-          },
-        }"
+        :is="
+          deadline.component === 'mod_assign' && deadline.instance
+            ? Link
+            : 'span'
+        "
+        :to="
+          deadline.instance
+            ? {
+                name: RouteName.Assignment,
+                params: {
+                  courseId: deadline.course.id,
+                  assignmentId: deadline.instance,
+                },
+                query: {
+                  courseName: deadline.course.fullname,
+                },
+              }
+            : undefined
+        "
         hover
         class="truncate"
       >
@@ -44,15 +52,15 @@ defineProps<{
       <Link
         :to="{
           name: RouteName.Course,
-          params: { courseId: deadline.course_id },
+          params: { courseId: deadline.course.id },
           query: {
-            courseName: deadline.course_name,
+            courseName: deadline.course.fullname,
           },
         }"
         hover
         class="truncate text-sm"
       >
-        {{ splitCourseName(deadline.course_name).name }}
+        {{ splitCourseName(deadline.course.fullname).name }}
       </Link>
     </div>
     <span class="flex-shrink-0 text-sm">
