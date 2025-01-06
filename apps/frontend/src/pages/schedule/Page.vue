@@ -3,11 +3,8 @@ import { RoundedSection, PageWrapper } from "@/entities/page";
 import Calendar from "./ui/Calendar.vue";
 import GroupSelect from "./ui/GroupSelect.vue";
 import { useSchedule } from "./composables/useSchedule";
-import { useAppStore } from "@/shared/stores/app";
 
 import dayjs from "dayjs";
-
-const appStore = useAppStore();
 
 const { groupSchedule, allGroups, convertToDateTime } = useSchedule();
 
