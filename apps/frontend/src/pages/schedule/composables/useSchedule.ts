@@ -2,20 +2,21 @@ import { ref, computed } from "vue";
 import parsedSchedule from "../3_2.json";
 import type { Schedule } from "../types";
 import type { CalendarEvent } from "@schedule-x/calendar";
+import dayjs from "dayjs";
+import weekday from "dayjs/plugin/weekday";
 
 export function useSchedule(group: string) {
   const allSchedules = ref<Schedule>(parsedSchedule as Schedule);
 
   const allGroups = computed(() => Object.keys(allSchedules.value));
 
-  const getTargetDateByDay = (day: string): Date => {
-    if (day === "Sunday") {
-      return new Date();
-    }
+  dayjs.extend(weekday);
 
+  const getTargetDateByDay = (day: string): Date => {
     const [dayName, time] = day.split(" ");
 
     const daysMap: { [key: string]: number } = {
+      Sunday: 0,
       Monday: 1,
       Tuesday: 2,
       Wednesday: 3,
@@ -24,23 +25,22 @@ export function useSchedule(group: string) {
       Saturday: 6,
     };
 
-    const now = new Date();
-    const todayWeekday = now.getDay();
-
+    const now = dayjs();
     const targetWeekday = daysMap[dayName];
-    const daysAhead = (targetWeekday - todayWeekday + 7) % 7;
-
-    const targetDate = new Date(now);
-    targetDate.setDate(now.getDate() + daysAhead);
+    const targetDate = now.weekday(targetWeekday);
 
     const [hours, minutes] = time.split(":").map(Number);
-    targetDate.setHours(hours, minutes, 0, 0);
 
-    return targetDate;
+    return targetDate
+      .hour(hours)
+      .minute(minutes)
+      .second(0)
+      .millisecond(0)
+      .toDate();
   };
 
   const convertToDateTime = (date: Date): string => {
-    // Format as 'Y-m-d HH:mm'
+    // Format 'Y-m-d HH:mm'
     return date
       .toLocaleString("sv-SE", {
         year: "numeric",
@@ -60,19 +60,30 @@ export function useSchedule(group: string) {
 
     // Convert the schedule to CalendarEvent format (also for the previous and next week)
     const resultSchedule: CalendarEvent[] = groupSchedule.flatMap((item) => {
+      const calendarId = (): "online" | "offline" | "learn" => {
+        if (item.teacher.startsWith("https://")) {
+          return "learn";
+        }
+
+        if (item.location === "online") {
+          return "online";
+        }
+
+        return "offline";
+      };
       const newEvent = {
         id: item.id,
         title: item.courseName,
         description: `Teacher: ${item.teacher}\n
                       ${item.location === "online" ? "Online" : "Location: " + item.location + "\n"}
                       Type: ${item.type}\n`,
-        rrule: "FREQ=WEEKLY;COUNT=10",
+        rrule: "FREQ=WEEKLY;COUNT=1",
       };
 
       const startBaseDate = getTargetDateByDay(item.start);
       const start = convertToDateTime(startBaseDate);
       const end = convertToDateTime(
-        new Date(new Date(start).setHours(startBaseDate.getHours() + 1)),
+        new Date(new Date(start).setMinutes(startBaseDate.getMinutes() + 50)),
       );
 
       return [
@@ -80,6 +91,7 @@ export function useSchedule(group: string) {
           ...newEvent,
           start: start,
           end: end,
+          calendarId: calendarId(),
         },
       ];
     });

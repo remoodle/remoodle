@@ -5,10 +5,14 @@ import GroupSelect from "./ui/GroupSelect.vue";
 import { useSchedule } from "./composables/useSchedule";
 import { useAppStore } from "@/shared/stores/app";
 
+import weekday from "dayjs/plugin/weekday";
+import dayjs from "dayjs";
+
 const appStore = useAppStore();
 
-const { groupSchedule, allGroups, convertToDateTime, getTargetDateByDay } =
-  useSchedule(appStore.group || "SE-2203");
+const { groupSchedule, allGroups, convertToDateTime } = useSchedule(
+  appStore.group || "SE-2203",
+);
 
 const getGroups = (allGroups: string[]) => {
   const groups: Record<string, string[]> = {};
@@ -21,6 +25,22 @@ const getGroups = (allGroups: string[]) => {
   });
   return groups;
 };
+
+const minDate = dayjs()
+  .weekday(0)
+  .hour(0)
+  .minute(0)
+  .second(0)
+  .millisecond(0)
+  .toDate();
+
+const maxDate = dayjs()
+  .weekday(6)
+  .hour(23)
+  .minute(59)
+  .second(59)
+  .millisecond(999)
+  .toDate();
 </script>
 <template>
   <PageWrapper>
@@ -31,8 +51,8 @@ const getGroups = (allGroups: string[]) => {
     <RoundedSection>
       <Calendar
         :events="groupSchedule"
-        :min-date="convertToDateTime(getTargetDateByDay('Monday 00:00'))"
-        :max-date="convertToDateTime(getTargetDateByDay('Saturday 23:59'))"
+        :min-date="convertToDateTime(minDate)"
+        :max-date="convertToDateTime(maxDate)"
       />
     </RoundedSection>
   </PageWrapper>
