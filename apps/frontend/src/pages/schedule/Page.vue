@@ -2,6 +2,8 @@
 import { RoundedSection, PageWrapper } from "@/entities/page";
 import Calendar from "./ui/Calendar.vue";
 import GroupSelect from "./ui/GroupSelect.vue";
+import ScheduleSettings from "./ui/ScheduleSettings.vue";
+import ExportToIcal from "./ui/ExportToIcal.vue";
 import { useSchedule } from "./composables/useSchedule";
 
 import dayjs from "dayjs";
@@ -48,6 +50,9 @@ const maxDate = dayjs()
         :min-date="convertToDateTime(minDate)"
         :max-date="convertToDateTime(maxDate)"
       />
+      <div class="my-4 flex justify-between gap-2">
+        <ScheduleSettings /> <ExportToIcal />
+      </div>
     </RoundedSection>
   </PageWrapper>
 </template>
