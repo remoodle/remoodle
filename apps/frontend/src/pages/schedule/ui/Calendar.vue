@@ -10,6 +10,7 @@ import {
 import type { CalendarConfig, CalendarEvent } from "@schedule-x/calendar";
 import "@schedule-x/theme-default/dist/index.css";
 import { onMounted } from "vue";
+import { useAppStore } from "@/shared/stores/app";
 
 const props = defineProps<{
   events: CalendarEvent[];
@@ -44,8 +45,8 @@ const config: CalendarConfig = {
 
 const calendar = createCalendar(config);
 
-// const appStore = useAppStore();
-// calendar.setTheme(appStore.theme);
+const appStore = useAppStore();
+calendar.setTheme(appStore.theme);
 
 onMounted(() => {
   calendar.render(document.getElementById("calendar") as HTMLElement);
