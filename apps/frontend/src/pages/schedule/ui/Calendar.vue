@@ -33,9 +33,8 @@ const config: CalendarConfig = {
 
 const calendar = createCalendar(config);
 
-const appStore = useAppStore();
-
-calendar.setTheme(appStore.theme);
+// const appStore = useAppStore();
+// calendar.setTheme(appStore.theme);
 
 onMounted(() => {
   calendar.render(document.getElementById("calendar") as HTMLElement);
