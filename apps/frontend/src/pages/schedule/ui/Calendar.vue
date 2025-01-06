@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useAppStore } from "@/shared/stores/app";
+import { createEventRecurrencePlugin } from "@schedule-x/event-recurrence";
+import { createEventModalPlugin } from "@schedule-x/event-modal";
 import {
   createCalendar,
   createViewDay,
@@ -15,6 +16,7 @@ const props = defineProps<{
 
 const config: CalendarConfig = {
   views: [createViewWeek(), createViewDay()],
+  plugins: [createEventRecurrencePlugin(), createEventModalPlugin()],
   events: props.events,
   locale: "en-GB",
   dayBoundaries: {

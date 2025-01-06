@@ -7,8 +7,8 @@ import { useSchedule } from "./composables/useSchedule";
 import { useAppStore } from "@/shared/stores/app";
 
 const appStore = useAppStore();
-// const { groupSchedule } = useSchedule(appStore.group || "SE-2203");
-const { groupSchedule } = useSchedule("SE-2203");
+const { groupSchedule } = useSchedule(appStore.group || "SE-2203");
+// const { groupSchedule } = useSchedule("SE-2203");
 console.log(groupSchedule.value);
 // const groupSchedule = ref([
 //   { id: 1, start: "2025-01-06 12:00", end: "2025-01-06 14:00", title: "Lunch" },

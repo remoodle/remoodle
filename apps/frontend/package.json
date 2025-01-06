@@ -17,6 +17,8 @@
     "@radix-icons/vue": "^1.0.0",
     "@remoodle/utils": "workspace:*",
     "@schedule-x/calendar": "^2.12.1",
+    "@schedule-x/event-modal": "^2.12.1",
+    "@schedule-x/event-recurrence": "^2.12.1",
     "@schedule-x/ical": "^2.12.1",
     "@schedule-x/theme-default": "^2.12.1",
     "@vueuse/core": "^10.7.1",

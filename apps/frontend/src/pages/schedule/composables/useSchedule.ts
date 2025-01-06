@@ -6,7 +6,13 @@ import type { CalendarEvent } from "@schedule-x/calendar";
 export function useSchedule(group: string) {
   const allSchedules = ref<Schedule>(parsedSchedule as Schedule);
 
+  const allGroups = computed(() => Object.keys(allSchedules.value));
+
   const getTargetDateByDay = (day: string): Date => {
+    if (day === "Sunday") {
+      return new Date();
+    }
+
     const [dayName, time] = day.split(" ");
 
     const daysMap: { [key: string]: number } = {
@@ -16,11 +22,10 @@ export function useSchedule(group: string) {
       Thursday: 4,
       Friday: 5,
       Saturday: 6,
-      Sunday: 0,
     };
 
     const now = new Date();
-    const todayWeekday = now.getDay(); // 0-indexed weekday
+    const todayWeekday = now.getDay();
 
     const targetWeekday = daysMap[dayName];
     const daysAhead = (targetWeekday - todayWeekday + 7) % 7;
@@ -34,24 +39,20 @@ export function useSchedule(group: string) {
     return targetDate;
   };
 
-  const convertToDateTime = (dates: Date[]): string[] => {
+  const convertToDateTime = (date: Date): string => {
     // Format as 'Y-m-d HH:mm'
-    const formattedDate = dates.map((date) => {
-      return date
-        .toLocaleString("sv-SE", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        })
-        .replace(" ", "T")
-        .slice(0, 16)
-        .replace("T", " ");
-    });
-
-    return formattedDate;
+    return date
+      .toLocaleString("sv-SE", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      })
+      .replace(" ", "T")
+      .slice(0, 16)
+      .replace("T", " ");
   };
 
   const groupSchedule = computed((): CalendarEvent[] => {
@@ -59,54 +60,27 @@ export function useSchedule(group: string) {
 
     // Convert the schedule to CalendarEvent format (also for the previous and next week)
     const resultSchedule: CalendarEvent[] = groupSchedule.flatMap((item) => {
-      const baseEvent = {
+      const newEvent = {
         id: item.id,
         title: item.courseName,
         description: `Teacher: ${item.teacher}\n
                       ${item.location === "online" ? "Online" : "Location: " + item.location + "\n"}
                       Type: ${item.type}\n`,
-      } as CalendarEvent;
+        rrule: "FREQ=WEEKLY;COUNT=10",
+      };
 
       const startBaseDate = getTargetDateByDay(item.start);
-      const [startCurrentWeek, startPrevWeek, startNextWeek] =
-        convertToDateTime([
-          startBaseDate,
-          new Date(
-            startBaseDate.setDate(
-              startBaseDate.getDate() - 7 < 0 ? 0 : startBaseDate.getDate() - 7,
-            ),
-          ),
-          new Date(startBaseDate.getDate() + 14),
-        ]);
-
-      const [endCurrentWeek, endPrevWeek, endNextWeek] = convertToDateTime([
-        new Date(
-          new Date(startCurrentWeek).setHours(startBaseDate.getHours() + 1),
-        ),
-        new Date(
-          new Date(startPrevWeek).setHours(startBaseDate.getHours() + 1),
-        ),
-        new Date(
-          new Date(startNextWeek).setHours(startBaseDate.getHours() + 1),
-        ),
-      ]);
+      const start = convertToDateTime(startBaseDate);
+      const end = convertToDateTime(
+        new Date(new Date(start).setHours(startBaseDate.getHours() + 1)),
+      );
 
       return [
         {
-          ...baseEvent,
-          start: startCurrentWeek,
-          end: endCurrentWeek,
+          ...newEvent,
+          start: start,
+          end: end,
         },
-        // {
-        //   ...baseEvent,
-        //   start: startNextWeek,
-        //   end: endNextWeek,
-        // },
-        // {
-        //   ...baseEvent,
-        //   start: startPrevWeek,
-        //   end: endPrevWeek,
-        // },
       ];
     });
 
@@ -115,5 +89,6 @@ export function useSchedule(group: string) {
 
   return {
     groupSchedule,
+    allGroups,
   };
 }
