@@ -9,9 +9,7 @@ import dayjs from "dayjs";
 
 const appStore = useAppStore();
 
-const { groupSchedule, allGroups, convertToDateTime } = useSchedule(
-  appStore.group || "SE-2203",
-);
+const { groupSchedule, allGroups, convertToDateTime } = useSchedule();
 
 const getGroups = (allGroups: string[]) => {
   const groups: Record<string, string[]> = {};

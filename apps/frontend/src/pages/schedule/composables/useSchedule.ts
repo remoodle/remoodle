@@ -3,9 +3,10 @@ import parsedSchedule from "../3_2.json";
 import type { Schedule } from "../types";
 import type { CalendarEvent } from "@schedule-x/calendar";
 import dayjs from "dayjs";
+import { useAppStore } from "@/shared/stores/app";
 import weekday from "dayjs/plugin/weekday";
 
-export function useSchedule(group: string) {
+export function useSchedule() {
   const allSchedules = ref<Schedule>(parsedSchedule as Schedule);
 
   const allGroups = computed(() => Object.keys(allSchedules.value));
@@ -56,6 +57,8 @@ export function useSchedule(group: string) {
   };
 
   const groupSchedule = computed((): CalendarEvent[] => {
+    const appStore = useAppStore();
+    const group = appStore.group ?? "SE-2203";
     const groupSchedule = allSchedules.value[group];
 
     // Convert the schedule to CalendarEvent format (also for the previous and next week)
@@ -74,9 +77,7 @@ export function useSchedule(group: string) {
       const newEvent = {
         id: item.id,
         title: item.courseName,
-        description: `Teacher: ${item.teacher}\n
-                      ${item.location === "online" ? "Online" : "Location: " + item.location + "\n"}
-                      Type: ${item.type}\n`,
+        description: `Teacher: ${item.teacher}\n${item.location === "online" ? "Online" : "Location: " + item.location}\nType: ${item.type}\n`,
         rrule: "FREQ=WEEKLY;COUNT=1",
       };
 
@@ -96,6 +97,8 @@ export function useSchedule(group: string) {
       ];
     });
 
+    console.log(resultSchedule);
+    console.log(group);
     return resultSchedule;
   });
 
