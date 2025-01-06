@@ -13,7 +13,7 @@ import type {
   CalendarType,
 } from "@schedule-x/calendar";
 import "@schedule-x/theme-default/dist/index.css";
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import { useAppStore } from "@/shared/stores/app";
 
 const props = defineProps<{
@@ -67,8 +67,6 @@ const calendars: Record<string, CalendarType> = {
   },
 };
 
-console.log(props);
-
 const config: CalendarConfig = {
   views: [createViewWeek(), createViewDay()],
   plugins: [
@@ -99,6 +97,20 @@ calendar.setTheme(appStore.theme);
 onMounted(() => {
   calendar.render(document.getElementById("calendar") as HTMLElement);
 });
+
+watch(
+  () => appStore.theme,
+  (newTheme) => {
+    calendar.setTheme(newTheme);
+  },
+);
+
+watch(
+  () => appStore.group,
+  () => {
+    window.location.reload();
+  },
+);
 </script>
 <template>
   <div id="calendar"></div>
