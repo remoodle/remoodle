@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { createEventRecurrencePlugin } from "@schedule-x/event-recurrence";
 import { createEventModalPlugin } from "@schedule-x/event-modal";
+import { createCurrentTimePlugin } from "@schedule-x/current-time";
 import {
   createCalendar,
   createViewDay,
@@ -16,7 +17,11 @@ const props = defineProps<{
 
 const config: CalendarConfig = {
   views: [createViewWeek(), createViewDay()],
-  plugins: [createEventRecurrencePlugin(), createEventModalPlugin()],
+  plugins: [
+    createEventRecurrencePlugin(),
+    createEventModalPlugin(),
+    createCurrentTimePlugin(),
+  ],
   events: props.events,
   locale: "en-GB",
   dayBoundaries: {
