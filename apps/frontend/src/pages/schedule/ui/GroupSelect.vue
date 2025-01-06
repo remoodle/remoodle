@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import {
   Select,
   SelectContent,
@@ -9,6 +10,14 @@ import {
   SelectValue,
 } from "@/shared/ui/select";
 import { useAppStore } from "@/shared/stores/app";
+
+const appStore = useAppStore();
+const selectedGroup = ref<string>(appStore.group || "SE-2203");
+
+const onChangeGroup = (newGroup: string) => {
+  selectedGroup.value = newGroup;
+  appStore.setGroup(newGroup);
+};
 
 const groups = {
   "Software Engineering": ["SE-2203", "SE-2204"],
@@ -22,9 +31,9 @@ const groups = {
 </script>
 
 <template>
-  <Select>
+  <Select v-model="selectedGroup" @update:model-value="onChangeGroup">
     <SelectTrigger>
-      <SelectValue placeholder="Select group" />
+      <SelectValue :placeholder="selectedGroup || 'Select group'" />
     </SelectTrigger>
     <SelectContent>
       <SelectGroup v-for="(items, label) in groups" :key="label">
