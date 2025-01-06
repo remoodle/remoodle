@@ -81,10 +81,10 @@ const config: CalendarConfig = {
   maxDate: props.maxDate,
   dayBoundaries: {
     start: "08:00",
-    end: "21:00",
+    end: "22:00",
   },
   weekOptions: {
-    gridHeight: 900,
+    gridHeight: 1050,
     nDays: 6,
   },
 };
