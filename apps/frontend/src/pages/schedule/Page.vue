@@ -5,7 +5,6 @@ import GroupSelect from "./ui/GroupSelect.vue";
 import { useSchedule } from "./composables/useSchedule";
 import { useAppStore } from "@/shared/stores/app";
 
-import weekday from "dayjs/plugin/weekday";
 import dayjs from "dayjs";
 
 const appStore = useAppStore();
