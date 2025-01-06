@@ -1,47 +1,70 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Button } from "@/shared/ui/button";
 import { useAppStore } from "@/shared/stores/app";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/shared/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
+import { ChevronsUpDown } from "lucide-vue-next";
+import { ref } from "vue";
+import type { AcceptableValue } from "node_modules/radix-vue/dist/shared/types";
 
 const appStore = useAppStore();
+
 const selectedGroup = ref<string>(appStore.group || "SE-2203");
 
-const onChangeGroup = (newGroup: string) => {
-  selectedGroup.value = newGroup;
-  appStore.setGroup(newGroup);
+const onChangeGroup = (newGroup: AcceptableValue): void => {
+  selectedGroup.value = newGroup as string;
+  appStore.setGroup(newGroup as string);
 };
 
-const groups = {
-  "Software Engineering": ["SE-2203", "SE-2204"],
-  "Computer Science": ["IT-2203", "IT-2204"],
-  "Cyber Security": ["CS-2203", "CS-2204"],
-  "Media Technologies": ["MT-2203", "MT-2204"],
-  "Big Data Analytics": ["BDA-2203", "BDA-2204"],
-  "IT Management": ["ITM-2203", "ITM-2204"],
-  "IT Entrepreneurship": ["ITE-2203", "ITE-2204"],
-};
+const props = defineProps<{
+  groups: Record<string, string[]>;
+}>();
+
+const open = ref(false);
 </script>
 
 <template>
-  <Select v-model="selectedGroup" @update:model-value="onChangeGroup">
-    <SelectTrigger>
-      <SelectValue :placeholder="selectedGroup || 'Select group'" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectGroup v-for="(items, label) in groups" :key="label">
-        <SelectLabel>{{ label }}</SelectLabel>
-        <div v-for="item in items" :key="item">
-          <SelectItem :value="item">{{ item }}</SelectItem>
-        </div>
-      </SelectGroup>
-    </SelectContent>
-  </Select>
+  <Popover v-model:open="open">
+    <PopoverTrigger as-child>
+      <Button
+        variant="outline"
+        role="combobox"
+        :aria-expanded="open"
+        class="w-[200px] justify-between"
+      >
+        {{ selectedGroup || "Select group" }}
+
+        <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+      </Button>
+    </PopoverTrigger>
+    <PopoverContent class="w-[200px] p-0">
+      <Command v-model="selectedGroup" @update:model-value="onChangeGroup">
+        <CommandInput placeholder="Search framework..." />
+        <CommandEmpty>No framework found.</CommandEmpty>
+        <CommandList>
+          <CommandGroup
+            v-for="(groupType, label) in props.groups"
+            :key="label"
+            :title="label"
+          >
+            <CommandItem
+              v-for="group in groupType"
+              :key="group"
+              :value="group"
+              @select="open = false"
+            >
+              {{ group }}
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    </PopoverContent>
+  </Popover>
 </template>

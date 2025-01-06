@@ -13,6 +13,8 @@ import { onMounted } from "vue";
 
 const props = defineProps<{
   events: CalendarEvent[];
+  minDate?: string;
+  maxDate?: string;
 }>();
 
 const config: CalendarConfig = {
@@ -24,6 +26,8 @@ const config: CalendarConfig = {
   ],
   events: props.events,
   locale: "en-GB",
+  minDate: props.minDate,
+  maxDate: props.maxDate,
   dayBoundaries: {
     start: "08:00",
     end: "21:00",

@@ -90,5 +90,7 @@ export function useSchedule(group: string) {
   return {
     groupSchedule,
     allGroups,
+    getTargetDateByDay,
+    convertToDateTime,
   };
 }
