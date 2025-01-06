@@ -44,5 +44,3 @@ onMounted(() => {
 <template>
   <div id="calendar"></div>
 </template>
-
-<style lang="scss" scoped></style>
