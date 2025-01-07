@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { Button } from "@/shared/ui/button";
+import { Checkbox } from "@/shared/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -26,16 +27,50 @@ import {
           Make changes to your schedule and click save when you're done.
         </DialogDescription>
       </DialogHeader>
-      <!-- <div class="grid gap-4 py-4">
-        <div class="grid grid-cols-4 items-center gap-4">
-          <Label for="name" class="text-right"> Name </Label>
-          <Input id="name" default-value="Pedro Duarte" class="col-span-3" />
+
+      <div class="mt-2">
+        <h1 class="mb-2 font-semibold">Toggle event types</h1>
+        <div class="flex gap-8">
+          <div class="flex items-center gap-2 text-center">
+            <Checkbox
+              default-checked
+              name="toggle-lecture"
+              id="toggle-lecture"
+            />
+            <Label for="toggle-lecture"> Lecture </Label>
+          </div>
+          <div class="flex items-center gap-2 text-center">
+            <Checkbox
+              default-checked
+              name="toggle-practice"
+              id="toggle-practice"
+            />
+            <Label for="toggle-practice"> Practice </Label>
+          </div>
+          <div class="flex items-center gap-2 text-center">
+            <Checkbox default-checked name="toggle-learn" id="toggle-learn" />
+            <Label for="toggle-learn"> Learn </Label>
+          </div>
         </div>
-        <div class="grid grid-cols-4 items-center gap-4">
-          <Label for="username" class="text-right"> Username </Label>
-          <Input id="username" default-value="@peduarte" class="col-span-3" />
+      </div>
+
+      <div class="mt-2">
+        <h1 class="mb-2 font-semibold">Toggle event formats</h1>
+        <div class="flex gap-8">
+          <div class="flex items-center gap-2 text-center">
+            <Checkbox default-checked name="toggle-online" id="toggle-online" />
+            <Label for="toggle-online"> Online </Label>
+          </div>
+          <div class="flex items-center gap-2 text-center">
+            <Checkbox
+              default-checked
+              name="toggle-offline"
+              id="toggle-offline"
+            />
+            <Label for="toggle-offline"> Offline </Label>
+          </div>
         </div>
-      </div> -->
+      </div>
       WIP
       <DialogFooter>
         <Button type="submit"> Save changes </Button>
