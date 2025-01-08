@@ -18,7 +18,7 @@ final class GetEventsBatch
     {
         $requests = [];
         $client = new Client(['verify' => false]);
-        $from = time();
+        $from = time() - 604800;
         $to = time() + 604800 * 7;
         foreach ($DTOs as $dto) {
             $promise = $client->requestAsync('GET', $moodleWebServicesUrl, [

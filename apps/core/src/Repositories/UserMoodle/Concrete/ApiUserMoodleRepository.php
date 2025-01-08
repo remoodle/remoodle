@@ -40,7 +40,7 @@ class ApiUserMoodleRepository implements ApiUserMoodleRepositoryInterface
      */
     public function getDeadlines(int $moodleId, string $moodleToken): array
     {
-        return Moodle::createFromToken($moodleToken, $moodleId)->getDeadlines();
+        return Moodle::createFromToken($moodleToken, $moodleId)->getDeadlines(from: time());
     }
 
     /**

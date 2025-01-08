@@ -22,7 +22,7 @@ class ParseUserEvents
     public function __invoke()
     {
         $moodle = Moodle::createFromToken($this->user->moodle_token, $this->user->moodle_id);
-        $userApiEvents = $moodle->getDeadlines();
+        $userApiEvents = $moodle->getDeadlines(from: time() - 604800);
 
 
         try {
