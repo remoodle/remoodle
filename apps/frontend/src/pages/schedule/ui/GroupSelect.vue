@@ -23,8 +23,8 @@ const onChangeGroup = (newGroup: AcceptableValue): void => {
   appStore.setGroup(newGroup as string);
 };
 
-const props = defineProps<{
-  groups: Record<string, string[]>;
+defineProps<{
+  allGroups: string[];
 }>();
 
 const open = ref(false);
@@ -47,15 +47,11 @@ const open = ref(false);
     <PopoverContent class="w-[200px] p-0">
       <Command v-model="selectedGroup" @update:model-value="onChangeGroup">
         <CommandInput placeholder="Search framework..." />
-        <CommandEmpty>No framework found.</CommandEmpty>
+        <CommandEmpty>Group not found.</CommandEmpty>
         <CommandList>
-          <CommandGroup
-            v-for="(groupType, label) in props.groups"
-            :key="label"
-            :title="label"
-          >
+          <CommandGroup>
             <CommandItem
-              v-for="group in groupType"
+              v-for="group in allGroups"
               :key="group"
               :value="group"
               @select="open = false"
