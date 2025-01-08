@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.4](https://github.com/remoodle/remoodle/compare/remoodle/core-v1.5.3...remoodle/core-v1.5.4) (2025-01-08)
+
+
+### Bug Fixes
+
+* fix ([#300](https://github.com/remoodle/remoodle/issues/300)) ([f4fcf46](https://github.com/remoodle/remoodle/commit/f4fcf46c88b2d1128fce4b1705f52bdc86980e5e))
+
 ## [1.5.3](https://github.com/remoodle/remoodle/compare/remoodle/core-v1.5.2...remoodle/core-v1.5.3) (2024-12-09)
 
 
