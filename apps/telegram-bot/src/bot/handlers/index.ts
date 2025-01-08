@@ -71,7 +71,6 @@ callbacksHandler.callbackQuery("remove_message", callbacks.other.clearMessage);
 
 // Back buttons
 callbacksHandler.callbackQuery("back_to_menu", callbacks.back.toMenu);
-callbacksHandler.callbackQuery("back_to_grades", callbacks.back.toGrades);
 
 // Extra
 callbacksHandler.callbackQuery("donate", callbacks.other.donate);

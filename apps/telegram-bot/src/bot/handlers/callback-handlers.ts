@@ -174,47 +174,6 @@ async function grades(ctx: Context) {
   await ctx.editMessageText("Your courses:", { reply_markup: gradesKeyboards });
 }
 
-async function backToGrades(ctx: Context) {
-  if (!ctx.from) {
-    return;
-  }
-
-  const userId = ctx.from.id;
-
-  const [grades, _] = await request((client) =>
-    client.v1.courses.$get(
-      {
-        query: {
-          status: "inprogress",
-        },
-      },
-      {
-        headers: getAuthHeaders(userId),
-      },
-    ),
-  );
-
-  if (!grades) {
-    await ctx.reply("Grades are not available.");
-    return;
-  }
-
-  const gradesKeyboards = new InlineKeyboard();
-
-  grades.forEach((grade) => {
-    gradesKeyboards
-      .row()
-      .text(grade.name.split(" | ")[0], `inprogress_course_${grade.course_id}`);
-  });
-
-  gradesKeyboards
-    .row()
-    .text("Back ←", "back_to_menu")
-    .text("Past courses", "old_grades_1");
-
-  await ctx.editMessageText("Your courses:", { reply_markup: gradesKeyboards });
-}
-
 async function gradesInProgressCourse(ctx: Context) {
   if (!ctx?.from || !ctx?.match) {
     return;
@@ -270,7 +229,7 @@ async function gradesInProgressCourse(ctx: Context) {
   const keyboard = new InlineKeyboard()
     .text("Assignments", `course_assignments_${courseId}`)
     .row()
-    .text("Back ←", "back_to_grades");
+    .text("Back ←", "grades");
 
   return await ctx.editMessageText(message, {
     reply_markup: keyboard,
@@ -302,14 +261,14 @@ async function gradesPastCourses(ctx: Context) {
 
   if (!rmcCourses) {
     await ctx.editMessageText("Past courses are not available.", {
-      reply_markup: new InlineKeyboard().text("Back ←", "back_to_grades"),
+      reply_markup: new InlineKeyboard().text("Back ←", "grades"),
     });
     return;
   }
 
   if (rmcCourses.length === 0) {
     await ctx.editMessageText("You have no past courses 🥰", {
-      reply_markup: new InlineKeyboard().text("Back", "back_to_grades"),
+      reply_markup: new InlineKeyboard().text("Back", "grades"),
     });
     return;
   }
@@ -336,7 +295,7 @@ async function gradesPastCourses(ctx: Context) {
     coursesKeyboards.text("←", `old_grades_${page - 1}`);
   }
 
-  coursesKeyboards.text("Back", "back_to_grades");
+  coursesKeyboards.text("Back", "grades");
 
   if (page < totalPages) {
     coursesKeyboards.text("→", `old_grades_${page + 1}`);
@@ -863,7 +822,6 @@ const callbacks = {
   },
   back: {
     toMenu: backToMenu,
-    toGrades: backToGrades,
   },
   other: {
     donate: donate,
