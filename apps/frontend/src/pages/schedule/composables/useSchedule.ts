@@ -9,7 +9,9 @@ import weekday from "dayjs/plugin/weekday";
 export function useSchedule() {
   const allSchedules = ref<Schedule>(parsedSchedule as Schedule);
 
-  const allGroups = computed(() => Object.keys(allSchedules.value));
+  const allGroups = computed(() =>
+    Object.keys(allSchedules.value).sort().reverse(),
+  );
 
   dayjs.extend(weekday);
 
