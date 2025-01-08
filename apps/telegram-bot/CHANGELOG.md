@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.11.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.10.3...remoodle/telegram-bot-v0.11.0) (2025-01-08)
+
+
+### Features
+
+* remove new year theme ([c366067](https://github.com/remoodle/remoodle/commit/c36606725e2a5757610bbebe8555b63b3bb643af))
+
+
+### Bug Fixes
+
+* kal moment with back ([5567284](https://github.com/remoodle/remoodle/commit/556728409fc202ee46c1b98ac5e4c7383d2abe28))
+
 ## [0.10.3](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.10.2...remoodle/telegram-bot-v0.10.3) (2025-01-01)
 
 
