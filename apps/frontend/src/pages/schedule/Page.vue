@@ -10,18 +10,6 @@ import dayjs from "dayjs";
 
 const { groupSchedule, allGroups, convertToDateTime } = useSchedule();
 
-const getGroups = (allGroups: string[]) => {
-  const groups: Record<string, string[]> = {};
-  allGroups.forEach((group) => {
-    const course = group.split("-")[0];
-    if (!groups[course]) {
-      groups[course] = [];
-    }
-    groups[course].push(group);
-  });
-  return groups;
-};
-
 const minDate = dayjs()
   .weekday(0)
   .hour(0)
@@ -41,8 +29,10 @@ const maxDate = dayjs()
 <template>
   <PageWrapper>
     <template #title>
-      <h1>Schedule</h1>
-      <GroupSelect :groups="getGroups(allGroups)" />
+      <div class="w-100 flex gap-4">
+        <h1>Schedule</h1>
+        <GroupSelect :all-groups />
+      </div>
     </template>
     <RoundedSection>
       <Calendar
