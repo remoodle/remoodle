@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { createEventRecurrencePlugin } from "@schedule-x/event-recurrence";
 import { createEventModalPlugin } from "@schedule-x/event-modal";
+import { createEventsServicePlugin } from "@schedule-x/event-recurrence";
 import { createCurrentTimePlugin } from "@schedule-x/current-time";
 import {
   createCalendar,
@@ -67,12 +68,15 @@ const calendars: Record<string, CalendarType> = {
   },
 };
 
+const eventsServicePlugin = createEventsServicePlugin();
+
 const config: CalendarConfig = {
   views: [createViewWeek(), createViewDay()],
   plugins: [
     createEventRecurrencePlugin(),
     createEventModalPlugin(),
     createCurrentTimePlugin(),
+    eventsServicePlugin,
   ],
   calendars: calendars,
   events: props.events,
@@ -108,7 +112,7 @@ watch(
 watch(
   () => appStore.group,
   () => {
-    window.location.reload();
+    eventsServicePlugin.set(props.events);
   },
 );
 </script>

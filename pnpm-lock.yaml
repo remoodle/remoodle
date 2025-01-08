@@ -141,6 +141,9 @@ importers:
       '@schedule-x/event-recurrence':
         specifier: ^2.12.1
         version: 2.12.1
+      '@schedule-x/events-service':
+        specifier: ^2.13.0
+        version: 2.13.0
       '@schedule-x/ical':
         specifier: ^2.12.1
         version: 2.12.1
@@ -1479,6 +1482,9 @@ packages:
 
   '@schedule-x/event-recurrence@2.12.1':
     resolution: {integrity: sha512-BMewSEwtIavCQjHVNaij/8fEI93ttM46FzU8KSHxtGiUYCiZRj3lBJhmaQXu2nHxz7KywKt87tTG7Vuu9CzOEw==}
+
+  '@schedule-x/events-service@2.13.0':
+    resolution: {integrity: sha512-8dJ1paCmB8PBUMRczErZWvD2uoxOrE7FEBlOSavnYm4Dr8U6FIxA0G/M7NYBrLTTgl6TX5g3XQlq6ArmER+7+g==}
 
   '@schedule-x/ical@2.12.1':
     resolution: {integrity: sha512-4fgMNpV141tgq0mvSlUGcxwniGh/vE7HjBvkXZrz07tmQIOg0e7Nn0SUDsZNB4wC6Nk8SkXRXBx0LzmZJDwe0g==}
@@ -5785,6 +5791,8 @@ snapshots:
       preact: 10.25.4
 
   '@schedule-x/event-recurrence@2.12.1': {}
+
+  '@schedule-x/events-service@2.13.0': {}
 
   '@schedule-x/ical@2.12.1':
     dependencies:
