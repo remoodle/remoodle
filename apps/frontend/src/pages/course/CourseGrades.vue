@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
+import { Text } from "@/shared/ui/text";
 import { Link } from "@/shared/ui/link";
 import type { CourseGradeItem } from "@remoodle/types";
 import { RouteName } from "@/shared/lib/routes";
@@ -30,11 +31,7 @@ const updateGrade = (data: CourseGradeItem[] | undefined) => {
   grades.value = data;
 };
 
-const {
-  run: fetchGrades,
-  loading,
-  error,
-} = createAsyncProcess(async (id: string) => {
+const { run: fetchGrades } = createAsyncProcess(async (id: string) => {
   const [data, error] = await request((client) =>
     client.v1.course[":courseId"].grades.$get(
       {
@@ -108,7 +105,7 @@ onMounted(async () => {
             <TableCell> {{ item.percentage }} % </TableCell>
             <TableCell> {{ item.grademin }} - {{ item.grademax }} </TableCell>
             <TableCell class="text-left">
-              {{ item.feedback }}
+              <Text :msg="item.feedback.trim()" />
             </TableCell>
           </TableRow>
         </template>

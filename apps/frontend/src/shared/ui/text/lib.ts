@@ -34,6 +34,9 @@ const vDompurify = buildVueDompurifyHTMLDirective({
   },
   hooks: {
     afterSanitizeAttributes: (node) => {
+      if (node.nodeName === "P" && node.innerHTML === "<br>") {
+        node.innerHTML = "";
+      }
       if ("target" in node) {
         node.setAttribute("target", "_blank");
         node.setAttribute("class", "text-primary underline underline-offset-4");
