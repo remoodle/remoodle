@@ -76,8 +76,8 @@ async function handleRegistration(
   userId: number,
   token: string,
 ) {
-  const [data, authError] = await request((client) =>
-    client.v1.auth.internal.telegram.token.register.$post(
+  const [data, error] = await request((client) =>
+    client.v1.auth.token.$post(
       {
         json: {
           moodleToken: token,
@@ -88,22 +88,20 @@ async function handleRegistration(
       },
     ),
   );
-  if (authError) {
+  if (error) {
     // If the token is invalid, ask for the token again
     await ctx.reply("Your token is invalid. Please try again.");
     return;
   }
 
   // Registration successful, greet the user
-  if (data && !authError) {
-    await ctx.reply(`You have registered successfully!`);
-    await ctx.reply(`${data?.user.name}`, {
-      reply_markup: keyboards.main,
-    });
+  await ctx.reply(`You have registered successfully!`);
+  await ctx.reply(`${data.user.name}`, {
+    reply_markup: keyboards.main,
+  });
 
-    // Reset the session step
-    ctx.session.step = null;
-  }
+  // Reset the session step
+  ctx.session.step = null;
 }
 
 async function deadlines(ctx: Context) {
