@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.5](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.4...remoodle/frontend-v1.3.5) (2025-01-11)
+
+
+### Bug Fixes
+
+* feedback render html ([540c556](https://github.com/remoodle/remoodle/commit/540c5562c79c6552860c27a4ab030cbbb86b5722))
+
 ## [1.3.4](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.3...remoodle/frontend-v1.3.4) (2024-12-15)
 
 
