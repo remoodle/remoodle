@@ -1,4 +1,4 @@
-import { Deadline, CourseGradeItem } from "@remoodle/types";
+import type { MoodleEvent, MoodleGrade } from "@remoodle/types";
 import { getTimeLeft } from "@remoodle/utils";
 import { InlineKeyboard, GrammyError, BotError, HttpError } from "grammy";
 
@@ -16,12 +16,12 @@ const formatUnixtimestamp = (timestamp: number, showYear: boolean = false) => {
     .replace("24:00", "00:00");
 };
 
-const getDeadlineText = (deadline: Deadline) => {
+const getDeadlineText = (deadline: MoodleEvent) => {
   let text = "";
   deadline.timestart *= 1000;
   const timeleft = deadline.timestart - Date.now();
   const isFiring = timeleft / 60 / 60 / 1000 <= 3;
-  const [courseName, _] = deadline.course_name.split(" | ");
+  const [courseName, _] = deadline.course.shortname.split(" | ");
 
   const date = formatUnixtimestamp(deadline.timestart);
   const timeLeft = `<b>${getTimeLeft(deadline.timestart)}</b>`;
@@ -32,12 +32,12 @@ const getDeadlineText = (deadline: Deadline) => {
   return text;
 };
 
-const getGradeText = (grade: CourseGradeItem) => {
+const getGradeText = (grade: MoodleGrade) => {
   let text = "";
   if (!["category", "course"].includes(grade.itemtype)) {
-    text += `${grade.name} → <b>${grade.graderaw !== null ? grade.graderaw?.toFixed(2) : "None"}</b>\n`;
+    text += `${grade.itemname} → <b>${grade.graderaw !== null ? grade.graderaw?.toFixed(2) : "None"}</b>\n`;
 
-    if (grade.name === "Attendance") {
+    if (grade.itemname === "Attendance") {
       text += "\n";
     }
   }
@@ -64,9 +64,9 @@ const getGPA = (total: number) => {
   return grades[grade] ? grades[grade].toFixed(2) : "0.00";
 };
 
-const calculateGrades = (grades: CourseGradeItem[]) => {
+const calculateGrades = (grades: MoodleGrade[]) => {
   const getGrade = (name: string) =>
-    grades.find((grade) => grade.name === name)?.graderaw ?? 0;
+    grades.find((grade) => grade.itemname === name)?.graderaw ?? 0;
 
   const regFinal = getGrade("Register Final");
   const regMid = getGrade("Register Midterm");
