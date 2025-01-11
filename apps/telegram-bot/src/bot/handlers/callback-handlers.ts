@@ -156,7 +156,7 @@ async function grades(ctx: Context) {
   grades.forEach((grade) => {
     gradesKeyboards
       .row()
-      .text(grade.name.split(" | ")[0], `inprogress_course_${grade.course_id}`);
+      .text(grade.shortname.split(" | ")[0], `inprogress_course_${grade.id}`);
   });
 
   gradesKeyboards
@@ -218,7 +218,7 @@ async function gradesInProgressCourse(ctx: Context) {
     return;
   }
 
-  let message: string = `${course.name.split(" | ")[0]}\nTeacher: ${course.name.split(" | ")[1]}\n\n`;
+  let message: string = `${course.shortname.split(" | ")[0]}\nTeacher: ${course.shortname.split(" | ")[1]}\n\n`;
 
   message += `${calculateGrades(grades)}`;
 
@@ -284,8 +284,8 @@ async function gradesPastCourses(ctx: Context) {
     coursesKeyboards
       .row()
       .text(
-        course.name.split(" | ")[0],
-        `past_course_${course.course_id}_${page}`,
+        course.shortname.split(" | ")[0],
+        `past_course_${course.id}_${page}`,
       );
   });
 
@@ -355,7 +355,7 @@ async function gradesPastCourse(ctx: Context) {
     return;
   }
 
-  let message: string = `${course.name.split(" | ")[0]}\nTeacher: ${course.name.split(" | ")[1]}\n\n`;
+  let message: string = `${course.shortname.split(" | ")[0]}\nTeacher: ${course.shortname.split(" | ")[1]}\n\n`;
 
   message += `${calculateGrades(grades)}`;
 
@@ -641,13 +641,13 @@ async function courseAssignments(ctx: Context) {
       .row()
       .text(
         assignment.name,
-        `assignment_${assignment.course_id}_${assignment.assignment_id}`,
+        `assignment_${assignment.course}_${assignment.id}`,
       );
   });
 
   keyboard.row().text("Back ←", `inprogress_course_${courseId}`);
 
-  await ctx.editMessageText(`Assignments\n*${course.name}*`, {
+  await ctx.editMessageText(`Assignments\n*${course.shortname}*`, {
     reply_markup: keyboard,
     parse_mode: "Markdown",
   });
@@ -682,15 +682,28 @@ async function courseAssignmentById(ctx: Context) {
     ),
   );
 
-  if (courseError) {
-    await ctx.editMessageText("Course error.", {
+  if (!course || courseError) {
+    await ctx.editMessageText("Course is not available.", {
       reply_markup: keyboardBack,
     });
     return;
   }
 
-  if (!course) {
-    await ctx.editMessageText("Course is not available.", {
+  const [grades, gradesError] = await request((client) =>
+    client.v1.course[":courseId"].grades.$get(
+      {
+        param: {
+          courseId: courseId,
+        },
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  if (!grades || gradesError) {
+    await ctx.editMessageText("Grades are not available.", {
       reply_markup: keyboardBack,
     });
     return;
@@ -731,7 +744,7 @@ async function courseAssignmentById(ctx: Context) {
   }
 
   const assignment = assignments.find(
-    (assignment) => assignment.assignment_id === assignmentId,
+    (assignment) => assignment.id === assignmentId,
   );
 
   if (!assignment || !assignmentId) {
@@ -742,33 +755,19 @@ async function courseAssignmentById(ctx: Context) {
   }
 
   let text = `*${assignment.name}*\n`;
-  text += `*${course.name}*\n\n`;
+  text += `*${course.shortname}*\n\n`;
 
   if (assignment.duedate && assignment.allowsubmissionsfromdate) {
     text += `*Opened:* ${formatUnixtimestamp(assignment.allowsubmissionsfromdate * 1000, true)}\n`;
     text += `*Due:* ${formatUnixtimestamp(assignment.duedate * 1000, true)}\n`;
   }
 
-  if (assignment.gradeEntity && assignment.gradeEntity.percentage) {
-    text += `*Grade:* ${assignment.gradeEntity.percentage}%\n`;
+  console.log(assignmentId);
+  const grade = grades.find((g) => g.iteminstance === assignmentId);
+  console.log(grade);
 
-    if (assignment.gradeEntity.feedback) {
-      const turndownService = new TurndownService();
-      turndownService.remove(["script", "table", "img", "iframe"]);
-      const markdownFeedback = turndownService.turndown(
-        assignment.gradeEntity.feedback,
-      );
-
-      if (assignment.gradeEntity.feedback.length > 300) {
-        text += `*Feedback:* ${markdownFeedback.slice(0, 700)}...\n\n`;
-      } else {
-        text += `*Feedback:* ${markdownFeedback}\n\n`;
-      }
-    } else {
-      text += "\n";
-    }
-  } else {
-    text += "\n";
+  if (grade) {
+    text += `*Grade:* ${grade.gradeformatted}%\n`;
   }
 
   if (assignment.intro) {
@@ -777,9 +776,9 @@ async function courseAssignmentById(ctx: Context) {
     const markdownIntro = turndownService.turndown(assignment.intro);
 
     if (assignment.intro.length > 700) {
-      text += `${markdownIntro.slice(0, 700)}...\n\n`;
+      text += `\n${markdownIntro.slice(0, 700)}...\n\n`;
     } else {
-      text += `${markdownIntro}\n\n`;
+      text += `\n${markdownIntro}\n\n`;
     }
   }
 
