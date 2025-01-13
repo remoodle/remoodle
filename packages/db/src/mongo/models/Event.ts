@@ -7,7 +7,7 @@ const event = new Schema<IEvent>(
     _id: { type: String, default: uuidv7 },
     userId: { type: String, required: true, ref: "User" },
     data: { type: Schema.Types.Mixed, required: true },
-    reminders: { type: Schema.Types.Mixed, required: true, default: null },
+    reminders: { type: Schema.Types.Mixed, default: null },
   },
   { timestamps: true },
 );

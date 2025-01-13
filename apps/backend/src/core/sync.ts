@@ -24,21 +24,22 @@ export const syncEvents = async (userId: string) => {
     throw new Error(error.message);
   }
 
-  await db.event.bulkWrite(
-    [
+  for (const event of response.events) {
+    await db.event.findOneAndUpdate(
+      { userId, "data.id": event.id },
       {
-        deleteMany: {
-          filter: { userId },
+        $set: {
+          data: event,
         },
       },
-      ...response.events.map((event) => ({
-        insertOne: {
-          document: { userId, data: event, reminders: {} },
-        },
-      })),
-    ],
-    { ordered: true },
-  );
+      { upsert: true },
+    );
+  }
+
+  await db.event.deleteMany({
+    userId,
+    "data.id": { $nin: response.events.map((event) => event.id) },
+  });
 };
 
 export const syncCourses = async (

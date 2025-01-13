@@ -4,7 +4,7 @@ import { getTimeLeft } from "@remoodle/utils";
 export interface DeadlineReminderDiff {
   courseId: number;
   courseName: string;
-  /** [id, name, date, remaining, __threshold] */
+  /** [id, name, date, remaining, threshold] */
   deadlines: [number, string, number, string, string][];
 }
 
@@ -62,7 +62,6 @@ export const trackDeadlineReminders = (
   deadlines: Deadline[],
   thresholds: string[],
 ): DeadlineReminderDiff[] => {
-  // const now = Date.now();
   const diff: DeadlineReminderDiff[] = [];
 
   for (const deadline of deadlines) {
@@ -79,28 +78,26 @@ export const trackDeadlineReminders = (
     const [remaining, threshold] = result;
     // [ '1 day, 00:10:46', '2 days' ]
 
-    // console.log(reminders, threshold);
+    if (!reminders[threshold]) {
+      continue;
+    }
 
-    // return;
+    const existingCourseReminder = diff.find((item) => item.courseId === id);
 
-    if (remaining && threshold && !reminders[threshold]) {
-      const existingCourseReminder = diff.find((item) => item.courseId === id);
-
-      if (!existingCourseReminder) {
-        diff.push({
-          courseId: course.id,
-          courseName: course.fullname,
-          deadlines: [[id, name, dueDate, remaining, threshold]],
-        });
-      } else {
-        existingCourseReminder.deadlines.push([
-          id,
-          name,
-          dueDate,
-          remaining,
-          threshold,
-        ]);
-      }
+    if (!existingCourseReminder) {
+      diff.push({
+        courseId: course.id,
+        courseName: course.fullname,
+        deadlines: [[id, name, dueDate, remaining, threshold]],
+      });
+    } else {
+      existingCourseReminder.deadlines.push([
+        id,
+        name,
+        dueDate,
+        remaining,
+        threshold,
+      ]);
     }
   }
 

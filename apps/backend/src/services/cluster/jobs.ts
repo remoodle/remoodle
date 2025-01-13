@@ -286,39 +286,35 @@ export const jobs: Record<JobName, ClusterJob> = {
         return "deadlineReminders not enabled";
       }
 
-      const customThresholds = user.notificationSettings.deadlineThresholds;
-
       const deadlines = await getDeadlines(userId);
 
-      const courseReminders = trackDeadlineReminders(
+      const deadlineReminderDiffs = trackDeadlineReminders(
         deadlines,
-        customThresholds,
+        user.notificationSettings.deadlineThresholds,
       );
 
-      const reminders = courseReminders.flatMap(
-        (reminder) => reminder.deadlines,
-      );
-
-      if (!reminders.length) {
+      if (!deadlineReminderDiffs.length) {
         return;
       }
 
-      for (const reminder of reminders) {
-        const deadline = deadlines.find(
-          (deadline) => deadline.id === reminder[0],
-        );
+      const reminders = deadlineReminderDiffs.flatMap(
+        (reminder) => reminder.deadlines,
+      );
 
-        if (!deadline) {
+      for (const [id, name, date, remaining, threshold] of reminders) {
+        const event = deadlines.find((deadline) => deadline.id === id);
+
+        if (!event) {
           continue;
         }
 
-        deadline.reminders[reminder[4]] = true;
+        event.reminders[threshold] = true;
 
         await db.event.findOneAndUpdate(
-          { userId, "data.id": deadline.id },
+          { userId, "data.id": event.id },
           {
             $set: {
-              reminders: deadline.reminders,
+              reminders: event.reminders,
             },
           },
           { upsert: true },
@@ -327,7 +323,7 @@ export const jobs: Record<JobName, ClusterJob> = {
 
       const deadlineReminderEvent: DeadlineReminderEvent = {
         userId,
-        payload: courseReminders,
+        payload: deadlineReminderDiffs,
       };
 
       if (!deadlineReminderEvent.payload.length) {
