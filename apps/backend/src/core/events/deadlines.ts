@@ -78,7 +78,7 @@ export const trackDeadlineReminders = (
     const [remaining, threshold] = result;
     // [ '1 day, 00:10:46', '2 days' ]
 
-    if (!reminders[threshold]) {
+    if (reminders[threshold]) {
       continue;
     }
 
