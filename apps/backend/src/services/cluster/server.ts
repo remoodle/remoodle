@@ -33,6 +33,9 @@ const bullBoard = api.route("/", serverAdapter.registerPlugin());
 const routes = api
   .use(pinoLogger(logger.cluster))
   .use(prettyJSON())
+  .get("/health", async (ctx) => {
+    return ctx.json({ status: "ok" });
+  })
   .use("*", async (ctx, next) => {
     const authorization = ctx.req.header("Authorization");
 
