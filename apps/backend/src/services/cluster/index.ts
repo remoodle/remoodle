@@ -25,7 +25,7 @@ const workers: Worker[] = [];
 const defaultWorkerOptions: WorkerOptions = {
   connection: db.redisConnection,
   removeOnComplete: { age: mSecOneDay },
-  removeOnFail: { age: mSecOneDay * 7 },
+  removeOnFail: { age: mSecOneDay },
 };
 
 const loadConfig = async () => {
