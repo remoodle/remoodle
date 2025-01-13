@@ -24,7 +24,11 @@ export const syncEvents = async (userId: string) => {
     throw new Error(error.message);
   }
 
-  for (const event of response.events) {
+  const filteredEvents = response.events.filter(
+    (event) => event.component !== "mod_attendance",
+  );
+
+  for (const event of filteredEvents) {
     await db.event.findOneAndUpdate(
       { userId, "data.id": event.id },
       {
@@ -38,7 +42,7 @@ export const syncEvents = async (userId: string) => {
 
   await db.event.deleteMany({
     userId,
-    "data.id": { $nin: response.events.map((event) => event.id) },
+    "data.id": { $nin: filteredEvents.map((event) => event.id) },
   });
 };
 

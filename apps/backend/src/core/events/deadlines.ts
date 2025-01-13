@@ -1,4 +1,4 @@
-import type { Deadline } from "@remoodle/types";
+import type { IEvent } from "@remoodle/types";
 import { getTimeLeft } from "@remoodle/utils";
 
 export interface DeadlineReminderDiff {
@@ -59,13 +59,13 @@ export const calculateRemainingTime = (
 };
 
 export const trackDeadlineReminders = (
-  deadlines: Deadline[],
+  events: IEvent[],
   thresholds: string[],
 ): DeadlineReminderDiff[] => {
   const diff: DeadlineReminderDiff[] = [];
 
-  for (const deadline of deadlines) {
-    const { id, name, timestart, reminders, course } = deadline;
+  for (const { data, reminders } of events) {
+    const { id, name, timestart, course } = data;
 
     const dueDate = timestart * 1000; // Convert to milliseconds
 
@@ -78,7 +78,7 @@ export const trackDeadlineReminders = (
     const [remaining, threshold] = result;
     // [ '1 day, 00:10:46', '2 days' ]
 
-    if (reminders[threshold]) {
+    if (reminders && reminders[threshold]) {
       continue;
     }
 

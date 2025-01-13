@@ -15,7 +15,7 @@ import type {
 
 import { config, env } from "../../../config";
 import { db } from "../../../library/db";
-import { deleteUser, getDeadlines } from "../../../core/wrapper";
+import { deleteUser } from "../../../core/wrapper";
 import { QueueName, JobName } from "../../../core/queues";
 import { requestAlertWorker } from "../../../library/hc";
 import { Moodle } from "../../../library/moodle";
@@ -303,12 +303,20 @@ const userRoutes = new Hono<{
 
       const { courseId, daysLimit } = ctx.req.valid("query");
 
-      const deadlines = await getDeadlines(userId, {
-        courseId: courseId ? parseInt(courseId) : undefined,
-        daysLimit: daysLimit ? parseInt(daysLimit) : undefined,
-      });
+      const events = await db.event
+        .find({
+          userId,
+          ...(courseId && { "course.id": courseId }),
+          "data.timestart": {
+            $gt: Date.now() / 1000,
+            ...(daysLimit && {
+              $lte: Date.now() / 1000 + parseInt(daysLimit) * 24 * 60 * 60,
+            }),
+          },
+        })
+        .lean();
 
-      if (!deadlines.length) {
+      if (!events.length) {
         const user = await db.user.findById(userId);
 
         if (!user) {
@@ -336,7 +344,7 @@ const userRoutes = new Hono<{
         return ctx.json(response.events as MoodleEvent[]);
       }
 
-      return ctx.json(deadlines);
+      return ctx.json(events.map((event) => event.data));
     },
   )
   .get(

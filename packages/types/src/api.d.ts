@@ -17,10 +17,6 @@ export type APIErrorResponse = {
 
 export type APIWrapper<T> = T | APIErrorResponse;
 
-export type Deadline = MoodleEvent & {
-  reminders: Record<string, boolean>;
-};
-
 export type Course = MoodleCourse & {
   content?: MoodleCourseContent[];
 };

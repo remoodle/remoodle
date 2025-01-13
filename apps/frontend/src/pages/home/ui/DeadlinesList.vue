@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import type { Deadline } from "@remoodle/types";
+import type { MoodleEvent } from "@remoodle/types";
 import { Error } from "@/entities/page";
 import { DeadlineCard } from "@/entities/deadline";
 import { Skeleton } from "@/shared/ui/skeleton";
@@ -15,7 +15,7 @@ import {
 } from "@/shared/lib/helpers";
 
 const deadlines = ref<{
-  [date: string]: Deadline[] | undefined;
+  [date: string]: MoodleEvent[] | undefined;
 }>();
 
 const { run, loading, error } = createAsyncProcess(async () => {

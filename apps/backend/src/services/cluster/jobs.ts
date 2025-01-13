@@ -1,11 +1,9 @@
 import { FlowProducer } from "bullmq";
 import type { Job } from "bullmq";
-import type { MoodleCourseClassification } from "@remoodle/types";
-import { getValues, objectEntries, partition } from "@remoodle/utils";
+import { getValues } from "@remoodle/utils";
 import { Telegram } from "@remoodle/utils";
 import { config } from "../../config";
 import { db } from "../../library/db";
-import { getDeadlines } from "../../core/wrapper";
 import { logger } from "../../library/logger";
 import type {
   GradeChangeDiff,
@@ -286,10 +284,14 @@ export const jobs: Record<JobName, ClusterJob> = {
         return "deadlineReminders not enabled";
       }
 
-      const deadlines = await getDeadlines(userId);
+      const events = await db.event.find({ userId });
+
+      if (!events.length) {
+        return "no events";
+      }
 
       const deadlineReminderDiffs = trackDeadlineReminders(
-        deadlines,
+        events,
         user.notificationSettings.deadlineThresholds,
       );
 
@@ -302,13 +304,13 @@ export const jobs: Record<JobName, ClusterJob> = {
       );
 
       for (const [id, name, date, remaining, threshold] of reminders) {
-        const event = deadlines.find((deadline) => deadline.id === id);
+        const event = events.find((e) => e.id === id);
 
         if (!event) {
           continue;
         }
 
-        event.reminders[threshold] = true;
+        (event.reminders || {})[threshold] = true;
 
         await db.event.findOneAndUpdate(
           { userId, "data.id": event.id },

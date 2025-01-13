@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Deadline } from "@remoodle/types";
+import type { MoodleEvent } from "@remoodle/types";
 import { RouteName } from "@/shared/lib/routes";
 import {
   splitCourseName,
@@ -17,7 +17,7 @@ import {
 import { Link } from "@/shared/ui/link";
 
 defineProps<{
-  deadline: Deadline;
+  deadline: MoodleEvent;
 }>();
 </script>
 

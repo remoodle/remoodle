@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
 import { fromPartial } from "@total-typescript/shoehorn";
-import type { Deadline } from "@remoodle/types";
+import type { IEvent } from "@remoodle/types";
 import type { DeadlineReminderDiff } from "./deadlines";
 import { trackDeadlineReminders, formatDeadlineReminders } from "./deadlines";
 
@@ -8,24 +8,28 @@ describe("deadlines notifications", () => {
   vi.setSystemTime(new Date("2024-09-15T12:24:00"));
 
   test("trackDeadlineReminders", () => {
-    const deadlines: Deadline[] = fromPartial([
+    const events: IEvent[] = fromPartial([
       {
-        id: 515515,
-        name: "Assignment 1 is due",
-        timestart: 1726426740,
-        course: {
-          id: 4911,
-          fullname: "Research Methods and Tools | Omirgaliyev Ruslan",
+        data: {
+          id: 515515,
+          name: "Assignment 1 is due",
+          timestart: 1726426740,
+          course: {
+            id: 4911,
+            fullname: "Research Methods and Tools | Omirgaliyev Ruslan",
+          },
         },
         reminders: {},
       },
       {
-        id: 515578,
-        name: "practice 1 is due",
-        timestart: 1726167600,
-        course: {
-          id: 4963,
-          fullname: "Computer Networks | Akerke Auelbayeva",
+        data: {
+          id: 515578,
+          name: "practice 1 is due",
+          timestart: 1726167600,
+          course: {
+            id: 4963,
+            fullname: "Computer Networks | Akerke Auelbayeva",
+          },
         },
         reminders: {},
       },
@@ -48,19 +52,21 @@ describe("deadlines notifications", () => {
     ];
 
     expect(
-      trackDeadlineReminders(deadlines, ["6 hours", "12 hours", "24 hours"]),
+      trackDeadlineReminders(events, ["6 hours", "12 hours", "24 hours"]),
     ).toStrictEqual(diff);
   });
 
   test("not started thresholds", () => {
-    const deadlines: Deadline[] = fromPartial([
+    const events: IEvent[] = fromPartial([
       {
-        id: 515515,
-        name: "Assignment 1 is due",
-        timestart: 1726426740,
-        course: {
-          id: 4911,
-          fullname: "Research Methods and Tools | Omirgaliyev Ruslan",
+        data: {
+          id: 515515,
+          name: "Assignment 1 is due",
+          timestart: 1726426740,
+          course: {
+            id: 4911,
+            fullname: "Research Methods and Tools | Omirgaliyev Ruslan",
+          },
         },
         reminders: {},
       },
@@ -68,17 +74,19 @@ describe("deadlines notifications", () => {
 
     const diff: DeadlineReminderDiff[] = [];
 
-    expect(trackDeadlineReminders(deadlines, ["6 hours"])).toStrictEqual(diff);
+    expect(trackDeadlineReminders(events, ["6 hours"])).toStrictEqual(diff);
   });
 
   test("checked thresholds", () => {
-    const deadlines: Deadline[] = fromPartial([
+    const events: IEvent[] = fromPartial([
       {
-        id: 515515,
-        name: "Assignment 1 is due",
-        course: {
-          id: 4911,
-          fullname: "Research Methods and Tools | Omirgaliyev Ruslan",
+        data: {
+          id: 515515,
+          name: "Assignment 1 is due",
+          course: {
+            id: 4911,
+            fullname: "Research Methods and Tools | Omirgaliyev Ruslan",
+          },
         },
         reminders: {
           "12 hours": true,
@@ -88,7 +96,7 @@ describe("deadlines notifications", () => {
 
     const diff: DeadlineReminderDiff[] = [];
 
-    expect(trackDeadlineReminders(deadlines, ["12 hours"])).toStrictEqual(diff);
+    expect(trackDeadlineReminders(events, ["12 hours"])).toStrictEqual(diff);
   });
 
   test("formatDeadlineReminders", () => {
