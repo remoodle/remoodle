@@ -34,19 +34,17 @@ echo "$GH_PAT" | docker login ghcr.io -u USERNAME --password-stdin
 
 ```
 /remoodle
-    /db
-        docker-compose.yml
-        /data
-            /mongo
-            /mysql
-            /redis
-    /aitu
-        docker-compose.yml
-        .env.backend
-        .env.core
+    compose-db.yml
+    /data
+      /mongo
+      /redis
+    docker-compose.yml
+    .env.backend
+    .env.tgbot
+    varopeon.json
 ```
 
-##### docker-compose.yml
+##### compose-db.yml
 
 ```yml
 services:
@@ -58,8 +56,6 @@ services:
       - ./data/redis:/data
     ports:
       - "127.0.0.1:6379:6379"
-    networks:
-      - shared
 
   mongo:
     image: mongo:7.0.5
@@ -68,81 +64,44 @@ services:
       - ./data/mongo:/data/db
     ports:
       - "127.0.0.1:27017:27017"
-    networks:
-      - shared
-
-  mysql:
-    image: mysql:8.2
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: remoodle_aitu
-      MYSQL_USER: username
-      MYSQL_PASSWORD: password
-    volumes:
-      - ./data/mysql:/var/lib/mysql
-    networks:
-      - shared
-    ports:
-      - "127.0.0.1:3306:3306"
-
-networks:
-  shared:
-    name: r1ng
-    external: true
 ```
-
-### Apps
 
 ##### docker-compose.yml
 
 ```yml
 services:
-  core:
-    image: ghcr.io/remoodle/core:0.2.2
+  api:
+    image: ghcr.io/remoodle/backend:trunk
     restart: always
-    networks:
-      - shared
-    env_file:
-      - .env.core
-
-  backend:
-    image: ghcr.io/remoodle/backend:0.2.14
-    restart: always
-    networks:
-      - shared
     env_file:
       - .env.backend
     environment:
-      - CORE_URL=http://core:8080
+      - SERVICE_NAME=api
     ports:
-      - "80:9000"
+      - "9000:9000"
+
+  cluster:
+    image: ghcr.io/remoodle/backend:trunk
+    restart: always
+    volumes:
+      - ./vaporeon.json:/app/apps/backend/dist/services/cluster/vaporeon.json
+    env_file:
+      - .env.backend
+    environment:
+      - SERVICE_NAME=cluster
+    ports:
+      - "127.0.0.1:9001:9001"
 
   tgbot:
-    image: ghcr.io/remoodle/tgbot:0.0.2
+    image: ghcr.io/remoodle/tgbot:trunk
     restart: always
-    networks:
-      - shared
     env_file:
       - .env.tgbot
     environment:
-      - BACKEND_URL=http://backend:9000
+      - BACKEND_URL=http://api:9000
     ports:
       - "8888:8888"
-
-networks:
-  shared:
-    name: r1ng
-    external: true
 ```
-
-# Migration
-
-`docker exec -it db-mysql-1 mysql -u root -p`  
-`docker cp remoodle.users.json remoodle-mongo-1:/data.json`
-
-`docker exec -it db-mongo-1 bash`  
-`mongoimport --db remoodle --collection users --file data.json --jsonArray`
 
 ### Cloud init
 

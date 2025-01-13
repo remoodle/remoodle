@@ -41,9 +41,6 @@ pnpm install
 
 ### 4. Run the application
 
-> [!IMPORTANT]  
-> Make sure ReMoodle Core is running. Follow the instructions in the [core repository](https://github.com/remoodle/core) to run it if it's not.
-
 ### Run the application
 
 ```bash
@@ -52,8 +49,7 @@ pnpm run dev
 
 ### Access it
 
-- Frontend http://localhost:5173/
-- Backend http://localhost:9000/health
-- Backend (Core) http://localhost:9000/v1/health
-- Telegram Bot Server http://localhost:8888/health
-- Alert Worker http://localhost:8787/
+- Frontend http://localhost:5173
+- Backend (API) http://localhost:9000/v1/health
+- Backend (Cluster) http://localhost:9001
+- Alert Worker http://localhost:8787
