@@ -304,19 +304,21 @@ export const jobs: Record<JobName, ClusterJob> = {
       );
 
       for (const [id, name, date, remaining, threshold] of reminders) {
-        const event = events.find((e) => e.id === id);
+        const event = events.find(({ data }) => data.id === id);
 
         if (!event) {
           continue;
         }
 
-        (event.reminders || {})[threshold] = true;
+        const updatedReminders = { ...(event.reminders || {}) };
+
+        updatedReminders[threshold] = true;
 
         await db.event.findOneAndUpdate(
-          { userId, "data.id": event.id },
+          { userId, "data.id": event.data.id },
           {
             $set: {
-              reminders: event.reminders,
+              reminders: updatedReminders,
             },
           },
           { upsert: true },
