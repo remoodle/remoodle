@@ -3,13 +3,21 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
-import type { IUser, MoodleAssignment, MoodleGrade } from "@remoodle/types";
+import { FlowProducer } from "bullmq";
+
+import type {
+  IUser,
+  MoodleAssignment,
+  MoodleCourse,
+  MoodleEvent,
+  MoodleGrade,
+} from "@remoodle/types";
 
 import { config, env } from "../../../config";
 import { db } from "../../../library/db";
 import { deleteUser, getDeadlines } from "../../../core/wrapper";
-import { syncCourses, syncEvents } from "../../../core/sync";
-import { requestAlertWorker, requestCluster } from "../../../library/hc";
+import { QueueName, JobName } from "../../../core/queues";
+import { requestAlertWorker } from "../../../library/hc";
 import { Moodle } from "../../../library/moodle";
 import {
   hashPassword,
@@ -87,7 +95,36 @@ const authRoutes = new Hono<{
           const { _id: userId } = newUser;
 
           try {
-            await Promise.all([syncEvents(userId), syncCourses(userId)]);
+            const flowProducer = new FlowProducer({
+              connection: db.redisConnection,
+            });
+
+            await flowProducer.add({
+              name: JobName.UPDATE_GRADES,
+              queueName: QueueName.GRADES_FLOW,
+              data: { userId, trackDiff: false },
+              opts: {
+                priority: 1,
+              },
+              children: [
+                {
+                  name: JobName.UPDATE_COURSES,
+                  queueName: QueueName.COURSES,
+                  data: { userId },
+                  opts: {
+                    priority: 1,
+                  },
+                },
+                {
+                  name: JobName.UPDATE_EVENTS,
+                  queueName: QueueName.EVENTS,
+                  data: { userId },
+                  opts: {
+                    priority: 1,
+                  },
+                },
+              ],
+            });
           } catch (error: any) {
             await deleteUser(userId);
             throw new HTTPException(500, {
@@ -104,10 +141,6 @@ const authRoutes = new Hono<{
                 message: `New ${telegramId ? "Telegram" : "Regular"} user \n<b>${student.fullname}</b> \n<b>${student.username}</b>`,
               },
             }),
-          );
-
-          await requestCluster((client) =>
-            client.user.$post({ json: { userId, moodleToken } }),
           );
         } catch (error: any) {
           throw new HTTPException(500, {
@@ -275,6 +308,34 @@ const userRoutes = new Hono<{
         daysLimit: daysLimit ? parseInt(daysLimit) : undefined,
       });
 
+      if (!deadlines.length) {
+        const user = await db.user.findById(userId);
+
+        if (!user) {
+          throw new HTTPException(404, {
+            message: "User not found",
+          });
+        }
+
+        const client = new Moodle(user.moodleToken);
+
+        const [response, error] = await client.call(
+          "core_calendar_get_action_events_by_timesort",
+          {
+            timesortfrom: Math.floor(Date.now() / 1000 / 86400) * 86400,
+            ...(daysLimit && {
+              timesortto: parseInt(daysLimit) * 86400,
+            }),
+          },
+        );
+
+        if (error) {
+          throw new HTTPException(500, { message: error.message });
+        }
+
+        return ctx.json(response.events as MoodleEvent[]);
+      }
+
       return ctx.json(deadlines);
     },
   )
@@ -296,6 +357,29 @@ const userRoutes = new Hono<{
         deleted: false,
         ...(status && { classification: status }),
       });
+
+      if (!courses.length) {
+        const user = await db.user.findById(userId);
+
+        if (!user) {
+          throw new HTTPException(404, {
+            message: "User not found",
+          });
+        }
+
+        const client = new Moodle(user.moodleToken);
+
+        const [response, error] = await client.call(
+          "core_course_get_enrolled_courses_by_timeline_classification",
+          { classification: status ?? null },
+        );
+
+        if (error) {
+          throw new HTTPException(500, { message: error.message });
+        }
+
+        return ctx.json(response.courses as MoodleCourse[]);
+      }
 
       return ctx.json(courses.map((course) => course.data));
     },

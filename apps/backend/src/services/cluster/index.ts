@@ -1,13 +1,24 @@
 import { readFile } from "node:fs/promises";
 import type { RepeatOptions, WorkerOptions } from "bullmq";
 import { Worker } from "bullmq";
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
+import { createBullBoard } from "@bull-board/api";
+import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
+import { HonoAdapter } from "@bull-board/hono";
+import {
+  queues,
+  queueValues,
+  obliterateQueues,
+  closeQueues,
+  JobName,
+} from "../../core/queues";
 import { config } from "../../config";
 import { mSecOneDay } from "../../config/constants";
-import { db } from "../../library/db";
 import { logger } from "../../library/logger";
-import { queues, obliterateQueues, closeQueues } from "./queues";
-import { jobs, JobName } from "./jobs";
-import { startServer } from "./server";
+import { db } from "../../library/db";
+import { jobs } from "./jobs";
 
 const workers: Worker[] = [];
 
@@ -28,6 +39,29 @@ const loadConfig = async () => {
     repeat?: Omit<RepeatOptions, "key">;
     opts?: WorkerOptions;
   }[];
+};
+
+export const app = new Hono();
+const serverAdapter = new HonoAdapter(serveStatic);
+createBullBoard({
+  queues: queueValues.map((queue) => new BullMQAdapter(queue)),
+  serverAdapter,
+});
+// @ts-expect-error - TODO: Fix this
+app.route("/", serverAdapter.registerPlugin());
+export const startServer = () => {
+  serve(
+    {
+      hostname: config.cluster.server.host,
+      port: config.cluster.server.port,
+      fetch: app.fetch,
+    },
+    (info) => {
+      logger.cluster.info(
+        `Server is running on http://${info.address}:${info.port}`,
+      );
+    },
+  );
 };
 
 const run = async () => {

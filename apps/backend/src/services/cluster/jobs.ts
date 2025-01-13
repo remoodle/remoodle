@@ -18,25 +18,7 @@ import {
   formatDeadlineReminders,
   trackDeadlineReminders,
 } from "../../core/events/deadlines";
-import { queues, QueueName } from "./queues";
-
-export enum JobName {
-  SCHEDULE_COURSES = "courses::schedule-sync",
-  UPDATE_COURSES = "courses::update",
-
-  SCHEDULE_EVENTS = "events::schedule-sync",
-  UPDATE_EVENTS = "events::update",
-
-  SCHEDULE_GRADES = "grades::schedule-sync",
-  UPDATE_GRADES = "grades::update-user",
-  UPDATE_COURSE_GRADES = "grades::update-by-course",
-  COMBINE_GRADES = "grades::combine-diffs",
-
-  SCHEDULE_REMINDERS = "reminders::schedule-sync",
-  CHECK_REMINDERS = "reminders::check",
-
-  SEND_TELEGRAM_MESSAGE = "telegram::send-message",
-}
+import { queues, QueueName, JobName } from "../../core/queues";
 
 export type ClusterJob = {
   queueName: QueueName;
@@ -119,14 +101,18 @@ export const jobs: Record<JobName, ClusterJob> = {
     run: async () => {
       logger.cluster.info("Scheduling grades sync");
 
-      await withUsersCourses("inprogress", async (data) => {
+      await withUsers(async (data) => {
         queues[QueueName.GRADES_FLOW].addBulk(
-          data.map(([userId, courses]) => ({
+          data.map((payload) => ({
             name: JobName.UPDATE_GRADES,
-            data: { userId, courses },
+            data: {
+              userId: payload.userId,
+              classification: "inprogress",
+              trackDiff: true,
+            },
             opts: {
               deduplication: {
-                id: userId,
+                id: payload.userId,
               },
             },
           })),
@@ -137,16 +123,23 @@ export const jobs: Record<JobName, ClusterJob> = {
   [JobName.UPDATE_GRADES]: {
     queueName: QueueName.GRADES_FLOW,
     run: async (job) => {
-      const { userId, courses } = job.data;
+      const { userId, classification, trackDiff } = job.data;
 
       logger.cluster.info(`Updating grades for ${userId}`);
+
+      const courses = await db.course
+        .find({
+          userId,
+          deleted: false,
+          ...(classification && { classification }),
+        })
+        .lean();
 
       if (!courses.length) {
         return;
       }
 
-      // @ts-ignore FIXME
-      const courseIds = courses.map((course) => course.courseId);
+      const courseIds = courses.map((course) => course.data.id);
 
       const data = {
         userId,
@@ -161,13 +154,12 @@ export const jobs: Record<JobName, ClusterJob> = {
         name: JobName.COMBINE_GRADES,
         queueName: QueueName.GRADES_FLOW_COMBINE,
         data,
-        // @ts-ignore FIXME
         children: courses.map((course) => {
           const data = {
             userId,
-            courseId: course.courseId,
-            courseName: course.courseName,
-            trackDiff: true,
+            courseId: course.data.id,
+            courseName: course.data.fullname,
+            trackDiff,
           };
 
           return {
@@ -181,7 +173,7 @@ export const jobs: Record<JobName, ClusterJob> = {
                 delay: 2000,
               },
               deduplication: {
-                id: `${userId}::${course.courseId}`,
+                id: `${userId}::${course.data.id}`,
               },
               removeDependencyOnFailure: true,
             },
@@ -377,41 +369,6 @@ const withUsers = async (
     .lean();
 
   await cb(users.map((user) => ({ userId: user._id })));
-};
-
-const withUsersCourses = async (
-  classification: MoodleCourseClassification | undefined,
-  cb: (
-    groups: [
-      string,
-      (
-        | {
-            userId: string;
-            courseId: number;
-            courseName: string;
-          }[]
-        | undefined
-      ),
-    ][],
-  ) => Promise<void>,
-) => {
-  const users = await db.user.find({ moodleId: { $exists: true } }).lean();
-
-  const courses = await db.course
-    .find({
-      userId: { $in: users.map((user) => user._id) },
-      deleted: false,
-      ...(classification && { classification }),
-    })
-    .lean();
-
-  const data = courses.map((course) => ({
-    userId: course.userId,
-    courseId: course.data.id,
-    courseName: course.data.fullname,
-  }));
-
-  await cb(objectEntries(partition(data, ({ userId }) => userId)));
 };
 
 async function sendTelegramMessage(chatId: number, message: string) {

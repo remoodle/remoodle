@@ -1,6 +1,24 @@
 import { Queue } from "bullmq";
 import { getValues } from "@remoodle/utils";
-import { db } from "../../library/db";
+import { db } from "../library/db";
+
+export enum JobName {
+  SCHEDULE_COURSES = "courses::schedule-sync",
+  UPDATE_COURSES = "courses::update",
+
+  SCHEDULE_EVENTS = "events::schedule-sync",
+  UPDATE_EVENTS = "events::update",
+
+  SCHEDULE_GRADES = "grades::schedule-sync",
+  UPDATE_GRADES = "grades::update-user",
+  UPDATE_COURSE_GRADES = "grades::update-by-course",
+  COMBINE_GRADES = "grades::combine-diffs",
+
+  SCHEDULE_REMINDERS = "reminders::schedule-sync",
+  CHECK_REMINDERS = "reminders::check",
+
+  SEND_TELEGRAM_MESSAGE = "telegram::send-message",
+}
 
 export enum QueueName {
   EVENTS_SYNC = "events sync",
