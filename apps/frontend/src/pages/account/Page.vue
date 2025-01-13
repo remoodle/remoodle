@@ -7,11 +7,11 @@ import { request, getAuthHeaders } from "@/shared/lib/hc";
 import { createAsyncProcess } from "@/shared/lib/helpers";
 import { useToast } from "@/shared/ui/toast";
 import { Avatar } from "@/shared/ui/avatar";
+import { Skeleton } from "@/shared/ui/skeleton";
 import { RouteName } from "@/shared/lib/routes";
 import AccountSidebar from "./ui/AccountSidebar.vue";
 import AccountProfilePage from "./AccountProfile.vue";
 import AccountNotificationsPage from "./AccountNotifications.vue";
-import Skeleton from "@/shared/ui/skeleton/Skeleton.vue";
 
 const userStore = useUserStore();
 

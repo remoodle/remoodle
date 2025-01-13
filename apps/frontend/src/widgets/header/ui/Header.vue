@@ -13,7 +13,6 @@ import { Avatar } from "@/shared/ui/avatar";
 import { Logo } from "@/shared/ui/logo";
 import { useUserStore } from "@/shared/stores/user";
 import { RouteName } from "@/shared/lib/routes";
-import MagicSearch from "./MagicSearch.vue";
 
 const route = useRoute();
 
