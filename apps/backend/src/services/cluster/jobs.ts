@@ -242,6 +242,8 @@ export const jobs: Record<JobName, ClusterJob> = {
         userId,
         message: formatCourseDiffs(gradeChangeEvent.payload),
       });
+
+      return gradeChangeEvent.payload;
     },
   },
   [JobName.SCHEDULE_REMINDERS]: {
@@ -329,13 +331,15 @@ export const jobs: Record<JobName, ClusterJob> = {
       };
 
       if (!deadlineReminderEvent.payload.length) {
-        return;
+        return "no deadline reminders";
       }
 
       await queues[QueueName.TELEGRAM].add(QueueName.TELEGRAM, {
         userId,
         message: formatDeadlineReminders(deadlineReminderEvent.payload),
       });
+
+      return deadlineReminderEvent.payload;
     },
   },
   [JobName.SEND_TELEGRAM_MESSAGE]: {
