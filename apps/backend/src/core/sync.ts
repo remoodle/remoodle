@@ -147,6 +147,7 @@ export const syncCourseGrades = async (
   }
 
   if (
+    !currentGrades.length ||
     !trackDiff ||
     !user.telegramId ||
     !user.notificationSettings.telegram.gradeUpdates

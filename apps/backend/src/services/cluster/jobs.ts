@@ -29,26 +29,28 @@ export const jobs: Record<JobName, ClusterJob> = {
   [JobName.SCHEDULE_EVENTS]: {
     queueName: QueueName.EVENTS_SYNC,
     run: async () => {
-      logger.cluster.info("Scheduling events sync");
+      const users = await getUsers();
 
-      await withUsers(async (data) => {
-        queues[QueueName.EVENTS].addBulk(
-          data.map((payload) => ({
-            name: JobName.UPDATE_EVENTS,
-            data: { userId: payload.userId },
-            opts: {
-              deduplication: {
-                id: payload.userId,
-              },
-              attempts: 3,
-              backoff: {
-                type: "exponential",
-                delay: 1000,
-              },
-            },
-          })),
-        );
-      });
+      logger.cluster.info(`Updating events for ${users.length} users`);
+
+      const jobs = users.map((payload) => ({
+        name: JobName.UPDATE_EVENTS,
+        data: { userId: payload.userId },
+        opts: {
+          deduplication: {
+            id: payload.userId,
+          },
+          attempts: 3,
+          backoff: {
+            type: "exponential",
+            delay: 1000,
+          },
+        },
+      }));
+
+      queues[QueueName.EVENTS].addBulk(jobs);
+
+      return users.length;
     },
   },
   [JobName.UPDATE_EVENTS]: {
@@ -64,26 +66,28 @@ export const jobs: Record<JobName, ClusterJob> = {
   [JobName.SCHEDULE_COURSES]: {
     queueName: QueueName.COURSES_SYNC,
     run: async () => {
-      logger.cluster.info("Scheduling courses sync");
+      const users = await getUsers();
 
-      await withUsers(async (data) => {
-        queues[QueueName.COURSES].addBulk(
-          data.map((payload) => ({
-            name: JobName.UPDATE_COURSES,
-            data: { userId: payload.userId },
-            opts: {
-              deduplication: {
-                id: payload.userId,
-              },
-              attempts: 2,
-              backoff: {
-                type: "exponential",
-                delay: 1000,
-              },
-            },
-          })),
-        );
-      });
+      logger.cluster.info(`Updating courses for ${users.length} users`);
+
+      const jobs = users.map((payload) => ({
+        name: JobName.UPDATE_COURSES,
+        data: { userId: payload.userId },
+        opts: {
+          deduplication: {
+            id: payload.userId,
+          },
+          attempts: 2,
+          backoff: {
+            type: "exponential",
+            delay: 1000,
+          },
+        },
+      }));
+
+      queues[QueueName.COURSES].addBulk(jobs);
+
+      return users.length;
     },
   },
   [JobName.UPDATE_COURSES]: {
@@ -99,25 +103,27 @@ export const jobs: Record<JobName, ClusterJob> = {
   [JobName.SCHEDULE_GRADES]: {
     queueName: QueueName.GRADES_SYNC,
     run: async () => {
-      logger.cluster.info("Scheduling grades sync");
+      const users = await getUsers();
 
-      await withUsers(async (data) => {
-        queues[QueueName.GRADES_FLOW].addBulk(
-          data.map((payload) => ({
-            name: JobName.UPDATE_GRADES,
-            data: {
-              userId: payload.userId,
-              classification: "inprogress",
-              trackDiff: true,
-            },
-            opts: {
-              deduplication: {
-                id: payload.userId,
-              },
-            },
-          })),
-        );
-      });
+      logger.cluster.info(`Updating grades for ${users.length} users`);
+
+      const jobs = users.map((payload) => ({
+        name: JobName.UPDATE_GRADES,
+        data: {
+          userId: payload.userId,
+          classification: "inprogress",
+          trackDiff: true,
+        },
+        opts: {
+          deduplication: {
+            id: payload.userId,
+          },
+        },
+      }));
+
+      queues[QueueName.GRADES_FLOW].addBulk(jobs);
+
+      return users.length;
     },
   },
   [JobName.UPDATE_GRADES]: {
@@ -218,38 +224,47 @@ export const jobs: Record<JobName, ClusterJob> = {
           .map((value) => value) as GradeChangeDiff[],
       };
 
-      if (gradeChangeEvent.payload.length) {
-        await queues[QueueName.TELEGRAM].add(QueueName.TELEGRAM, {
-          userId,
-          message: formatCourseDiffs(gradeChangeEvent.payload),
-        });
+      if (!gradeChangeEvent.payload.length) {
+        return "no grade changes";
       }
+
+      const user = await db.user.findOne({ moodleId: userId });
+
+      if (!user) {
+        throw new Error(`User ${userId} not found`);
+      }
+
+      if (!user.notificationSettings.telegram.gradeUpdates) {
+        return "gradeUpdates not enabled";
+      }
+
+      await queues[QueueName.TELEGRAM].add(QueueName.TELEGRAM, {
+        userId,
+        message: formatCourseDiffs(gradeChangeEvent.payload),
+      });
     },
   },
   [JobName.SCHEDULE_REMINDERS]: {
     queueName: QueueName.REMINDERS_SYNC,
     run: async () => {
-      logger.cluster.info("Scheduling reminders sync");
+      const users = await getUsers({
+        telegramId: { $exists: true },
+        "notificationSettings.telegram.deadlineReminders": true,
+      });
 
-      await withUsers(
-        async (data) => {
-          queues[QueueName.REMINDERS].addBulk(
-            data.map((payload) => ({
-              name: JobName.CHECK_REMINDERS,
-              data: { userId: payload.userId },
-              opts: {
-                deduplication: {
-                  id: payload.userId,
-                },
-              },
-            })),
-          );
+      logger.cluster.info(`Updating reminders for ${users.length} users`);
+
+      const jobs = users.map((payload) => ({
+        name: JobName.CHECK_REMINDERS,
+        data: { userId: payload.userId },
+        opts: {
+          deduplication: {
+            id: payload.userId,
+          },
         },
-        {
-          telegramId: { $exists: true },
-          "notificationSettings.telegram.deadlineReminders": true,
-        },
-      );
+      }));
+
+      queues[QueueName.REMINDERS].addBulk(jobs);
     },
   },
   [JobName.CHECK_REMINDERS]: {
@@ -259,13 +274,14 @@ export const jobs: Record<JobName, ClusterJob> = {
 
       logger.cluster.info(`Checking reminders for ${userId}`);
 
-      const user = await db.user.findOne({
-        _id: userId,
-        "notificationSettings.telegram.deadlineReminders": true,
-      });
+      const user = await db.user.findOne({ _id: userId });
 
       if (!user) {
         throw new Error(`User ${user} not found `);
+      }
+
+      if (!user.notificationSettings.telegram.deadlineReminders) {
+        return "deadlineReminders not enabled";
       }
 
       const customThresholds = user.notificationSettings.deadlineThresholds;
@@ -312,12 +328,14 @@ export const jobs: Record<JobName, ClusterJob> = {
         payload: courseReminders,
       };
 
-      if (deadlineReminderEvent.payload.length) {
-        await queues[QueueName.TELEGRAM].add(QueueName.TELEGRAM, {
-          userId,
-          message: formatDeadlineReminders(deadlineReminderEvent.payload),
-        });
+      if (!deadlineReminderEvent.payload.length) {
+        return;
       }
+
+      await queues[QueueName.TELEGRAM].add(QueueName.TELEGRAM, {
+        userId,
+        message: formatDeadlineReminders(deadlineReminderEvent.payload),
+      });
     },
   },
   [JobName.SEND_TELEGRAM_MESSAGE]: {
@@ -333,10 +351,7 @@ export const jobs: Record<JobName, ClusterJob> = {
         throw new Error(`User ${user} not found `);
       }
 
-      if (
-        !user.telegramId ||
-        !user.notificationSettings.telegram.gradeUpdates
-      ) {
+      if (!user.telegramId) {
         return job.remove();
       }
 
@@ -360,15 +375,12 @@ export const jobs: Record<JobName, ClusterJob> = {
   },
 };
 
-const withUsers = async (
-  cb: (data: { userId: string }[]) => Promise<void>,
-  options: Record<string, any> = {},
-) => {
+const getUsers = async (options: Record<string, any> = {}) => {
   const users = await db.user
     .find({ moodleId: { $exists: true }, ...options })
     .lean();
 
-  await cb(users.map((user) => ({ userId: user._id })));
+  return users.map((user) => ({ userId: user._id }));
 };
 
 async function sendTelegramMessage(chatId: number, message: string) {

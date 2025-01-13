@@ -2,13 +2,13 @@
   {
     "name": "courses::schedule-sync",
     "repeat": {
-      "every": 10800000
+      "every": 900000
     }
   },
   {
     "name": "grades::schedule-sync",
     "repeat": {
-      "every": 360000
+      "every": 60000
     }
   },
   {
