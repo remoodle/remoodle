@@ -74,12 +74,10 @@ const authRoutes = new Hono<{
       });
 
       if (existingUser && telegramId) {
-        if (!existingUser.telegramId) {
-          await db.user.updateOne(
-            { _id: existingUser._id },
-            { $set: { telegramId } },
-          );
-        }
+        await db.user.updateOne(
+          { _id: existingUser._id },
+          { $set: { telegramId } },
+        );
 
         if (student.userid === existingUser.moodleId) {
           await db.user.updateOne(
