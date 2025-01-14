@@ -67,7 +67,7 @@ export const useUserStore = defineStore("user", () => {
   const { run: updateUser, loading: updatingUser } = createAsyncProcess(
     async () => {
       const [data, error] = await request((client) =>
-        client.v1.user.check.$get(
+        client.v2.user.check.$get(
           {},
           {
             headers: getAuthHeaders(),

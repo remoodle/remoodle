@@ -43,7 +43,7 @@ const handle = ref<string>(`${initialHandle.value}`);
 const { run: updateHandle, loading: updatingHandle } = createAsyncProcess(
   async () => {
     const [_, error] = await request((client) =>
-      client.v1.user.settings.$post(
+      client.v2.user.settings.$post(
         {
           json: {
             handle: handle.value,
@@ -94,7 +94,7 @@ const resetPasswordFields = () => {
 const { run: updatePassword, loading: updatingPassword } = createAsyncProcess(
   async () => {
     const [_, error] = await request((client) =>
-      client.v1.user.settings.$post(
+      client.v2.user.settings.$post(
         {
           json: {
             password: newPassword.value,
@@ -134,7 +134,7 @@ const canUpdatePassword = computed(() => {
 // const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
 //   async () => {
 //     const [_, error] = await request((client) =>
-//       client.v1.bye.$delete(
+//       client.v2.bye.$delete(
 //         {},
 //         {
 //           headers: getAuthHeaders(),

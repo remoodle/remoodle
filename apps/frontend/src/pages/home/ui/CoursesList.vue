@@ -20,7 +20,7 @@ const courseCategories = computed(() => Object.keys(courses.value || {}));
 
 const { run, loading, error } = createAsyncProcess(async () => {
   const [data, error] = await request((client) =>
-    client.v1.courses.overall.$get(
+    client.v2.courses.overall.$get(
       {
         query: {
           status: "inprogress",

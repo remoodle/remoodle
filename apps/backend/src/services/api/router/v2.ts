@@ -775,7 +775,7 @@ const userRoutes = new Hono<{
     return ctx.json(user);
   });
 
-export const v1 = new Hono()
+export const v2 = new Hono()
   .route("/", publicRoutes)
   .route("/auth", authRoutes)
   .route("/", userRoutes);

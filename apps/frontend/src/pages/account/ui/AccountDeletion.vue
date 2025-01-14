@@ -22,7 +22,7 @@ const userStore = useUserStore();
 const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
   async () => {
     const [_, error] = await request((client) =>
-      client.v1.bye.$delete(
+      client.v2.bye.$delete(
         {},
         {
           headers: getAuthHeaders(),

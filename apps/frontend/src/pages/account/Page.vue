@@ -38,7 +38,7 @@ const settings = ref<{
 const { run: loadSettings, loading: loadingSettings } = createAsyncProcess(
   async () => {
     const [data, error] = await request((client) =>
-      client.v1.user.settings.$get(
+      client.v2.user.settings.$get(
         {},
         {
           headers: getAuthHeaders(),

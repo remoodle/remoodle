@@ -43,7 +43,7 @@ const connect = () => {
 
 const { run: verify, loading } = createAsyncProcess(async () => {
   const [data, error] = await request((client) =>
-    client.v1.otp.verify.$post(
+    client.v2.otp.verify.$post(
       {
         json: {
           otp: otp.value,
@@ -77,7 +77,7 @@ const { run: verify, loading } = createAsyncProcess(async () => {
 const { run: updateNotifications, loading: updatingNotifications } =
   createAsyncProcess(async () => {
     const [_, error] = await request((client) =>
-      client.v1.user.settings.$post(
+      client.v2.user.settings.$post(
         {
           json: {
             telegramDeadlineReminders:

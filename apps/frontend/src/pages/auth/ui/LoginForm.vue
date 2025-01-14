@@ -27,7 +27,7 @@ const { toast } = useToast();
 
 const { run: submit, loading } = createAsyncProcess(async () => {
   const [data, error] = await request((client) =>
-    client.v1.auth.login.$post({
+    client.v2.auth.login.$post({
       json: {
         identifier: form.value.name,
         password: form.value.password,
@@ -47,7 +47,7 @@ const { run: submit, loading } = createAsyncProcess(async () => {
 
 const handleTelegramAuth: OnTelegramAuth = async (user) => {
   const [data, error] = await request((client) =>
-    client.v1.auth.oauth.telegram.callback.$post({
+    client.v2.auth.oauth.telegram.callback.$post({
       json: user,
     }),
   );

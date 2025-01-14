@@ -18,7 +18,7 @@ async function start(ctx: RegistrationContext) {
   }
 
   const [user, error] = await request((client) =>
-    client.v1.user.check.$get(
+    client.v2.user.check.$get(
       {},
       {
         headers: getAuthHeaders(userId),
@@ -82,7 +82,7 @@ async function handleRegistration(
   token: string,
 ) {
   const [data, error] = await request((client) =>
-    client.v1.auth.token.$post(
+    client.v2.auth.token.$post(
       {
         json: {
           moodleToken: token,
@@ -119,7 +119,7 @@ async function deadlines(ctx: Context) {
   const short = ctx.message.text.startsWith("/ds");
 
   const [data, error] = await request((client) =>
-    client.v1.deadlines.$get(
+    client.v2.deadlines.$get(
       {
         query: {
           daysLimit: short ? "2" : "21",

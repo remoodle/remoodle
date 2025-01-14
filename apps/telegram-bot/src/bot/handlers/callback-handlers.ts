@@ -27,7 +27,7 @@ async function deadlines(ctx: Context) {
   const userId = ctx.from.id;
 
   const [deadlines, _] = await request((client) =>
-    client.v1.deadlines.$get(
+    client.v2.deadlines.$get(
       {
         query: {},
       },
@@ -66,7 +66,7 @@ async function backToMenu(ctx: Context) {
   const userId = ctx.from.id;
 
   const [user, _] = await request((client) =>
-    client.v1.user.check.$get(
+    client.v2.user.check.$get(
       {},
       {
         headers: getAuthHeaders(userId),
@@ -94,7 +94,7 @@ async function refreshDeadlines(ctx: Context) {
   const userId = ctx.from.id;
 
   const [deadlines, _] = await request((client) =>
-    client.v1.deadlines.$get(
+    client.v2.deadlines.$get(
       {
         query: {},
       },
@@ -135,7 +135,7 @@ async function grades(ctx: Context) {
   const userId = ctx.from.id;
 
   const [grades, _] = await request((client) =>
-    client.v1.courses.$get(
+    client.v2.courses.$get(
       {
         query: {
           status: "inprogress",
@@ -183,7 +183,7 @@ async function gradesInProgressCourse(ctx: Context) {
   const courseId = ctx.match[0].split("_")[2];
 
   const [grades, _] = await request((client) =>
-    client.v1.course[":courseId"].grades.$get(
+    client.v2.course[":courseId"].grades.$get(
       {
         param: {
           courseId: courseId,
@@ -196,7 +196,7 @@ async function gradesInProgressCourse(ctx: Context) {
   );
 
   const [course, __] = await request((client) =>
-    client.v1.course[":courseId"].$get(
+    client.v2.course[":courseId"].$get(
       {
         param: {
           courseId: courseId,
@@ -247,7 +247,7 @@ async function gradesPastCourses(ctx: Context) {
   const userId = ctx.from.id;
 
   let [rmcCourses, _] = await request((client) =>
-    client.v1.courses.$get(
+    client.v2.courses.$get(
       {
         query: {
           status: "past",
@@ -315,7 +315,7 @@ async function gradesPastCourse(ctx: Context) {
   const courseId = ctx.match[0].split("_")[2];
 
   const [grades, _] = await request((client) =>
-    client.v1.course[":courseId"].grades.$get(
+    client.v2.course[":courseId"].grades.$get(
       {
         param: {
           courseId: courseId,
@@ -328,7 +328,7 @@ async function gradesPastCourse(ctx: Context) {
   );
 
   const [course, __] = await request((client) =>
-    client.v1.course[":courseId"].$get(
+    client.v2.course[":courseId"].$get(
       {
         param: {
           courseId: courseId,
@@ -377,7 +377,7 @@ async function notifications(ctx: Context) {
   const userId = ctx.from.id;
 
   const [data, _] = await request((client) =>
-    client.v1.user.settings.$get(
+    client.v2.user.settings.$get(
       {},
       {
         headers: getAuthHeaders(userId),
@@ -418,7 +418,7 @@ async function changeNotifications(ctx: Context) {
   }
 
   const [_, error] = await request((client) =>
-    client.v1.user.settings.$post(
+    client.v2.user.settings.$post(
       {
         json: json,
       },
@@ -436,7 +436,7 @@ async function changeNotifications(ctx: Context) {
   }
 
   const [data, __] = await request((client) =>
-    client.v1.user.settings.$get(
+    client.v2.user.settings.$get(
       {},
       {
         headers: getAuthHeaders(userId),
@@ -464,7 +464,7 @@ async function deleteProfile(ctx: Context) {
   const userId = ctx.from.id;
 
   const [user, _] = await request((client) =>
-    client.v1.user.check.$get(
+    client.v2.user.check.$get(
       {},
       {
         headers: getAuthHeaders(userId),
@@ -493,7 +493,7 @@ async function deleteProfileYes(ctx: Context) {
   const userId = ctx.from.id;
 
   const [_, error] = await request((client) =>
-    client.v1.bye.$delete(
+    client.v2.bye.$delete(
       {},
       {
         headers: getAuthHeaders(userId),
@@ -536,7 +536,7 @@ async function account(ctx: Context) {
   const userId = ctx.from.id;
 
   const [user, _] = await request((client) =>
-    client.v1.user.check.$get(
+    client.v2.user.check.$get(
       {},
       {
         headers: getAuthHeaders(userId),
@@ -571,7 +571,7 @@ async function courseAssignments(ctx: Context) {
   const courseId = ctx.match[0].split("_")[2];
 
   const [course, courseError] = await request((client) => {
-    return client.v1.course[":courseId"].$get(
+    return client.v2.course[":courseId"].$get(
       {
         param: {
           courseId: courseId,
@@ -601,7 +601,7 @@ async function courseAssignments(ctx: Context) {
   }
 
   const [assignments, assignmentsError] = await request((client) =>
-    client.v1.course[":courseId"].assignments.$get(
+    client.v2.course[":courseId"].assignments.$get(
       {
         param: {
           courseId: courseId,
@@ -667,7 +667,7 @@ async function courseAssignmentById(ctx: Context) {
   );
 
   const [course, courseError] = await request((client) =>
-    client.v1.course[":courseId"].$get(
+    client.v2.course[":courseId"].$get(
       {
         param: {
           courseId: courseId,
@@ -690,7 +690,7 @@ async function courseAssignmentById(ctx: Context) {
   }
 
   const [grades, gradesError] = await request((client) =>
-    client.v1.course[":courseId"].grades.$get(
+    client.v2.course[":courseId"].grades.$get(
       {
         param: {
           courseId: courseId,
@@ -710,7 +710,7 @@ async function courseAssignmentById(ctx: Context) {
   }
 
   const [assignments, assignmentsError] = await request((client) =>
-    client.v1.course[":courseId"].assignments.$get(
+    client.v2.course[":courseId"].assignments.$get(
       {
         param: {
           courseId: courseId,

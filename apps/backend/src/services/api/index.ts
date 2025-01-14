@@ -14,7 +14,7 @@ import {
 } from "./middleware/metrics";
 import { errorHandler } from "./middleware/error";
 import { versionHandler } from "./middleware/version";
-import { v1 } from "./router/v1";
+import { v2 } from "./router/v2";
 
 const api = new Hono();
 
@@ -41,7 +41,7 @@ api.get("/health", async (ctx) => {
   return ctx.json({ status: "ok" });
 });
 
-const routes = api.route("/v1", v1);
+const routes = api.route("/v2", v2);
 
 export type AppType = typeof routes;
 

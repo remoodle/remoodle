@@ -44,7 +44,7 @@ const {
   updateCourse(undefined);
 
   const [data, error] = await request((client) =>
-    client.v1.course[":courseId"].$get(
+    client.v2.course[":courseId"].$get(
       {
         param: { courseId: id },
         query: { content: "1" },
@@ -89,7 +89,7 @@ const {
   updateAssignments(undefined);
 
   const [data, error] = await request((client) =>
-    client.v1.course[":courseId"].assignments.$get(
+    client.v2.course[":courseId"].assignments.$get(
       {
         param: { courseId: id },
       },
@@ -133,7 +133,7 @@ const {
   error: gradesError,
 } = createAsyncProcess(async () => {
   const [data, error] = await request((client) =>
-    client.v1.course[":courseId"].grades.$get(
+    client.v2.course[":courseId"].grades.$get(
       {
         param: { courseId: courseId.value },
       },
