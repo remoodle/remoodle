@@ -79,6 +79,15 @@ const userSchema = new Schema<IUser, UserModel>(
   },
 );
 
+userSchema.index(
+  { telegramId: 1 },
+  { unique: true, partialFilterExpression: { telegramId: { $exists: true } } },
+);
+userSchema.index(
+  { email: 1 },
+  { unique: true, partialFilterExpression: { email: { $exists: true } } },
+);
+
 const User = model("User", userSchema);
 
 export type UserType = typeof User;
