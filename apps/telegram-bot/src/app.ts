@@ -24,6 +24,7 @@ function main(): void {
       return c.text("Internal Server Error", 500);
     });
 
+    // @ts-ignore
     app.use(webhookCallback(bot, "hono"));
 
     const url = new URL(config.bot.token, config.bot.webhook_host).toString();
