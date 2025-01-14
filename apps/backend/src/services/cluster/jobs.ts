@@ -100,17 +100,21 @@ export const jobs: Record<JobName, ClusterJob> = {
   },
   [JobName.SCHEDULE_GRADES]: {
     queueName: QueueName.GRADES_SYNC,
-    run: async () => {
+    run: async (job) => {
       const users = await getUsers();
 
-      logger.cluster.info(`Updating grades for ${users.length} users`);
+      const { classification = "inprogress", trackDiff = true } = job.data;
+
+      logger.cluster.info(
+        `Updating ${classification} grades for ${users.length} users, trackDiff: ${trackDiff}`,
+      );
 
       const jobs = users.map((payload) => ({
         name: JobName.UPDATE_GRADES,
         data: {
           userId: payload.userId,
-          classification: "inprogress",
-          trackDiff: true,
+          classification,
+          trackDiff,
         },
         opts: {
           deduplication: {
