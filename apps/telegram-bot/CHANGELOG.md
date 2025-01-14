@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.12.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.11.0...remoodle/telegram-bot-v0.12.0) (2025-01-14)
+
+
+### Features
+
+* support health recovery ([da29a2e](https://github.com/remoodle/remoodle/commit/da29a2e5c72b0c5fbf4c8d1281c49616f11b8a85))
+
+
+### Bug Fixes
+
+* bump api version ([7c10e86](https://github.com/remoodle/remoodle/commit/7c10e865b48305eaa95999f9e3932c127852f5f9))
+* supress error ([2368a98](https://github.com/remoodle/remoodle/commit/2368a982d75f42052d5cbdf55289ed55633b3a1d))
+
+
+### Code Refactoring
+
+* **tgbot:** adapt breaking changes ([eafb7cb](https://github.com/remoodle/remoodle/commit/eafb7cbf43f4de716a7716607cc2b938b0a1e26b))
+
 ## [0.11.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.10.3...remoodle/telegram-bot-v0.11.0) (2025-01-08)
 
 
