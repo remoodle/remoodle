@@ -30,7 +30,14 @@ const userSchema = new Schema<IUser>(
     _id: { type: String, default: uuidv7 },
     name: { type: String, required: true },
     username: { type: String, required: true },
-    handle: { type: String, required: true, unique: true },
+    handle: {
+      type: String,
+      required: true,
+      unique: true,
+      default() {
+        return this._id;
+      },
+    },
     moodleId: { type: Number, required: true, unique: true },
     moodleToken: { type: String, required: true, unique: true },
     health: { type: Number, default: 7 },
