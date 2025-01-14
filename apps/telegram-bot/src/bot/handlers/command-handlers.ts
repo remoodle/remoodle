@@ -26,15 +26,20 @@ async function start(ctx: RegistrationContext) {
     ),
   );
 
+  const token = ctx.message.text.split(" ")[1];
+
   if (user && !error) {
+    if (user.health < 0 && token) {
+      await handleRegistration(ctx, userId, token);
+      return;
+    }
+
     // If the user is already registered, greet them
     await ctx.reply(`${user.name}`, {
       reply_markup: keyboards.main,
     });
     return;
   }
-
-  const token = ctx.message.text.split(" ")[1];
 
   if (token && token === "connect") {
     const { token, expiryDate } = await db.telegramToken.set(userId);

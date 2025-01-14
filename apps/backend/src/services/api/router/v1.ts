@@ -73,11 +73,27 @@ const authRoutes = new Hono<{
         moodleId: student.userid,
       });
 
-      if (existingUser && !existingUser.telegramId && telegramId) {
-        await db.user.updateOne(
-          { _id: existingUser._id },
-          { $set: { telegramId } },
-        );
+      if (existingUser && telegramId) {
+        if (!existingUser.telegramId) {
+          await db.user.updateOne(
+            { _id: existingUser._id },
+            { $set: { telegramId } },
+          );
+        }
+
+        if (student.userid === existingUser.moodleId) {
+          await db.user.updateOne(
+            { _id: existingUser._id },
+            {
+              $set: {
+                moodleToken,
+                username: student.username,
+                name: student.fullname,
+                health: 7,
+              },
+            },
+          );
+        }
       }
 
       if (!existingUser) {
