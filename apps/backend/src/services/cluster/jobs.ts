@@ -46,9 +46,9 @@ export const jobs: Record<JobName, ClusterJob> = {
         },
       }));
 
-      queues[QueueName.EVENTS].addBulk(jobs);
+      const bulk = await queues[QueueName.EVENTS].addBulk(jobs);
 
-      return users.length;
+      return bulk.length;
     },
   },
   [JobName.UPDATE_EVENTS]: {
@@ -83,9 +83,9 @@ export const jobs: Record<JobName, ClusterJob> = {
         },
       }));
 
-      queues[QueueName.COURSES].addBulk(jobs);
+      const bulk = await queues[QueueName.COURSES].addBulk(jobs);
 
-      return users.length;
+      return bulk.length;
     },
   },
   [JobName.UPDATE_COURSES]: {
@@ -123,9 +123,9 @@ export const jobs: Record<JobName, ClusterJob> = {
         },
       }));
 
-      queues[QueueName.GRADES_FLOW].addBulk(jobs);
+      const bulk = await queues[QueueName.GRADES_FLOW].addBulk(jobs);
 
-      return users.length;
+      return bulk.length;
     },
   },
   [JobName.UPDATE_GRADES]: {
@@ -184,7 +184,7 @@ export const jobs: Record<JobName, ClusterJob> = {
         };
       });
 
-      await flowProducer.add({
+      const flow = await flowProducer.add({
         name: JobName.COMBINE_GRADES,
         queueName: QueueName.GRADES_FLOW_COMBINE,
         data,
@@ -195,6 +195,8 @@ export const jobs: Record<JobName, ClusterJob> = {
           },
         },
       });
+
+      return flow.children?.length;
     },
   },
   [JobName.UPDATE_COURSE_GRADES]: {
@@ -270,7 +272,9 @@ export const jobs: Record<JobName, ClusterJob> = {
         },
       }));
 
-      queues[QueueName.REMINDERS].addBulk(jobs);
+      const bulk = await queues[QueueName.REMINDERS].addBulk(jobs);
+
+      return bulk.length;
     },
   },
   [JobName.CHECK_REMINDERS]: {
@@ -302,7 +306,7 @@ export const jobs: Record<JobName, ClusterJob> = {
       );
 
       if (!deadlineReminderDiffs.length) {
-        return;
+        return "no deadline reminders";
       }
 
       const reminders = deadlineReminderDiffs.flatMap(
