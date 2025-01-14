@@ -22,7 +22,7 @@
     "@remoodle/db": "workspace:*",
     "@remoodle/utils": "workspace:*",
     "@total-typescript/shoehorn": "^0.1.2",
-    "bullmq": "^5.34.8",
+    "bullmq": "^5.34.10",
     "dotenv": "^16.4.5",
     "envalid": "^8.0.0",
     "hono": "^4.5.5",
