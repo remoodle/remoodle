@@ -47,7 +47,6 @@ createBullBoard({
   queues: queueValues.map((queue) => new BullMQAdapter(queue)),
   serverAdapter,
 });
-// @ts-expect-error - TODO: Fix this
 app.route("/", serverAdapter.registerPlugin());
 export const startServer = () => {
   serve(
