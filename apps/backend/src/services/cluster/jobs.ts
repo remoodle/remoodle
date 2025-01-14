@@ -391,7 +391,7 @@ export const jobs: Record<JobName, ClusterJob> = {
 
 const getUsers = async (options: Record<string, any> = {}) => {
   const users = await db.user
-    .find({ moodleId: { $exists: true }, ...options })
+    .find({ moodleId: { $exists: true }, health: { $gt: 0 }, ...options })
     .lean();
 
   return users.map((user) => ({ userId: user._id }));

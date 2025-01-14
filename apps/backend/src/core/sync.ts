@@ -1,8 +1,21 @@
-import type { MoodleCourse, MoodleCourseClassification } from "@remoodle/types";
+import type {
+  IUser,
+  MoodleCourse,
+  MoodleCourseClassification,
+} from "@remoodle/types";
 import { Moodle } from "../library/moodle";
 import { db } from "../library/db";
 import { trackCourseDiff } from "./events/grades";
 import type { GradeChangeDiff } from "./events/grades";
+
+const handleError = async (error: { message: string }, user: IUser) => {
+  if (error.message.includes("Invalid token")) {
+    await db.user.updateOne(
+      { _id: user._id },
+      { $set: { health: user.health - 1 } },
+    );
+  }
+};
 
 export const syncEvents = async (userId: string) => {
   const user = await db.user.findById(userId);
@@ -21,7 +34,8 @@ export const syncEvents = async (userId: string) => {
   );
 
   if (error) {
-    throw new Error(error.message);
+    await handleError(error, user);
+    throw new Error(`Failed to get events: ${error.message}`);
   }
 
   const filteredEvents = response.events.filter(
@@ -70,7 +84,8 @@ export const syncCourses = async (
     );
 
     if (error) {
-      throw new Error(error.message);
+      await handleError(error, user);
+      throw new Error(`Failed to get ${variant} courses: ${error.message}`);
     }
 
     courses.push(
@@ -124,6 +139,7 @@ export const syncCourseGrades = async (
   );
 
   if (error) {
+    await handleError(error, user);
     throw new Error(`Failed to get grades for ${courseId}: ${error.message}`);
   }
 
