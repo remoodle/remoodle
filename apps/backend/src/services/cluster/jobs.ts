@@ -226,7 +226,7 @@ export const jobs: Record<JobName, ClusterJob> = {
         return "no grade changes";
       }
 
-      const user = await db.user.findOne({ moodleId: userId });
+      const user = await db.user.findOne({ _id: userId });
 
       if (!user) {
         throw new Error(`User ${userId} not found`);
