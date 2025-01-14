@@ -72,8 +72,10 @@ const authRoutes = new Hono<{
           try {
             user = (await db.user.create({
               name: student.name,
+              username: student.username,
+              handle: handle,
               moodleId: student.moodle_id,
-              handle: handle || student.username,
+              moodleToken: moodleToken,
               ...(telegramId && { telegramId }),
               ...(student.email && { email: student.email }),
               ...(password && { password: hashPassword(password) }),

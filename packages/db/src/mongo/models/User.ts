@@ -21,10 +21,12 @@ type NotificationSettings = {
 export type IUser = {
   _id: string;
   name: string;
+  username: string;
   handle: string;
   moodleId: number;
-  // moodleToken: string;
+  moodleToken: string;
   notificationSettings: NotificationSettings;
+  health: number;
   email?: string;
   telegramId?: number;
   password?: string;
@@ -51,9 +53,18 @@ const userSchema = new Schema<IUser, UserModel>(
   {
     _id: { type: String, default: uuidv7 },
     name: { type: String, required: true },
-    handle: { type: String, required: true, unique: true },
+    username: { type: String, required: true },
+    handle: {
+      type: String,
+      required: true,
+      unique: true,
+      default() {
+        return this._id;
+      },
+    },
     moodleId: { type: Number, required: true, unique: true },
-    // moodleToken: { type: String, required: true, unique: true },
+    moodleToken: { type: String, required: true, unique: true },
+    health: { type: Number, default: 7 },
     email: { type: String },
     telegramId: { type: Number },
     password: { type: String },
@@ -66,15 +77,6 @@ const userSchema = new Schema<IUser, UserModel>(
   {
     timestamps: true,
   },
-);
-
-userSchema.index(
-  { telegramId: 1 },
-  { unique: true, partialFilterExpression: { telegramId: { $exists: true } } },
-);
-userSchema.index(
-  { email: 1 },
-  { unique: true, partialFilterExpression: { email: { $exists: true } } },
 );
 
 const User = model("User", userSchema);
