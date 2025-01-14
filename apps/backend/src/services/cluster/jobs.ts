@@ -1,5 +1,5 @@
 import { FlowProducer } from "bullmq";
-import type { Job } from "bullmq";
+import type { FlowChildJob, Job } from "bullmq";
 import { getValues } from "@remoodle/utils";
 import { Telegram } from "@remoodle/utils";
 import { config } from "../../config";
@@ -158,40 +158,42 @@ export const jobs: Record<JobName, ClusterJob> = {
         connection: db.redisConnection,
       });
 
+      const children: FlowChildJob[] = courses.map((course) => {
+        const data = {
+          userId,
+          courseId: course.data.id,
+          courseName: course.data.fullname,
+          trackDiff,
+        };
+
+        return {
+          name: JobName.UPDATE_COURSE_GRADES,
+          data,
+          queueName: QueueName.GRADES_FLOW_UPDATE,
+          opts: {
+            attempts: 4,
+            backoff: {
+              type: "exponential",
+              delay: 2000,
+            },
+            deduplication: {
+              id: `${userId}::${course.data.id}`,
+            },
+            ignoreDependencyOnFailure: true,
+          },
+        };
+      });
+
       await flowProducer.add({
         name: JobName.COMBINE_GRADES,
         queueName: QueueName.GRADES_FLOW_COMBINE,
         data,
-        children: courses.map((course) => {
-          const data = {
-            userId,
-            courseId: course.data.id,
-            courseName: course.data.fullname,
-            trackDiff,
-          };
-
-          return {
-            name: JobName.UPDATE_COURSE_GRADES,
-            data,
-            queueName: QueueName.GRADES_FLOW_UPDATE,
-            opts: {
-              attempts: 4,
-              backoff: {
-                type: "exponential",
-                delay: 2000,
-              },
-              deduplication: {
-                id: `${userId}::${course.data.id}`,
-              },
-              removeDependencyOnFailure: true,
-            },
-          };
-        }),
-        // opts: {
-        //   deduplication: {
-        //     id: `${userId}::${courseIds.join("-")}`,
-        //   },
-        // },
+        children,
+        opts: {
+          deduplication: {
+            id: `${userId}::${courseIds.join("-")}`,
+          },
+        },
       });
     },
   },
