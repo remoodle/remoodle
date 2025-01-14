@@ -25,7 +25,7 @@ rl.question("Enter Telegram Bot token: ", (telegramBotToken) => {
         telegramBotToken
       );
       setEnvVar(
-        "apps/alert-worker/.dev.vars",
+        "apps/serverless/alert-worker/.dev.vars",
         "TELEGRAM_BOT_TOKEN",
         telegramBotToken
       );
