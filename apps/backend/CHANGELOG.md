@@ -1,5 +1,53 @@
 # Changelog
 
+## [2.0.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.7.2...remoodle/backend-v2.0.0) (2025-01-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* bump major version
+
+### Features
+
+* add ability to pass job data to grades scheduler ([2c2c6c5](https://github.com/remoodle/remoodle/commit/2c2c6c5c7d598315ad68975ec3726b20b949e384))
+* add health system ([42a86e3](https://github.com/remoodle/remoodle/commit/42a86e3141afe8d8b68561dd156dac9c426b85d2))
+* **backend,db,types:** introduce cluster ([f50cc04](https://github.com/remoodle/remoodle/commit/f50cc04bbb83c8e6008ed7bcee07c33195a07f80))
+* bump major version ([45a32dd](https://github.com/remoodle/remoodle/commit/45a32dde74c8bb0c651245ad9c9b9b6858dd95ee))
+* **cluster:** add health endpoint ([665ca4c](https://github.com/remoodle/remoodle/commit/665ca4cfa7abe9488c9a9063bd2df5e9f1ce78f4))
+* support health recovery ([da29a2e](https://github.com/remoodle/remoodle/commit/da29a2e5c72b0c5fbf4c8d1281c49616f11b8a85))
+
+
+### Bug Fixes
+
+* allow telegram account swap ([68fef9a](https://github.com/remoodle/remoodle/commit/68fef9ad198340888813d6dd42d8c9a299a3209f))
+* better return values ([07d3598](https://github.com/remoodle/remoodle/commit/07d35980612fa419c2c690827702a834b4472777))
+* bump api version ([7c10e86](https://github.com/remoodle/remoodle/commit/7c10e865b48305eaa95999f9e3932c127852f5f9))
+* concise returnvalues ([1eafa82](https://github.com/remoodle/remoodle/commit/1eafa827545848abdf0c0e7a8abe4270c56fcea6))
+* correct typings ([fdfa281](https://github.com/remoodle/remoodle/commit/fdfa2814c39edb4e9b146707df9d87efcf4f980c))
+* find user properly ([825976f](https://github.com/remoodle/remoodle/commit/825976f75e166524c16db6f503256fad84c67ec8))
+* handle deadlines properly ([4353fb4](https://github.com/remoodle/remoodle/commit/4353fb4774c54a31bff9ed255ba2e25ba17c8db1))
+* handle flows correctly ([6f6567c](https://github.com/remoodle/remoodle/commit/6f6567c788f7d24c0f86d8d69e737a1deb0bc071))
+* handle scheduled updates properly ([ccd4dd1](https://github.com/remoodle/remoodle/commit/ccd4dd12d08a2884a6aa45773a7aa3d733d90972))
+* revert condition ([e4349b2](https://github.com/remoodle/remoodle/commit/e4349b27ed7592c3774dcbe12af3d5cedeffb69e))
+* set _id as default handle ([eb88b5f](https://github.com/remoodle/remoodle/commit/eb88b5f9c3525a4d621fcacc42e081292c361010))
+* sync events properly ([213fc1d](https://github.com/remoodle/remoodle/commit/213fc1d80fb4cd9850a61f6ad990b7a10ce60cb5))
+
+
+### Reverts
+
+* **cluster:** remove heath endpoint ([ac9c891](https://github.com/remoodle/remoodle/commit/ac9c89130039c45f24cbbf1da54ccc2419368871))
+
+
+### Miscellaneous Chores
+
+* **deps:** upgade bullmq ([49984a7](https://github.com/remoodle/remoodle/commit/49984a74dd97471030a908b4e4ece4778e14fcb3))
+
+
+### Code Refactoring
+
+* reduce deadlines overhead ([be70369](https://github.com/remoodle/remoodle/commit/be70369388c01083c453deb75d79e46151ca7769))
+* tie up api and cluster ([21b190f](https://github.com/remoodle/remoodle/commit/21b190f1f4078e16dc3fff6ac40dcadcaf6145aa))
+
 ## [1.7.2](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.7.1...remoodle/backend-v1.7.2) (2024-12-19)
 
 
