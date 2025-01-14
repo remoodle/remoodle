@@ -52,4 +52,9 @@ const userSchema = new Schema<IUser>(
   { timestamps: true },
 );
 
+userSchema.index(
+  { telegramId: 1 },
+  { unique: true, partialFilterExpression: { telegramId: { $exists: true } } },
+);
+
 export default model("User", userSchema);
