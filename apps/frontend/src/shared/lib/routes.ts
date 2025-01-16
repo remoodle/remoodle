@@ -1,4 +1,5 @@
 export enum RouteName {
+  Landing = "landing",
   Home = "home",
   Dashboard = "dashboard",
   Login = "login",
