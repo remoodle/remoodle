@@ -213,6 +213,10 @@ const authRoutes = new Hono<{
 
       if (telegramId) {
         user = await db.user.findOne({ telegramId });
+
+        if (!user) {
+          throw new Error("No user found with this telegramId");
+        }
       } else {
         if (!password || !identifier) {
           throw new Error("Arguments missing");
@@ -223,7 +227,7 @@ const authRoutes = new Hono<{
         });
 
         if (!user) {
-          throw new Error("No user found with this email");
+          throw new Error("No user found with this email or telegramId");
         }
 
         if (!user.password) {
@@ -233,10 +237,6 @@ const authRoutes = new Hono<{
         if (!verifyPassword(password, user.password)) {
           throw new Error("Invalid credentials");
         }
-      }
-
-      if (!user) {
-        throw new Error("No user found at all");
       }
 
       try {
