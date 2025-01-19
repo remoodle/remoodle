@@ -9,6 +9,7 @@ import {
   formatUnixtimestamp,
 } from "../utils";
 import keyboards from "./keyboards";
+import { config } from "../../config";
 
 // Menu buttons
 async function others(ctx: Context) {
@@ -79,8 +80,29 @@ async function backToMenu(ctx: Context) {
     return;
   }
 
+  const [loginResponse, err] = await request((client) => {
+    return client.v2.auth.login.$post(
+      {
+        json: {},
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    );
+  });
+
+  if (err) {
+    await ctx.editMessageText(`${user.name}`, {
+      reply_markup: keyboards.main,
+    });
+  }
+
+  const b64 = btoa(JSON.stringify(loginResponse));
+  const url = config.frontend.url + "?usr=" + b64;
+  const keyboard = keyboards.main.clone().webApp("Website", url);
+
   await ctx.editMessageText(`${user.name}`, {
-    reply_markup: keyboards.main,
+    reply_markup: keyboard,
   });
 }
 

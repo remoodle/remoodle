@@ -7,11 +7,12 @@ const keyboards = {
     .text("Courses", "grades")
     .row()
     .webApp("Map", "https://yuujiso.github.io/aitumap/")
-    // .webApp("Schedule", "https://remoodle.app")
+    // .webApp("Schedule", "https://remoodle.app/schedule")
     .text("Schedule", "schedule_coming_soon")
     .row()
     .text("⚙️", "settings")
-    .text("More", "others"),
+    .text("More", "others")
+    .row(),
 
   single_grade: new InlineKeyboard().row().text("Back ←", "back_to_grades"),
 
