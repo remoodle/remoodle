@@ -227,7 +227,7 @@ const authRoutes = new Hono<{
         });
 
         if (!user) {
-          throw new Error("No user found with this email or telegramId");
+          throw new Error("No user found with this email or handle");
         }
 
         if (!user.password) {
