@@ -200,17 +200,27 @@ const authRoutes = new Hono<{
     zValidator(
       "json",
       z.object({
-        identifier: z.string(),
-        password: z.string(),
+        identifier: z.string().optional(),
+        password: z.string().optional(),
       }),
     ),
     async (ctx) => {
       const { identifier, password } = ctx.req.valid("json");
 
-      try {
-        const user = (await db.user.findOne({
-          $or: [{ email: identifier }, { handle: identifier }],
-        })) as IUser | null;
+      const telegramId = ctx.get("telegramId");
+
+      let user: IUser | null = null;
+
+      if (telegramId) {
+        user = await db.user.findOne({ telegramId });
+      } else {
+        if (!password || !identifier) {
+          throw new Error("Arguments missing");
+        }
+
+        user = await db.user.findOne({
+          $or: [{ email: identifier }, { handle: identifier }, { telegramId }],
+        });
 
         if (!user) {
           throw new Error("No user found with this email");
@@ -223,7 +233,13 @@ const authRoutes = new Hono<{
         if (!verifyPassword(password, user.password)) {
           throw new Error("Invalid credentials");
         }
+      }
 
+      if (!user) {
+        throw new Error("No user found at all");
+      }
+
+      try {
         const { accessToken, refreshToken } = issueTokens(
           user._id.toString(),
           user.moodleId,
