@@ -1,6 +1,7 @@
 import type { MoodleEvent, MoodleGrade } from "@remoodle/types";
 import { getTimeLeft } from "@remoodle/utils";
 import { InlineKeyboard, GrammyError, BotError, HttpError } from "grammy";
+import { config } from "../../config";
 
 const formatUnixtimestamp = (timestamp: number, showYear: boolean = false) => {
   return new Date(timestamp)
@@ -109,11 +110,14 @@ const calculateGrades = (grades: MoodleGrade[]) => {
   return "";
 };
 
-const getNotificationsKeyboard = (notifications: {
-  enabled: boolean;
-  gradeUpdates: boolean;
-  deadlineReminders: boolean;
-}) => {
+const getNotificationsKeyboard = (
+  notifications: {
+    enabled: boolean;
+    gradeUpdates: boolean;
+    deadlineReminders: boolean;
+  },
+  websiteUrl: string | false = false,
+) => {
   const keyboard = new InlineKeyboard();
 
   if (notifications.enabled) {
@@ -130,9 +134,13 @@ const getNotificationsKeyboard = (notifications: {
       .text(
         `Deadlines ${notifications.deadlineReminders ? "🔔" : "🔕"}`,
         `change_notifications_deadlines_${notifications.deadlineReminders ? "off" : "on"}`,
-      )
-      .row()
-      .text("Back ←", "settings");
+      );
+
+    if (websiteUrl) {
+      keyboard.row().webApp("Advanced settings", websiteUrl);
+    }
+
+    keyboard.row().text("Back ←", "settings");
   } else {
     keyboard
       .text(

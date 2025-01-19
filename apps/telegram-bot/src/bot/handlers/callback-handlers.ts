@@ -413,8 +413,28 @@ async function notifications(ctx: Context) {
 
   const settings = data.notifications.telegram;
 
+  const [loginResponse, err] = await request((client) => {
+    return client.v2.auth.login.$post(
+      {
+        json: {},
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    );
+  });
+
+  if (err) {
+    await ctx.editMessageText("Notifications", {
+      reply_markup: getNotificationsKeyboard(settings, false),
+    });
+  }
+
+  const b64 = btoa(JSON.stringify(loginResponse));
+  const url = config.frontend.url + "/account/notifications?usr=" + b64;
+
   await ctx.editMessageText("Notifications", {
-    reply_markup: getNotificationsKeyboard(settings),
+    reply_markup: getNotificationsKeyboard(settings, url),
   });
 }
 
@@ -472,8 +492,28 @@ async function changeNotifications(ctx: Context) {
 
   const settings = data.notifications.telegram;
 
+  const [loginResponse, err] = await request((client) => {
+    return client.v2.auth.login.$post(
+      {
+        json: {},
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    );
+  });
+
+  if (err) {
+    await ctx.editMessageText("Notifications", {
+      reply_markup: getNotificationsKeyboard(settings, false),
+    });
+  }
+
+  const b64 = btoa(JSON.stringify(loginResponse));
+  const url = config.frontend.url + "/account/notifications?usr=" + b64;
+
   await ctx.editMessageText("Notifications", {
-    reply_markup: getNotificationsKeyboard(settings),
+    reply_markup: getNotificationsKeyboard(settings, url),
   });
 }
 
