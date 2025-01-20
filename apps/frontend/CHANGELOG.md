@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.4.0](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.5...remoodle/frontend-v1.4.0) (2025-01-20)
+
+
+### Features
+
+* add usr query login ([c687c2a](https://github.com/remoodle/remoodle/commit/c687c2aeb71065f0f46e298876f62a9ad6500694))
+
+
+### Bug Fixes
+
+* bump api version ([7c10e86](https://github.com/remoodle/remoodle/commit/7c10e865b48305eaa95999f9e3932c127852f5f9))
+* set proper viewpoint ([4d7d5dc](https://github.com/remoodle/remoodle/commit/4d7d5dcd9f56be54f06d5615b9e59c0d369ab555))
+
+
+### Miscellaneous Chores
+
+* **ui:** remove unused components ([382d46d](https://github.com/remoodle/remoodle/commit/382d46d3533c0a1ab1194f2868c17e1db4662a37))
+
+
+### Code Refactoring
+
+* **frontend:** adapt breaking changes ([352b77e](https://github.com/remoodle/remoodle/commit/352b77e84935d61a8d4a4a5b026e395475829e19))
+* reduce deadlines overhead ([be70369](https://github.com/remoodle/remoodle/commit/be70369388c01083c453deb75d79e46151ca7769))
+
 ## [1.3.5](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.4...remoodle/frontend-v1.3.5) (2025-01-11)
 
 
