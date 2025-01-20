@@ -1,5 +1,5 @@
 import { ref, computed } from "vue";
-import parsedSchedule from "../masters_1_2.json";
+import parsedSchedule from "../3_2.json";
 import type { Schedule } from "@remoodle/types";
 import type { CalendarEvent } from "@schedule-x/calendar";
 import dayjs from "dayjs";
