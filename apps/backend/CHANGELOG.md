@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.1](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.0...remoodle/backend-v2.0.1) (2025-01-20)
+
+
+### Bug Fixes
+
+* add telegram login ([7f0a3f1](https://github.com/remoodle/remoodle/commit/7f0a3f1331b9d2a6051337bbd44f96128597fbc1))
+* **api:** sort deadlines ([63e4bb3](https://github.com/remoodle/remoodle/commit/63e4bb3a1c0bf9947ee92b1c9cdbe0f4ca158fd3))
+* correct typo ([20ed97f](https://github.com/remoodle/remoodle/commit/20ed97fad4f70ac829555e5e7db8aa2b4412ce9d))
+* handle unordered thresholds properly ([79261ec](https://github.com/remoodle/remoodle/commit/79261ecf02be63275a4f198ae7f65f8fa042ac09))
+
+
+### Code Refactoring
+
+* remove reminders sync ([5ebc5ce](https://github.com/remoodle/remoodle/commit/5ebc5ce95a8828cff37808049c6389d65d9b0182))
+* simplify condition ([826c899](https://github.com/remoodle/remoodle/commit/826c899a05161d2c115ed34a58d48cc55ad0ffdf))
+
 ## [2.0.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v1.7.2...remoodle/backend-v2.0.0) (2025-01-14)
 
 
