@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.13.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.12.0...remoodle/telegram-bot-v0.13.0) (2025-01-20)
+
+
+### Features
+
+* add website miniapp in bot ([2d7c48a](https://github.com/remoodle/remoodle/commit/2d7c48a7f8968c8b3cd9f4c99b271518aa913b0e))
+* add website miniapp to settings ([47a96e6](https://github.com/remoodle/remoodle/commit/47a96e6a90bbb5e36471cc49888ecb88dabb7405))
+
+
+### Bug Fixes
+
+* course shortname -&gt; fullname in bot ([7c6ad35](https://github.com/remoodle/remoodle/commit/7c6ad354ee191c8fe38243a53f57bff659bcdfba))
+* remove "is due to be graded" ([0adb9fd](https://github.com/remoodle/remoodle/commit/0adb9fdfe8958e322eead0a1be798ccdec6efd6f))
+* unused import ([a3c542b](https://github.com/remoodle/remoodle/commit/a3c542b2c3375ea41311a8da243d2c41d7a525b8))
+
+
+### Miscellaneous Chores
+
+* remove useless tests ([91f5a48](https://github.com/remoodle/remoodle/commit/91f5a48194ac68c4fd251bf37b872e82d176e928))
+
 ## [0.12.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.11.0...remoodle/telegram-bot-v0.12.0) (2025-01-14)
 
 
