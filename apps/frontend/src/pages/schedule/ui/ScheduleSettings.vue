@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useScheduleStore } from "@/shared/stores/schedule";
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
@@ -13,11 +13,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/shared/ui/dialog";
+import { defineProps } from "vue";
+import { useAppStore } from "@/shared/stores/app";
 
 const props = defineProps<{
   courses: string[];
-  group: string;
 }>();
+
+const appStore = useAppStore();
 
 const scheduleStore = useScheduleStore();
 
@@ -39,13 +42,25 @@ let open = ref<boolean>(false);
 
 // Initialize local state from store
 onMounted(() => {
-  const currentFilters = scheduleStore.getFilters(props.group);
+  const currentFilters = scheduleStore.getFilters(appStore.group);
   localFilters.value = {
     eventTypes: { ...currentFilters.eventTypes },
     eventFormats: { ...currentFilters.eventFormats },
     excludedCourses: [...currentFilters.excludedCourses],
   };
 });
+
+watch(
+  () => appStore.group,
+  () => {
+    const newFilters = scheduleStore.getFilters(appStore.group);
+    localFilters.value = {
+      eventTypes: { ...newFilters.eventTypes },
+      eventFormats: { ...newFilters.eventFormats },
+      excludedCourses: [...newFilters.excludedCourses],
+    };
+  },
+);
 
 // Helper function to check if a course is selected
 const isChecked = (course: string): boolean => {
@@ -64,15 +79,15 @@ const handleCourseToggle = (course: string, checked: boolean) => {
 
 // Save changes to store
 const handleSave = () => {
-  scheduleStore.saveFilters(props.group, {
-    selectedGroup: props.group,
+  scheduleStore.saveFilters(appStore.group, {
+    selectedGroup: appStore.group,
     eventTypes: { ...localFilters.value.eventTypes },
     eventFormats: { ...localFilters.value.eventFormats },
     excludedCourses: [...localFilters.value.excludedCourses],
   });
   open.value = false;
 
-  const currentFilters = scheduleStore.getFilters(props.group);
+  const currentFilters = scheduleStore.getFilters(appStore.group);
   localFilters.value = {
     eventTypes: { ...currentFilters.eventTypes },
     eventFormats: { ...currentFilters.eventFormats },
@@ -81,10 +96,10 @@ const handleSave = () => {
 };
 
 const handleReset = () => {
-  scheduleStore.resetFilters(props.group);
+  scheduleStore.resetFilters(appStore.group);
   open.value = false;
 
-  const currentFilters = scheduleStore.getFilters(props.group);
+  const currentFilters = scheduleStore.getFilters(appStore.group);
   localFilters.value = {
     eventTypes: { ...currentFilters.eventTypes },
     eventFormats: { ...currentFilters.eventFormats },
@@ -109,7 +124,7 @@ const handleReset = () => {
       <div class="mt-2">
         <h1 class="">
           Selected group →
-          <span class="font-semibold">{{ props.group }}</span>
+          <span class="font-semibold">{{ appStore.group }}</span>
         </h1>
       </div>
 

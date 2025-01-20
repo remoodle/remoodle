@@ -16,6 +16,7 @@ import type {
 import "@schedule-x/theme-default/dist/index.css";
 import { onMounted, watch } from "vue";
 import { useAppStore } from "@/shared/stores/app";
+import { useScheduleStore } from "@/shared/stores/schedule";
 
 const props = defineProps<{
   events: CalendarEvent[];
@@ -95,6 +96,7 @@ const config: CalendarConfig = {
 
 const calendar = createCalendar(config);
 
+const scheduleStore = useScheduleStore();
 const appStore = useAppStore();
 calendar.setTheme(appStore.theme);
 
@@ -111,6 +113,13 @@ watch(
 
 watch(
   () => appStore.group,
+  () => {
+    eventsServicePlugin.set(props.events);
+  },
+);
+
+watch(
+  () => scheduleStore.filters[appStore.group],
   () => {
     eventsServicePlugin.set(props.events);
   },
