@@ -1,5 +1,5 @@
 import { ref, computed } from "vue";
-import parsedSchedule from "../3_2.json";
+import parsedSchedule from "../masters_1_2.json";
 import type { Schedule } from "@remoodle/types";
 import type { CalendarEvent } from "@schedule-x/calendar";
 import dayjs from "dayjs";
@@ -61,16 +61,74 @@ export function useSchedule() {
 
   const groupSchedule = computed((): CalendarEvent[] => {
     const appStore = useAppStore();
-    // const scheduleStore = useScheduleStore();
+    const scheduleStore = useScheduleStore();
     const group = appStore.group ?? "SE-2203";
-    // const userGroupFilters = scheduleStore.filters[group];
-    // console.log(userGroupFilters);
+    const userGroupFilters = scheduleStore.filters?.[group];
     const groupSchedule = allSchedules.value[group];
 
+    const filteredSchedule = groupSchedule.filter((item) => {
+      if (!userGroupFilters) {
+        return true;
+      }
+
+      if (userGroupFilters.excludedCourses.length > 0) {
+        if (userGroupFilters.excludedCourses.includes(item.courseName)) {
+          return false;
+        }
+      }
+
+      if (
+        !userGroupFilters.eventTypes.learn &&
+        !userGroupFilters.eventTypes.lecture &&
+        !userGroupFilters.eventTypes.practice
+      ) {
+        return true;
+      }
+
+      if (!userGroupFilters.eventTypes.learn) {
+        if (item.teacher.startsWith("https://learn")) {
+          return false;
+        }
+      }
+
+      if (!userGroupFilters.eventTypes.lecture) {
+        if (item.type === "lecture") {
+          return false;
+        }
+      }
+
+      if (!userGroupFilters.eventTypes.practice) {
+        if (item.type === "practice") {
+          return false;
+        }
+      }
+
+      if (
+        !userGroupFilters.eventFormats.offline &&
+        !userGroupFilters.eventFormats.online
+      ) {
+        return true;
+      }
+
+      if (!userGroupFilters.eventFormats.offline) {
+        if (item.location !== "online") {
+          return false;
+        }
+      }
+
+      if (!userGroupFilters.eventFormats.online) {
+        if (item.location === "online") {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
     // Convert the schedule to CalendarEvent format (also for the previous and next week)
-    const resultSchedule: CalendarEvent[] = groupSchedule.map((item) => {
+    const resultSchedule: CalendarEvent[] = filteredSchedule.map((item) => {
       const calendarId = (): "online" | "offline" | "learn" => {
-        if (item.teacher.startsWith("https://")) {
+        if (item.teacher.startsWith("https://learn")) {
           return "learn";
         }
 
@@ -80,6 +138,7 @@ export function useSchedule() {
 
         return "offline";
       };
+
       const newEvent = {
         id: item.id,
         title:
@@ -87,7 +146,6 @@ export function useSchedule() {
             ? item.courseName.slice(0, 26) + "..."
             : item.courseName,
         description: `${item.teacher.startsWith("https://learn") ? "learn.astanait.edu.kz" : item.teacher}  |  ${item.location.toUpperCase()}  |  ${item.type}\n`,
-        // rrule: "FREQ=WEEKLY;COUNT=1",
       };
 
       const startBaseDate = getTargetDateByDay(item.start);
