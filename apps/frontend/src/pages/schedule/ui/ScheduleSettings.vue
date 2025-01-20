@@ -35,6 +35,8 @@ const localFilters = ref({
   excludedCourses: [] as string[],
 });
 
+let open = ref<boolean>(false);
+
 // Initialize local state from store
 onMounted(() => {
   const currentFilters = scheduleStore.getFilters(props.group);
@@ -68,15 +70,31 @@ const handleSave = () => {
     eventFormats: { ...localFilters.value.eventFormats },
     excludedCourses: [...localFilters.value.excludedCourses],
   });
+  open.value = false;
+
+  const currentFilters = scheduleStore.getFilters(props.group);
+  localFilters.value = {
+    eventTypes: { ...currentFilters.eventTypes },
+    eventFormats: { ...currentFilters.eventFormats },
+    excludedCourses: [...currentFilters.excludedCourses],
+  };
 };
 
 const handleReset = () => {
   scheduleStore.resetFilters(props.group);
+  open.value = false;
+
+  const currentFilters = scheduleStore.getFilters(props.group);
+  localFilters.value = {
+    eventTypes: { ...currentFilters.eventTypes },
+    eventFormats: { ...currentFilters.eventFormats },
+    excludedCourses: [...currentFilters.excludedCourses],
+  };
 };
 </script>
 
 <template>
-  <Dialog>
+  <Dialog v-model:open="open" @update:open="open = $event">
     <DialogTrigger as-child>
       <Button variant="outline"> Filter </Button>
     </DialogTrigger>
