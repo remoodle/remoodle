@@ -240,7 +240,7 @@ async function gradesInProgressCourse(ctx: Context) {
     return;
   }
 
-  let message: string = `${course.shortname.split(" | ")[0]}\nTeacher: ${course.shortname.split(" | ")[1]}\n\n`;
+  let message: string = `${course.fullname.split(" | ")[0]}\nTeacher: ${course.fullname.split(" | ")[1]}\n\n`;
 
   message += `${calculateGrades(grades)}`;
 
@@ -306,7 +306,7 @@ async function gradesPastCourses(ctx: Context) {
     coursesKeyboards
       .row()
       .text(
-        course.shortname.split(" | ")[0],
+        course.fullname.split(" | ")[0],
         `past_course_${course.id}_${page}`,
       );
   });
@@ -377,7 +377,7 @@ async function gradesPastCourse(ctx: Context) {
     return;
   }
 
-  let message: string = `${course.shortname.split(" | ")[0]}\nTeacher: ${course.shortname.split(" | ")[1]}\n\n`;
+  let message: string = `${course.fullname.split(" | ")[0]}\nTeacher: ${course.fullname.split(" | ")[1]}\n\n`;
 
   message += `${calculateGrades(grades)}`;
 
@@ -709,7 +709,7 @@ async function courseAssignments(ctx: Context) {
 
   keyboard.row().text("Back ←", `inprogress_course_${courseId}`);
 
-  await ctx.editMessageText(`Assignments\n*${course.shortname}*`, {
+  await ctx.editMessageText(`Assignments\n*${course.fullname}*`, {
     reply_markup: keyboard,
     parse_mode: "Markdown",
   });
@@ -817,7 +817,7 @@ async function courseAssignmentById(ctx: Context) {
   }
 
   let text = `*${assignment.name}*\n`;
-  text += `*${course.shortname}*\n\n`;
+  text += `*${course.fullname}*\n\n`;
 
   if (assignment.duedate && assignment.allowsubmissionsfromdate) {
     text += `*Opened:* ${formatUnixtimestamp(assignment.allowsubmissionsfromdate * 1000, true)}\n`;
