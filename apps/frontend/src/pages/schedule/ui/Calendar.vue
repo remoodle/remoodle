@@ -125,6 +125,7 @@ watch(
   },
 );
 </script>
+
 <template>
   <div id="calendar"></div>
 </template>

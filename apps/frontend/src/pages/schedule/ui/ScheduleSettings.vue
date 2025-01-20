@@ -24,7 +24,6 @@ const appStore = useAppStore();
 
 const scheduleStore = useScheduleStore();
 
-// Local state to track changes before saving
 const localFilters = ref({
   eventTypes: {
     lecture: true,
@@ -40,7 +39,6 @@ const localFilters = ref({
 
 let open = ref<boolean>(false);
 
-// Initialize local state from store
 onMounted(() => {
   const currentFilters = scheduleStore.getFilters(appStore.group);
   localFilters.value = {
@@ -62,12 +60,10 @@ watch(
   },
 );
 
-// Helper function to check if a course is selected
 const isChecked = (course: string): boolean => {
   return !localFilters.value.excludedCourses.includes(course);
 };
 
-// Handle course toggle
 const handleCourseToggle = (course: string, checked: boolean) => {
   if (checked) {
     localFilters.value.excludedCourses =
@@ -77,7 +73,6 @@ const handleCourseToggle = (course: string, checked: boolean) => {
   }
 };
 
-// Save changes to store
 const handleSave = () => {
   scheduleStore.saveFilters(appStore.group, {
     selectedGroup: appStore.group,

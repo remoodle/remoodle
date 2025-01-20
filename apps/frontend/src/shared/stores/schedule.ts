@@ -2,18 +2,16 @@ import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import { getStorageKey } from "@/shared/lib/helpers";
 import type { ScheduleFilter } from "@remoodle/types";
+import { useStorage } from "@vueuse/core";
 
 export const useScheduleStore = defineStore("schedule", () => {
-  // State
   const filters = ref<Record<string, ScheduleFilter>>({});
 
-  // Initialize from localStorage if exists
-  const storedFilters = localStorage.getItem(getStorageKey("scheduleFilters"));
+  const storedFilters = useStorage(getStorageKey("scheduleFilters"), "");
   if (storedFilters) {
-    filters.value = JSON.parse(storedFilters);
+    filters.value = JSON.parse(storedFilters.value);
   }
 
-  // Helper function
   const getDefaultFilter = (groupId: string): ScheduleFilter => ({
     selectedGroup: groupId,
     eventTypes: {
@@ -28,7 +26,6 @@ export const useScheduleStore = defineStore("schedule", () => {
     excludedCourses: [],
   });
 
-  // Actions
   const saveFilters = (groupId: string, newFilter: Partial<ScheduleFilter>) => {
     const currentFilter = filters.value[groupId] || getDefaultFilter(groupId);
 
@@ -48,11 +45,7 @@ export const useScheduleStore = defineStore("schedule", () => {
       },
     };
 
-    // Persist to localStorage
-    localStorage.setItem(
-      getStorageKey("scheduleFilters"),
-      JSON.stringify(filters.value),
-    );
+    storedFilters.value = JSON.stringify(filters.value);
   };
 
   const resetFilters = (groupId: string) => {
@@ -60,23 +53,16 @@ export const useScheduleStore = defineStore("schedule", () => {
       ...filters.value,
       [groupId]: getDefaultFilter(groupId),
     };
-    localStorage.setItem(
-      getStorageKey("scheduleFilters"),
-      JSON.stringify(filters.value),
-    );
+    storedFilters.value = JSON.stringify(filters.value);
   };
 
   const removeFilters = (groupId: string) => {
     const newFilters = { ...filters.value };
     delete newFilters[groupId];
     filters.value = newFilters;
-    localStorage.setItem(
-      getStorageKey("scheduleFilters"),
-      JSON.stringify(filters.value),
-    );
+    storedFilters.value = JSON.stringify(filters.value);
   };
 
-  // Getters
   const getFilters = computed(() => {
     return (groupId: string) =>
       filters.value[groupId] || getDefaultFilter(groupId);

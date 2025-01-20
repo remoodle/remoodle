@@ -59,9 +59,10 @@ export function useSchedule() {
       .replace("T", " ");
   };
 
+  const appStore = useAppStore();
+  const scheduleStore = useScheduleStore();
+
   const groupSchedule = computed((): CalendarEvent[] => {
-    const appStore = useAppStore();
-    const scheduleStore = useScheduleStore();
     const group = appStore.group ?? "SE-2203";
     const userGroupFilters = scheduleStore.filters?.[group];
     const groupSchedule = allSchedules.value[group];
