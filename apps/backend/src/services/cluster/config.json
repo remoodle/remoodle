@@ -2,7 +2,7 @@
   {
     "name": "courses::schedule-sync",
     "repeat": {
-      "every": 900000
+      "pattern": "0 */30 * * * *"
     }
   },
   {
@@ -13,12 +13,6 @@
   },
   {
     "name": "events::schedule-sync",
-    "repeat": {
-      "every": 240000
-    }
-  },
-  {
-    "name": "reminders::schedule-sync",
     "repeat": {
       "pattern": "0 */5 * * * *"
     }

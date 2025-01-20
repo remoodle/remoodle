@@ -14,7 +14,6 @@ export enum JobName {
   UPDATE_COURSE_GRADES = "grades::update-by-course",
   COMBINE_GRADES = "grades::combine-diffs",
 
-  SCHEDULE_REMINDERS = "reminders::schedule-sync",
   CHECK_REMINDERS = "reminders::check",
 
   SEND_TELEGRAM_MESSAGE = "telegram::send-message",
@@ -32,7 +31,6 @@ export enum QueueName {
   GRADES_FLOW_COMBINE = "grades combine",
   GRADES_FLOW_UPDATE = "grades update",
 
-  REMINDERS_SYNC = "reminders sync",
   REMINDERS = "reminders check",
 
   TELEGRAM = "telegram",

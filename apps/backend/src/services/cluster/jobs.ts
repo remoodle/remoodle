@@ -59,6 +59,15 @@ export const jobs: Record<JobName, ClusterJob> = {
       logger.cluster.info(`Updating events for ${userId}`);
 
       await syncEvents(userId);
+
+      logger.cluster.info(`Scheduling reminders for ${userId}`);
+
+      const reminderJob = await queues[QueueName.REMINDERS].add(
+        QueueName.REMINDERS,
+        { userId },
+      );
+
+      return reminderJob;
     },
   },
   [JobName.SCHEDULE_COURSES]: {
@@ -204,8 +213,6 @@ export const jobs: Record<JobName, ClusterJob> = {
     run: async (job) => {
       const { userId, courseId, courseName, trackDiff } = job.data;
 
-      logger.cluster.info(`Updating course ${courseId} grades for ${userId}`);
-
       return await syncCourseGrades(userId, courseId, courseName, trackDiff);
     },
   },
@@ -252,31 +259,6 @@ export const jobs: Record<JobName, ClusterJob> = {
       return gradeChangeEvent.payload;
     },
   },
-  [JobName.SCHEDULE_REMINDERS]: {
-    queueName: QueueName.REMINDERS_SYNC,
-    run: async () => {
-      const users = await getUsers({
-        telegramId: { $exists: true },
-        "notificationSettings.telegram.deadlineReminders": true,
-      });
-
-      logger.cluster.info(`Updating reminders for ${users.length} users`);
-
-      const jobs = users.map((payload) => ({
-        name: JobName.CHECK_REMINDERS,
-        data: { userId: payload.userId },
-        opts: {
-          deduplication: {
-            id: payload.userId,
-          },
-        },
-      }));
-
-      const bulk = await queues[QueueName.REMINDERS].addBulk(jobs);
-
-      return bulk.length;
-    },
-  },
   [JobName.CHECK_REMINDERS]: {
     queueName: QueueName.REMINDERS,
     run: async (job) => {
@@ -294,7 +276,11 @@ export const jobs: Record<JobName, ClusterJob> = {
         return "deadlineReminders not enabled";
       }
 
-      const events = await db.event.find({ userId });
+      const rawEvents = await db.event.find({ userId });
+
+      const events = rawEvents.sort(
+        (a, b) => a.data.timestart - b.data.timestart,
+      );
 
       if (!events.length) {
         return "no events";
