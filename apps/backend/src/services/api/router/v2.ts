@@ -374,7 +374,11 @@ const userRoutes = new Hono<{
         return ctx.json(response.events as MoodleEvent[]);
       }
 
-      return ctx.json(events.map((event) => event.data));
+      const sortedEvents = events.sort(
+        (a, b) => a.data.timestart - b.data.timestart,
+      );
+
+      return ctx.json(sortedEvents.map((event) => event.data));
     },
   )
   .get(
