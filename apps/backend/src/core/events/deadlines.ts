@@ -32,6 +32,28 @@ const convertThresholdToMs = (value: string): number => {
   }
 };
 
+const convertMsToThreshold = (ms: number): string => {
+  if (ms < 0) {
+    throw new Error("Duration cannot be negative");
+  }
+  if (!Number.isInteger(ms)) {
+    throw new Error("Duration must be a whole number of milliseconds");
+  }
+
+  if (ms >= 24 * 60 * 60 * 1000) {
+    const days = Math.floor(ms / (24 * 60 * 60 * 1000));
+    return `${days} ${days === 1 ? "day" : "days"}`;
+  }
+
+  if (ms >= 60 * 60 * 1000) {
+    const hours = Math.floor(ms / (60 * 60 * 1000));
+    return `${hours} ${hours === 1 ? "hour" : "hours"}`;
+  }
+
+  const minutes = Math.floor(ms / (60 * 1000));
+  return `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
+};
+
 const convertThresholds = (thresholds: string[]): number[] => {
   return thresholds.map(convertThresholdToMs).sort((a, b) => a - b);
 };
@@ -51,7 +73,7 @@ export const calculateRemainingTime = (
 
   for (let i = 0; i < thresholdsMs.length; i++) {
     if (remainingMs <= thresholdsMs[i]) {
-      return [getTimeLeft(dueDate), thresholds[i]];
+      return [getTimeLeft(dueDate), convertMsToThreshold(thresholdsMs[i])];
     }
   }
 
