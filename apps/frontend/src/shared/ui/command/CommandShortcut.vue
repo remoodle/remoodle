@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue'
-import { cn } from '@/shared/lib/helpers'
+import type { HTMLAttributes } from "vue";
+import { cn } from "@/shared/lib/helpers";
 
 const props = defineProps<{
-  class?: HTMLAttributes['class']
-}>()
+  class?: HTMLAttributes["class"];
+}>();
 </script>
 
 <template>
-  <span :class="cn('ml-auto text-xs tracking-widest text-muted-foreground', props.class)">
+  <span
+    :class="
+      cn('ml-auto text-xs tracking-widest text-muted-foreground', props.class)
+    "
+  >
     <slot />
   </span>
 </template>
