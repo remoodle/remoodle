@@ -24,7 +24,9 @@ export const useAppStore = defineStore("app", () => {
     return storedTheme.value;
   });
 
-  const group = ref<string>(localStorage.getItem(getStorageKey("group")) || "");
+  const group = ref<string>(
+    localStorage.getItem(getStorageKey("group")) || "SE-2203",
+  );
 
   const setGroup = (newGroup: string) => {
     group.value = newGroup;
