@@ -7,8 +7,11 @@ import ExportToIcal from "./ui/ExportToIcal.vue";
 import { useSchedule } from "./composables/useSchedule";
 
 import dayjs from "dayjs";
+import { useAppStore } from "@/shared/stores/app";
 
-const { groupSchedule, allGroups, convertToDateTime } = useSchedule();
+const { groupSchedule, allGroups, convertToDateTime, groupCourses } =
+  useSchedule();
+const { group } = useAppStore();
 
 const minDate = dayjs()
   .weekday(0)
@@ -41,7 +44,8 @@ const maxDate = dayjs()
         :max-date="convertToDateTime(maxDate)"
       />
       <div class="my-4 flex justify-between gap-2">
-        <ScheduleSettings /> <ExportToIcal />
+        <ScheduleSettings :group="group" :courses="groupCourses" />
+        <ExportToIcal />
       </div>
     </RoundedSection>
   </PageWrapper>

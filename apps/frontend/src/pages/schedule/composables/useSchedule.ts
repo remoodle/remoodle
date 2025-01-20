@@ -110,10 +110,20 @@ export function useSchedule() {
     return resultSchedule;
   });
 
+  const groupCourses = computed(() => {
+    const appStore = useAppStore();
+    const group = appStore.group ?? "SE-2203";
+    const groupSchedule = allSchedules.value[group];
+
+    const uniqueCourses = new Set(groupSchedule.map((item) => item.courseName));
+    return Array.from(uniqueCourses);
+  });
+
   return {
     groupSchedule,
     allGroups,
     getTargetDateByDay,
     convertToDateTime,
+    groupCourses,
   };
 }

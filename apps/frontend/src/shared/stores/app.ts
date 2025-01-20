@@ -24,7 +24,6 @@ export const useAppStore = defineStore("app", () => {
     return storedTheme.value;
   });
 
-  // Group info (temporary in local storage)
   const group = ref<string>(localStorage.getItem(getStorageKey("group")) || "");
 
   const setGroup = (newGroup: string) => {

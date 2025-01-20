@@ -1,6 +1,9 @@
 <script lang="ts" setup>
+import { ref, onMounted } from "vue";
+import { useScheduleStore } from "@/shared/stores/schedule";
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
+import { Label } from "@/shared/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -10,12 +13,69 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/shared/ui/dialog";
-// import { Input } from "@/shared/ui/input";
-// import { Label } from "@/shared/ui/label";
-</script>
-<template>
-  <!-- <Button variant="outline" class="px-16 py-5">Filters</Button> -->
 
+const props = defineProps<{
+  courses: string[];
+  group: string;
+}>();
+
+const scheduleStore = useScheduleStore();
+
+// Local state to track changes before saving
+const localFilters = ref({
+  eventTypes: {
+    lecture: true,
+    practice: true,
+    learn: true,
+  },
+  eventFormats: {
+    online: true,
+    offline: true,
+  },
+  excludedCourses: [] as string[],
+});
+
+// Initialize local state from store
+onMounted(() => {
+  const currentFilters = scheduleStore.getFilters(props.group);
+  localFilters.value = {
+    eventTypes: { ...currentFilters.eventTypes },
+    eventFormats: { ...currentFilters.eventFormats },
+    excludedCourses: [...currentFilters.excludedCourses],
+  };
+});
+
+// Helper function to check if a course is selected
+const isChecked = (course: string): boolean => {
+  return !localFilters.value.excludedCourses.includes(course);
+};
+
+// Handle course toggle
+const handleCourseToggle = (course: string, checked: boolean) => {
+  if (checked) {
+    localFilters.value.excludedCourses =
+      localFilters.value.excludedCourses.filter((c) => c !== course);
+  } else {
+    localFilters.value.excludedCourses.push(course);
+  }
+};
+
+// Save changes to store
+const handleSave = () => {
+  scheduleStore.saveFilters(props.group, {
+    selectedGroup: props.group,
+    eventTypes: { ...localFilters.value.eventTypes },
+    eventFormats: { ...localFilters.value.eventFormats },
+    excludedCourses: [...localFilters.value.excludedCourses],
+  });
+};
+
+const handleReset = () => {
+  scheduleStore.resetFilters(props.group);
+};
+</script>
+
+<template>
   <Dialog>
     <DialogTrigger as-child>
       <Button variant="outline"> Filter </Button>
@@ -29,11 +89,18 @@ import {
       </DialogHeader>
 
       <div class="mt-2">
+        <h1 class="">
+          Selected group →
+          <span class="font-semibold">{{ props.group }}</span>
+        </h1>
+      </div>
+
+      <div class="">
         <h1 class="mb-2 font-semibold">Toggle event types</h1>
         <div class="flex gap-8">
           <div class="flex items-center gap-2 text-center">
             <Checkbox
-              default-checked
+              v-model:checked="localFilters.eventTypes.lecture"
               name="toggle-lecture"
               id="toggle-lecture"
             />
@@ -41,14 +108,18 @@ import {
           </div>
           <div class="flex items-center gap-2 text-center">
             <Checkbox
-              default-checked
+              v-model:checked="localFilters.eventTypes.practice"
               name="toggle-practice"
               id="toggle-practice"
             />
             <Label for="toggle-practice"> Practice </Label>
           </div>
           <div class="flex items-center gap-2 text-center">
-            <Checkbox default-checked name="toggle-learn" id="toggle-learn" />
+            <Checkbox
+              v-model:checked="localFilters.eventTypes.learn"
+              name="toggle-learn"
+              id="toggle-learn"
+            />
             <Label for="toggle-learn"> Learn </Label>
           </div>
         </div>
@@ -58,12 +129,16 @@ import {
         <h1 class="mb-2 font-semibold">Toggle event formats</h1>
         <div class="flex gap-8">
           <div class="flex items-center gap-2 text-center">
-            <Checkbox default-checked name="toggle-online" id="toggle-online" />
+            <Checkbox
+              v-model:checked="localFilters.eventFormats.online"
+              name="toggle-online"
+              id="toggle-online"
+            />
             <Label for="toggle-online"> Online </Label>
           </div>
           <div class="flex items-center gap-2 text-center">
             <Checkbox
-              default-checked
+              v-model:checked="localFilters.eventFormats.offline"
               name="toggle-offline"
               id="toggle-offline"
             />
@@ -71,9 +146,29 @@ import {
           </div>
         </div>
       </div>
-      WIP
+
+      <div class="mt-2">
+        <h1 class="mb-2 font-semibold">Toggle courses</h1>
+        <div class="flex flex-col gap-2">
+          <div
+            v-for="course in props.courses"
+            :key="course"
+            class="flex items-center gap-2 text-center"
+          >
+            <Checkbox
+              :checked="isChecked(course)"
+              @update:checked="(checked) => handleCourseToggle(course, checked)"
+              :name="'toggle-' + course"
+              :id="'toggle-' + course"
+            />
+            <Label :for="'toggle-' + course"> {{ course }} </Label>
+          </div>
+        </div>
+      </div>
+
       <DialogFooter>
-        <Button type="submit"> Save changes </Button>
+        <Button variant="outline" @click="handleReset"> Reset </Button>
+        <Button type="submit" @click="handleSave"> Save changes </Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
