@@ -25,9 +25,10 @@ const getDeadlineText = (deadline: MoodleEvent) => {
 
   const date = formatUnixtimestamp(deadline.timestart);
   const timeLeft = `<b>${getTimeLeft(deadline.timestart)}</b>`;
+  const deadlineName = deadline.name.replace(/ is due( to be graded)?/, "");
 
   text += isFiring ? "🔥  " : "📅  ";
-  text += `<b>${deadline.name.slice(0, -7)}</b>  |  ${courseName}  |  Date → ${date}  |  Time left → ${timeLeft}\n`;
+  text += `<b>${deadlineName}</b>  |  ${courseName}  |  Date → ${date}  |  Time left → ${timeLeft}\n`;
 
   return text;
 };
