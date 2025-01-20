@@ -1,10 +1,11 @@
 import { ref, computed } from "vue";
 import parsedSchedule from "../3_2.json";
-import type { Schedule } from "../types";
+import type { Schedule } from "@remoodle/types";
 import type { CalendarEvent } from "@schedule-x/calendar";
 import dayjs from "dayjs";
 import { useAppStore } from "@/shared/stores/app";
 import weekday from "dayjs/plugin/weekday";
+import { useScheduleStore } from "@/shared/stores/schedule";
 
 export function useSchedule() {
   const allSchedules = ref<Schedule>(parsedSchedule as Schedule);
@@ -60,7 +61,10 @@ export function useSchedule() {
 
   const groupSchedule = computed((): CalendarEvent[] => {
     const appStore = useAppStore();
+    // const scheduleStore = useScheduleStore();
     const group = appStore.group ?? "SE-2203";
+    // const userGroupFilters = scheduleStore.filters[group];
+    // console.log(userGroupFilters);
     const groupSchedule = allSchedules.value[group];
 
     // Convert the schedule to CalendarEvent format (also for the previous and next week)

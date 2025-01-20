@@ -1,24 +1,7 @@
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import { getStorageKey } from "@/shared/lib/helpers";
-
-type EventTypes = {
-  lecture: boolean;
-  practice: boolean;
-  learn: boolean;
-};
-
-type EventFormats = {
-  online: boolean;
-  offline: boolean;
-};
-
-type ScheduleFilter = {
-  selectedGroup: string;
-  eventTypes: EventTypes;
-  eventFormats: EventFormats;
-  excludedCourses: string[];
-};
+import type { ScheduleFilter } from "@remoodle/types";
 
 export const useScheduleStore = defineStore("schedule", () => {
   // State
