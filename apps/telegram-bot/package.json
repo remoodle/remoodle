@@ -7,8 +7,7 @@
     "start": "node dist/app.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ignore-path .gitignore && prettier --check src/",
-    "format": "eslint . --fix --ignore-path .gitignore && prettier --write src/",
-    "test": "vitest"
+    "format": "eslint . --fix --ignore-path .gitignore && prettier --write src/"
   },
   "dependencies": {
     "@hono/node-server": "^1.10.0",
@@ -18,8 +17,7 @@
     "envalid": "^8.0.0",
     "grammy": "^1.29.0",
     "hono": "^4.5.5",
-    "turndown": "^7.2.0",
-    "vitest": "^1.6.0"
+    "turndown": "^7.2.0"
   },
   "devDependencies": {
     "@remoodle/backend": "workspace:*",
