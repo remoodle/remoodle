@@ -215,11 +215,11 @@ const authRoutes = new Hono<{
         user = await db.user.findOne({ telegramId });
 
         if (!user) {
-          throw new Error("No user found with this telegramId");
+          throw new HTTPException(401, { message: "User not found" });
         }
       } else {
         if (!password || !identifier) {
-          throw new Error("Arguments missing");
+          throw new HTTPException(500, { message: "Arguments missing" });
         }
 
         user = await db.user.findOne({
@@ -227,15 +227,19 @@ const authRoutes = new Hono<{
         });
 
         if (!user) {
-          throw new Error("No user found with this email or handle");
+          throw new HTTPException(401, {
+            message: "No user found with this email or handle",
+          });
         }
 
         if (!user.password) {
-          throw new Error("Cannot login with this email");
+          throw new HTTPException(401, {
+            message: "Cannot login with this email",
+          });
         }
 
         if (!verifyPassword(password, user.password)) {
-          throw new Error("Invalid credentials");
+          throw new HTTPException(401, { message: "Invalid credentials" });
         }
       }
 
