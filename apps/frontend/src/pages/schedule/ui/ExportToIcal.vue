@@ -54,31 +54,34 @@ watch(
       <div class="">
         <!-- <h1 class="mb-2 font-semibold">Toggled filters:</h1> -->
 
-        <div class="flex flex-col gap-2">
-          <div class="">
-            <div class="">Event types:</div>
-            <div class="my-2 flex select-none gap-1">
-              <span v-for="(enabled, type) in filters.eventTypes" :key="type">
-                <Badge :variant="enabled ? 'default' : 'destructive'">
-                  {{ type }}
-                </Badge>
-              </span>
-            </div>
-          </div>
-          <div class="">
-            <div class="">Event formats:</div>
-            <div class="my-2 flex select-none gap-1">
-              <span
-                v-for="(enabled, format) in filters.eventFormats"
-                :key="format"
-              >
-                <Badge :variant="enabled ? 'default' : 'destructive'">
-                  {{ format }}
-                </Badge>
-              </span>
-            </div>
+        <div class="">
+          <div class="">Event types:</div>
+          <div class="my-2 flex select-none gap-1">
+            <span v-for="(enabled, type) in filters.eventTypes" :key="type">
+              <Badge :variant="enabled ? 'default' : 'destructive'">
+                {{ type }}
+              </Badge>
+            </span>
           </div>
         </div>
+
+        <hr class="my-2" />
+
+        <div class="">
+          <div class="">Event formats:</div>
+          <div class="my-2 flex select-none gap-1">
+            <span
+              v-for="(enabled, format) in filters.eventFormats"
+              :key="format"
+            >
+              <Badge :variant="enabled ? 'default' : 'destructive'">
+                {{ format }}
+              </Badge>
+            </span>
+          </div>
+        </div>
+
+        <hr class="my-2" />
 
         <div class="">
           <div class="">Excluded courses:</div>
