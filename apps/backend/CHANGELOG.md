@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.1...remoodle/backend-v2.0.2) (2025-01-21)
+
+
+### Bug Fixes
+
+* replace errors with HTTPExceptions ([1af480e](https://github.com/remoodle/remoodle/commit/1af480e4757afe76977208f4c9ff73508eaf2b6f))
+
 ## [2.0.1](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.0...remoodle/backend-v2.0.1) (2025-01-20)
 
 
