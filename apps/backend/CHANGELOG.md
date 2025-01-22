@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.5](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.4...remoodle/backend-v2.0.5) (2025-01-22)
+
+
+### Bug Fixes
+
+* handle regular login properly ([8930f9f](https://github.com/remoodle/remoodle/commit/8930f9f1dee5a451556bbe4039fa0c0ffeed4fe4))
+
 ## [2.0.4](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.3...remoodle/backend-v2.0.4) (2025-01-22)
 
 
