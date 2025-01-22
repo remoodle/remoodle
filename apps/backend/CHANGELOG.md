@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.4](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.3...remoodle/backend-v2.0.4) (2025-01-22)
+
+
+### Bug Fixes
+
+* pass lifo to the children jobs ([253914f](https://github.com/remoodle/remoodle/commit/253914f4c983b1bb94f1f4dc0a87953a597500a6))
+
 ## [2.0.3](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.2...remoodle/backend-v2.0.3) (2025-01-22)
 
 
