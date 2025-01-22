@@ -74,7 +74,7 @@ services:
     image: ghcr.io/remoodle/backend:trunk
     restart: always
     env_file:
-      - .env.backend
+      - .env.api
     environment:
       - SERVICE_NAME=api
     ports:
@@ -86,7 +86,7 @@ services:
     volumes:
       - ./vaporeon.json:/app/apps/backend/dist/services/cluster/vaporeon.json
     env_file:
-      - .env.backend
+      - .env.cluster
     environment:
       - SERVICE_NAME=cluster
 
