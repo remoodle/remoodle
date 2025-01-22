@@ -141,6 +141,8 @@ export const jobs: Record<JobName, ClusterJob> = {
     run: async (job) => {
       const { userId, classification, trackDiff } = job.data;
 
+      const { lifo } = job.opts;
+
       logger.cluster.info(`Updating grades for ${userId}`);
 
       const courses = await db.course
@@ -179,6 +181,7 @@ export const jobs: Record<JobName, ClusterJob> = {
           data,
           queueName: QueueName.GRADES_FLOW_UPDATE,
           opts: {
+            lifo,
             attempts: 4,
             backoff: {
               type: "exponential",
@@ -198,6 +201,7 @@ export const jobs: Record<JobName, ClusterJob> = {
         data,
         children,
         opts: {
+          lifo,
           deduplication: {
             id: `${userId}::${courseIds.join("-")}`,
           },
