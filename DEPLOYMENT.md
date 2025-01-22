@@ -89,8 +89,6 @@ services:
       - .env.backend
     environment:
       - SERVICE_NAME=cluster
-    ports:
-      - "127.0.0.1:9001:9001"
 
   tgbot:
     image: ghcr.io/remoodle/tgbot:trunk
