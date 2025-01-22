@@ -20,7 +20,7 @@ export const env = cleanEnv(process.env, {
 
   CLUSTER_QUEUES_PRUNE: str({ default: "0" }),
   CLUSTER_SCHEDULER_ENABLED: str({ default: "0" }),
-  CLUSTER_TASKS_CONFIG_PATH: str({ default: "/config.json" }),
+  CLUSTER_TASKS_CONFIG_PATH: str({ default: "/configs/example.json" }),
   CLUSTER_SERVER_ENABLED: str({ default: "1" }),
   CLUSTER_SERVER_HOST: str({ default: "0.0.0.0" }),
   CLUSTER_SERVER_PORT: num({ default: 9001 }),
