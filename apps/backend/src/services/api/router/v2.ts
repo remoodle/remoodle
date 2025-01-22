@@ -115,7 +115,7 @@ const authRoutes = new Hono<{
               queueName: QueueName.GRADES_FLOW,
               data: { userId, trackDiff: false },
               opts: {
-                priority: 1,
+                lifo: true,
               },
               children: [
                 {
@@ -123,7 +123,7 @@ const authRoutes = new Hono<{
                   queueName: QueueName.COURSES,
                   data: { userId },
                   opts: {
-                    priority: 1,
+                    lifo: true,
                   },
                 },
                 {
@@ -131,7 +131,7 @@ const authRoutes = new Hono<{
                   queueName: QueueName.EVENTS,
                   data: { userId },
                   opts: {
-                    priority: 1,
+                    lifo: true,
                   },
                 },
               ],
