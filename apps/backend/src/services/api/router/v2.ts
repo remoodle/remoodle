@@ -27,11 +27,8 @@ import {
 import { issueTokens } from "../helpers/jwt";
 import { defaultRules, rateLimiter } from "../middleware/ratelimit";
 import { authMiddleware } from "../middleware/auth";
+import { errorHandler } from "../middleware/error";
 import { userGauge } from "../middleware/metrics";
-
-const publicRoutes = new Hono().get("/health", async (ctx) => {
-  return ctx.json({ status: "ok" });
-});
 
 const authRoutes = new Hono<{
   Variables: {
@@ -800,6 +797,6 @@ const userRoutes = new Hono<{
   });
 
 export const v2 = new Hono()
-  .route("/", publicRoutes)
   .route("/auth", authRoutes)
-  .route("/", userRoutes);
+  .route("/", userRoutes)
+  .onError(errorHandler);
