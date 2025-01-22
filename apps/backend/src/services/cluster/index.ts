@@ -8,7 +8,6 @@ import {
   JobName,
 } from "../../core/queues";
 import { config } from "../../config";
-import { mSecOneDay } from "../../config/constants";
 import { logger } from "../../library/logger";
 import { db } from "../../library/db";
 import { jobs } from "./jobs";
@@ -17,8 +16,8 @@ const workers: Worker[] = [];
 
 const defaultWorkerOptions: WorkerOptions = {
   connection: db.redisConnection,
-  removeOnComplete: { age: mSecOneDay },
-  removeOnFail: { age: mSecOneDay },
+  removeOnComplete: { age: 86400 }, // keep up to 1 day
+  removeOnFail: { age: 86400 }, // keep up to 1 day
 };
 
 const loadConfig = async () => {
