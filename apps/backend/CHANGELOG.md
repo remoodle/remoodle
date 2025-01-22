@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.3](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.2...remoodle/backend-v2.0.3) (2025-01-22)
+
+
+### Bug Fixes
+
+* expose Version header ([c934096](https://github.com/remoodle/remoodle/commit/c93409645dccaedb6ab9ce4df800ce91d0b71528))
+* prioritize properly ([4b93164](https://github.com/remoodle/remoodle/commit/4b931645d7813c8397eb88d5d189552c05df03e1))
+* use seconds for removeOnComplete api ([053fbd0](https://github.com/remoodle/remoodle/commit/053fbd0324842d1e7e06ccaba117dd523541cd35))
+
+
+### Code Refactoring
+
+* move bull-board to api ([a34ff14](https://github.com/remoodle/remoodle/commit/a34ff14c385ed89aec9b0a71faaa1bb9068bb300))
+* move configs to it's folder ([b1e94fc](https://github.com/remoodle/remoodle/commit/b1e94fc4c3e54f2d665ac01857c6a5d18200393f))
+* use same import ([168a642](https://github.com/remoodle/remoodle/commit/168a642f5e0ffef9c2e47a56346c3e940ccdb809))
+
 ## [2.0.2](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.1...remoodle/backend-v2.0.2) (2025-01-21)
 
 
