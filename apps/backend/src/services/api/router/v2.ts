@@ -220,12 +220,12 @@ const authRoutes = new Hono<{
         }
 
         user = await db.user.findOne({
-          $or: [{ email: identifier }, { handle: identifier }, { telegramId }],
+          $or: [{ username: identifier }, { handle: identifier }],
         });
 
         if (!user) {
           throw new HTTPException(401, {
-            message: "No user found with this email or handle",
+            message: "No user found with this username or handle",
           });
         }
 
