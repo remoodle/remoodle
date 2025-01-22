@@ -17,7 +17,7 @@ export const env = cleanEnv(process.env, {
 
   REDIS_URI: str({ default: "redis://localhost:6379" }),
 
-  SERVER_PORT: num({ default: 3000 }),
+  SERVER_PORT: num({ default: 8888 }),
 });
 
 export const config = {
