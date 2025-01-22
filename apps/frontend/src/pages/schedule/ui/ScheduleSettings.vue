@@ -2,8 +2,7 @@
 import { ref, onMounted, watch } from "vue";
 import { useScheduleStore } from "@/shared/stores/schedule";
 import { Button } from "@/shared/ui/button";
-import { Checkbox } from "@/shared/ui/checkbox";
-import { Label } from "@/shared/ui/label";
+import { Badge } from "@/shared/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -60,19 +59,6 @@ watch(
   },
 );
 
-const isChecked = (course: string): boolean => {
-  return !localFilters.value.excludedCourses.includes(course);
-};
-
-const handleCourseToggle = (course: string, checked: boolean) => {
-  if (checked) {
-    localFilters.value.excludedCourses =
-      localFilters.value.excludedCourses.filter((c) => c !== course);
-  } else {
-    localFilters.value.excludedCourses.push(course);
-  }
-};
-
 const handleSave = () => {
   scheduleStore.saveFilters(appStore.group, {
     selectedGroup: appStore.group,
@@ -118,79 +104,100 @@ const handleReset = () => {
 
       <div class="mt-2">
         <h1 class="">
-          Selected group →
-          <span class="font-semibold">{{ appStore.group }}</span>
+          Selected group
+          <Badge variant="outline">{{ appStore.group }}</Badge>
         </h1>
       </div>
 
       <div class="">
         <h1 class="mb-2 font-semibold">Toggle event types</h1>
-        <div class="flex gap-8">
-          <div class="flex items-center gap-2 text-center">
-            <Checkbox
-              v-model:checked="localFilters.eventTypes.lecture"
-              name="toggle-lecture"
-              id="toggle-lecture"
-            />
-            <Label for="toggle-lecture"> Lecture </Label>
-          </div>
-          <div class="flex items-center gap-2 text-center">
-            <Checkbox
-              v-model:checked="localFilters.eventTypes.practice"
-              name="toggle-practice"
-              id="toggle-practice"
-            />
-            <Label for="toggle-practice"> Practice </Label>
-          </div>
-          <div class="flex items-center gap-2 text-center">
-            <Checkbox
-              v-model:checked="localFilters.eventTypes.learn"
-              name="toggle-learn"
-              id="toggle-learn"
-            />
-            <Label for="toggle-learn"> Learn </Label>
-          </div>
+        <div class="flex flex-wrap gap-2">
+          <Badge
+            :variant="
+              localFilters.eventTypes.lecture ? 'default' : 'destructive'
+            "
+            class="cursor-pointer"
+            @click="
+              localFilters.eventTypes.lecture = !localFilters.eventTypes.lecture
+            "
+          >
+            Lecture
+          </Badge>
+          <Badge
+            :variant="
+              localFilters.eventTypes.practice ? 'default' : 'destructive'
+            "
+            class="cursor-pointer"
+            @click="
+              localFilters.eventTypes.practice =
+                !localFilters.eventTypes.practice
+            "
+          >
+            Practice
+          </Badge>
+          <Badge
+            :variant="localFilters.eventTypes.learn ? 'default' : 'destructive'"
+            class="cursor-pointer"
+            @click="
+              localFilters.eventTypes.learn = !localFilters.eventTypes.learn
+            "
+          >
+            Learn
+          </Badge>
         </div>
       </div>
 
       <div class="mt-2">
         <h1 class="mb-2 font-semibold">Toggle event formats</h1>
-        <div class="flex gap-8">
-          <div class="flex items-center gap-2 text-center">
-            <Checkbox
-              v-model:checked="localFilters.eventFormats.online"
-              name="toggle-online"
-              id="toggle-online"
-            />
-            <Label for="toggle-online"> Online </Label>
-          </div>
-          <div class="flex items-center gap-2 text-center">
-            <Checkbox
-              v-model:checked="localFilters.eventFormats.offline"
-              name="toggle-offline"
-              id="toggle-offline"
-            />
-            <Label for="toggle-offline"> Offline </Label>
-          </div>
+        <div class="flex flex-wrap gap-2">
+          <Badge
+            :variant="
+              localFilters.eventFormats.online ? 'default' : 'destructive'
+            "
+            class="cursor-pointer"
+            @click="
+              localFilters.eventFormats.online =
+                !localFilters.eventFormats.online
+            "
+          >
+            Online
+          </Badge>
+          <Badge
+            :variant="
+              localFilters.eventFormats.offline ? 'default' : 'destructive'
+            "
+            class="cursor-pointer"
+            @click="
+              localFilters.eventFormats.offline =
+                !localFilters.eventFormats.offline
+            "
+          >
+            Offline
+          </Badge>
         </div>
       </div>
 
       <div class="mt-2">
         <h1 class="mb-2 font-semibold">Toggle courses</h1>
-        <div class="flex flex-col gap-2">
-          <div
+        <div class="flex flex-wrap gap-2">
+          <Badge
             v-for="course in props.courses"
             :key="course"
-            class="flex items-center gap-2 text-center"
+            :variant="
+              !localFilters.excludedCourses.includes(course)
+                ? 'default'
+                : 'destructive'
+            "
+            class="cursor-pointer"
+            @click="
+              localFilters.excludedCourses.includes(course)
+                ? (localFilters.excludedCourses =
+                    localFilters.excludedCourses.filter((c) => c !== course))
+                : localFilters.excludedCourses.push(course)
+            "
           >
-            <Checkbox
-              :checked="isChecked(course)"
-              @update:checked="(checked) => handleCourseToggle(course, checked)"
-              :name="'toggle-' + course"
-              :id="'toggle-' + course"
-            />
-            <Label :for="'toggle-' + course"> {{ course }} </Label>
-          </div>
+            {{ course }}
+          </Badge>
         </div>
       </div>
 

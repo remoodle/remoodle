@@ -46,12 +46,12 @@ watch(
 
       <div class="mt-2">
         <h1 class="">
-          Selected group →
-          <span class="font-semibold">{{ appStore.group }}</span>
+          Selected group
+          <Badge variant="outline">{{ appStore.group }}</Badge>
         </h1>
       </div>
 
-      <div class="">
+      <div class="rounded-xl border p-4">
         <!-- <h1 class="mb-2 font-semibold">Toggled filters:</h1> -->
 
         <div class="">
