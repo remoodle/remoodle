@@ -1,3 +1,7 @@
+export const MODE = import.meta.env.MODE;
+export const IS_PROD = import.meta.env.MODE === "production";
+export const IS_DEV = import.meta.env.MODE === "development";
+
 export const TELEGRAM_CHAT_URL = "https://t.me/remoodle";
 
 export const TELEGRAM_BOT_NAME = import.meta.env.VITE_TELEGRAM_BOT_NAME;
