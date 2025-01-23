@@ -49,9 +49,10 @@ onMounted(async () => {
   }
 
   if (userStore.authorized && userStore.user) {
-    posthog.identify(userStore.user.handle, {
+    posthog.identify(userStore.user._id, {
       name: userStore.user.name,
       username: userStore.user.username,
+      handle: userStore.user.handle,
       health: userStore.user.health,
     });
   }
