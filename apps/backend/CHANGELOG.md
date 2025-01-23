@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.6](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.5...remoodle/backend-v2.0.6) (2025-01-23)
+
+
+### Bug Fixes
+
+* get rid of csrf ([bc31ab7](https://github.com/remoodle/remoodle/commit/bc31ab7a5468492175280b5da3f02032d5cd99fa))
+
 ## [2.0.5](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.4...remoodle/backend-v2.0.5) (2025-01-22)
 
 
