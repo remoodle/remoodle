@@ -3,7 +3,7 @@ import { IS_PROD } from "@/shared/config";
 
 export const useAnalytics = () => {
   posthog.init(
-    IS_PROD ? "phc_cfpLe4cOVjX1vTJLFU2Xdf63XmT0kqEfRBpYxYmEVoi" : "gagr",
+    IS_PROD ? "phc_cfpLe4cOVjX1vTJLFU2Xdf63XmT0kqEfRBpYxYmEVoi" : "remoodle",
     {
       api_host: "https://us.i.posthog.com",
       autocapture: true,
