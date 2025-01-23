@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.5.0](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.4.0...remoodle/frontend-v1.5.0) (2025-01-23)
+
+
+### Features
+
+* integrate posthog analytics ([#319](https://github.com/remoodle/remoodle/issues/319)) ([1c428db](https://github.com/remoodle/remoodle/commit/1c428dbd75bdec5bb9f852d038e1624d48cf572c))
+
+
+### Bug Fixes
+
+* add mode to footer ([1d13e5a](https://github.com/remoodle/remoodle/commit/1d13e5a3b28324007544aecda5d7c0243e4a4723))
+* **posthog:** change identifier from handle to _id ([e3c580c](https://github.com/remoodle/remoodle/commit/e3c580c7bd52f05889d19e66ead3be5c0b4d785b))
+
 ## [1.4.0](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.3.5...remoodle/frontend-v1.4.0) (2025-01-20)
 
 
