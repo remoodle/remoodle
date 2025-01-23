@@ -5,7 +5,7 @@ import { RouteName } from "@/shared/lib/routes";
 import { ThemeSwitcher } from "@/features/theme-switcher";
 import { Icon } from "@/shared/ui/icon";
 import { Button } from "@/shared/ui/button";
-import { TELEGRAM_CHAT_URL, TELEGRAM_BOT_URL } from "@/shared/config";
+import { TELEGRAM_CHAT_URL, TELEGRAM_BOT_URL, MODE } from "@/shared/config";
 import ClientVersion from "./ClientVersion.vue";
 
 withDefaults(
@@ -69,6 +69,7 @@ withDefaults(
 
         <span class="text-xs text-muted-foreground">
           <ClientVersion />
+          {{ MODE }}
         </span>
       </div>
     </div>
