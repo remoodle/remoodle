@@ -1,10 +1,9 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { csrf } from "hono/csrf";
 import { prettyJSON } from "hono/pretty-json";
 import { pinoLogger } from "hono-pino-logger";
-import { config, env } from "../../config";
+import { config } from "../../config";
 import { logger } from "../../library/logger";
 import { applyBullBoard } from "../../library/bull-board";
 import {
@@ -16,10 +15,6 @@ import { versionHandler } from "./middleware/version";
 import { v2 } from "./router/v2";
 
 const api = new Hono();
-
-if (env.isProduction) {
-  api.use(csrf({ origin: "remoodle.app" }));
-}
 
 api.use("*", pinoLogger(logger.api), prettyJSON());
 api.use("*", versionHandler);
