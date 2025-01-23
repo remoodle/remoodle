@@ -4,6 +4,7 @@ import type { IUser } from "@remoodle/types";
 import { RouterView, useRoute, useRouter } from "vue-router";
 import { useUrlSearchParams } from "@vueuse/core";
 import { ConfigProvider } from "radix-vue";
+import { useAnalytics } from "@/shared/lib/use-analytics";
 import { useUserStore } from "@/shared/stores/user";
 import { useAppStore } from "@/shared/stores/app";
 import { RouteName } from "@/shared/lib/routes";
@@ -24,6 +25,8 @@ const router = useRouter();
 
 const userStore = useUserStore();
 
+const { posthog } = useAnalytics();
+
 onMounted(async () => {
   const params = useUrlSearchParams("history");
 
@@ -43,6 +46,14 @@ onMounted(async () => {
     }
 
     userStore.login(resp.accessToken, resp.refreshToken, resp.user);
+  }
+
+  if (userStore.authorized && userStore.user) {
+    posthog.identify(userStore.user.handle, {
+      name: userStore.user.name,
+      username: userStore.user.username,
+      health: userStore.user.health,
+    });
   }
 });
 
