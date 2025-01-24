@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.5.1...remoodle/frontend-v1.5.2) (2025-01-24)
+
+
+### Bug Fixes
+
+* trigger release ([c84f54e](https://github.com/remoodle/remoodle/commit/c84f54e346f79e8c4f99bf15e9c3cf6fbbacb47e))
+
 ## [1.5.1](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.5.0...remoodle/frontend-v1.5.1) (2025-01-24)
 
 
