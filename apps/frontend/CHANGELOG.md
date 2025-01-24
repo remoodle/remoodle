@@ -6,6 +6,7 @@
 ### Bug Fixes
 
 * feedback column render ([e1f880a](https://github.com/remoodle/remoodle/commit/e1f880a9839d582125bcbb1f630d74b8b9e8cc9c))
+* **web:** use handle as avatar source ([73764e4](https://github.com/remoodle/remoodle/commit/73764e4d65366df2f24e0a91a3d515ace55b9347))
 
 
 ### Code Refactoring
