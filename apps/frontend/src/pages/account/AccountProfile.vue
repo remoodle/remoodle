@@ -64,6 +64,10 @@ const { run: updateHandle, loading: updatingHandle } = createAsyncProcess(
 
     initialHandle.value = handle.value;
 
+    if (userStore.user) {
+      userStore.user.handle = handle.value;
+    }
+
     toast({
       title: "Handle updated",
     });
