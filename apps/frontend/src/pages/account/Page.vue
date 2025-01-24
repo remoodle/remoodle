@@ -66,7 +66,7 @@ onMounted(async () => {
   <PageWrapper v-if="userStore.user && userStore.authorized">
     <template #title>
       <div class="flex items-center gap-4">
-        <Avatar :name="userStore.user.moodleId" :size="56" />
+        <Avatar :name="userStore.user.handle" :size="56" />
         <div class="flex flex-col">
           {{ userStore.user.name }}
           <span class="text-sm text-muted-foreground">

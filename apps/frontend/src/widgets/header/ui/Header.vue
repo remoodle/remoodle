@@ -36,7 +36,7 @@ const userStore = useUserStore();
       <div class="ml-auto inline-flex w-1/2 items-center justify-end">
         <DropdownMenu v-if="userStore.user" :modal="false">
           <DropdownMenuTrigger>
-            <Avatar :name="userStore.user.moodleId" :size="36" />
+            <Avatar :name="userStore.user.handle" :size="36" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
