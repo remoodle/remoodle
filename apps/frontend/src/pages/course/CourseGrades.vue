@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
+import { Text } from "@/shared/ui/text";
 import { Link } from "@/shared/ui/link";
 import { RouteName } from "@/shared/lib/routes";
 
@@ -68,7 +69,7 @@ defineProps<{
             <TableCell> {{ item.gradeformatted }} % </TableCell>
             <TableCell> {{ item.grademin }} - {{ item.grademax }} </TableCell>
             <TableCell class="text-left">
-              {{ item.feedback }}
+              <Text :msg="item.feedback" />
             </TableCell>
           </TableRow>
         </template>
