@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.1](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.5.0...remoodle/frontend-v1.5.1) (2025-01-24)
+
+
+### Bug Fixes
+
+* feedback column render ([e1f880a](https://github.com/remoodle/remoodle/commit/e1f880a9839d582125bcbb1f630d74b8b9e8cc9c))
+
+
+### Code Refactoring
+
+* rename stuff ([66c7ae0](https://github.com/remoodle/remoodle/commit/66c7ae0cb2ce6a77a924811380311b48a650dfe9))
+
 ## [1.5.0](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.4.0...remoodle/frontend-v1.5.0) (2025-01-23)
 
 
