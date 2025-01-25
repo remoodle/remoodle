@@ -8,7 +8,8 @@ export const useScheduleStore = defineStore("schedule", () => {
   const filters = ref<Record<string, ScheduleFilter>>({});
 
   const storedFilters = useStorage(getStorageKey("scheduleFilters"), "");
-  if (storedFilters) {
+
+  if (storedFilters.value !== "") {
     filters.value = JSON.parse(storedFilters.value);
   }
 
