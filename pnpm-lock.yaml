@@ -123,6 +123,9 @@ importers:
 
   apps/frontend:
     dependencies:
+      '@internationalized/date':
+        specifier: ^3.7.0
+        version: 3.7.0
       '@radix-icons/vue':
         specifier: ^1.0.0
         version: 1.0.0(vue@3.5.12(typescript@5.4.5))
@@ -1229,8 +1232,8 @@ packages:
     peerDependencies:
       vue: '>=3'
 
-  '@internationalized/date@3.5.5':
-    resolution: {integrity: sha512-H+CfYvOZ0LTJeeLOqm19E3uj/4YjrmOFtBufDHPfvtI80hFAMqtrp7oCACpe4Cil5l8S0Qu/9dYfZc/5lY8WQQ==}
+  '@internationalized/date@3.7.0':
+    resolution: {integrity: sha512-VJ5WS3fcVx0bejE/YHfbDKR/yawZgKqn/if+oEeLqNwBtPzVB06olkfcnojTmEMX+gTpH+FlQ69SHNitJ8/erQ==}
 
   '@internationalized/number@3.5.3':
     resolution: {integrity: sha512-rd1wA3ebzlp0Mehj5YTuTI50AQEx80gWFyHcQu+u91/5NgdwBecO8BH6ipPfE+lmQ9d63vpB3H9SHoIUiupllw==}
@@ -5576,7 +5579,7 @@ snapshots:
       '@iconify/types': 2.0.0
       vue: 3.5.12(typescript@5.4.5)
 
-  '@internationalized/date@3.5.5':
+  '@internationalized/date@3.7.0':
     dependencies:
       '@swc/helpers': 0.5.12
 
@@ -8699,7 +8702,7 @@ snapshots:
     dependencies:
       '@floating-ui/dom': 1.6.10
       '@floating-ui/vue': 1.1.4(vue@3.5.12(typescript@5.4.5))
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.7.0
       '@internationalized/number': 3.5.3
       '@tanstack/vue-virtual': 3.8.6(vue@3.5.12(typescript@5.4.5))
       '@vueuse/core': 10.11.1(vue@3.5.12(typescript@5.4.5))
