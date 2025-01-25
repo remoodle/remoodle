@@ -39,14 +39,10 @@ const maxDate = dayjs()
       </div>
     </template>
     <RoundedSection>
-      <Calendar
-        :events="groupSchedule"
-        :min-date="convertToDateTime(minDate)"
-        :max-date="convertToDateTime(maxDate)"
-      />
+      <Calendar :events="groupSchedule" :min-date="convertToDateTime(minDate)" :max-date="convertToDateTime(maxDate)" />
       <div class="my-4 flex justify-between gap-2">
         <ScheduleSettings :group="group" :courses="groupCourses" />
-        <ExportToIcal />
+        <ExportToIcal :events="groupSchedule" />
       </div>
     </RoundedSection>
   </PageWrapper>
