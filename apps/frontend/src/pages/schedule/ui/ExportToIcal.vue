@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Button } from "@/shared/ui/button";
+import { Calendar } from "@/shared/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -10,17 +11,20 @@ import {
   DialogTrigger,
 } from "@/shared/ui/dialog";
 import { Badge } from "@/shared/ui/badge";
-import { type Ref, ref, watch } from "vue";
-import type { DateRange } from 'radix-vue';
-import { RangeCalendar } from '@/shared/ui/range-calendar';
+import { ref, watch } from "vue";
 import { useAppStore } from "@/shared/stores/app";
 import { useScheduleStore } from "@/shared/stores/schedule";
 import type { ScheduleFilter } from "@remoodle/types";
 import type { CalendarEvent } from "@schedule-x/calendar";
-import { CalendarIcon } from 'lucide-vue-next'
-import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
-import { type DateValue, CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date';
-import dayjs, { Dayjs } from "dayjs";
+import { CalendarIcon } from "lucide-vue-next";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
+import {
+  type DateValue,
+  DateFormatter,
+  getLocalTimeZone,
+  today,
+} from "@internationalized/date";
+import dayjs from "dayjs";
 
 const props = defineProps<{
   events: CalendarEvent[];
@@ -28,21 +32,15 @@ const props = defineProps<{
 
 const appStore = useAppStore();
 const scheduleStore = useScheduleStore();
-
-const df = new DateFormatter('en-US', {
-  dateStyle: 'medium',
-});
-
-const value = ref({
-  start: new CalendarDate(2025, 2, 2),
-  end: new CalendarDate(2022, 3, 3),
-}) as unknown as Ref<DateRange>;
-
-console.log(value);
-
 const filters = ref<ScheduleFilter>(scheduleStore.getFilters(appStore.group));
 
 let open = ref<boolean>(false);
+
+const df = new DateFormatter("en-US", {
+  dateStyle: "long",
+});
+
+const value = ref<DateValue>(today(getLocalTimeZone()));
 
 watch(
   () => scheduleStore.getFilters(appStore.group),
@@ -58,18 +56,9 @@ const getIcsString = () => {
     "PRODID:-//ReMoodle//Calendar Export//EN",
   ];
 
-  const formatDateValueToDayjs = (dateVal: DateValue | undefined): dayjs.Dayjs => {
-    if (!dateVal) {
-      return dayjs();
-    }
+  const end = dayjs(value.value.toDate(getLocalTimeZone()));
 
-    const { year, month, day } = dateVal;
-    return dayjs(new Date(year, month, day));
-  };
-
-  const start = formatDateValueToDayjs(value.value.start);
-
-  if (!start || !end) {
+  if (!end) {
     return "";
   }
 
@@ -88,31 +77,31 @@ const getIcsString = () => {
     return new Date(year, month - 1, day, hour, minute);
   };
 
-  props.events.forEach((event) => {
-    if (event.title && event.description && event.start && event.end) {
-      const startDate = parseDate(event.start);
-      const endDate = parseDate(event.end);
+  const formatDate = (date: any): string => {
+    return date.format("YYYYMMDD[T]HHmmss").replace(/[-:]/g, "");
+  };
 
-      // for (let current = new Date(startDate); current <= endDate; current = addDays(current, 7)) {
-      //   icalContent.push(
-      //     `BEGIN:VEVENT`,
-      //     `UID:${event.id}-${current.toISOString()}`,
-      //     `SUMMARY:${escapeText(event.title)}`,
-      //     `DTSTART:${formatDate({
-      //       year: current.getFullYear(),
-      //       month: current.getMonth() + 1,
-      //       day: current.getDate(),
-      //     } as DateValue)}`,
-      //     `DTEND:${formatDate({
-      //       year: current.getFullYear(),
-      //       month: current.getMonth() + 1,
-      //       day: current.getDate(),
-      //     } as DateValue)}`,
-      //     `DESCRIPTION:${escapeText(event.description)}`,
-      //     `LOCATION:Astana IT University`,
-      //     `END:VEVENT`
-      //   );
-      // }
+  props.events.forEach((event) => {
+    if (event.title && event.description && event.start) {
+      const startDate = parseDate(event.start);
+      const endDate = end;
+
+      for (
+        let current = dayjs(startDate);
+        current <= endDate;
+        current = current.add(7, "day")
+      ) {
+        icalContent.push(
+          `BEGIN:VEVENT`,
+          `UID:${event.id}-${current.toISOString()}`,
+          `SUMMARY:${escapeText(event.title)}`,
+          `DTSTART:${formatDate(current)}`,
+          `DTEND:${formatDate(current.add(50, "minute"))}`,
+          `DESCRIPTION:${escapeText(event.description)}`,
+          `LOCATION:Astana IT University`,
+          `END:VEVENT`,
+        );
+      }
     }
   });
 
@@ -122,9 +111,11 @@ const getIcsString = () => {
 };
 
 const getICalFile = (): void => {
-  const blob = new Blob([getIcsString()], { type: 'text/calendar;charset=utf-8' });
+  const blob = new Blob([getIcsString()], {
+    type: "text/calendar;charset=utf-8",
+  });
 
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = "myCalendar.ics";
   link.click();
@@ -172,7 +163,10 @@ const getICalFile = (): void => {
         <div class="">
           <div class="">Event formats:</div>
           <div class="my-2 flex select-none gap-1">
-            <span v-for="(enabled, format) in filters.eventFormats" :key="format">
+            <span
+              v-for="(enabled, format) in filters.eventFormats"
+              :key="format"
+            >
               <Badge :variant="enabled ? 'default' : 'destructive'">
                 {{ format }}
               </Badge>
@@ -196,31 +190,28 @@ const getICalFile = (): void => {
         </div>
       </div>
 
-      <div class="flex gap-2">
-        <Popover>
-          <PopoverTrigger as-child>
-            <Button variant="outline" class="w-[280px] justify-start text-left font-normal                    ">
-              <CalendarIcon class="mr-2 h-4 w-4" />
-              <template v-if="value.start">
-                <template v-if="value.end">
-                  {{ df.format(value.start.toDate(getLocalTimeZone())) }} - {{
-                    df.format(value.end.toDate(getLocalTimeZone())) }}
-                </template>
-
-                <template v-else>
-                  {{ df.format(value.start.toDate(getLocalTimeZone())) }}
-                </template>
-              </template>
-              <template v-else>
-                Pick a date
-              </template>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent class="w-auto p-0">
-            <RangeCalendar v-model="value" initial-focus :number-of-months="2"
-              @update:start-value="(startDate: CalendarDate) => value.start = startDate" />
-          </PopoverContent>
-        </Popover>
+      <div class="">
+        <div class="mb-2">Select end date</div>
+        <div class="flex gap-2">
+          <Popover>
+            <PopoverTrigger as-child>
+              <Button
+                variant="outline"
+                class="w-[280px] justify-start text-left font-normal"
+              >
+                <CalendarIcon class="mr-2 h-4 w-4" />
+                {{
+                  value
+                    ? df.format(value.toDate(getLocalTimeZone()))
+                    : "Pick an end date"
+                }}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent class="w-auto p-0">
+              <Calendar v-model="value" initial-focus />
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
 
       <DialogFooter>
