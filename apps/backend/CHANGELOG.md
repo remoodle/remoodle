@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.7](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.6...remoodle/backend-v2.0.7) (2025-01-28)
+
+
+### Bug Fixes
+
+* keep much less jobs ([6113881](https://github.com/remoodle/remoodle/commit/61138811c3c4caa5beac819e6015dfb5d5abbced))
+
 ## [2.0.6](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.5...remoodle/backend-v2.0.6) (2025-01-23)
 
 
