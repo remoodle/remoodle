@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.14.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.13.0...remoodle/telegram-bot-v0.14.0) (2025-01-28)
+
+
+### Features
+
+* show token health in bot ([f6af555](https://github.com/remoodle/remoodle/commit/f6af55531a44d8e9268b931e88fce7e08c6622c1))
+
+
+### Bug Fixes
+
+* correct default ([f6689cd](https://github.com/remoodle/remoodle/commit/f6689cdc056ce1c26c2edba93efc937b5ece0f64))
+
 ## [0.13.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.12.0...remoodle/telegram-bot-v0.13.0) (2025-01-20)
 
 
