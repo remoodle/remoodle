@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.14.0...remoodle/telegram-bot-v1.0.0) (2025-01-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* trigger bot release
+
+### Features
+
+* trigger bot release ([c8426fd](https://github.com/remoodle/remoodle/commit/c8426fdc11aa80318986a170a4a88dca9bd2519d))
+
 ## [0.14.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.13.0...remoodle/telegram-bot-v0.14.0) (2025-01-28)
 
 
