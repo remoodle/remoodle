@@ -16,8 +16,8 @@ const workers: Worker[] = [];
 
 const defaultWorkerOptions: WorkerOptions = {
   connection: db.redisConnection,
-  removeOnComplete: { age: 86400 }, // keep up to 1 day
-  removeOnFail: { age: 86400 }, // keep up to 1 day
+  removeOnComplete: { age: 3600 }, // keep up to 1 day
+  removeOnFail: { age: 3600 * 3 }, // keep up to 3 hours
 };
 
 const loadConfig = async () => {
