@@ -615,7 +615,7 @@ async function account(ctx: Context) {
       user?.moodleId +
       "`\n\nBot version:   `" +
       // eslint-disable-next-line
-      (process.env.VERSION_TAG || " ") +
+      (process.env.VERSION_TAG || "") +
       "`\nToken health:   `" +
       (user?.health && user?.health > 0 ? `🟢 (${user?.health}/7)` : "🔴") +
       "`",
