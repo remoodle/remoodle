@@ -616,7 +616,9 @@ async function account(ctx: Context) {
       "`\n\nBot version:   `" +
       // eslint-disable-next-line
       (process.env.VERSION_TAG || " ") +
-      "`\n",
+      "`\nToken health:   `" +
+      (user?.health && user?.health > 0 ? `🟢 (${user?.health}/7)` : "🔴") +
+      "`",
     {
       reply_markup: keyboards.account,
       parse_mode: "Markdown",
