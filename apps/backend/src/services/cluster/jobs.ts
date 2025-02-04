@@ -255,10 +255,25 @@ export const jobs: Record<JobName, ClusterJob> = {
         return "gradeUpdates not enabled";
       }
 
-      await queues[QueueName.TELEGRAM].add(QueueName.TELEGRAM, {
-        userId,
-        message: formatCourseDiffs(gradeChangeEvent.payload),
-      });
+      const message = formatCourseDiffs(gradeChangeEvent.payload);
+
+      await queues[QueueName.TELEGRAM].add(
+        QueueName.TELEGRAM,
+        {
+          userId,
+          message,
+        },
+        {
+          attempts: 3,
+          backoff: {
+            type: "exponential",
+            delay: 2000,
+          },
+          deduplication: {
+            id: `${userId}::${message}`,
+          },
+        },
+      );
 
       return gradeChangeEvent.payload;
     },
@@ -334,10 +349,25 @@ export const jobs: Record<JobName, ClusterJob> = {
         return "no deadline reminders";
       }
 
-      await queues[QueueName.TELEGRAM].add(QueueName.TELEGRAM, {
-        userId,
-        message: formatDeadlineReminders(deadlineReminderEvent.payload),
-      });
+      const message = formatDeadlineReminders(deadlineReminderEvent.payload);
+
+      await queues[QueueName.TELEGRAM].add(
+        QueueName.TELEGRAM,
+        {
+          userId,
+          message,
+        },
+        {
+          attempts: 3,
+          backoff: {
+            type: "exponential",
+            delay: 2000,
+          },
+          deduplication: {
+            id: `${userId}::${message}`,
+          },
+        },
+      );
 
       return deadlineReminderEvent.payload;
     },
