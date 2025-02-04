@@ -178,7 +178,10 @@ async function grades(ctx: Context) {
   grades.forEach((grade) => {
     gradesKeyboards
       .row()
-      .text(grade.shortname.split(" | ")[0], `inprogress_course_${grade.id}`);
+      .text(
+        `${grade.shortname.split(" | ")[0]} ${grade.notingroup ? "❗" : ""}`,
+        `inprogress_course_${grade.id}`,
+      );
   });
 
   gradesKeyboards
