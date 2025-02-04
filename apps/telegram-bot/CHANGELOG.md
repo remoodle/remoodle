@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.1](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.0...remoodle/telegram-bot-v1.0.1) (2025-02-04)
+
+
+### Bug Fixes
+
+* pin pnpm in corepack ([b21b9df](https://github.com/remoodle/remoodle/commit/b21b9df8e58a209ffc8439fe10d47a46944ec97b))
+* **tgbor:** show problematic courses ([78d3f67](https://github.com/remoodle/remoodle/commit/78d3f67e8b14dda818618a7f466e7c2a5ca141d3))
+
+
+### Code Refactoring
+
+* **tgbot:** common sense ([b26766d](https://github.com/remoodle/remoodle/commit/b26766d41a168b0dd538889d18fa8c6f587e811b))
+
 ## [1.0.0](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v0.14.0...remoodle/telegram-bot-v1.0.0) (2025-01-28)
 
 
