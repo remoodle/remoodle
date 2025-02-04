@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.10](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.9...remoodle/backend-v2.0.10) (2025-02-04)
+
+
+### Bug Fixes
+
+* ya dolbaeb ([aee3ec6](https://github.com/remoodle/remoodle/commit/aee3ec68b0510ae035a72b563238313a593a482c))
+
 ## [2.0.9](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.8...remoodle/backend-v2.0.9) (2025-02-04)
 
 
