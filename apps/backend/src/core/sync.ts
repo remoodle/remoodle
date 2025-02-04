@@ -8,11 +8,24 @@ import { db } from "../library/db";
 import { trackCourseDiff } from "./events/grades";
 import type { GradeChangeDiff } from "./events/grades";
 
-const handleError = async (error: { message: string }, user: IUser) => {
+const handleTokenError = async (error: { message: string }, user: IUser) => {
   if (error.message.includes("Invalid token")) {
     await db.user.updateOne(
       { _id: user._id },
       { $set: { health: user.health - 1 } },
+    );
+  }
+};
+
+const handleNotInGroupError = async (
+  error: { message: string },
+  user: IUser,
+  courseId: number,
+) => {
+  if (error.message.includes("error/notingroup")) {
+    await db.course.updateOne(
+      { userId: user._id, data: { id: courseId } },
+      { $set: { notingroup: true } },
     );
   }
 };
@@ -34,7 +47,7 @@ export const syncEvents = async (userId: string) => {
   );
 
   if (error) {
-    await handleError(error, user);
+    await handleTokenError(error, user);
     throw new Error(`Failed to get events: ${error.message}`);
   }
 
@@ -84,7 +97,7 @@ export const syncCourses = async (
     );
 
     if (error) {
-      await handleError(error, user);
+      await handleTokenError(error, user);
       throw new Error(`Failed to get ${variant} courses: ${error.message}`);
     }
 
@@ -139,7 +152,8 @@ export const syncCourseGrades = async (
   );
 
   if (error) {
-    await handleError(error, user);
+    await handleTokenError(error, user);
+    await handleNotInGroupError(error, user, courseId);
     throw new Error(`Failed to get grades for ${courseId}: ${error.message}`);
   }
 

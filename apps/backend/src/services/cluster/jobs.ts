@@ -149,6 +149,7 @@ export const jobs: Record<JobName, ClusterJob> = {
         .find({
           userId,
           deleted: false,
+          notingroup: false,
           ...(classification && { classification }),
         })
         .lean();

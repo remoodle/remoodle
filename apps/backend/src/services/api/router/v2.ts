@@ -70,25 +70,31 @@ const authRoutes = new Hono<{
         moodleId: student.userid,
       });
 
+      // changing telegram account
       if (existingUser && telegramId) {
         await db.user.updateOne(
           { _id: existingUser._id },
           { $set: { telegramId } },
         );
+      }
 
-        if (student.userid === existingUser.moodleId) {
-          await db.user.updateOne(
-            { _id: existingUser._id },
-            {
-              $set: {
-                moodleToken,
-                username: student.username,
-                name: student.fullname,
-                health: 7,
-              },
+      // re-syncing moodle account with new token
+      if (existingUser && student.userid === existingUser.moodleId) {
+        await db.user.updateOne(
+          { _id: existingUser._id },
+          {
+            $set: {
+              moodleToken,
+              username: student.username,
+              name: student.fullname,
+              health: 7,
             },
-          );
-        }
+          },
+        );
+        await db.course.updateMany(
+          { userId: existingUser._id, notingroup: true },
+          { $set: { notingroup: false } },
+        );
       }
 
       if (!existingUser) {
