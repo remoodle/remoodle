@@ -427,10 +427,19 @@ const userRoutes = new Hono<{
           throw new HTTPException(500, { message: error.message });
         }
 
-        return ctx.json(response.courses as MoodleCourse[]);
+        return ctx.json(
+          response.courses as (MoodleCourse & { notingroup?: boolean })[],
+        );
       }
 
-      return ctx.json(courses.map((course) => course.data));
+      return ctx.json(
+        courses.map((course) => {
+          return {
+            ...course.data,
+            notingroup: course.notingroup,
+          };
+        }),
+      );
     },
   )
   .get(
