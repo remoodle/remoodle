@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, toRefs, watch } from "vue";
+import { ref, reactive, toRef, watch } from "vue";
 import { useMutation } from "@tanstack/vue-query";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
