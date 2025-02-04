@@ -19,7 +19,7 @@ WORKDIR /app
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
-RUN corepack enable
+RUN corepack enable && corepack prepare pnpm@9.8.0 --activate
 RUN pnpm install --frozen-lockfile
 
 # Build the project
