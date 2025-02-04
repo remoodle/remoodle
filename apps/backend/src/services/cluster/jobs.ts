@@ -149,7 +149,7 @@ export const jobs: Record<JobName, ClusterJob> = {
         .find({
           userId,
           deleted: false,
-          notingroup: false,
+          notingroup: { $ne: true },
           ...(classification && { classification }),
         })
         .lean();
