@@ -30,7 +30,7 @@ const { toast } = useToast();
 
 const userStore = useUserStore();
 
-const { notifications } = toRefs(props.settings);
+const notifications = toRef(props.settings, "notifications");
 
 const telegramId = ref<number | undefined>(props.settings?.telegramId);
 const editingMode = ref(false);
