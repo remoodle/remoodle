@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.9](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.8...remoodle/backend-v2.0.9) (2025-02-04)
+
+
+### Bug Fixes
+
+* **cluster:** add telegram retries ([536b7c9](https://github.com/remoodle/remoodle/commit/536b7c974a1dfbce4967be71af35fece7009e5a3))
+
 ## [2.0.8](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.7...remoodle/backend-v2.0.8) (2025-02-04)
 
 
