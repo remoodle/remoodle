@@ -19,36 +19,18 @@ const route = useRoute();
 
 const { toast } = useToast();
 
-const settings = ref<{
-  name: string;
-  handle: string;
-  moodleId: number;
-  telegramId?: number;
-  hasPassword: boolean;
-  notifications: {
-    telegram: {
-      enabled: boolean;
-      gradeUpdates: boolean;
-      deadlineReminders: boolean;
-    };
-    deadlineThresholds: string[];
-  };
-}>();
-
-const { isPending, isError, data, error, refetch } = useQuery({
+const {
+  isPending,
+  isError,
+  data: settings,
+  error,
+  refetch,
+} = useQuery({
   queryKey: ["settings"],
   queryFn: async () =>
     await requestUnwrap((client) =>
       client.v2.user.settings.$get({}, { headers: getAuthHeaders() }),
     ),
-});
-
-watch(data, (value) => {
-  if (!value) {
-    return;
-  }
-
-  settings.value = value;
 });
 </script>
 
