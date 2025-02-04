@@ -600,7 +600,7 @@ async function account(ctx: Context) {
 
   const userId = ctx.from.id;
 
-  const [user, _] = await request((client) =>
+  const [user, error] = await request((client) =>
     client.v2.user.check.$get(
       {},
       {
@@ -609,18 +609,26 @@ async function account(ctx: Context) {
     ),
   );
 
+  if (error) {
+    await ctx.editMessageText("An error occurred. Try again later.", {
+      reply_markup: keyboards.account,
+      parse_mode: "Markdown",
+    });
+    return;
+  }
+
   return await ctx.editMessageText(
     "ReMoodle Account\n\nHandle:   `" +
-      user?.handle +
-      "`\nName:   `" +
-      user?.name +
-      "`\nMoodleID:   `" +
-      user?.moodleId +
-      "`\n\nBot version:   `" +
+      user.handle +
+      "`\nName:  `" +
+      user.name +
+      "`\nMoodleID:  `" +
+      user.moodleId +
+      "`\n\nBot version:  `" +
       // eslint-disable-next-line
       (process.env.VERSION_TAG || "") +
-      "`\nToken health:   `" +
-      (user?.health && user?.health > 0 ? `🟢 (${user?.health}/7)` : "🔴") +
+      "`\nToken health:  `" +
+      `${user.health} ${user.health > 0 ? "🟢" : "🔴"}` +
       "`",
     {
       reply_markup: keyboards.account,
