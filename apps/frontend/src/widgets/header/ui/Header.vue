@@ -5,8 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
 import { Avatar } from "@/shared/ui/avatar";
@@ -39,9 +37,7 @@ const userStore = useUserStore();
           <DropdownMenuTrigger>
             <Avatar :name="userStore.user.handle" :size="36" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
+          <DropdownMenuContent side="bottom" align="end" :side-offset="6">
             <RouterLink :to="{ name: RouteName.Account }">
               <DropdownMenuItem> Account </DropdownMenuItem>
             </RouterLink>
