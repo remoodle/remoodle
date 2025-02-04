@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.0.8](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.7...remoodle/backend-v2.0.8) (2025-02-04)
+
+
+### Bug Fixes
+
+* add notingroup error handler ([294fcf3](https://github.com/remoodle/remoodle/commit/294fcf3c6203f51e251eecd12f0006db640cb923))
+* add notingroup to api response ([0aa3b82](https://github.com/remoodle/remoodle/commit/0aa3b827a8bdf7507e07836051cc9e300ff12fe5))
+* handle course update properly ([f72fe16](https://github.com/remoodle/remoodle/commit/f72fe165a5698a3b000049e2e025f91ff35cf66a))
+* pin pnpm in corepack ([b21b9df](https://github.com/remoodle/remoodle/commit/b21b9df8e58a209ffc8439fe10d47a46944ec97b))
+
 ## [2.0.7](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.6...remoodle/backend-v2.0.7) (2025-01-28)
 
 
