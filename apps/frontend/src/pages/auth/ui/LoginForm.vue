@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useMutation } from "@tanstack/vue-query";
 import { useRouter } from "vue-router";
 import { cn } from "@/shared/lib/helpers";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { useToast } from "@/shared/ui/toast/use-toast";
-import { request } from "@/shared/lib/hc";
-import { createAsyncProcess, vFocus } from "@/shared/lib/helpers";
+import { requestUnwrap } from "@/shared/lib/hc";
+import { vFocus } from "@/shared/lib/helpers";
 import { TELEGRAM_BOT_NAME } from "@/shared/config";
 import { useUserStore } from "@/shared/stores/user";
 import { RouteName } from "@/shared/lib/routes";
@@ -25,48 +26,46 @@ const form = ref({
 
 const { toast } = useToast();
 
-const { run: submit, loading } = createAsyncProcess(async () => {
-  const [data, error] = await request((client) =>
-    client.v2.auth.login.$post({
-      json: {
-        identifier: form.value.name,
-        password: form.value.password,
-      },
-    }),
-  );
-
-  if (error) {
+const { mutate: submit, isPending } = useMutation({
+  mutationFn: async () =>
+    requestUnwrap((client) =>
+      client.v2.auth.login.$post({
+        json: {
+          identifier: form.value.name,
+          password: form.value.password,
+        },
+      }),
+    ),
+  onSuccess: (data) => {
+    userStore.login(data.accessToken, data.refreshToken, data.user);
+  },
+  onError: (error) => {
     toast({
       title: error.message,
     });
-    throw error;
-  }
-
-  userStore.login(data.accessToken, data.refreshToken, data.user);
+  },
 });
 
-const handleTelegramAuth: OnTelegramAuth = async (user) => {
-  const [data, error] = await request((client) =>
-    client.v2.auth.oauth.telegram.callback.$post({
-      json: user,
-    }),
-  );
-
-  if (error) {
+const { mutate: handleTelegramAuth } = useMutation({
+  mutationFn: async (user: Parameters<OnTelegramAuth>[0]) =>
+    requestUnwrap((client) =>
+      client.v2.auth.oauth.telegram.callback.$post({ json: user }),
+    ),
+  onSuccess: (data) => {
+    userStore.login(data.accessToken, data.refreshToken, data.user);
+  },
+  onError: (error) => {
     toast({
       title: "Telegram login failed",
       description: error.message,
     });
-    throw error;
-  }
-
-  userStore.login(data.accessToken, data.refreshToken, data.user);
-};
+  },
+});
 </script>
 
 <template>
   <div :class="cn('grid gap-6', $attrs.class ?? '')">
-    <form @submit.prevent="submit">
+    <form @submit.prevent="submit()">
       <div class="grid gap-5">
         <div class="grid gap-3">
           <div class="grid gap-1.5">
@@ -80,7 +79,7 @@ const handleTelegramAuth: OnTelegramAuth = async (user) => {
               autocomplete="username"
               auto-capitalize="none"
               auto-correct="off"
-              :disabled="loading"
+              :disabled="isPending"
               required
             />
           </div>
@@ -93,12 +92,12 @@ const handleTelegramAuth: OnTelegramAuth = async (user) => {
               type="password"
               auto-capitalize="none"
               auto-correct="off"
-              :disabled="loading"
+              :disabled="isPending"
               required
             />
           </div>
         </div>
-        <Button :disabled="loading"> Sign In </Button>
+        <Button :disabled="isPending"> Sign In </Button>
         <div class="relative">
           <div class="absolute inset-0 flex items-center">
             <span class="w-full border-t" />

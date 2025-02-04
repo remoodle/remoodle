@@ -128,30 +128,6 @@ interface UseAsync<T extends (...args: unknown[]) => unknown, E = APIError> {
   run: (...args: Parameters<T>) => Promise<ReturnType<T>>;
 }
 
-export function createAsyncProcess<T extends (...args: any) => unknown>(
-  fn: T,
-): UseAsync<T> {
-  const loading: UseAsync<T>["loading"] = ref(false);
-  const error: UseAsync<T>["error"] = ref(null);
-
-  const run: UseAsync<T>["run"] = async (...args) => {
-    try {
-      loading.value = true;
-      error.value = null;
-      const result = await fn(...(args as any));
-      return result as ReturnType<T>;
-    } catch (err) {
-      // @ts-ignore
-      error.value = err;
-      return error as ReturnType<T>;
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  return { loading, run, error };
-}
-
 export const vFocus = {
   mounted: (el: HTMLInputElement) => el.focus(),
 };

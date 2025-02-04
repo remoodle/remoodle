@@ -3,7 +3,6 @@ import { onMounted, onBeforeUnmount } from "vue";
 import { Header } from "@/widgets/header";
 import { Footer } from "@/widgets/footer";
 import { NotificationsBanner } from "@/widgets/notifications-banner";
-import { useUserStore } from "@/shared/stores/user";
 
 const attr = "data-dashboard";
 
@@ -13,12 +12,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.documentElement.removeAttribute(attr);
-});
-
-const userStore = useUserStore();
-
-onMounted(() => {
-  userStore.updateUser();
 });
 </script>
 

@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useMutation } from "@tanstack/vue-query";
 import { cn } from "@/shared/lib/helpers";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Link } from "@/shared/ui/link";
 import { useToast } from "@/shared/ui/toast/use-toast";
-import { request } from "@/shared/lib/hc";
-import { createAsyncProcess, vFocus } from "@/shared/lib/helpers";
+import { requestUnwrap } from "@/shared/lib/hc";
+import { vFocus } from "@/shared/lib/helpers";
 import { EXTERNAL } from "@/shared/config";
 import { useUserStore } from "@/shared/stores/user";
 
@@ -19,29 +20,27 @@ const form = ref({
 
 const { toast } = useToast();
 
-const { run: submit, loading } = createAsyncProcess(async () => {
-  const [data, error] = await request((client) =>
-    client.v2.auth.token.$post({
-      json: {
-        moodleToken: form.value.token,
-      },
-    }),
-  );
-
-  if (error) {
+const { mutate: submit, isPending } = useMutation({
+  mutationFn: async () =>
+    requestUnwrap((client) =>
+      client.v2.auth.token.$post({
+        json: { moodleToken: form.value.token },
+      }),
+    ),
+  onSuccess: (data) => {
+    userStore.login(data.accessToken, data.refreshToken, data.user);
+  },
+  onError: (error) => {
     toast({
       title: error.message,
     });
-    throw error;
-  }
-
-  userStore.login(data.accessToken, data.refreshToken, data.user);
+  },
 });
 </script>
 
 <template>
   <div :class="cn('grid gap-6', $attrs.class ?? '')">
-    <form @submit.prevent="submit">
+    <form @submit.prevent="submit()">
       <div class="grid gap-5">
         <div class="grid gap-3">
           <div class="grid gap-1.5">
@@ -54,7 +53,7 @@ const { run: submit, loading } = createAsyncProcess(async () => {
               type="password"
               auto-capitalize="none"
               auto-correct="off"
-              :disabled="loading"
+              :disabled="isPending"
               required
             />
             <Link
@@ -66,7 +65,7 @@ const { run: submit, loading } = createAsyncProcess(async () => {
             </Link>
           </div>
         </div>
-        <Button :disabled="loading"> Continue </Button>
+        <Button :disabled="isPending"> Continue </Button>
       </div>
     </form>
   </div>

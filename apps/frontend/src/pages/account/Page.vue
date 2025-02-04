@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, watch } from "vue";
+import { useQuery } from "@tanstack/vue-query";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/shared/stores/user";
 import { RoundedSection, PageWrapper } from "@/entities/page";
-import { request, getAuthHeaders } from "@/shared/lib/hc";
-import { createAsyncProcess } from "@/shared/lib/helpers";
+import { requestUnwrap, getAuthHeaders } from "@/shared/lib/hc";
 import { useToast } from "@/shared/ui/toast";
 import { Avatar } from "@/shared/ui/avatar";
 import { Skeleton } from "@/shared/ui/skeleton";
@@ -35,30 +35,20 @@ const settings = ref<{
   };
 }>();
 
-const { run: loadSettings, loading: loadingSettings } = createAsyncProcess(
-  async () => {
-    const [data, error] = await request((client) =>
-      client.v2.user.settings.$get(
-        {},
-        {
-          headers: getAuthHeaders(),
-        },
-      ),
-    );
+const { isPending, isError, data, error, refetch } = useQuery({
+  queryKey: ["settings"],
+  queryFn: async () =>
+    await requestUnwrap((client) =>
+      client.v2.user.settings.$get({}, { headers: getAuthHeaders() }),
+    ),
+});
 
-    if (error) {
-      toast({
-        title: error.message,
-      });
-      throw error;
-    }
+watch(data, (value) => {
+  if (!value) {
+    return;
+  }
 
-    settings.value = data;
-  },
-);
-
-onMounted(async () => {
-  await loadSettings();
+  settings.value = value;
 });
 </script>
 
@@ -83,7 +73,7 @@ onMounted(async () => {
           <AccountSidebar />
         </aside>
         <div class="flex-1">
-          <template v-if="loadingSettings">
+          <template v-if="isPending">
             <div class="flex flex-col gap-4">
               <Skeleton class="h-12" />
               <Skeleton class="h-6" />

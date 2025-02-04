@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, reactive, toRef, watch } from "vue";
+import { useMutation } from "@tanstack/vue-query";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
@@ -7,8 +8,7 @@ import { Switch } from "@/shared/ui/switch";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Separator } from "@/shared/ui/separator";
 import { useToast } from "@/shared/ui/toast";
-import { request, getAuthHeaders } from "@/shared/lib/hc";
-import { createAsyncProcess } from "@/shared/lib/helpers";
+import { requestUnwrap, getAuthHeaders } from "@/shared/lib/hc";
 import { useUserStore } from "@/shared/stores/user";
 import { TELEGRAM_BOT_URL } from "@/shared/config";
 
@@ -30,7 +30,7 @@ const { toast } = useToast();
 
 const userStore = useUserStore();
 
-const notifications = ref(props.settings.notifications);
+const notifications = toRef(props.settings, "notifications");
 
 const telegramId = ref<number | undefined>(props.settings?.telegramId);
 const editingMode = ref(false);
@@ -41,60 +41,54 @@ const connect = () => {
   window.open(`${TELEGRAM_BOT_URL}?start=connect`, "_blank");
 };
 
-const { run: verify, loading } = createAsyncProcess(async () => {
-  const [data, error] = await request((client) =>
-    client.v2.otp.verify.$post(
-      {
-        json: {
-          otp: otp.value,
-        },
-      },
-      {
-        headers: getAuthHeaders(),
-      },
+const { mutate: verify, isPending: verifying } = useMutation({
+  mutationFn: async () =>
+    requestUnwrap((client) =>
+      client.v2.otp.verify.$post(
+        { json: { otp: otp.value } },
+        { headers: getAuthHeaders() },
+      ),
     ),
-  );
+  onSuccess: (data) => {
+    editingMode.value = false;
+    otp.value = "";
 
-  editingMode.value = false;
-  otp.value = "";
+    telegramId.value = parseInt(data.telegramId);
 
-  if (error) {
+    userStore.closeTelegramBanner();
+
+    toast({
+      title: "Telegram connected",
+    });
+  },
+  onError: (error) => {
     toast({
       title: error.message,
     });
-    throw error;
-  }
-
-  telegramId.value = parseInt(data.telegramId);
-
-  userStore.closeTelegramBanner();
-
-  toast({
-    title: "Telegram connected",
-  });
+  },
 });
 
-const { run: updateNotifications, loading: updatingNotifications } =
-  createAsyncProcess(async () => {
-    const [_, error] = await request((client) =>
-      client.v2.user.settings.$post(
-        {
-          json: {
-            telegramDeadlineReminders:
-              notifications.value.telegram.deadlineReminders,
-            telegramGradeUpdates: notifications.value.telegram.gradeUpdates,
-            deadlineThresholds: notifications.value.deadlineThresholds,
+const { mutate: updateNotifications, isPending: updatingNotifications } =
+  useMutation({
+    mutationFn: async () =>
+      requestUnwrap((client) =>
+        client.v2.user.settings.$post(
+          {
+            json: {
+              telegramDeadlineReminders:
+                notifications.value.telegram.deadlineReminders,
+              telegramGradeUpdates: notifications.value.telegram.gradeUpdates,
+              deadlineThresholds: notifications.value.deadlineThresholds,
+            },
           },
-        },
-        {
-          headers: getAuthHeaders(),
-        },
+          { headers: getAuthHeaders() },
+        ),
       ),
-    );
-
-    if (error) {
-      throw error;
-    }
+    onError: (error) => {
+      toast({
+        title: error.message,
+      });
+    },
   });
 
 watch(
@@ -133,11 +127,8 @@ const THRESHOLDS = {
           <span class="text-lg font-medium">Grades</span>
           <div class="flex items-center space-x-2">
             <Switch
-              :checked="notifications.telegram.gradeUpdates"
+              v-model:checked="notifications.telegram.gradeUpdates"
               :disabled="updatingNotifications"
-              @update:checked="
-                (value) => (notifications.telegram.gradeUpdates = value)
-              "
               id="gradeUpdates"
             />
             <Label for="gradeUpdates">Telegram updates</Label>
@@ -148,11 +139,8 @@ const THRESHOLDS = {
           <span class="text-lg font-medium">Deadlines</span>
           <div class="flex items-center space-x-2">
             <Switch
-              :checked="notifications.telegram.deadlineReminders"
+              v-model:checked="notifications.telegram.deadlineReminders"
               :disabled="updatingNotifications"
-              @update:checked="
-                (value) => (notifications.telegram.deadlineReminders = value)
-              "
               id="deadlineReminders"
             />
             <Label for="deadlineReminders">Telegram reminders</Label>
@@ -206,10 +194,10 @@ const THRESHOLDS = {
           <div class="flex max-w-sm items-center gap-2">
             <Input
               v-model="otp"
-              :disabled="loading"
+              :disabled="verifying"
               placeholder="Telegram OTP"
             />
-            <Button type="submit" :disabled="loading"> Verify </Button>
+            <Button type="submit" :disabled="verifying"> Verify </Button>
           </div>
         </form>
       </template>

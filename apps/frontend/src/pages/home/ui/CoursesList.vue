@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
+import { useQuery } from "@tanstack/vue-query";
 import type { ExtendedCourse } from "@remoodle/types";
 import { Error } from "@/entities/page";
 import { CourseListCard } from "@/entities/course";
 import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { Skeleton } from "@/shared/ui/skeleton";
-import { createAsyncProcess, isDefined, partition } from "@/shared/lib/helpers";
-import { request, getAuthHeaders } from "@/shared/lib/hc";
+import { isDefined, partition } from "@/shared/lib/helpers";
+import { requestUnwrap, getAuthHeaders } from "@/shared/lib/hc";
 
 const toggledCourseCategories = defineModel<string[]>("categories", {
   required: true,
@@ -18,37 +19,33 @@ const courses = ref<{
 
 const courseCategories = computed(() => Object.keys(courses.value || {}));
 
-const { run, loading, error } = createAsyncProcess(async () => {
-  const [data, error] = await request((client) =>
-    client.v2.courses.overall.$get(
-      {
-        query: {
-          status: "inprogress",
-        },
-      },
-      {
-        headers: getAuthHeaders(),
-      },
+const { isPending, isError, data, error, refetch } = useQuery({
+  queryKey: ["courses"],
+  queryFn: async () =>
+    await requestUnwrap((client) =>
+      client.v2.courses.overall.$get(
+        { query: { status: "inprogress" } },
+        { headers: getAuthHeaders() },
+      ),
     ),
-  );
+});
 
-  if (error) {
-    throw error;
+watch(data, (value) => {
+  if (!value) {
+    return;
   }
 
-  courses.value = partition(data, ({ coursecategory }) => coursecategory);
+  courses.value = partition(value, ({ coursecategory }) => coursecategory);
 
   if (courseCategories.value.length) {
     !toggledCourseCategories.value.length &&
       toggledCourseCategories.value.push(...courseCategories.value);
   }
 });
-
-onMounted(run);
 </script>
 
 <template>
-  <template v-if="loading">
+  <template v-if="isPending">
     <div class="space-y-3">
       <div class="flex gap-2">
         <Skeleton class="h-9 w-24" />
@@ -60,7 +57,7 @@ onMounted(run);
     </div>
   </template>
   <template v-else-if="error || !isDefined(courses)">
-    <Error @retry="run" />
+    <Error @retry="refetch" />
   </template>
   <template v-else>
     <template v-if="courseCategories.length > 1">

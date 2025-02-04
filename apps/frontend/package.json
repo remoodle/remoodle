@@ -16,6 +16,7 @@
   "dependencies": {
     "@radix-icons/vue": "^1.0.0",
     "@remoodle/utils": "workspace:*",
+    "@tanstack/vue-query": "^5.66.0",
     "@vueuse/core": "^10.7.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",

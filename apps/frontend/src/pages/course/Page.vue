@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
-import { storeToRefs } from "pinia";
-import type { Course, MoodleAssignment, MoodleGrade } from "@remoodle/types";
+import { useQuery } from "@tanstack/vue-query";
+import type { Course } from "@remoodle/types";
 import { RoundedSection, PageWrapper } from "@/entities/page";
 import { useUserStore } from "@/shared/stores/user";
 import { RouterNav } from "@/shared/ui/router-nav";
 import { Link } from "@/shared/ui/link";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { ScrollArea } from "@/shared/ui/scroll-area";
-import { request, getAuthHeaders } from "@/shared/lib/hc";
-import { createAsyncProcess, isDefined, cn } from "@/shared/lib/helpers";
-import { useBreakpoints } from "@/shared/lib/use-breakpoints";
+import { requestUnwrap, getAuthHeaders } from "@/shared/lib/hc";
+import { isDefined, cn } from "@/shared/lib/helpers";
 import { RouteName } from "@/shared/lib/routes";
 import CourseOverview from "./CourseOverview.vue";
 import CourseGrades from "./CourseGrades.vue";
@@ -23,47 +22,32 @@ const assignmentId = computed(() => route.params.assignmentId as string);
 
 const courseName = ref("");
 
-const { lgOrLarger } = useBreakpoints();
-
-const abortController = new AbortController();
-const signal = abortController.signal;
-
-const course = ref<Course>();
-const updateCourse = (data: Course | undefined) => {
-  course.value = data;
-
-  if (data) {
-    courseName.value = data.fullname;
+onMounted(async () => {
+  if (route.query.courseName) {
+    courseName.value = route.query.courseName as string;
   }
-};
-const {
-  run: fetchCourse,
-  loading,
-  error,
-} = createAsyncProcess(async (id: string, signal: AbortSignal) => {
-  updateCourse(undefined);
-
-  const [data, error] = await request((client) =>
-    client.v2.course[":courseId"].$get(
-      {
-        param: { courseId: id },
-        query: { content: "1" },
-      },
-      {
-        init: { signal },
-        headers: getAuthHeaders(),
-      },
-    ),
-  );
-
-  if (error) {
-    throw error;
-  }
-
-  updateCourse(data);
 });
-const loadCourse = async () => {
-  await fetchCourse(courseId.value, signal);
+
+const userStore = useUserStore();
+
+const { isPending: loading, data: course } = useQuery<Course>({
+  queryKey: ["course", courseId],
+  queryFn: async () =>
+    await requestUnwrap((client) =>
+      client.v2.course[":courseId"].$get(
+        {
+          param: { courseId: courseId.value },
+          query: { content: "1" },
+        },
+        { headers: getAuthHeaders() },
+      ),
+    ),
+});
+
+watch(course, (value) => {
+  if (!value) {
+    return;
+  }
 
   const hash = route.hash;
 
@@ -75,94 +59,41 @@ const loadCourse = async () => {
       }
     }, 100);
   }
-};
+});
 
-const assignments = ref<MoodleAssignment[]>();
-const updateAssignments = (data: MoodleAssignment[] | undefined) => {
-  assignments.value = data;
-};
 const {
-  run: fetchAssignments,
-  loading: loadingAssignments,
+  isPending: loadingAssignments,
+  data: assignments,
   error: assignmentsError,
-} = createAsyncProcess(async (id: string, signal: AbortSignal) => {
-  updateAssignments(undefined);
-
-  const [data, error] = await request((client) =>
-    client.v2.course[":courseId"].assignments.$get(
-      {
-        param: { courseId: id },
-      },
-      {
-        init: { signal },
-        headers: getAuthHeaders(),
-      },
+} = useQuery({
+  queryKey: ["course-assignments", courseId],
+  queryFn: async () =>
+    await requestUnwrap((client) =>
+      client.v2.course[":courseId"].assignments.$get(
+        {
+          param: { courseId: courseId.value },
+        },
+        { headers: getAuthHeaders() },
+      ),
     ),
-  );
-
-  if (error) {
-    throw error;
-  }
-
-  updateAssignments(data);
 });
-const loadAssignments = async () => {
-  await fetchAssignments(courseId.value, signal);
-
-  const id = assignmentId.value;
-
-  if (id && !lgOrLarger.value) {
-    setTimeout(() => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView();
-      }
-    }, 100);
-  }
-};
-
-const grades = ref<MoodleGrade[]>();
-
-const updateGrades = (data: MoodleGrade[] | undefined) => {
-  grades.value = data;
-};
 
 const {
-  run: loadGrades,
-  loading: loadingGrades,
+  isPending: loadingGrades,
+  data: grades,
   error: gradesError,
-} = createAsyncProcess(async () => {
-  const [data, error] = await request((client) =>
-    client.v2.course[":courseId"].grades.$get(
-      {
-        param: { courseId: courseId.value },
-      },
-      {
-        headers: getAuthHeaders(),
-      },
+} = useQuery({
+  queryKey: ["course-grades", courseId],
+  queryFn: async () =>
+    await requestUnwrap((client) =>
+      client.v2.course[":courseId"].grades.$get(
+        {
+          param: { courseId: courseId.value },
+        },
+        { headers: getAuthHeaders() },
+      ),
     ),
-  );
-
-  if (error) {
-    throw error;
-  }
-
-  updateGrades(data);
 });
-
-onMounted(async () => {
-  if (route.query.courseName) {
-    courseName.value = route.query.courseName as string;
-  }
-
-  await Promise.all([loadCourse(), loadAssignments(), loadGrades()]);
-});
-
-onBeforeUnmount(() => {
-  abortController.abort();
-});
-
-const userStore = useUserStore();
 </script>
 
 <template>
@@ -190,7 +121,7 @@ const userStore = useUserStore();
         <aside class="mt-6 h-32 rounded-2xl border p-2 lg:h-fit lg:w-1/5">
           <ScrollArea class="h-full">
             <nav class="flex flex-wrap lg:flex-col">
-              <template v-if="loading">
+              <template v-if="loadingAssignments">
                 <Skeleton v-for="i in 4" :key="i" class="my-1 h-9 w-full" />
               </template>
               <template v-else-if="assignments?.length">
@@ -232,6 +163,7 @@ const userStore = useUserStore();
                 :grades
                 :assignment-ids="assignments?.map((a) => a.cmid)"
               />
+              de
             </template>
             <template v-else-if="route.name === RouteName.Assignment">
               <CourseAssignment

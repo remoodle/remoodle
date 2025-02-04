@@ -4,14 +4,12 @@ import type { AppType } from "@remoodle/backend";
 import { useUserStore } from "@/shared/stores/user";
 import { API_URL } from "@/shared/config";
 
-const { request } = createHC<AppType>(API_URL);
+const { request, requestUnwrap } = createHC<AppType>(API_URL);
 
-const getAuthHeaders = () => {
-  const userStore = useUserStore();
-
+const getAuthHeaders = (token?: string) => {
   return {
-    Authorization: `Bearer ${userStore.accessToken}`,
+    Authorization: `Bearer ${token ?? useUserStore().accessToken}`,
   };
 };
 
-export { request, getAuthHeaders };
+export { request, requestUnwrap, getAuthHeaders };

@@ -1,11 +1,29 @@
-import { computed } from "vue";
+import { computed, watchEffect } from "vue";
+import { useQuery } from "@tanstack/vue-query";
 import { defineStore } from "pinia";
 import { useStorage, StorageSerializers } from "@vueuse/core";
 import type { RemovableRef } from "@vueuse/core";
-import type { IUser } from "@remoodle/types";
+import type { APIError, IUser } from "@remoodle/types";
 import { getStorageKey } from "@/shared/lib/helpers";
-import { createAsyncProcess } from "@/shared/lib/helpers";
-import { request, getAuthHeaders } from "@/shared/lib/hc";
+import { requestUnwrap, getAuthHeaders } from "@/shared/lib/hc";
+
+export function useUser(token: string) {
+  const {
+    isPending,
+    isError,
+    data,
+    error,
+    refetch: updateUser,
+  } = useQuery<IUser, APIError>({
+    queryKey: ["user"],
+    queryFn: async () =>
+      await requestUnwrap((client) =>
+        client.v2.user.check.$get({}, { headers: getAuthHeaders(token) }),
+      ),
+  });
+
+  return { data, isPending, error };
+}
 
 export const useUserStore = defineStore("user", () => {
   const accessToken = useStorage(getStorageKey("accessToken"), "");
@@ -64,28 +82,17 @@ export const useUserStore = defineStore("user", () => {
     showTelegramBanner.value = true;
   };
 
-  const { run: updateUser, loading: updatingUser } = createAsyncProcess(
-    async () => {
-      const [data, error] = await request((client) =>
-        client.v2.user.check.$get(
-          {},
-          {
-            headers: getAuthHeaders(),
-          },
-        ),
-      );
+  const { data, isPending, error } = useUser(accessToken.value);
 
-      if (error) {
-        if (error.status === 401) {
-          logout();
-        }
+  watchEffect(() => {
+    if (data.value) {
+      user.value = data.value;
+    }
 
-        return;
-      }
-
-      user.value = data;
-    },
-  );
+    if (error.value && error.value.status === 401) {
+      logout();
+    }
+  });
 
   return {
     user,
@@ -97,7 +104,5 @@ export const useUserStore = defineStore("user", () => {
     logout,
     showTelegramBanner,
     closeTelegramBanner,
-    updateUser,
-    updatingUser,
   };
 });

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useMutation } from "@tanstack/vue-query";
 import { useUserStore } from "@/shared/stores/user";
 import {
   Dialog,
@@ -11,39 +12,31 @@ import {
   DialogClose,
 } from "@/shared/ui/dialog";
 import { Button } from "@/shared/ui/button";
-import { createAsyncProcess } from "@/shared/lib/helpers";
-import { request, getAuthHeaders } from "@/shared/lib/hc";
+import { requestUnwrap, getAuthHeaders } from "@/shared/lib/hc";
 import { useToast } from "@/shared/ui/toast";
 
 const { toast } = useToast();
 
 const userStore = useUserStore();
 
-const { run: deleteAccount, loading: deletingAccount } = createAsyncProcess(
-  async () => {
-    const [_, error] = await request((client) =>
-      client.v2.bye.$delete(
-        {},
-        {
-          headers: getAuthHeaders(),
-        },
-      ),
-    );
-
-    if (error) {
-      toast({
-        title: error.message,
-      });
-      throw error;
-    }
-
+const { mutate: deleteAccount, isPending: deletingAccount } = useMutation({
+  mutationFn: async () =>
+    requestUnwrap((client) =>
+      client.v2.bye.$delete({}, { headers: getAuthHeaders() }),
+    ),
+  onSuccess: () => {
     toast({
       title: "Account deleted",
     });
 
     userStore.logout();
   },
-);
+  onError: (error) => {
+    toast({
+      title: error.message,
+    });
+  },
+});
 </script>
 
 <template>

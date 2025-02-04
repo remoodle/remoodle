@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { ref, watch } from "vue";
+import { useQuery } from "@tanstack/vue-query";
 import type { MoodleEvent } from "@remoodle/types";
 import { Error } from "@/entities/page";
 import { DeadlineCard } from "@/entities/deadline";
 import { Skeleton } from "@/shared/ui/skeleton";
-import { request, getAuthHeaders } from "@/shared/lib/hc";
+import { requestUnwrap, getAuthHeaders } from "@/shared/lib/hc";
 import {
-  createAsyncProcess,
   isDefined,
   partition,
   objectEntries,
@@ -18,39 +18,34 @@ const deadlines = ref<{
   [date: string]: MoodleEvent[] | undefined;
 }>();
 
-const { run, loading, error } = createAsyncProcess(async () => {
-  const [data, error] = await request((client) =>
-    client.v2.deadlines.$get(
-      {
-        query: {},
-      },
-      {
-        headers: getAuthHeaders(),
-      },
+const { isPending, isError, data, error, refetch } = useQuery({
+  queryKey: ["deadlines"],
+  queryFn: async () =>
+    await requestUnwrap((client) =>
+      client.v2.deadlines.$get({ query: {} }, { headers: getAuthHeaders() }),
     ),
-  );
+});
 
-  if (error) {
-    throw error;
+watch(data, (value) => {
+  if (!value) {
+    return;
   }
 
   deadlines.value = partition(
-    data,
+    value,
     ({ timestart }) => `${formatDate(fromUnix(timestart), "fullDate")}`,
   );
 });
-
-onMounted(run);
 </script>
 
 <template>
-  <template v-if="loading">
+  <template v-if="isPending">
     <div class="flex flex-col gap-2">
       <Skeleton v-for="i in 3" :key="i" class="h-16" />
     </div>
   </template>
   <template v-else-if="error || !isDefined(deadlines)">
-    <Error @retry="run" />
+    <Error @retry="refetch" />
   </template>
   <template v-else>
     <div class="flex flex-col gap-6">
