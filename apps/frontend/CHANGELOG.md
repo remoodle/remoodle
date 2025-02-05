@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.2](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.1...remoodle/frontend-v1.7.2) (2025-02-05)
+
+
+### Bug Fixes
+
+* use watchEffect ([bc5e32c](https://github.com/remoodle/remoodle/commit/bc5e32ceca4c31b0a35b4d625328006958da7391))
+
 ## [1.7.1](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.0...remoodle/frontend-v1.7.1) (2025-02-05)
 
 
