@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.12](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.11...remoodle/backend-v2.0.12) (2025-02-05)
+
+
+### Bug Fixes
+
+* filter out dead users ([fa88587](https://github.com/remoodle/remoodle/commit/fa88587186924d19390d4283e5103c7eb3fcb352))
+
 ## [2.0.11](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.10...remoodle/backend-v2.0.11) (2025-02-05)
 
 
