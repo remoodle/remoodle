@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.6.0](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.5.3...remoodle/frontend-v1.6.0) (2025-02-05)
+
+
+### Features
+
+* upgrade dropdown ([438cb14](https://github.com/remoodle/remoodle/commit/438cb1485de67513000c3a0443713130ac5a841c))
+
+
+### Bug Fixes
+
+* change ui ([214cdc5](https://github.com/remoodle/remoodle/commit/214cdc51cd034bb9e397ca9b1258e6a1a933c271))
+* go back ([cd0ebc7](https://github.com/remoodle/remoodle/commit/cd0ebc71b38aeeba665368c2fe5418506d1ea3d4))
+* oops ([60f35ea](https://github.com/remoodle/remoodle/commit/60f35ea545756c6b5e5397750e23f23d2af06d57))
+* potential fix ([6b8221a](https://github.com/remoodle/remoodle/commit/6b8221a5afb44c7afa4a1991f0e7157698186dd5))
+* why ([dcefc31](https://github.com/remoodle/remoodle/commit/dcefc31e1d0fe395b18303806cf4d65100c4924f))
+
+
+### Code Refactoring
+
+* replace createAsyncProcess with useQuery ([16a33ae](https://github.com/remoodle/remoodle/commit/16a33aede1cb5fe213beb33612884d1ebd93fcb7))
+
 ## [1.5.3](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.5.2...remoodle/frontend-v1.5.3) (2025-01-24)
 
 
