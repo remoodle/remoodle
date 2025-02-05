@@ -1,6 +1,6 @@
 import { FlowProducer } from "bullmq";
-import type { FlowChildJob, Job } from "bullmq";
-import { Telegram, getValues } from "@remoodle/utils";
+import type { FlowChildJob, FlowJob, Job } from "bullmq";
+import { Telegram, getValues, partition } from "@remoodle/utils";
 import { config } from "../../config";
 import { db } from "../../library/db";
 import { logger } from "../../library/logger";
@@ -117,23 +117,74 @@ export const jobs: Record<JobName, ClusterJob> = {
         `Updating ${classification} grades for ${users.length} users, trackDiff: ${trackDiff}`,
       );
 
-      const jobs = users.map((payload) => ({
-        name: JobName.UPDATE_GRADES,
-        data: {
-          userId: payload.userId,
-          classification,
-          trackDiff,
-        },
-        opts: {
-          deduplication: {
-            id: payload.userId,
-          },
-        },
-      }));
+      const courses = await db.course
+        .find({
+          deleted: false,
+          notingroup: { $ne: true },
+          ...(classification && { classification }),
+        })
+        .lean();
 
-      const bulk = await queues[QueueName.GRADES_FLOW].addBulk(jobs);
+      const grouppedCourses = partition(courses, (course) => course.userId);
 
-      return bulk.length;
+      const flow = new FlowProducer({
+        connection: db.redisConnection,
+      });
+
+      const flows: FlowJob[] = Object.entries(grouppedCourses)
+        .map(([userId, courses]) => {
+          if (!courses) {
+            return;
+          }
+
+          const courseIds = courses.map((course) => course.data.id);
+
+          const children: FlowChildJob[] = courses.map((course) => {
+            const data = {
+              userId,
+              courseId: course.data.id,
+              courseName: course.data.fullname,
+              trackDiff,
+            };
+
+            return {
+              name: JobName.UPDATE_COURSE_GRADES,
+              data,
+              queueName: QueueName.GRADES_FLOW_UPDATE,
+              opts: {
+                attempts: 4,
+                backoff: {
+                  type: "exponential",
+                  delay: 2000,
+                },
+                deduplication: {
+                  id: `${userId}::${course.data.id}`,
+                },
+                ignoreDependencyOnFailure: true,
+              },
+            };
+          });
+
+          return {
+            name: JobName.COMBINE_GRADES,
+            queueName: QueueName.GRADES_FLOW_COMBINE,
+            data: {
+              userId,
+              trackDiff,
+            },
+            children,
+            opts: {
+              deduplication: {
+                id: `${userId}::${courseIds.join("-")}`,
+              },
+            },
+          };
+        })
+        .filter(Boolean);
+
+      const trees = await flow.addBulk(flows);
+
+      return trees.length;
     },
   },
   [JobName.UPDATE_GRADES]: {
@@ -160,12 +211,7 @@ export const jobs: Record<JobName, ClusterJob> = {
 
       const courseIds = courses.map((course) => course.data.id);
 
-      const data = {
-        userId,
-        courseIds,
-      };
-
-      const flowProducer = new FlowProducer({
+      const flow = new FlowProducer({
         connection: db.redisConnection,
       });
 
@@ -179,8 +225,8 @@ export const jobs: Record<JobName, ClusterJob> = {
 
         return {
           name: JobName.UPDATE_COURSE_GRADES,
-          data,
           queueName: QueueName.GRADES_FLOW_UPDATE,
+          data,
           opts: {
             lifo,
             attempts: 4,
@@ -196,10 +242,13 @@ export const jobs: Record<JobName, ClusterJob> = {
         };
       });
 
-      const flow = await flowProducer.add({
+      const tree = await flow.add({
         name: JobName.COMBINE_GRADES,
         queueName: QueueName.GRADES_FLOW_COMBINE,
-        data,
+        data: {
+          userId,
+          courseIds,
+        },
         children,
         opts: {
           lifo,
@@ -209,7 +258,7 @@ export const jobs: Record<JobName, ClusterJob> = {
         },
       });
 
-      return flow.children?.length;
+      return tree.children?.length;
     },
   },
   [JobName.UPDATE_COURSE_GRADES]: {
