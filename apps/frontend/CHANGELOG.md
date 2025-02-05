@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.0...remoodle/frontend-v1.7.1) (2025-02-05)
+
+
+### Bug Fixes
+
+* less caching ([463fd65](https://github.com/remoodle/remoodle/commit/463fd655c284dfe26ceff132fa3de31a8ecf7bed))
+
 ## [1.7.0](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.6.0...remoodle/frontend-v1.7.0) (2025-02-05)
 
 
