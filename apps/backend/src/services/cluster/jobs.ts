@@ -121,6 +121,9 @@ export const jobs: Record<JobName, ClusterJob> = {
         .find({
           deleted: false,
           notingroup: { $ne: true },
+          userId: {
+            $in: users.filter((u) => u.health > 0).map((u) => u.userId),
+          },
           ...(classification && { classification }),
         })
         .lean();
@@ -463,7 +466,7 @@ const getUsers = async (options: Record<string, any> = {}) => {
     .find({ moodleId: { $exists: true }, health: { $gt: 0 }, ...options })
     .lean();
 
-  return users.map((user) => ({ userId: user._id }));
+  return users.map((user) => ({ userId: user._id, health: user.health }));
 };
 
 async function sendTelegramMessage(chatId: number, message: string) {
