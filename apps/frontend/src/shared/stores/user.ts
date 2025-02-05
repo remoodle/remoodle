@@ -22,7 +22,7 @@ export function useUser(token: string) {
       ),
   });
 
-  return { data, isPending, error };
+  return { data, isPending, isError, error };
 }
 
 export const useUserStore = defineStore("user", () => {
@@ -82,14 +82,16 @@ export const useUserStore = defineStore("user", () => {
     showTelegramBanner.value = true;
   };
 
-  const { data, isPending, error } = useUser(accessToken.value);
+  const { data, isPending, isError, error } = useUser(accessToken.value);
 
   watchEffect(() => {
     if (data.value) {
       user.value = data.value;
     }
+  });
 
-    if (error.value && error.value.status === 401) {
+  watchEffect(() => {
+    if (error.value?.status === 401) {
       logout();
     }
   });
