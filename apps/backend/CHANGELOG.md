@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.11](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.10...remoodle/backend-v2.0.11) (2025-02-05)
+
+
+### Bug Fixes
+
+* try to speed up grades flow ([539ed51](https://github.com/remoodle/remoodle/commit/539ed51ea71f9db8157bb8cf0aea472db83c5941))
+
 ## [2.0.10](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.9...remoodle/backend-v2.0.10) (2025-02-04)
 
 
