@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, toRef, watch } from "vue";
+import { ref, reactive, toRef, watch, onMounted } from "vue";
 import { useMutation } from "@tanstack/vue-query";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -30,7 +30,14 @@ const { toast } = useToast();
 
 const userStore = useUserStore();
 
-const notifications = toRef(props.settings, "notifications");
+const notifications = ref<{
+  telegram: {
+    enabled: boolean;
+    gradeUpdates: boolean;
+    deadlineReminders: boolean;
+  };
+  deadlineThresholds: string[];
+}>(props.settings.notifications);
 
 const telegramId = ref<number | undefined>(props.settings?.telegramId);
 const editingMode = ref(false);
