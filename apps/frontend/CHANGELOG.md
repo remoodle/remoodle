@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.3](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.2...remoodle/frontend-v1.7.3) (2025-02-05)
+
+
+### Bug Fixes
+
+* thow & handle errors properly ([6f12eb4](https://github.com/remoodle/remoodle/commit/6f12eb4a8da03149e2beb142dca6e2f64846c6b6))
+
 ## [1.7.2](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.1...remoodle/frontend-v1.7.2) (2025-02-05)
 
 
