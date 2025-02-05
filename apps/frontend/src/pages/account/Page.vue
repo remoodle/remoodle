@@ -58,8 +58,20 @@ const {
           <template v-if="isPending">
             <div class="flex flex-col gap-4">
               <Skeleton class="h-12" />
+              <Skeleton class="h-6 w-1/2" />
               <Skeleton class="h-6" />
+            </div>
+            <div class="py-6"></div>
+            <div class="flex flex-col gap-4">
+              <Skeleton class="h-12" />
+              <Skeleton class="h-6 w-1/3" />
               <Skeleton class="h-6" />
+            </div>
+            <div class="py-6"></div>
+            <div class="flex flex-col gap-4">
+              <Skeleton class="h-6 w-1/4" />
+              <Skeleton class="h-6" />
+              <Skeleton class="h-12" />
             </div>
           </template>
           <template v-else-if="settings">

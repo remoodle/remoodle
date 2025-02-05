@@ -79,7 +79,7 @@ watch(
 </script>
 
 <template>
-  <ConfigProvider :scroll-body="false">
+  <ConfigProvider>
     <div class="flex h-[100svh] flex-col">
       <RouterView />
     </div>
