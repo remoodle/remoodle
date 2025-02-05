@@ -9,6 +9,9 @@
     "format": {},
     "test": {},
     "type-check": {},
-    "build": {}
+    "build": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["^build"]
+    }
   }
 }
