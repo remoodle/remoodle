@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watchEffect } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import type { MoodleEvent } from "@remoodle/types";
 import { Error } from "@/entities/page";
@@ -26,13 +26,13 @@ const { isPending, isError, data, error, refetch } = useQuery({
     ),
 });
 
-watch(data, (value) => {
-  if (!value) {
+watchEffect(() => {
+  if (!data.value) {
     return;
   }
 
   deadlines.value = partition(
-    value,
+    data.value,
     ({ timestart }) => `${formatDate(fromUnix(timestart), "fullDate")}`,
   );
 });

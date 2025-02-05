@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, toRef, watch, onMounted } from "vue";
+import { ref, reactive, toRef, watch, onMounted, watchEffect } from "vue";
 import { useMutation } from "@tanstack/vue-query";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -37,7 +37,7 @@ const notifications = ref<{
     deadlineReminders: boolean;
   };
   deadlineThresholds: string[];
-}>(props.settings.notifications);
+}>(JSON.parse(JSON.stringify(props.settings.notifications)));
 
 const telegramId = ref<number | undefined>(props.settings?.telegramId);
 const editingMode = ref(false);
@@ -77,15 +77,18 @@ const { mutate: verify, isPending: verifying } = useMutation({
 
 const { mutate: updateNotifications, isPending: updatingNotifications } =
   useMutation({
-    mutationFn: async () =>
+    mutationFn: async (options: {
+      telegramDeadlineReminders: boolean;
+      telegramGradeUpdates: boolean;
+      deadlineThresholds: string[];
+    }) =>
       requestUnwrap((client) =>
         client.v2.user.settings.$post(
           {
             json: {
-              telegramDeadlineReminders:
-                notifications.value.telegram.deadlineReminders,
-              telegramGradeUpdates: notifications.value.telegram.gradeUpdates,
-              deadlineThresholds: notifications.value.deadlineThresholds,
+              telegramDeadlineReminders: options.telegramDeadlineReminders,
+              telegramGradeUpdates: options.telegramGradeUpdates,
+              deadlineThresholds: options.deadlineThresholds,
             },
           },
           { headers: getAuthHeaders() },
@@ -98,13 +101,13 @@ const { mutate: updateNotifications, isPending: updatingNotifications } =
     },
   });
 
-watch(
-  notifications,
-  () => {
-    updateNotifications();
-  },
-  { deep: true },
-);
+watchEffect(() => {
+  updateNotifications({
+    telegramDeadlineReminders: notifications.value.telegram.deadlineReminders,
+    telegramGradeUpdates: notifications.value.telegram.gradeUpdates,
+    deadlineThresholds: notifications.value.deadlineThresholds,
+  });
+});
 
 const THRESHOLDS = {
   HOUR_THRESHOLDS: ["1 hour", "3 hours", "6 hours", "12 hours"],

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from "vue";
+import { watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuery } from "@tanstack/vue-query";
 import { useUserStore } from "@/shared/stores/user";
@@ -43,19 +43,21 @@ const {
   retry: 2,
 });
 
-watch(fileBlob, async (newBlob) => {
-  if (newBlob) {
-    const url = window.URL.createObjectURL(newBlob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = getCleanFilepath().split("/").pop() ?? "file";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-
-    window.close();
+watchEffect(() => {
+  if (!fileBlob.value) {
+    return;
   }
+
+  const url = window.URL.createObjectURL(fileBlob.value);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = getCleanFilepath().split("/").pop() ?? "file";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+
+  window.close();
 });
 </script>
 

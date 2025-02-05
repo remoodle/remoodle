@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useQuery } from "@tanstack/vue-query";
 import type { Course } from "@remoodle/types";
@@ -44,8 +44,8 @@ const { isPending: loading, data: course } = useQuery<Course>({
     ),
 });
 
-watch(course, (value) => {
-  if (!value) {
+watchEffect(() => {
+  if (!course.value) {
     return;
   }
 

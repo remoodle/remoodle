@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import type { ExtendedCourse } from "@remoodle/types";
 import { Error } from "@/entities/page";
@@ -30,12 +30,12 @@ const { isPending, isError, data, error, refetch } = useQuery({
     ),
 });
 
-watch(data, (value) => {
-  if (!value) {
+watchEffect(() => {
+  if (!data.value) {
     return;
   }
 
-  courses.value = partition(value, ({ coursecategory }) => coursecategory);
+  courses.value = partition(data.value, ({ coursecategory }) => coursecategory);
 
   if (courseCategories.value.length) {
     !toggledCourseCategories.value.length &&
