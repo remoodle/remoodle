@@ -49,7 +49,6 @@ pnpm run dev
 
 ### Access it
 
-- Frontend http://localhost:5173
-- Backend (API) http://localhost:9000/v1/health
-- Backend (Cluster) http://localhost:9001
-- Alert Worker http://localhost:8787
+- frontend: http://localhost:5173
+- backend: http://localhost:9000
+- alert-worker: http://localhost:8787
