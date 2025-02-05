@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.4](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.3...remoodle/frontend-v1.7.4) (2025-02-05)
+
+
+### Bug Fixes
+
+* scroll ([95de3e4](https://github.com/remoodle/remoodle/commit/95de3e4e84f05669d0d5c99395d8ee8e0ac49027))
+
 ## [1.7.3](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.2...remoodle/frontend-v1.7.3) (2025-02-05)
 
 
