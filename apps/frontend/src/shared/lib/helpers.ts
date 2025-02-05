@@ -38,13 +38,13 @@ export function getURLHost(url: string) {
   }
 }
 
-export function prepareFileURL(fileurl: string, token: string) {
-  const url = new URL(fileurl);
+export function prepareFileURL(fileurl: string) {
+  const currentPath = window.location.pathname + window.location.search;
 
-  url.searchParams.set("token", token);
-  url.searchParams.set("forcedownload", "1");
-
-  return url.toString();
+  return (
+    window.location.origin +
+    `/f?filepath=${fileurl}&from=${encodeURIComponent(currentPath)}`
+  );
 }
 
 export function partition<T, U extends string>(

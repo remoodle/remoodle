@@ -36,7 +36,7 @@ defineProps<{
             "
             :to="
               module.contents?.length === 1 && module.contents[0].fileurl
-                ? prepareFileURL(module.contents[0].fileurl, token)
+                ? prepareFileURL(module.contents[0].fileurl)
                 : {
                     name: RouteName.Assignment,
                     params: {
@@ -68,7 +68,7 @@ defineProps<{
               {{ item.fileurl }}
             </template>
             <template v-else-if="item.type === 'file' && item.fileurl">
-              <Link :to="prepareFileURL(item.fileurl, token)" hover underline>
+              <Link :to="prepareFileURL(item.fileurl)" hover underline>
                 {{ item.filename
                 }}<template v-if="item.filesize"
                   >,{{ filesize(item.filesize) }}</template

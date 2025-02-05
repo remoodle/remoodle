@@ -79,7 +79,7 @@ const grade = computed(() => {
         <div class="flex items-center gap-2">
           <FileIcon :mimetype="file.mimetype" class="w-5" />
           <Link
-            :to="prepareFileURL(file.fileurl, token)"
+            :to="prepareFileURL(file.fileurl)"
             hover
             download="filename"
             class="text-primary"

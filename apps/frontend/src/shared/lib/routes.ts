@@ -8,6 +8,7 @@ export enum RouteName {
   Account = "account",
   AccountProfile = "profile",
   AccountNotifications = "notifications",
+  File = "file",
   Course = "course",
   Grades = "course-grades",
   Assignment = "assignment",

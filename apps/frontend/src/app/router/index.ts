@@ -10,6 +10,7 @@ import HomePage from "@/pages/home/Page.vue";
 import NotFoundPage from "@/pages/404/Page.vue";
 import AccountPage from "@/pages/account/Page.vue";
 import CoursePage from "@/pages/course/Page.vue";
+import FilePage from "@/pages/file/Page.vue";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
 
 declare module "vue-router" {
@@ -68,6 +69,12 @@ const routes: RouteRecordRaw[] = [
         ],
       },
     ],
+  },
+  {
+    path: "/f",
+    name: RouteName.File,
+    meta: { auth: "required" },
+    component: FilePage,
   },
   {
     path: "/auth/login",

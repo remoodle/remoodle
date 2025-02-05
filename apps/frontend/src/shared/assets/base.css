@@ -118,10 +118,6 @@ html {
   scroll-padding-top: 5rem;
 }
 
-html[data-dashboard="true"] {
-  overflow-y: scroll;
-}
-
 html[data-theme="light"] {
   color-scheme: light;
 }
