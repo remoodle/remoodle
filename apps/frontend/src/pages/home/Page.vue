@@ -5,10 +5,6 @@ import { useUserStore } from "@/shared/stores/user";
 import CoursesList from "./ui/CoursesList.vue";
 import DeadlinesList from "./ui/DeadlinesList.vue";
 
-defineOptions({
-  name: "DashboardPage",
-});
-
 const userStore = useUserStore();
 
 const { preferences } = storeToRefs(userStore);

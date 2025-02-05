@@ -12,10 +12,6 @@ import { Text } from "@/shared/ui/text";
 import { Link } from "@/shared/ui/link";
 import { RouteName } from "@/shared/lib/routes";
 
-defineOptions({
-  name: "CourseGrades",
-});
-
 defineProps<{
   courseId: string;
   grades: MoodleGrade[] | undefined;

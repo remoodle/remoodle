@@ -11,10 +11,6 @@ import {
   prepareFileURL,
 } from "@/shared/lib/helpers";
 
-defineOptions({
-  name: "CourseAssignment",
-});
-
 const props = defineProps<{
   assignmentId?: string;
   assignments?: MoodleAssignment[];

@@ -5,10 +5,6 @@ import { Skeleton } from "@/shared/ui/skeleton";
 import { getRandomInt } from "@/shared/lib/helpers";
 import { useUserStore } from "@/shared/stores/user";
 
-defineOptions({
-  name: "CourseOverview",
-});
-
 defineProps<{
   courseId: number;
   content?: MoodleCourseContent[];

@@ -148,32 +148,27 @@ const {
           </ScrollArea>
         </aside>
         <div class="flex-1 p-1 lg:p-5">
-          <KeepAlive
-            :include="['CourseOverview', 'CourseGrades', 'CourseAssignment']"
-          >
-            <template v-if="route.name === RouteName.Course">
-              <CourseOverview
-                :course-id="Number(courseId)"
-                :content="course?.content"
-              />
-            </template>
-            <template v-else-if="route.name === RouteName.Grades">
-              <CourseGrades
-                :course-id="courseId"
-                :grades
-                :assignment-ids="assignments?.map((a) => a.cmid)"
-              />
-              de
-            </template>
-            <template v-else-if="route.name === RouteName.Assignment">
-              <CourseAssignment
-                :assignment-id
-                :assignments
-                :grades
-                :token="userStore.accessToken"
-              />
-            </template>
-          </KeepAlive>
+          <template v-if="route.name === RouteName.Course">
+            <CourseOverview
+              :course-id="Number(courseId)"
+              :content="course?.content"
+            />
+          </template>
+          <template v-else-if="route.name === RouteName.Grades">
+            <CourseGrades
+              :course-id="courseId"
+              :grades
+              :assignment-ids="assignments?.map((a) => a.cmid)"
+            />
+          </template>
+          <template v-else-if="route.name === RouteName.Assignment">
+            <CourseAssignment
+              :assignment-id
+              :assignments
+              :grades
+              :token="userStore.accessToken"
+            />
+          </template>
         </div>
       </div>
     </RoundedSection>
