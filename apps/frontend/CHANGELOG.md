@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.6.0...remoodle/frontend-v1.7.0) (2025-02-05)
+
+
+### Features
+
+* add files support ([1c1de37](https://github.com/remoodle/remoodle/commit/1c1de37ea73bcde89013df02a492eabb314ddb9f))
+
 ## [1.6.0](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.5.3...remoodle/frontend-v1.6.0) (2025-02-05)
 
 
