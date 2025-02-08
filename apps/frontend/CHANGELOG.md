@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.5](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.4...remoodle/frontend-v1.7.5) (2025-02-08)
+
+
+### Code Refactoring
+
+* **ui:** move shadcn utils to shared/ui ([747a485](https://github.com/remoodle/remoodle/commit/747a485e6756bbcef5d0f6184d3ea3d0ca5d2da3))
+
 ## [1.7.4](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.3...remoodle/frontend-v1.7.4) (2025-02-05)
 
 
