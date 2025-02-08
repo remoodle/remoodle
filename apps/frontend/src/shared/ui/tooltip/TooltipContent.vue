@@ -6,7 +6,7 @@ import {
   TooltipPortal,
   useForwardPropsEmits,
 } from "radix-vue";
-import { cn } from "@/shared/lib/helpers";
+import { cn } from "@/shared/ui/utils";
 
 const props = withDefaults(defineProps<TooltipContentProps>(), {
   sideOffset: 4,

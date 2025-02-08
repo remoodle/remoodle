@@ -1,7 +1,3 @@
-import { ref, type Ref } from "vue";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import type { APIError } from "@remoodle/types";
 import { dayjs, type TDate } from "./dayjs";
 
 export { camelize, getCurrentInstance, toHandlerKey } from "vue";
@@ -20,10 +16,6 @@ export function insertIf<T>(condition = true, ...elements: T[]) {
 
 export function isEmptyString(value: string) {
   return value.trim() === "";
-}
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
 }
 
 export function getStorageKey(key: string, storageVersion?: number) {
@@ -120,12 +112,6 @@ export function splitCourseName(title?: string) {
 
 export function formatAssignmentName(title: string) {
   return title.replace("is due", "").trim();
-}
-
-interface UseAsync<T extends (...args: unknown[]) => unknown, E = APIError> {
-  loading: Ref<boolean>;
-  error: Ref<E | null>;
-  run: (...args: Parameters<T>) => Promise<ReturnType<T>>;
 }
 
 export const vFocus = {

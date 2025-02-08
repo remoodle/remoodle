@@ -9,7 +9,7 @@ import {
   useEmitAsProps,
 } from "radix-vue";
 import { X } from "lucide-vue-next";
-import { cn } from "@/shared/lib/helpers";
+import { cn } from "@/shared/ui/utils";
 
 const props = defineProps<DialogContentProps & { class?: string }>();
 const emits = defineEmits<DialogContentEmits>();

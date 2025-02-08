@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useMutation } from "@tanstack/vue-query";
-import { cn, isEmptyString } from "@/shared/lib/helpers";
+import { isEmptyString } from "@/shared/lib/helpers";
+import { cn } from "@/shared/ui/utils";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";

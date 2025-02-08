@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DialogTitle, type DialogTitleProps } from "radix-vue";
-import { cn } from "@/shared/lib/helpers";
+import { cn } from "@/shared/ui/utils";
 
 const props = defineProps<DialogTitleProps & { class?: string }>();
 </script>

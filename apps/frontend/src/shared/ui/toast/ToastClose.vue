@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ToastClose } from "radix-vue";
 import { XIcon } from "lucide-vue-next";
-import { cn } from "@/shared/lib/helpers";
+import { cn } from "@/shared/ui/utils";
 
 const props = defineProps<{
   class?: string;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { cn } from "@/shared/lib/helpers";
+import { cn } from "@/shared/ui/utils";
 import { ChevronRight } from "lucide-vue-next";
 import {
   DropdownMenuSubTrigger,

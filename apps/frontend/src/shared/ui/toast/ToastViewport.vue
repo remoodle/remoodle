@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ToastViewport, type ToastViewportProps } from "radix-vue";
-import { cn } from "@/shared/lib/helpers";
+import { cn } from "@/shared/ui/utils";
 
 const props = defineProps<ToastViewportProps & { class?: string }>();
 </script>

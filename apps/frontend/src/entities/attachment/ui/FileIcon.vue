@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { cn } from "@/shared/lib/helpers";
 import { Icon, fileIcons, type FileIconName } from "@/shared/ui/icon";
+import { cn } from "@/shared/ui/utils";
 
 const props = defineProps<{
   mimetype: string;

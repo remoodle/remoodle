@@ -6,7 +6,7 @@ import {
   useForwardPropsEmits,
 } from "radix-vue";
 import { Check } from "lucide-vue-next";
-import { cn } from "@/shared/lib/helpers";
+import { cn } from "@/shared/ui/utils";
 
 const props = defineProps<CheckboxRootProps>();
 const emits = defineEmits<CheckboxRootEmits>();
