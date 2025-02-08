@@ -173,7 +173,7 @@ export const jobs: Record<JobName, ClusterJob> = {
             queueName: QueueName.GRADES_FLOW_COMBINE,
             data: {
               userId,
-              trackDiff,
+              courseIds,
             },
             children,
             opts: {
