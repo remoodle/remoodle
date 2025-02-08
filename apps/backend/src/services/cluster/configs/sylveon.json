@@ -2,55 +2,55 @@
   {
     "name": "courses::schedule-sync",
     "repeat": {
-      "pattern": "0 */30 * * * *"
+      "pattern": "0 */60 * * * *"
     }
   },
   {
     "name": "grades::schedule-sync",
     "repeat": {
-      "every": 60000
+      "every": 1000000
     }
   },
   {
     "name": "events::schedule-sync",
     "repeat": {
-      "pattern": "0 */5 * * * *"
+      "pattern": "0 */10 * * * *"
     }
   },
   {
     "name": "courses::update",
     "opts": {
-      "concurrency": 5
+      "concurrency": 50
     }
   },
   {
     "name": "events::update",
     "opts": {
-      "concurrency": 5
+      "concurrency": 50
     }
   },
   {
     "name": "grades::update-user",
     "opts": {
-      "concurrency": 1
+      "concurrency": 10
     }
   },
   {
     "name": "grades::update-by-course",
     "opts": {
-      "concurrency": 50
+      "concurrency": 120
     }
   },
   {
     "name": "grades::combine-diffs",
     "opts": {
-      "concurrency": 100
+      "concurrency": 200
     }
   },
   {
     "name": "reminders::check",
     "opts": {
-      "concurrency": 10
+      "concurrency": 60
     }
   },
   {

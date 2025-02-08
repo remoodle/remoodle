@@ -14,7 +14,7 @@
   {
     "name": "events::schedule-sync",
     "repeat": {
-      "pattern": "0 */5 * * * *"
+      "pattern": "0 */10 * * * *"
     }
   },
   {
@@ -26,13 +26,13 @@
   {
     "name": "events::update",
     "opts": {
-      "concurrency": 5
+      "concurrency": 10
     }
   },
   {
     "name": "grades::update-user",
     "opts": {
-      "concurrency": 1
+      "concurrency": 10
     }
   },
   {
@@ -50,7 +50,7 @@
   {
     "name": "reminders::check",
     "opts": {
-      "concurrency": 10
+      "concurrency": 15
     }
   },
   {
