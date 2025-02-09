@@ -1,0 +1,8 @@
+[
+  {
+    "name": "grades::update-by-course",
+    "opts": {
+      "concurrency": 120
+    }
+  }
+]
