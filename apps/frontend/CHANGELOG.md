@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.6](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.5...remoodle/frontend-v1.7.6) (2025-02-09)
+
+
+### Bug Fixes
+
+* remove useless attribute ([1145fa3](https://github.com/remoodle/remoodle/commit/1145fa30a16bfabab61306e30da9214a9a64bdce))
+
 ## [1.7.5](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.4...remoodle/frontend-v1.7.5) (2025-02-08)
 
 
