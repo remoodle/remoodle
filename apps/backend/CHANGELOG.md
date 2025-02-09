@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.13](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.12...remoodle/backend-v2.0.13) (2025-02-08)
+
+
+### Bug Fixes
+
+* **cluster:** pass correct payload ([4e8a8aa](https://github.com/remoodle/remoodle/commit/4e8a8aa0c7394586bb70190621b1d2635a796ff2))
+
+
+### Miscellaneous Chores
+
+* add bundle step ([550439f](https://github.com/remoodle/remoodle/commit/550439f4286530720484e03efc060236af81c6ad))
+* **backend:** omit bundle step ([e85cbc4](https://github.com/remoodle/remoodle/commit/e85cbc4fa3eab2b3c4e7ff7b43a9ffa7a5a457a5))
+* **clsuter:** add stage and prod configs ([8b45730](https://github.com/remoodle/remoodle/commit/8b457302ec9436d03f95b725d63994f827f2118c))
+* dont bundle json ([bf93de0](https://github.com/remoodle/remoodle/commit/bf93de028c23cfce959034e7857d642c1fbda225))
+* kek ([50d5665](https://github.com/remoodle/remoodle/commit/50d56653b578f2ff555d2f437cfbf6add23840d1))
+
 ## [2.0.12](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.11...remoodle/backend-v2.0.12) (2025-02-05)
 
 
