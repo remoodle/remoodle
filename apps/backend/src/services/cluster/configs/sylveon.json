@@ -8,7 +8,7 @@
   {
     "name": "grades::schedule-sync",
     "repeat": {
-      "every": 800000
+      "every": 600000
     }
   },
   {
