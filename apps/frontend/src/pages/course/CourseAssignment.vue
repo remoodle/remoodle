@@ -74,12 +74,7 @@ const grade = computed(() => {
       >
         <div class="flex items-center gap-2">
           <FileIcon :mimetype="file.mimetype" class="w-5" />
-          <Link
-            :to="prepareFileURL(file.fileurl)"
-            hover
-            download="filename"
-            class="text-primary"
-          >
+          <Link :to="prepareFileURL(file.fileurl)" hover class="text-primary">
             {{ file.filename }}
           </Link>
         </div>
