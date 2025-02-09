@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.15](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.14...remoodle/backend-v2.0.15) (2025-02-09)
+
+
+### Miscellaneous Chores
+
+* add eon-x2 config ([f3f6948](https://github.com/remoodle/remoodle/commit/f3f6948a2c176095b1cb82030e3b145b826731ca))
+* lower grades sync to 10 minutes ([06a9321](https://github.com/remoodle/remoodle/commit/06a932133c852dbe31448b0a88f1b7afda30dd41))
+
 ## [2.0.14](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.13...remoodle/backend-v2.0.14) (2025-02-09)
 
 
