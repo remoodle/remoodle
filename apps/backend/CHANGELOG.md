@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.14](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.13...remoodle/backend-v2.0.14) (2025-02-09)
+
+
+### Miscellaneous Chores
+
+* **cluster:** change configs ([bed3dd8](https://github.com/remoodle/remoodle/commit/bed3dd865f9cdab7bd6dbb17b58d60ac5681ab03))
+
 ## [2.0.13](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.12...remoodle/backend-v2.0.13) (2025-02-08)
 
 
