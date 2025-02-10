@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.16](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.15...remoodle/backend-v2.0.16) (2025-02-10)
+
+
+### Code Refactoring
+
+* **api,cluster,front,tgbot:** update notificationSettings schema ([fa24ca8](https://github.com/remoodle/remoodle/commit/fa24ca896bc45e49ee6d81dd39b922b8e6bbbf25))
+
 ## [2.0.15](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.14...remoodle/backend-v2.0.15) (2025-02-09)
 
 
