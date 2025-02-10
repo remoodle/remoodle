@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.1...remoodle/telegram-bot-v1.0.2) (2025-02-10)
+
+
+### Code Refactoring
+
+* **api,cluster,front,tgbot:** update notificationSettings schema ([fa24ca8](https://github.com/remoodle/remoodle/commit/fa24ca896bc45e49ee6d81dd39b922b8e6bbbf25))
+
 ## [1.0.1](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.0...remoodle/telegram-bot-v1.0.1) (2025-02-04)
 
 
