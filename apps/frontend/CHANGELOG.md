@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.0...remoodle/frontend-v1.8.1) (2025-02-10)
+
+
+### Code Refactoring
+
+* **api,cluster,front,tgbot:** update notificationSettings schema ([fa24ca8](https://github.com/remoodle/remoodle/commit/fa24ca896bc45e49ee6d81dd39b922b8e6bbbf25))
+
 ## [1.8.0](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.6...remoodle/frontend-v1.8.0) (2025-02-10)
 
 
