@@ -30,10 +30,8 @@ export type IEvent = {
 };
 
 export type NotificationSettings = {
-  telegram: {
-    deadlineReminders: boolean;
-    gradeUpdates: boolean;
-  };
+  "gradeUpdates::telegram": 0 | 1 | 2;
+  "deadlineReminders::telegram": 0 | 1 | 2;
   deadlineThresholds: string[];
 };
 

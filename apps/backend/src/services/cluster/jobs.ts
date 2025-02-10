@@ -303,29 +303,32 @@ export const jobs: Record<JobName, ClusterJob> = {
         throw new Error(`User ${userId} not found`);
       }
 
-      if (!user.notificationSettings.telegram.gradeUpdates) {
-        return "gradeUpdates not enabled";
+      if (
+        user.telegramId &&
+        user.notificationSettings["gradeUpdates::telegram"] !== 0
+      ) {
+        const message = formatCourseDiffs(gradeChangeEvent.payload);
+
+        const job = await queues[QueueName.TELEGRAM].add(
+          QueueName.TELEGRAM,
+          {
+            userId,
+            message,
+          },
+          {
+            attempts: 3,
+            backoff: {
+              type: "exponential",
+              delay: 2000,
+            },
+            deduplication: {
+              id: `${userId}::${message}`,
+            },
+          },
+        );
+
+        return job.data;
       }
-
-      const message = formatCourseDiffs(gradeChangeEvent.payload);
-
-      await queues[QueueName.TELEGRAM].add(
-        QueueName.TELEGRAM,
-        {
-          userId,
-          message,
-        },
-        {
-          attempts: 3,
-          backoff: {
-            type: "exponential",
-            delay: 2000,
-          },
-          deduplication: {
-            id: `${userId}::${message}`,
-          },
-        },
-      );
 
       return gradeChangeEvent.payload;
     },
@@ -341,10 +344,6 @@ export const jobs: Record<JobName, ClusterJob> = {
 
       if (!user) {
         throw new Error(`User ${user} not found `);
-      }
-
-      if (!user.notificationSettings.telegram.deadlineReminders) {
-        return "deadlineReminders not enabled";
       }
 
       const rawEvents = await db.event.find({ userId });
@@ -401,25 +400,32 @@ export const jobs: Record<JobName, ClusterJob> = {
         return "no deadline reminders";
       }
 
-      const message = formatDeadlineReminders(deadlineReminderEvent.payload);
+      if (
+        user.telegramId &&
+        user.notificationSettings["deadlineReminders::telegram"] !== 0
+      ) {
+        const message = formatDeadlineReminders(deadlineReminderEvent.payload);
 
-      await queues[QueueName.TELEGRAM].add(
-        QueueName.TELEGRAM,
-        {
-          userId,
-          message,
-        },
-        {
-          attempts: 3,
-          backoff: {
-            type: "exponential",
-            delay: 2000,
+        const job = await queues[QueueName.TELEGRAM].add(
+          QueueName.TELEGRAM,
+          {
+            userId,
+            message,
           },
-          deduplication: {
-            id: `${userId}::${message}`,
+          {
+            attempts: 3,
+            backoff: {
+              type: "exponential",
+              delay: 2000,
+            },
+            deduplication: {
+              id: `${userId}::${message}`,
+            },
           },
-        },
-      );
+        );
+
+        return job.data;
+      }
 
       return deadlineReminderEvent.payload;
     },
@@ -438,7 +444,7 @@ export const jobs: Record<JobName, ClusterJob> = {
       }
 
       if (!user.telegramId) {
-        return job.remove();
+        throw new Error(`User ${userId} has no telegramId`);
       }
 
       const response = await sendTelegramMessage(user.telegramId, message);

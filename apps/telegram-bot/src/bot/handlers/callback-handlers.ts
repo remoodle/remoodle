@@ -10,6 +10,7 @@ import {
 } from "../utils";
 import keyboards from "./keyboards";
 import { config } from "../../config";
+import type { NotificationSettings } from "@remoodle/types";
 
 // Menu buttons
 async function others(ctx: Context) {
@@ -414,7 +415,7 @@ async function notifications(ctx: Context) {
     return;
   }
 
-  const settings = data.notifications.telegram;
+  const settings = data.notificationSettings;
 
   const [loginResponse, err] = await request((client) => {
     return client.v2.auth.login.$post(
@@ -450,14 +451,33 @@ async function changeNotifications(ctx: Context) {
   const type = ctx.match[0].split("_")[2];
   const value = ctx.match[0].split("_")[3];
 
-  const json: { [key: string]: boolean } = {};
+  const [account, accountError] = await request((client) =>
+    client.v2.user.settings.$get(
+      {},
+      {
+        headers: getAuthHeaders(userId),
+      },
+    ),
+  );
+
+  if (accountError) {
+    await ctx.editMessageText("An error occurred. Try again later.", {
+      reply_markup: new InlineKeyboard().text("Back ←", "settings"),
+    });
+    return;
+  }
+
+  const notificationSettings = account.notificationSettings;
+
   if (type === "telegram") {
-    json["telegramDeadlineReminders"] = value === "on";
-    json["telegramGradeUpdates"] = value === "on";
+    notificationSettings["gradeUpdates::telegram"] = value === "on" ? 1 : 0;
+    notificationSettings["deadlineReminders::telegram"] =
+      value === "on" ? 1 : 0;
   } else if (type === "grades") {
-    json["telegramGradeUpdates"] = value === "on";
+    notificationSettings["gradeUpdates::telegram"] = value === "on" ? 1 : 0;
   } else if (type === "deadlines") {
-    json["telegramDeadlineReminders"] = value === "on";
+    notificationSettings["deadlineReminders::telegram"] =
+      value === "on" ? 1 : 0;
   } else {
     return;
   }
@@ -465,7 +485,9 @@ async function changeNotifications(ctx: Context) {
   const [_, error] = await request((client) =>
     client.v2.user.settings.$post(
       {
-        json: json,
+        json: {
+          notificationSettings,
+        },
       },
       {
         headers: getAuthHeaders(userId),
@@ -493,8 +515,6 @@ async function changeNotifications(ctx: Context) {
     return;
   }
 
-  const settings = data.notifications.telegram;
-
   const [loginResponse, err] = await request((client) => {
     return client.v2.auth.login.$post(
       {
@@ -508,7 +528,7 @@ async function changeNotifications(ctx: Context) {
 
   if (err) {
     await ctx.editMessageText("Notifications", {
-      reply_markup: getNotificationsKeyboard(settings, false),
+      reply_markup: getNotificationsKeyboard(data.notificationSettings, false),
     });
   }
 
@@ -516,7 +536,7 @@ async function changeNotifications(ctx: Context) {
   const url = config.frontend.url + "/account/notifications?usr=" + b64;
 
   await ctx.editMessageText("Notifications", {
-    reply_markup: getNotificationsKeyboard(settings, url),
+    reply_markup: getNotificationsKeyboard(data.notificationSettings, url),
   });
 }
 

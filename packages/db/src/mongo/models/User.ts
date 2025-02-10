@@ -12,9 +12,17 @@ export const DEFAULT_THRESHOLDS = [
 
 const notificationSettingsSchema = new Schema<NotificationSettings>(
   {
-    telegram: {
-      deadlineReminders: { type: Boolean, default: false },
-      gradeUpdates: { type: Boolean, default: true },
+    "deadlineReminders::telegram": {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 2,
+    },
+    "gradeUpdates::telegram": {
+      type: Number,
+      default: 1,
+      min: 0,
+      max: 2,
     },
     deadlineThresholds: {
       type: [String],

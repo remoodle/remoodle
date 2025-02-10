@@ -1,4 +1,8 @@
-import type { MoodleEvent, MoodleGrade } from "@remoodle/types";
+import type {
+  MoodleEvent,
+  MoodleGrade,
+  NotificationSettings,
+} from "@remoodle/types";
 import { getTimeLeft } from "@remoodle/utils";
 import { InlineKeyboard, GrammyError, BotError, HttpError } from "grammy";
 
@@ -111,45 +115,35 @@ const calculateGrades = (grades: MoodleGrade[]) => {
 };
 
 const getNotificationsKeyboard = (
-  notifications: {
-    enabled: boolean;
-    gradeUpdates: boolean;
-    deadlineReminders: boolean;
-  },
+  notificationSettings: NotificationSettings,
   websiteUrl: string | false = false,
 ) => {
   const keyboard = new InlineKeyboard();
 
-  if (notifications.enabled) {
-    keyboard
-      .text(
-        `Telegram Notifications ${notifications.enabled ? "🔔" : "🔕"}`,
-        `change_notifications_telegram_${notifications.enabled ? "off" : "on"}`,
-      )
-      .row()
-      .text(
-        `Grades ${notifications.gradeUpdates ? "🔔" : "🔕"}`,
-        `change_notifications_grades_${notifications.gradeUpdates ? "off" : "on"}`,
-      )
-      .text(
-        `Deadlines ${notifications.deadlineReminders ? "🔔" : "🔕"}`,
-        `change_notifications_deadlines_${notifications.deadlineReminders ? "off" : "on"}`,
-      );
+  const enabled =
+    notificationSettings["deadlineReminders::telegram"] === 1 ||
+    notificationSettings["gradeUpdates::telegram"] === 1;
 
-    if (websiteUrl) {
-      keyboard.row().webApp("Advanced settings", websiteUrl);
-    }
+  keyboard
+    .text(
+      `Telegram Notifications ${enabled ? "🔔" : "🔕"}`,
+      `change_notifications_telegram_${enabled ? "off" : "on"}`,
+    )
+    .row()
+    .text(
+      `Grades ${notificationSettings["gradeUpdates::telegram"] === 1 ? "🔔" : "🔕"}`,
+      `change_notifications_grades_${notificationSettings["gradeUpdates::telegram"] === 1 ? "off" : "on"}`,
+    )
+    .text(
+      `Deadlines ${notificationSettings["deadlineReminders::telegram"] === 1 ? "🔔" : "🔕"}`,
+      `change_notifications_deadlines_${notificationSettings["deadlineReminders::telegram"] === 1 ? "off" : "on"}`,
+    );
 
-    keyboard.row().text("Back ←", "settings");
-  } else {
-    keyboard
-      .text(
-        `Telegram Notifications ${notifications.enabled ? "🔔" : "🔕"}`,
-        `change_notifications_telegram_${notifications.enabled ? "off" : "on"}`,
-      )
-      .row()
-      .text("Back ←", "settings");
+  if (websiteUrl) {
+    keyboard.row().webApp("Advanced settings", websiteUrl);
   }
+
+  keyboard.row().text("Back ←", "settings");
 
   return keyboard;
 };

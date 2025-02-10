@@ -30,14 +30,14 @@ const { toast } = useToast();
 const userStore = useUserStore();
 
 const props = defineProps<{
-  settings: {
+  account: {
     hasPassword: boolean;
     handle: string;
     name: string;
   };
 }>();
 
-const initialHandle = ref(props.settings.handle || "");
+const initialHandle = ref(props.account.handle || "");
 const handle = ref<string>(`${initialHandle.value}`);
 
 const MAX_HANDLE_LENGTH = 20;
@@ -77,7 +77,7 @@ const { mutate: updateHandle, isPending: updatingHandle } = useMutation({
   },
 });
 
-const hasPassword = ref(props.settings.hasPassword);
+const hasPassword = ref(props.account.hasPassword);
 
 const showPasswordDialog = ref(false);
 const currentPassword = ref<string>("");
@@ -174,7 +174,7 @@ const { mutate: updatePassword, isPending: updatingPassword } = useMutation({
             </DialogTitle>
             <DialogDescription>
               <p class="break-words" v-if="!hasPassword">
-                for <strong>{{ settings.handle }}</strong>
+                for <strong>{{ account.handle }}</strong>
               </p>
             </DialogDescription>
           </DialogHeader>

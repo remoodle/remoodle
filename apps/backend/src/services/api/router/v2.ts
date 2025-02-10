@@ -617,17 +617,7 @@ const userRoutes = new Hono<{
       handle: user.handle,
       hasPassword: !!user.password,
       telegramId: user.telegramId,
-      notifications: {
-        telegram: {
-          enabled:
-            user.notificationSettings.telegram.deadlineReminders ||
-            user.notificationSettings.telegram.gradeUpdates,
-          gradeUpdates: user.notificationSettings.telegram.gradeUpdates,
-          deadlineReminders:
-            user.notificationSettings.telegram.deadlineReminders,
-        },
-        deadlineThresholds: user.notificationSettings.deadlineThresholds,
-      },
+      notificationSettings: user.notificationSettings,
     });
   })
   .post(
@@ -637,21 +627,19 @@ const userRoutes = new Hono<{
       z.object({
         handle: z.string().optional(),
         password: z.string().optional(),
-        telegramDeadlineReminders: z.boolean().optional(),
-        telegramGradeUpdates: z.boolean().optional(),
-        deadlineThresholds: z.array(z.string()).optional(),
+        notificationSettings: z
+          .object({
+            "deadlineReminders::telegram": z.number(),
+            "gradeUpdates::telegram": z.number(),
+            deadlineThresholds: z.array(z.string()),
+          })
+          .optional(),
       }),
     ),
     async (ctx) => {
       const userId = ctx.get("userId");
 
-      const {
-        handle,
-        password,
-        telegramDeadlineReminders,
-        telegramGradeUpdates,
-        deadlineThresholds,
-      } = ctx.req.valid("json");
+      const { handle, password, notificationSettings } = ctx.req.valid("json");
 
       try {
         const user = await db.user.findOne({ _id: userId });
@@ -684,41 +672,22 @@ const userRoutes = new Hono<{
           );
         }
 
-        if (
-          telegramDeadlineReminders !== undefined ||
-          telegramGradeUpdates !== undefined
-        ) {
-          const notificationFields: { [key: string]: any } = {};
-
-          if (telegramGradeUpdates !== undefined) {
-            notificationFields["notificationSettings.telegram.gradeUpdates"] =
-              telegramGradeUpdates;
-          }
-
-          if (telegramDeadlineReminders !== undefined) {
-            notificationFields[
-              "notificationSettings.telegram.deadlineReminders"
-            ] = telegramDeadlineReminders;
-          }
-
-          if (deadlineThresholds !== undefined) {
-            if (
-              deadlineThresholds.length >
-              config.notifications.maxDeadlineThresholds
-            ) {
-              throw new HTTPException(400, {
-                message: "Too many thresholds",
-              });
-            }
-
-            notificationFields["notificationSettings.deadlineThresholds"] =
-              deadlineThresholds;
+        if (notificationSettings) {
+          if (
+            notificationSettings.deadlineThresholds.length >
+            config.notifications.maxDeadlineThresholds
+          ) {
+            throw new HTTPException(400, {
+              message: "Too many thresholds",
+            });
           }
 
           await db.user.updateOne(
             { _id: userId },
             {
-              $set: notificationFields,
+              $set: {
+                notificationSettings,
+              },
             },
           );
         }

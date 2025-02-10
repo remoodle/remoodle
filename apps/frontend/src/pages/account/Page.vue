@@ -22,11 +22,11 @@ const { toast } = useToast();
 const {
   isPending,
   isError,
-  data: settings,
+  data: account,
   error,
   refetch,
 } = useQuery({
-  queryKey: ["settings", userStore.user],
+  queryKey: ["account", userStore.user],
   queryFn: async () =>
     await requestUnwrap((client) =>
       client.v2.user.settings.$get({}, { headers: getAuthHeaders() }),
@@ -74,15 +74,15 @@ const {
               <Skeleton class="h-12" />
             </div>
           </template>
-          <template v-else-if="settings">
+          <template v-else-if="account">
             <div class="space-y-6">
               <template v-if="route.name === RouteName.AccountProfile">
-                <AccountProfilePage :settings="settings" />
+                <AccountProfilePage :account />
               </template>
               <template
                 v-else-if="route.name === RouteName.AccountNotifications"
               >
-                <AccountNotificationsPage :settings="settings" />
+                <AccountNotificationsPage :account />
               </template>
             </div>
           </template>

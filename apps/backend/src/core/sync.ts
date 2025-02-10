@@ -181,12 +181,7 @@ export const syncCourseGrades = async (
     );
   }
 
-  if (
-    !currentGrades.length ||
-    !trackDiff ||
-    !user.telegramId ||
-    !user.notificationSettings.telegram.gradeUpdates
-  ) {
+  if (!currentGrades.length || !trackDiff) {
     return;
   }
 
