@@ -3,6 +3,11 @@
 ## [1.0.2](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.1...remoodle/telegram-bot-v1.0.2) (2025-02-10)
 
 
+### Miscellaneous Chores
+
+* **trunk:** release remoodle/telegram-bot 1.0.2 ([#348](https://github.com/remoodle/remoodle/issues/348)) [manual] ([7b3074e](https://github.com/remoodle/remoodle/commit/7b3074e901cd6bc342ed2fc996201e37e1ec36f5))
+
+
 ### Code Refactoring
 
 * **api,cluster,front,tgbot:** update notificationSettings schema ([fa24ca8](https://github.com/remoodle/remoodle/commit/fa24ca896bc45e49ee6d81dd39b922b8e6bbbf25))
