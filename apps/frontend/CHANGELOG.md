@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.6...remoodle/frontend-v1.8.0) (2025-02-10)
+
+
+### Features
+
+* update notifications page ([c6053f7](https://github.com/remoodle/remoodle/commit/c6053f78bcd636057079e54042a34912836d4d5f))
+
 ## [1.7.6](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.7.5...remoodle/frontend-v1.7.6) (2025-02-09)
 
 
