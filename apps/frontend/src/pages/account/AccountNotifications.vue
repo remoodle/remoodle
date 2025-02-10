@@ -8,6 +8,15 @@ import { Switch } from "@/shared/ui/switch";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Separator } from "@/shared/ui/separator";
 import { useToast } from "@/shared/ui/toast";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/shared/ui/table";
 import { requestUnwrap, getAuthHeaders } from "@/shared/lib/hc";
 import { useUserStore } from "@/shared/stores/user";
 import { TELEGRAM_BOT_URL } from "@/shared/config";
@@ -109,10 +118,16 @@ watchEffect(() => {
   });
 });
 
-const THRESHOLDS = {
-  HOUR_THRESHOLDS: ["1 hour", "3 hours", "6 hours", "12 hours"],
-  DAY_THRESHOLDS: ["1 day", "2 days", "3 days", "4 days"],
-};
+const AVAILABLE_THRESHOLDS = [
+  "1 hour",
+  "3 hours",
+  "6 hours",
+  "12 hours",
+  "1 day",
+  "2 days",
+  "3 days",
+  "4 days",
+];
 </script>
 
 <template>
@@ -125,76 +140,10 @@ const THRESHOLDS = {
   <Separator />
 
   <div>
-    <h2 class="mb-4 text-lg font-medium">Telegram Notifications</h2>
     <template v-if="telegramId">
       <p class="text-sm text-muted-foreground">
         Connected to Telegram ID: <strong>{{ telegramId }}</strong>
       </p>
-      <div class="py-3"></div>
-
-      <div class="flex flex-col gap-8">
-        <div class="flex flex-col gap-3">
-          <span class="text-lg font-medium">Grades</span>
-          <div class="flex items-center space-x-2">
-            <Switch
-              v-model:checked="notifications.telegram.gradeUpdates"
-              :disabled="updatingNotifications"
-              id="gradeUpdates"
-            />
-            <Label for="gradeUpdates">Telegram updates</Label>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-3">
-          <span class="text-lg font-medium">Deadlines</span>
-          <div class="flex items-center space-x-2">
-            <Switch
-              v-model:checked="notifications.telegram.deadlineReminders"
-              :disabled="updatingNotifications"
-              id="deadlineReminders"
-            />
-            <Label for="deadlineReminders">Telegram reminders</Label>
-          </div>
-          <div class="py-0.5"></div>
-          <div class="flex flex-row gap-x-16">
-            <template
-              v-for="[key, value] in Object.entries(THRESHOLDS)"
-              :key="key"
-            >
-              <div class="flex flex-col gap-4">
-                <template v-for="threshold in value" :key="threshold">
-                  <div class="flex items-center space-x-2">
-                    <Checkbox
-                      :id="threshold"
-                      :checked="
-                        notifications.deadlineThresholds.includes(threshold)
-                      "
-                      :disabled="
-                        updatingNotifications ||
-                        !notifications.telegram.deadlineReminders
-                      "
-                      @update:checked="
-                        (value) =>
-                          (notifications.deadlineThresholds = value
-                            ? [...notifications.deadlineThresholds, threshold]
-                            : notifications.deadlineThresholds.filter(
-                                (t) => t !== threshold,
-                              ))
-                      "
-                    />
-                    <label
-                      :for="threshold"
-                      class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      {{ threshold }}
-                    </label>
-                  </div>
-                </template>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
     </template>
     <template v-else>
       <p class="text-sm text-muted-foreground">Telegram ID: Not connected</p>
@@ -216,4 +165,88 @@ const THRESHOLDS = {
       </template>
     </template>
   </div>
+
+  <section>
+    <Table class="max-w-2xl">
+      <TableHeader>
+        <TableRow>
+          <TableHead class="w-[420px]"> </TableHead>
+          <TableHead class="text-right"> Telegram </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell class="font-medium"> 📘 Updated grades </TableCell>
+          <TableCell class="text-right">
+            <Switch
+              :checked="
+                !telegramId ? false : notifications.telegram.gradeUpdates
+              "
+              @update:checked="
+                (value) => (notifications.telegram.gradeUpdates = value)
+              "
+              :disabled="!telegramId || updatingNotifications"
+            />
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell class="font-medium">
+            🔔 Upcoming deadlines
+
+            <div
+              class="mt-5 grid grid-cols-2 gap-x-3 gap-y-4 md:grid-cols-4 md:gap-x-6 md:gap-y-4"
+            >
+              <template
+                v-for="threshold in AVAILABLE_THRESHOLDS"
+                :key="threshold"
+              >
+                <div class="flex flex-col gap-4">
+                  <div class="flex items-center space-x-2">
+                    <Checkbox
+                      :id="threshold"
+                      :checked="
+                        telegramId
+                          ? notifications.deadlineThresholds.includes(threshold)
+                          : false
+                      "
+                      :disabled="
+                        !telegramId ||
+                        updatingNotifications ||
+                        !notifications.telegram.deadlineReminders
+                      "
+                      @update:checked="
+                        (value) =>
+                          (notifications.deadlineThresholds = value
+                            ? [...notifications.deadlineThresholds, threshold]
+                            : notifications.deadlineThresholds.filter(
+                                (t) => t !== threshold,
+                              ))
+                      "
+                    />
+                    <label
+                      :for="threshold"
+                      class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {{ threshold }}
+                    </label>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </TableCell>
+          <TableCell class="text-right">
+            <Switch
+              :checked="
+                !telegramId ? false : notifications.telegram.deadlineReminders
+              "
+              @update:checked="
+                (value) => (notifications.telegram.deadlineReminders = value)
+              "
+              :disabled="!telegramId || updatingNotifications"
+            />
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  </section>
 </template>
