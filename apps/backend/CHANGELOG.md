@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.1.0...remoodle/backend-v2.1.1) (2025-02-11)
+
+
+### Bug Fixes
+
+* **api:** show zod validation errors ([3631eaf](https://github.com/remoodle/remoodle/commit/3631eafd6f5ad21fcdaaeb135934448865f8da44))
+
 ## [2.1.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.16...remoodle/backend-v2.1.0) (2025-02-11)
 
 
