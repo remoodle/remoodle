@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.3...remoodle/telegram-bot-v1.0.4) (2025-02-11)
+
+
+### Code Refactoring
+
+* remove kal features ([#354](https://github.com/remoodle/remoodle/issues/354)) ([3684d2f](https://github.com/remoodle/remoodle/commit/3684d2fd57802cbb8c740912da9f53096eb30fa2))
+
 ## [1.0.3](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.2...remoodle/telegram-bot-v1.0.3) (2025-02-11)
 
 
