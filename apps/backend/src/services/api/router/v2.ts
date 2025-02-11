@@ -625,7 +625,18 @@ const userRoutes = new Hono<{
     zValidator(
       "json",
       z.object({
-        handle: z.string().optional(),
+        handle: z
+          .string()
+          .min(3)
+          .max(32)
+          .regex(
+            /^[a-zA-Z0-9_.-]+$/,
+            "Username can only contain letters, numbers, dots, underscores, and hyphens",
+          )
+          .refine((val) => !/<[^>]*>/g.test(val), {
+            message: "Username cannot contain HTML tags",
+          })
+          .optional(),
         password: z.string().optional(),
         notificationSettings: z
           .object({
