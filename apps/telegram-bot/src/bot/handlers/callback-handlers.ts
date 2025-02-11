@@ -7,6 +7,7 @@ import {
   calculateGrades,
   getNotificationsKeyboard,
   formatUnixtimestamp,
+  getMiniAppUrl,
 } from "../utils";
 import keyboards from "./keyboards";
 import { config } from "../../config";
@@ -81,25 +82,8 @@ async function backToMenu(ctx: Context) {
     return;
   }
 
-  const [loginResponse, err] = await request((client) => {
-    return client.v2.auth.login.$post(
-      {
-        json: {},
-      },
-      {
-        headers: getAuthHeaders(userId),
-      },
-    );
-  });
+  const url = await getMiniAppUrl(userId, config.frontend.url);
 
-  if (err) {
-    await ctx.editMessageText(`${user.name}`, {
-      reply_markup: keyboards.main,
-    });
-  }
-
-  const b64 = btoa(JSON.stringify(loginResponse));
-  const url = config.frontend.url + "?usr=" + b64;
   const keyboard = keyboards.main.clone().webApp("Website", url);
 
   await ctx.editMessageText(`${user.name}`, {
@@ -417,25 +401,11 @@ async function notifications(ctx: Context) {
 
   const settings = data.notificationSettings;
 
-  const [loginResponse, err] = await request((client) => {
-    return client.v2.auth.login.$post(
-      {
-        json: {},
-      },
-      {
-        headers: getAuthHeaders(userId),
-      },
-    );
-  });
-
-  if (err) {
-    await ctx.editMessageText("Notifications", {
-      reply_markup: getNotificationsKeyboard(settings, false),
-    });
-  }
-
-  const b64 = btoa(JSON.stringify(loginResponse));
-  const url = config.frontend.url + "/account/notifications?usr=" + b64;
+  const url = await getMiniAppUrl(
+    userId,
+    config.frontend.url,
+    "/account/notifications",
+  );
 
   await ctx.editMessageText("Notifications", {
     reply_markup: getNotificationsKeyboard(settings, url),
@@ -515,25 +485,11 @@ async function changeNotifications(ctx: Context) {
     return;
   }
 
-  const [loginResponse, err] = await request((client) => {
-    return client.v2.auth.login.$post(
-      {
-        json: {},
-      },
-      {
-        headers: getAuthHeaders(userId),
-      },
-    );
-  });
-
-  if (err) {
-    await ctx.editMessageText("Notifications", {
-      reply_markup: getNotificationsKeyboard(data.notificationSettings, false),
-    });
-  }
-
-  const b64 = btoa(JSON.stringify(loginResponse));
-  const url = config.frontend.url + "/account/notifications?usr=" + b64;
+  const url = await getMiniAppUrl(
+    userId,
+    config.frontend.url,
+    "/account/notifications",
+  );
 
   await ctx.editMessageText("Notifications", {
     reply_markup: getNotificationsKeyboard(data.notificationSettings, url),

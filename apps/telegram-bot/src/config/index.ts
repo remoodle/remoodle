@@ -1,4 +1,4 @@
-import { cleanEnv, num, str } from "envalid";
+import { cleanEnv, str } from "envalid";
 import "dotenv/config";
 
 export const env = cleanEnv(process.env, {
@@ -8,7 +8,6 @@ export const env = cleanEnv(process.env, {
   }),
 
   TELEGRAM_BOT_TOKEN: str(),
-  TELEGRAM_WEBHOOK_HOST: str({ default: "" }),
 
   BACKEND_URL: str({ default: "http://localhost:9000" }),
   BACKEND_SECRET: str({ default: "aboba" }),
@@ -16,8 +15,6 @@ export const env = cleanEnv(process.env, {
   FRONTEND_URL: str({ default: "https://remoodle.app" }),
 
   REDIS_URI: str({ default: "redis://localhost:6379" }),
-
-  SERVER_PORT: num({ default: 8888 }),
 });
 
 export const config = {
@@ -30,12 +27,8 @@ export const config = {
   },
   bot: {
     token: env.TELEGRAM_BOT_TOKEN,
-    webhook_host: env.TELEGRAM_WEBHOOK_HOST,
   },
   redis: {
     uri: env.REDIS_URI,
-  },
-  server: {
-    port: env.SERVER_PORT,
   },
 };
