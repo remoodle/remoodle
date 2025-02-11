@@ -1,9 +1,6 @@
+import { GrammyError, HttpError } from "grammy";
 import { config } from "./config";
 import { createBot } from "./bot";
-import { Hono } from "hono";
-import { serve } from "@hono/node-server";
-import { webhookCallback } from "grammy";
-import { logWithTimestamp } from "./bot/utils";
 
 function main(): void {
   const bot = createBot(config.bot.token);
@@ -16,28 +13,26 @@ function main(): void {
     bot.stop();
   });
 
-  if (config.bot.webhook_host) {
-    const app = new Hono();
+  console.log("Bot is running");
 
-    app.onError((err, c) => {
-      logWithTimestamp("Error in Hono: ", err);
-      return c.text("Internal Server Error", 500);
-    });
+  bot.catch((err) => {
+    const ctx = err.ctx;
+    const timestamp = new Date().toISOString();
+    console.error(
+      `[${timestamp}] Error while handling update ${ctx.update.update_id}:`,
+    );
 
-    // @ts-ignore
-    app.use(webhookCallback(bot, "hono"));
+    const e = err.error;
+    if (e instanceof GrammyError) {
+      console.error(`[${timestamp}] Error in request:`, e.description);
+    } else if (e instanceof HttpError) {
+      console.error(`[${timestamp}] Could not contact Telegram:`, e);
+    } else {
+      console.error(`[${timestamp}] Unknown error:`, e);
+    }
+  });
 
-    const url = new URL(config.bot.token, config.bot.webhook_host).toString();
-
-    bot.api.setWebhook(url);
-
-    serve(app).listen({ port: config.server.port }, () => {
-      console.log(`Bot is running using webhook on ${url}`);
-    });
-  } else {
-    console.log("Bot is running");
-    bot.start();
-  }
+  bot.start();
 }
 
 main();

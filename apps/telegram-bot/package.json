@@ -10,13 +10,11 @@
     "format": "eslint . --fix --ignore-path .gitignore && prettier --write src/"
   },
   "dependencies": {
-    "@hono/node-server": "^1.10.0",
     "@remoodle/db": "workspace:*",
     "@remoodle/utils": "workspace:*",
     "dotenv": "^16.4.5",
     "envalid": "^8.0.0",
     "grammy": "^1.29.0",
-    "hono": "^4.5.5",
     "turndown": "^7.2.0"
   },
   "devDependencies": {

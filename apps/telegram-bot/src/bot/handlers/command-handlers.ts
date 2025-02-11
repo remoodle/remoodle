@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { db } from "../../library/db";
 import { request, getAuthHeaders } from "../../library/hc";
-import { getDeadlineText } from "../utils";
+import { getDeadlineText, getMiniAppUrl } from "../utils";
 import keyboards from "./keyboards";
 import type { RegistrationContext } from "..";
 import { config } from "../../config";
@@ -35,25 +35,8 @@ async function start(ctx: RegistrationContext) {
       return;
     }
 
-    const [loginResponse, err] = await request((client) => {
-      return client.v2.auth.login.$post(
-        {
-          json: {},
-        },
-        {
-          headers: getAuthHeaders(userId),
-        },
-      );
-    });
+    const url = await getMiniAppUrl(userId, config.frontend.url);
 
-    if (err) {
-      await ctx.reply(`${user.name}`, {
-        reply_markup: keyboards.main,
-      });
-    }
-
-    const b64 = btoa(JSON.stringify(loginResponse));
-    const url = config.frontend.url + "?usr=" + b64;
     const keyboard = keyboards.main.clone().webApp("Website", url);
 
     await ctx.reply(`${user.name}`, {
@@ -124,25 +107,7 @@ async function handleRegistration(
   // Registration successful, greet the user
   await ctx.reply(`You have registered successfully!`);
 
-  const [loginResponse, err] = await request((client) => {
-    return client.v2.auth.login.$post(
-      {
-        json: {},
-      },
-      {
-        headers: getAuthHeaders(userId),
-      },
-    );
-  });
-
-  if (err) {
-    await ctx.reply(`${data.user.name}`, {
-      reply_markup: keyboards.main,
-    });
-  }
-
-  const b64 = btoa(JSON.stringify(loginResponse));
-  const url = config.frontend.url + "?usr=" + b64;
+  const url = await getMiniAppUrl(userId, config.frontend.url);
   const keyboard = keyboards.main.clone().webApp("Website", url);
 
   await ctx.reply(`${data.user.name}`, {

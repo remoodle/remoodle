@@ -314,9 +314,6 @@ importers:
 
   apps/telegram-bot:
     dependencies:
-      '@hono/node-server':
-        specifier: ^1.10.0
-        version: 1.12.0
       '@remoodle/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -332,9 +329,6 @@ importers:
       grammy:
         specifier: ^1.29.0
         version: 1.29.0
-      hono:
-        specifier: ^4.5.5
-        version: 4.6.15
       turndown:
         specifier: ^7.2.0
         version: 7.2.0

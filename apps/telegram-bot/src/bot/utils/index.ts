@@ -5,6 +5,7 @@ import type {
 } from "@remoodle/types";
 import { getTimeLeft } from "@remoodle/utils";
 import { InlineKeyboard, GrammyError, BotError, HttpError } from "grammy";
+import { request, getAuthHeaders } from "../../library/hc";
 
 const formatUnixtimestamp = (timestamp: number, showYear: boolean = false) => {
   return new Date(timestamp)
@@ -18,6 +19,32 @@ const formatUnixtimestamp = (timestamp: number, showYear: boolean = false) => {
       timeZone: "Asia/Almaty",
     })
     .replace("24:00", "00:00");
+};
+
+const getMiniAppUrl = async (
+  userId: number,
+  host: string,
+  route: string = "",
+) => {
+  const [loginResponse, err] = await request((client) => {
+    return client.v2.auth.login.$post(
+      {
+        json: {},
+      },
+      {
+        headers: getAuthHeaders(userId),
+      },
+    );
+  });
+
+  if (err) {
+    return host + route;
+  }
+
+  const b64 = btoa(JSON.stringify(loginResponse));
+  const url = host + route + "?usr=" + b64;
+
+  return url;
 };
 
 const getDeadlineText = (deadline: MoodleEvent) => {
@@ -163,4 +190,5 @@ export {
   getNotificationsKeyboard,
   formatUnixtimestamp,
   logWithTimestamp,
+  getMiniAppUrl,
 };
