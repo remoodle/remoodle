@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.16...remoodle/backend-v2.1.0) (2025-02-11)
+
+
+### Features
+
+* add username validation ([1e119cc](https://github.com/remoodle/remoodle/commit/1e119cccaefccd04fbf3efc1dc85a5b85022ab80))
+
 ## [2.0.16](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.0.15...remoodle/backend-v2.0.16) (2025-02-10)
 
 
