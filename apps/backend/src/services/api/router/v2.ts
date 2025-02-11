@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
 import { FlowProducer } from "bullmq";
@@ -24,6 +23,7 @@ import {
   verifyPassword,
   verifyTelegramData,
 } from "../helpers/crypto";
+import { zValidator } from "../helpers/zv";
 import { issueTokens } from "../helpers/jwt";
 import { defaultRules, rateLimiter } from "../middleware/ratelimit";
 import { authMiddleware } from "../middleware/auth";
@@ -633,9 +633,6 @@ const userRoutes = new Hono<{
             /^[a-zA-Z0-9_.-]+$/,
             "Username can only contain letters, numbers, dots, underscores, and hyphens",
           )
-          .refine((val) => !/<[^>]*>/g.test(val), {
-            message: "Username cannot contain HTML tags",
-          })
           .optional(),
         password: z.string().optional(),
         notificationSettings: z

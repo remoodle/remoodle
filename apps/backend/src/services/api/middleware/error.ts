@@ -3,18 +3,16 @@ import { HTTPException } from "hono/http-exception";
 import { env } from "../../../config";
 
 export const errorHandler: ErrorHandler = (err, c) => {
-  if (err instanceof HTTPException) {
-    return c.json(
-      {
-        error: {
-          status: err.status,
-          message: err.message,
-        },
-        ...(env.isDevelopment && { stack: err.stack }),
-      },
-      err.status,
-    );
-  }
+  const status = err instanceof HTTPException ? err.status : 500;
 
-  return c.json("Internal error", 500);
+  return c.json(
+    {
+      error: {
+        status,
+        message: err.message,
+      },
+      ...(env.isDevelopment && { stack: err.stack }),
+    },
+    status,
+  );
 };
