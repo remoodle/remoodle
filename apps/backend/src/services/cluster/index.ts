@@ -69,7 +69,7 @@ const upsertSchedulers = async (date?: Date | "manual" | "init") => {
 
     const queue = queues[clusterJob.queueName];
 
-    const scheduledJobs = await queue.getJobs(["delayed"]);
+    const scheduledJobs = await queue.getJobs(["delayed", "active"]);
 
     if (!scheduledJobs.length) {
       logger.cluster.info(
