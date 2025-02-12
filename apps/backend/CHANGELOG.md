@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.2.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.1.1...remoodle/backend-v2.2.0) (2025-02-12)
+
+
+### Features
+
+* **cluster:** add scheduler failover mechanism ([2900a9b](https://github.com/remoodle/remoodle/commit/2900a9ba490f8442885ce05a9e931d26c42be8f2))
+
+
+### Bug Fixes
+
+* **cluster:** add retries to job scheduler ([ed76828](https://github.com/remoodle/remoodle/commit/ed768282e010b810123b85925dbf37356e5c02ea))
+* **cluster:** prevent potential rescheduling ([ba54183](https://github.com/remoodle/remoodle/commit/ba54183013e85b765d49b19d6ee99b6ec2d4f227))
+
+
+### Miscellaneous Chores
+
+* **api,cluster:** update bullmq ([5afacd0](https://github.com/remoodle/remoodle/commit/5afacd0ddf556e43db932e0e1d4b617ff07dba8c))
+* **cluster:** remove useless logs ([6a510a1](https://github.com/remoodle/remoodle/commit/6a510a1935cd0f973460478fd346d2a6039b4447))
+
 ## [2.1.1](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.1.0...remoodle/backend-v2.1.1) (2025-02-11)
 
 
