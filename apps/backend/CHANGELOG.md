@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.2.0...remoodle/backend-v2.2.1) (2025-02-12)
+
+
+### Code Refactoring
+
+* update notifications schema ([554fdba](https://github.com/remoodle/remoodle/commit/554fdbad86849d6382d068aaf5a74e4b3f4bee2d))
+
 ## [2.2.0](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.1.1...remoodle/backend-v2.2.0) (2025-02-12)
 
 
