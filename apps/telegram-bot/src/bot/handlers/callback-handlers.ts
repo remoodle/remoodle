@@ -398,8 +398,6 @@ async function notifications(ctx: Context) {
     return;
   }
 
-  const settings = data.notificationSettings;
-
   const url = await getMiniAppUrl(
     userId,
     config.frontend.url,
@@ -407,7 +405,7 @@ async function notifications(ctx: Context) {
   );
 
   await ctx.editMessageText("Notifications", {
-    reply_markup: getNotificationsKeyboard(settings, url),
+    reply_markup: getNotificationsKeyboard(data.settings.notifications, url),
   });
 }
 
@@ -436,16 +434,16 @@ async function changeNotifications(ctx: Context) {
     return;
   }
 
-  const notificationSettings = account.notificationSettings;
-
   if (type === "telegram") {
-    notificationSettings["gradeUpdates::telegram"] = value === "on" ? 1 : 0;
-    notificationSettings["deadlineReminders::telegram"] =
+    account.settings.notifications["gradeUpdates::telegram"] =
+      value === "on" ? 1 : 0;
+    account.settings.notifications["deadlineReminders::telegram"] =
       value === "on" ? 1 : 0;
   } else if (type === "grades") {
-    notificationSettings["gradeUpdates::telegram"] = value === "on" ? 1 : 0;
+    account.settings.notifications["gradeUpdates::telegram"] =
+      value === "on" ? 1 : 0;
   } else if (type === "deadlines") {
-    notificationSettings["deadlineReminders::telegram"] =
+    account.settings.notifications["deadlineReminders::telegram"] =
       value === "on" ? 1 : 0;
   } else {
     return;
@@ -455,7 +453,7 @@ async function changeNotifications(ctx: Context) {
     client.v2.user.settings.$post(
       {
         json: {
-          notificationSettings,
+          settings: account.settings,
         },
       },
       {
@@ -491,7 +489,7 @@ async function changeNotifications(ctx: Context) {
   );
 
   await ctx.editMessageText("Notifications", {
-    reply_markup: getNotificationsKeyboard(data.notificationSettings, url),
+    reply_markup: getNotificationsKeyboard(data.settings.notifications, url),
   });
 }
 
