@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import type { RepeatOptions, WorkerOptions } from "bullmq";
+import cron from "node-cron";
 import { Worker } from "bullmq";
 import {
   queues,
@@ -33,13 +34,7 @@ const loadConfig = async () => {
   }[];
 };
 
-const run = async () => {
-  if (config.cluster.queues.prune) {
-    logger.cluster.info("Obliterating queues...");
-    await obliterateQueues();
-  }
-
-  logger.cluster.info("Starting cluster...");
+const upsertWorkers = async () => {
   const tasks = await loadConfig();
 
   for (const task of tasks) {
@@ -54,30 +49,67 @@ const run = async () => {
       ...task.opts,
     });
 
-    if (config.cluster.scheduler.enabled && task.repeat) {
+    workers.push(worker);
+  }
+};
+
+const upsertSchedulers = async (date?: Date | "manual" | "init") => {
+  if (!config.cluster.scheduler.enabled) {
+    return;
+  }
+
+  const tasks = await loadConfig();
+
+  for (const task of tasks.filter((task) => task.repeat)) {
+    const clusterJob = jobs[task.name];
+
+    if (!clusterJob) {
+      throw new Error(`Repeatable Job ${task.name} not found`);
+    }
+
+    const queue = queues[clusterJob.queueName];
+
+    const scheduledJobs = await queue.getJobs(["delayed"]);
+
+    if (!scheduledJobs.length) {
       logger.cluster.info(
         `Scheduling ${task.name} at ${JSON.stringify(task.repeat)}`,
       );
-      await queues[clusterJob.queueName].upsertJobScheduler(
-        task.name,
-        task.repeat,
-        {
-          opts: {
-            backoff: 3,
-            attempts: 6,
-            removeOnFail: false,
-          },
-        },
-      );
-    }
 
-    workers.push(worker);
+      await queue.upsertJobScheduler(task.name, task.repeat!, {
+        data: {
+          date,
+        },
+        opts: {
+          backoff: 3,
+          attempts: 6,
+          removeOnFail: false,
+        },
+      });
+    }
   }
+};
+
+const run = async () => {
+  if (config.cluster.queues.prune) {
+    logger.cluster.info("Obliterating queues...");
+    await obliterateQueues();
+  }
+
+  logger.cluster.info("Starting cluster...");
+
+  await upsertWorkers();
+
+  await upsertSchedulers();
 };
 
 run().catch((e) => {
   logger.cluster.error(e);
   process.exit(1);
+});
+
+cron.schedule("*/5 * * * *", async (date) => {
+  await upsertSchedulers(date);
 });
 
 export const closeWorkers = async () => {
