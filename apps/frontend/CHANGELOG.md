@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.2](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.1...remoodle/frontend-v1.8.2) (2025-02-12)
+
+
+### Code Refactoring
+
+* update notifications schema ([554fdba](https://github.com/remoodle/remoodle/commit/554fdbad86849d6382d068aaf5a74e4b3f4bee2d))
+
 ## [1.8.1](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.0...remoodle/frontend-v1.8.1) (2025-02-10)
 
 
