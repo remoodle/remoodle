@@ -54,14 +54,6 @@ const run = async () => {
       ...task.opts,
     });
 
-    worker.on("error", (err) => {
-      logger.cluster.error(err, `Worker error for ${task.name}`);
-    });
-
-    worker.on("drained", () => {
-      logger.cluster.info(`Worker ${task.name} drained`);
-    });
-
     if (config.cluster.scheduler.enabled && task.repeat) {
       logger.cluster.info(
         `Scheduling ${task.name} at ${JSON.stringify(task.repeat)}`,
