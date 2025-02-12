@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, toRef, watch, onMounted, watchEffect } from "vue";
 import { useMutation } from "@tanstack/vue-query";
-import type { NotificationSettings } from "@remoodle/types";
+import type { UserSettings } from "@remoodle/types";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
@@ -25,7 +25,7 @@ import { TELEGRAM_BOT_URL } from "@/shared/config";
 const props = defineProps<{
   account: {
     telegramId?: number;
-    notificationSettings: NotificationSettings;
+    settings: UserSettings;
   };
 }>();
 
@@ -33,8 +33,8 @@ const { toast } = useToast();
 
 const userStore = useUserStore();
 
-const notificationSettings = ref<NotificationSettings>(
-  JSON.parse(JSON.stringify(props.account.notificationSettings)),
+const settings = ref<UserSettings>(
+  JSON.parse(JSON.stringify(props.account.settings)),
 );
 
 const telegramId = ref<number | undefined>(props.account?.telegramId);
@@ -75,12 +75,12 @@ const { mutate: verify, isPending: verifying } = useMutation({
 
 const { mutate: updateNotifications, isPending: updatingNotifications } =
   useMutation({
-    mutationFn: async (notificationSettings: NotificationSettings) =>
+    mutationFn: async (settings: UserSettings) =>
       requestUnwrap((client) =>
         client.v2.user.settings.$post(
           {
             json: {
-              notificationSettings,
+              settings,
             },
           },
           { headers: getAuthHeaders() },
@@ -94,7 +94,7 @@ const { mutate: updateNotifications, isPending: updatingNotifications } =
   });
 
 watch(
-  notificationSettings,
+  settings,
   (value) => {
     updateNotifications(value);
   },
@@ -165,11 +165,11 @@ const AVAILABLE_THRESHOLDS = [
               :checked="
                 !telegramId
                   ? false
-                  : notificationSettings['gradeUpdates::telegram'] === 1
+                  : settings.notifications['gradeUpdates::telegram'] === 1
               "
               @update:checked="
                 (value) =>
-                  (notificationSettings['gradeUpdates::telegram'] = value
+                  (settings.notifications['gradeUpdates::telegram'] = value
                     ? 1
                     : 0)
               "
@@ -194,7 +194,7 @@ const AVAILABLE_THRESHOLDS = [
                       :id="threshold"
                       :checked="
                         telegramId
-                          ? notificationSettings.deadlineThresholds.includes(
+                          ? settings.deadlineReminders.thresholds.includes(
                               threshold,
                             )
                           : false
@@ -202,17 +202,18 @@ const AVAILABLE_THRESHOLDS = [
                       :disabled="
                         !telegramId ||
                         updatingNotifications ||
-                        notificationSettings['deadlineReminders::telegram'] ===
-                          0
+                        settings.notifications[
+                          'deadlineReminders::telegram'
+                        ] === 0
                       "
                       @update:checked="
                         (value) =>
-                          (notificationSettings.deadlineThresholds = value
+                          (settings.deadlineReminders.thresholds = value
                             ? [
-                                ...notificationSettings.deadlineThresholds,
+                                ...settings.deadlineReminders.thresholds,
                                 threshold,
                               ]
-                            : notificationSettings.deadlineThresholds.filter(
+                            : settings.deadlineReminders.thresholds.filter(
                                 (t) => t !== threshold,
                               ))
                       "
@@ -233,11 +234,11 @@ const AVAILABLE_THRESHOLDS = [
               :checked="
                 !telegramId
                   ? false
-                  : notificationSettings['deadlineReminders::telegram'] === 1
+                  : settings.notifications['deadlineReminders::telegram'] === 1
               "
               @update:checked="
                 (value) =>
-                  (notificationSettings['deadlineReminders::telegram'] = value
+                  (settings.notifications['deadlineReminders::telegram'] = value
                     ? 1
                     : 0)
               "

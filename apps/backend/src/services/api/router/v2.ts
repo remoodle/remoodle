@@ -617,7 +617,7 @@ const userRoutes = new Hono<{
       handle: user.handle,
       hasPassword: !!user.password,
       telegramId: user.telegramId,
-      notificationSettings: user.notificationSettings,
+      settings: user.settings,
     });
   })
   .post(
@@ -635,11 +635,15 @@ const userRoutes = new Hono<{
           )
           .optional(),
         password: z.string().optional(),
-        notificationSettings: z
+        settings: z
           .object({
-            "deadlineReminders::telegram": z.number(),
-            "gradeUpdates::telegram": z.number(),
-            deadlineThresholds: z.array(z.string()),
+            notifications: z.object({
+              "deadlineReminders::telegram": z.number(),
+              "gradeUpdates::telegram": z.number(),
+            }),
+            deadlineReminders: z.object({
+              thresholds: z.array(z.string()),
+            }),
           })
           .optional(),
       }),
@@ -647,7 +651,7 @@ const userRoutes = new Hono<{
     async (ctx) => {
       const userId = ctx.get("userId");
 
-      const { handle, password, notificationSettings } = ctx.req.valid("json");
+      const { handle, password, settings } = ctx.req.valid("json");
 
       try {
         const user = await db.user.findOne({ _id: userId });
@@ -680,9 +684,9 @@ const userRoutes = new Hono<{
           );
         }
 
-        if (notificationSettings) {
+        if (settings) {
           if (
-            notificationSettings.deadlineThresholds.length >
+            settings.deadlineReminders.thresholds.length >
             config.notifications.maxDeadlineThresholds
           ) {
             throw new HTTPException(400, {
@@ -694,7 +698,7 @@ const userRoutes = new Hono<{
             { _id: userId },
             {
               $set: {
-                notificationSettings,
+                settings,
               },
             },
           );

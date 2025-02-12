@@ -32,7 +32,13 @@ export type IEvent = {
 export type NotificationSettings = {
   "gradeUpdates::telegram": 0 | 1 | 2;
   "deadlineReminders::telegram": 0 | 1 | 2;
-  deadlineThresholds: string[];
+};
+
+export type UserSettings = {
+  notifications: NotificationSettings;
+  deadlineReminders: {
+    thresholds: string[];
+  };
 };
 
 export type IUser = {
@@ -46,5 +52,5 @@ export type IUser = {
   email?: string;
   telegramId?: number;
   password?: string;
-  notificationSettings: NotificationSettings;
+  settings: UserSettings;
 };

@@ -305,7 +305,7 @@ export const jobs: Record<JobName, ClusterJob> = {
 
       if (
         user.telegramId &&
-        user.notificationSettings["gradeUpdates::telegram"] !== 0
+        user.settings.notifications["gradeUpdates::telegram"] !== 0
       ) {
         const message = formatCourseDiffs(gradeChangeEvent.payload);
 
@@ -358,7 +358,7 @@ export const jobs: Record<JobName, ClusterJob> = {
 
       const deadlineReminderDiffs = trackDeadlineReminders(
         events,
-        user.notificationSettings.deadlineThresholds,
+        user.settings.deadlineReminders.thresholds,
       );
 
       if (!deadlineReminderDiffs.length) {
@@ -402,7 +402,7 @@ export const jobs: Record<JobName, ClusterJob> = {
 
       if (
         user.telegramId &&
-        user.notificationSettings["deadlineReminders::telegram"] !== 0
+        user.settings.notifications["deadlineReminders::telegram"] !== 0
       ) {
         const message = formatDeadlineReminders(deadlineReminderEvent.payload);
 

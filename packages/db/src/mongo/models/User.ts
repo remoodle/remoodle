@@ -24,7 +24,13 @@ const notificationSettingsSchema = new Schema<NotificationSettings>(
       min: 0,
       max: 2,
     },
-    deadlineThresholds: {
+  },
+  { _id: false },
+);
+
+const deadlineRemindersSchema = new Schema(
+  {
+    thresholds: {
       type: [String],
       default: DEFAULT_THRESHOLDS,
       required: true,
@@ -51,10 +57,17 @@ const userSchema = new Schema<IUser>(
     health: { type: Number, default: 7 },
     telegramId: { type: Number },
     password: { type: String },
-    notificationSettings: {
-      type: notificationSettingsSchema,
-      default: {},
-      required: true,
+    settings: {
+      notifications: {
+        type: notificationSettingsSchema,
+        default: {},
+        required: true,
+      },
+      deadlineReminders: {
+        type: deadlineRemindersSchema,
+        default: {},
+        required: true,
+      },
     },
   },
   { timestamps: true },
