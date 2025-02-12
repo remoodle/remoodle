@@ -69,6 +69,13 @@ const run = async () => {
       await queues[clusterJob.queueName].upsertJobScheduler(
         task.name,
         task.repeat,
+        {
+          opts: {
+            backoff: 3,
+            attempts: 6,
+            removeOnFail: false,
+          },
+        },
       );
     }
 
