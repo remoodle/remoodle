@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.5](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.4...remoodle/telegram-bot-v1.0.5) (2025-02-12)
+
+
+### Bug Fixes
+
+* remove unused import ([9b1d132](https://github.com/remoodle/remoodle/commit/9b1d13216701399f4046a9cc5b8f8b3029886109))
+* use new schema in telegram bot ([211f760](https://github.com/remoodle/remoodle/commit/211f760054de984dcf0214d98a65eb389157ec53))
+
 ## [1.0.4](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.3...remoodle/telegram-bot-v1.0.4) (2025-02-11)
 
 
