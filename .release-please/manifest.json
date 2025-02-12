@@ -1,7 +1,7 @@
 {
   "apps/frontend": "1.8.1",
   "apps/frontend+FILLER": "0.0.0",
-  "apps/backend": "2.2.0",
+  "apps/backend": "2.2.1",
   "apps/backend+FILLER": "0.0.0",
   "apps/telegram-bot": "1.0.4",
   "apps/telegram-bot+FILLER": "0.0.0",
