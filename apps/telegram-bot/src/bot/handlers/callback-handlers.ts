@@ -11,7 +11,6 @@ import {
 } from "../utils";
 import keyboards from "./keyboards";
 import { config } from "../../config";
-import type { NotificationSettings } from "@remoodle/types";
 
 // Menu buttons
 async function others(ctx: Context) {
