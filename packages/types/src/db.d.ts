@@ -31,11 +31,14 @@ export type IEvent = {
 
 export type NotificationSettings = {
   "gradeUpdates::telegram": 0 | 1 | 2;
+  "gradeUpdates::webhook": 0 | 1 | 2;
   "deadlineReminders::telegram": 0 | 1 | 2;
+  "deadlineReminders::webhook": 0 | 1 | 2;
 };
 
 export type UserSettings = {
   notifications: NotificationSettings;
+  webhook: string | null;
   deadlineReminders: {
     thresholds: string[];
   };

@@ -18,9 +18,21 @@ const notificationSettingsSchema = new Schema<NotificationSettings>(
       min: 0,
       max: 2,
     },
+    "deadlineReminders::webhook": {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 2,
+    },
     "gradeUpdates::telegram": {
       type: Number,
       default: 1,
+      min: 0,
+      max: 2,
+    },
+    "gradeUpdates::webhook": {
+      type: Number,
+      default: 0,
       min: 0,
       max: 2,
     },
@@ -62,6 +74,11 @@ const userSchema = new Schema<IUser>(
         type: notificationSettingsSchema,
         default: {},
         required: true,
+      },
+      webhook: {
+        type: String,
+        required: false,
+        default: null,
       },
       deadlineReminders: {
         type: deadlineRemindersSchema,

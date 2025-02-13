@@ -304,6 +304,31 @@ export const jobs: Record<JobName, ClusterJob> = {
       }
 
       if (
+        user.settings.webhook &&
+        user.settings.notifications["gradeUpdates::webhook"] !== 0
+      ) {
+        const { webhook } = user.settings;
+        const { payload } = gradeChangeEvent;
+
+        const job = await queues[QueueName.WEBHOOK].add(
+          QueueName.WEBHOOK,
+          {
+            userId,
+            webhook,
+            payload,
+            action: "gradeUpdates",
+          },
+          {
+            deduplication: {
+              id: `${userId}::${webhook}::${btoa(JSON.stringify(payload))}`,
+            },
+          },
+        );
+
+        return job.data;
+      }
+
+      if (
         user.telegramId &&
         user.settings.notifications["gradeUpdates::telegram"] !== 0
       ) {
@@ -401,6 +426,31 @@ export const jobs: Record<JobName, ClusterJob> = {
       }
 
       if (
+        user.settings.webhook &&
+        user.settings.notifications["deadlineReminders::webhook"] !== 0
+      ) {
+        const { webhook } = user.settings;
+        const { payload } = deadlineReminderEvent;
+
+        const job = await queues[QueueName.WEBHOOK].add(
+          QueueName.WEBHOOK,
+          {
+            userId,
+            webhook,
+            payload,
+            action: "deadlineReminders",
+          },
+          {
+            deduplication: {
+              id: `${userId}::${webhook}::${btoa(JSON.stringify(payload))}`,
+            },
+          },
+        );
+
+        return job.data;
+      }
+
+      if (
         user.telegramId &&
         user.settings.notifications["deadlineReminders::telegram"] !== 0
       ) {
@@ -463,6 +513,22 @@ export const jobs: Record<JobName, ClusterJob> = {
           `Failed to send notification to ${user.name} (${user.moodleId})`,
         );
       }
+    },
+  },
+  [JobName.SEND_WEBOOK_EVENT]: {
+    queueName: QueueName.WEBHOOK,
+    run: async (job) => {
+      const { userId, webhook, payload } = job.data;
+
+      logger.cluster.info(`Webhook event for ${userId}`);
+
+      await fetch(webhook, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     },
   },
 };

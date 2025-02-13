@@ -638,12 +638,15 @@ const userRoutes = new Hono<{
         settings: z
           .object({
             notifications: z.object({
-              "deadlineReminders::telegram": z.number(),
-              "gradeUpdates::telegram": z.number(),
+              "gradeUpdates::telegram": z.number().min(0).max(1),
+              "gradeUpdates::webhook": z.number().min(0).max(1),
+              "deadlineReminders::telegram": z.number().min(0).max(1),
+              "deadlineReminders::webhook": z.number().min(0).max(1),
             }),
             deadlineReminders: z.object({
               thresholds: z.array(z.string()),
             }),
+            webhook: z.string().url().nullable(),
           })
           .optional(),
       }),

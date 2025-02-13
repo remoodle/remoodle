@@ -17,6 +17,7 @@ export enum JobName {
   CHECK_REMINDERS = "reminders::check",
 
   SEND_TELEGRAM_MESSAGE = "telegram::send-message",
+  SEND_WEBOOK_EVENT = "webhook::send-event",
 }
 
 export enum QueueName {
@@ -34,6 +35,7 @@ export enum QueueName {
   REMINDERS = "reminders check",
 
   TELEGRAM = "telegram",
+  WEBHOOK = "webhook",
 }
 
 export const queueNames = getValues(QueueName);
