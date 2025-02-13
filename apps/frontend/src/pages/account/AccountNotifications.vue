@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, toRef, watch, onMounted, watchEffect } from "vue";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import type { UserSettings } from "@remoodle/types";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -19,6 +19,17 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/shared/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/shared/ui/alert-dialog";
 import {
   Table,
   TableBody,
@@ -47,6 +58,13 @@ const settings = ref<UserSettings>(
   JSON.parse(JSON.stringify(props.account.settings)),
 );
 
+watchEffect(() => {
+  settings.value = JSON.parse(JSON.stringify(props.account.settings));
+});
+
+const webhook = ref(props.account?.settings.webhook ?? "");
+const showWebhookModal = ref(false);
+
 const telegramId = ref<number | undefined>(props.account?.telegramId);
 const otp = ref<string>("");
 const showOtpModal = ref(false);
@@ -56,6 +74,8 @@ const connect = () => {
     window.open(`${TELEGRAM_BOT_URL}?start=connect`, "_blank");
   }, 1000);
 };
+
+const queryClient = useQueryClient();
 
 const { mutate: verifyOtp, isPending: verifying } = useMutation({
   mutationFn: async () =>
@@ -69,13 +89,38 @@ const { mutate: verifyOtp, isPending: verifying } = useMutation({
     showOtpModal.value = false;
     otp.value = "";
 
-    telegramId.value = parseInt(data.telegramId);
+    telegramId.value = Number(data.telegramId);
 
     userStore.closeTelegramBanner();
 
+    queryClient.invalidateQueries({ queryKey: ["account"] });
+  },
+  onError: (error) => {
     toast({
-      title: "Telegram connected",
+      title: error.message,
     });
+  },
+});
+
+const { mutate: submitWebhook, isPending: submittingWebhook } = useMutation({
+  mutationFn: async (value: string | null) =>
+    requestUnwrap((client) =>
+      client.v2.user.settings.$post(
+        {
+          json: {
+            settings: {
+              ...settings.value,
+              webhook: value,
+            },
+          },
+        },
+        { headers: getAuthHeaders() },
+      ),
+    ),
+  onSuccess: () => {
+    showWebhookModal.value = false;
+
+    queryClient.invalidateQueries({ queryKey: ["account"] });
   },
   onError: (error) => {
     toast({
@@ -89,14 +134,11 @@ const { mutate: updateNotifications, isPending: updatingNotifications } =
     mutationFn: async (settings: UserSettings) =>
       requestUnwrap((client) =>
         client.v2.user.settings.$post(
-          {
-            json: {
-              settings,
-            },
-          },
+          { json: { settings } },
           { headers: getAuthHeaders() },
         ),
       ),
+
     onError: (error) => {
       toast({
         title: error.message,
@@ -139,6 +181,7 @@ const AVAILABLE_THRESHOLDS = [
         <TableRow>
           <TableHead class="w-[420px]"> </TableHead>
           <TableHead class="text-right"> Telegram </TableHead>
+          <TableHead class="text-right"> Webhook </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -158,6 +201,22 @@ const AVAILABLE_THRESHOLDS = [
                     : 0)
               "
               :disabled="!telegramId || updatingNotifications"
+            />
+          </TableCell>
+          <TableCell class="text-right">
+            <Switch
+              :checked="
+                !settings.webhook
+                  ? false
+                  : settings.notifications['gradeUpdates::webhook'] === 1
+              "
+              @update:checked="
+                (value) =>
+                  (settings.notifications['gradeUpdates::webhook'] = value
+                    ? 1
+                    : 0)
+              "
+              :disabled="!settings.webhook || updatingNotifications"
             />
           </TableCell>
         </TableRow>
@@ -229,15 +288,34 @@ const AVAILABLE_THRESHOLDS = [
               :disabled="!telegramId || updatingNotifications"
             />
           </TableCell>
+          <TableCell class="text-right">
+            <Switch
+              :checked="
+                !settings.webhook
+                  ? false
+                  : settings.notifications['deadlineReminders::webhook'] === 1
+              "
+              @update:checked="
+                (value) =>
+                  (settings.notifications['deadlineReminders::webhook'] = value
+                    ? 1
+                    : 0)
+              "
+              :disabled="!settings.webhook || updatingNotifications"
+            />
+          </TableCell>
         </TableRow>
       </TableBody>
     </Table>
   </section>
 
-  <div class="max-w-sm">
+  <Separator />
+
+  <section class="flex max-w-2xl flex-col gap-y-6">
     <div>
       <div class="mb-2 text-muted-foreground">
-        Telegram ID: <strong>{{ telegramId || "not connected" }}</strong>
+        Telegram ID:
+        <strong>{{ telegramId || "not connected" }}</strong>
       </div>
       <Dialog v-model:open="showOtpModal">
         <DialogTrigger as-child>
@@ -266,5 +344,70 @@ const AVAILABLE_THRESHOLDS = [
         </DialogContent>
       </Dialog>
     </div>
-  </div>
+    <div>
+      <div class="mb-2 text-muted-foreground">
+        Webhook:
+        <strong>{{ account.settings.webhook || "not connected" }}</strong>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <Dialog v-model:open="showWebhookModal">
+          <DialogTrigger as-child>
+            <Button size="sm">
+              {{ account.settings.webhook ? "Change Webhook" : "Add Webhook" }}
+            </Button>
+          </DialogTrigger>
+          <DialogContent class="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Enter Webhook URL </DialogTitle>
+              <DialogDescription>
+                Webhooks provide a way for notifications to be delivered to an
+                external web server whenever certain events occur on ReMoodle.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form @submit.prevent="submitWebhook(webhook)">
+              <div class="flex max-w-sm items-center gap-2">
+                <Input
+                  v-model="webhook"
+                  :disabled="submittingWebhook"
+                  placeholder="Webhook URL"
+                />
+                <Button type="submit" :disabled="submittingWebhook">
+                  Add
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        <AlertDialog>
+          <AlertDialogTrigger>
+            <Button
+              v-if="account.settings.webhook"
+              size="sm"
+              variant="destructive"
+              :disabled="submittingWebhook"
+            >
+              Remove webhook
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction @click="submitWebhook(null)">
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </div>
+  </section>
 </template>
