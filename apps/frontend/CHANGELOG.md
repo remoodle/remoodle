@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.8.4](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.3...remoodle/frontend-v1.8.4) (2025-02-13)
+
+
+### Bug Fixes
+
+* change account queryKey ([d4f1a2d](https://github.com/remoodle/remoodle/commit/d4f1a2d0807981cdfdc0db2e081120ab8b1fb5cd))
+* change sections order ([830aee3](https://github.com/remoodle/remoodle/commit/830aee38183734b9f3eaca0dbd859cc4fd79b5db))
+* clear cache on logout ([d554fa2](https://github.com/remoodle/remoodle/commit/d554fa26d8b25a25b28d4174546d051606f8c152))
+
+
+### Code Refactoring
+
+* **ui:** add alert dialog ([0c40e27](https://github.com/remoodle/remoodle/commit/0c40e2714e2bc9b9baa0b3ed6ffd5b9f0a1b03bb))
+
 ## [1.8.3](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.2...remoodle/frontend-v1.8.3) (2025-02-13)
 
 
