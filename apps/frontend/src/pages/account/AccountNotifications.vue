@@ -10,6 +10,16 @@ import { Checkbox } from "@/shared/ui/checkbox";
 import { Separator } from "@/shared/ui/separator";
 import { useToast } from "@/shared/ui/toast";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/shared/ui/dialog";
+import {
   Table,
   TableBody,
   TableCaption,
@@ -38,15 +48,16 @@ const settings = ref<UserSettings>(
 );
 
 const telegramId = ref<number | undefined>(props.account?.telegramId);
-const editingMode = ref(false);
 const otp = ref<string>("");
+const showOtpModal = ref(false);
 
 const connect = () => {
-  editingMode.value = true;
-  window.open(`${TELEGRAM_BOT_URL}?start=connect`, "_blank");
+  setTimeout(() => {
+    window.open(`${TELEGRAM_BOT_URL}?start=connect`, "_blank");
+  }, 1000);
 };
 
-const { mutate: verify, isPending: verifying } = useMutation({
+const { mutate: verifyOtp, isPending: verifying } = useMutation({
   mutationFn: async () =>
     requestUnwrap((client) =>
       client.v2.otp.verify.$post(
@@ -55,7 +66,7 @@ const { mutate: verify, isPending: verifying } = useMutation({
       ),
     ),
   onSuccess: (data) => {
-    editingMode.value = false;
+    showOtpModal.value = false;
     otp.value = "";
 
     telegramId.value = parseInt(data.telegramId);
@@ -122,31 +133,38 @@ const AVAILABLE_THRESHOLDS = [
   </div>
   <Separator />
 
-  <div>
-    <template v-if="telegramId">
-      <p class="text-sm text-muted-foreground">
-        Connected to Telegram ID: <strong>{{ telegramId }}</strong>
-      </p>
-    </template>
-    <template v-else>
-      <p class="text-sm text-muted-foreground">Telegram ID: Not connected</p>
-      <div class="py-2" />
-      <template v-if="editingMode">
-        <form @submit.prevent="verify()">
-          <div class="flex max-w-sm items-center gap-2">
-            <Input
-              v-model="otp"
-              :disabled="verifying"
-              placeholder="Telegram OTP"
-            />
-            <Button type="submit" :disabled="verifying"> Verify </Button>
-          </div>
-        </form>
-      </template>
-      <template v-else>
-        <Button @click="connect"> Connect Telegram </Button>
-      </template>
-    </template>
+  <div class="max-w-sm">
+    <div>
+      <div class="mb-2 text-muted-foreground">
+        Telegram ID: <strong>{{ telegramId || "not connected" }}</strong>
+      </div>
+      <Dialog v-model:open="showOtpModal">
+        <DialogTrigger as-child>
+          <Button @click="connect" size="sm">
+            {{ telegramId ? "Change Telegram" : "Connect Telegram" }}
+          </Button>
+        </DialogTrigger>
+        <DialogContent class="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Enter OTP </DialogTitle>
+            <DialogDescription>
+              It was sent to your Telegram account
+            </DialogDescription>
+          </DialogHeader>
+
+          <form @submit.prevent="verifyOtp()">
+            <div class="flex max-w-sm items-center gap-2">
+              <Input
+                v-model="otp"
+                :disabled="verifying"
+                placeholder="Telegram OTP"
+              />
+              <Button type="submit" :disabled="verifying"> Verify </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
   </div>
 
   <section>
