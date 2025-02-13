@@ -26,7 +26,7 @@ const {
   error,
   refetch,
 } = useQuery({
-  queryKey: ["account", userStore.user],
+  queryKey: ["account"],
   queryFn: async () =>
     await requestUnwrap((client) =>
       client.v2.user.settings.$get({}, { headers: getAuthHeaders() }),
