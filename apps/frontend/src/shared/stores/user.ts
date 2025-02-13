@@ -1,11 +1,13 @@
 import { computed, watchEffect } from "vue";
-import { useQuery } from "@tanstack/vue-query";
+import { useQuery, QueryCache } from "@tanstack/vue-query";
 import { defineStore } from "pinia";
 import { useStorage, StorageSerializers } from "@vueuse/core";
 import type { RemovableRef } from "@vueuse/core";
 import type { APIError, IUser } from "@remoodle/types";
 import { getStorageKey } from "@/shared/lib/helpers";
 import { requestUnwrap, getAuthHeaders } from "@/shared/lib/hc";
+
+const queryCache = new QueryCache();
 
 export function useUser(token: string) {
   const {
@@ -80,6 +82,8 @@ export const useUserStore = defineStore("user", () => {
     preferences.value = getDefaultPreferences();
 
     showTelegramBanner.value = true;
+
+    queryCache.clear();
   };
 
   const { data, isPending, isError, error } = useUser(accessToken.value);
