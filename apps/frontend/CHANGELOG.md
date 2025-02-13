@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.3](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.2...remoodle/frontend-v1.8.3) (2025-02-13)
+
+
+### Code Refactoring
+
+* change otp verification ui ([b8c9296](https://github.com/remoodle/remoodle/commit/b8c9296bce306d708e3cf00a2de392fbcfe72973))
+
 ## [1.8.2](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.1...remoodle/frontend-v1.8.2) (2025-02-12)
 
 
