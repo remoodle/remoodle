@@ -2,15 +2,16 @@
 import { useMutation } from "@tanstack/vue-query";
 import { useUserStore } from "@/shared/stores/user";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/shared/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/shared/ui/alert-dialog";
 import { Button } from "@/shared/ui/button";
 import { requestUnwrap, getAuthHeaders } from "@/shared/lib/hc";
 import { useToast } from "@/shared/ui/toast";
@@ -49,35 +50,26 @@ const { mutate: deleteAccount, isPending: deletingAccount } = useMutation({
       with it.
     </p>
     <div class="mt-3">
-      <Dialog>
-        <DialogTrigger as-child>
+      <AlertDialog>
+        <AlertDialogTrigger as-child>
           <Button variant="destructive"> Delete account </Button>
-        </DialogTrigger>
-        <DialogContent class="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Delete Account </DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete your account? This action cannot
-              be undone.
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter class="sm:justify-start">
-            <DialogClose as-child>
-              <Button type="button" variant="outline"> Cancel </Button>
-            </DialogClose>
-
-            <Button
-              type="button"
-              variant="destructive"
-              :disabled="deletingAccount"
-              @click="deleteAccount"
-            >
-              Yes, delete my account
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction @click="deleteAccount">
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   </details>
 </template>
