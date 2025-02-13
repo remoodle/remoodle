@@ -133,40 +133,6 @@ const AVAILABLE_THRESHOLDS = [
   </div>
   <Separator />
 
-  <div class="max-w-sm">
-    <div>
-      <div class="mb-2 text-muted-foreground">
-        Telegram ID: <strong>{{ telegramId || "not connected" }}</strong>
-      </div>
-      <Dialog v-model:open="showOtpModal">
-        <DialogTrigger as-child>
-          <Button @click="connect" size="sm">
-            {{ telegramId ? "Change Telegram" : "Connect Telegram" }}
-          </Button>
-        </DialogTrigger>
-        <DialogContent class="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Enter OTP </DialogTitle>
-            <DialogDescription>
-              It was sent to your Telegram account
-            </DialogDescription>
-          </DialogHeader>
-
-          <form @submit.prevent="verifyOtp()">
-            <div class="flex max-w-sm items-center gap-2">
-              <Input
-                v-model="otp"
-                :disabled="verifying"
-                placeholder="Telegram OTP"
-              />
-              <Button type="submit" :disabled="verifying"> Verify </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </div>
-  </div>
-
   <section>
     <Table class="max-w-2xl">
       <TableHeader>
@@ -267,4 +233,38 @@ const AVAILABLE_THRESHOLDS = [
       </TableBody>
     </Table>
   </section>
+
+  <div class="max-w-sm">
+    <div>
+      <div class="mb-2 text-muted-foreground">
+        Telegram ID: <strong>{{ telegramId || "not connected" }}</strong>
+      </div>
+      <Dialog v-model:open="showOtpModal">
+        <DialogTrigger as-child>
+          <Button @click="connect" size="sm">
+            {{ telegramId ? "Change Telegram" : "Connect Telegram" }}
+          </Button>
+        </DialogTrigger>
+        <DialogContent class="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Enter OTP </DialogTitle>
+            <DialogDescription>
+              It was sent to your Telegram account
+            </DialogDescription>
+          </DialogHeader>
+
+          <form @submit.prevent="verifyOtp()">
+            <div class="flex max-w-sm items-center gap-2">
+              <Input
+                v-model="otp"
+                :disabled="verifying"
+                placeholder="Telegram OTP"
+              />
+              <Button type="submit" :disabled="verifying"> Verify </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  </div>
 </template>
