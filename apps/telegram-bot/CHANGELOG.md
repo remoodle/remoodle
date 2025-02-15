@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.5...remoodle/telegram-bot-v1.0.6) (2025-02-15)
+
+
+### Bug Fixes
+
+* **tgbot:** remove graderaw rounding ([e73e382](https://github.com/remoodle/remoodle/commit/e73e382506fc415b8903e1a70f96105ad6e3a325))
+
 ## [1.0.5](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.4...remoodle/telegram-bot-v1.0.5) (2025-02-12)
 
 
