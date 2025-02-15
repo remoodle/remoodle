@@ -20,7 +20,7 @@ const courses = ref<{
 const courseCategories = computed(() => Object.keys(courses.value || {}));
 
 const { isPending, isError, data, error, refetch } = useQuery({
-  queryKey: ["courses"],
+  queryKey: ["private", "courses"],
   queryFn: async () =>
     await requestUnwrap((client) =>
       client.v2.courses.overall.$get(

@@ -12,13 +12,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/shared/ui/alert-dialog";
+import { useLogout } from "@/shared/lib/use-logout";
 import { Button } from "@/shared/ui/button";
 import { requestUnwrap, getAuthHeaders } from "@/shared/lib/hc";
 import { useToast } from "@/shared/ui/toast";
 
 const { toast } = useToast();
 
-const userStore = useUserStore();
+const { logout } = useLogout();
 
 const { mutate: deleteAccount, isPending: deletingAccount } = useMutation({
   mutationFn: async () =>
@@ -30,7 +31,7 @@ const { mutate: deleteAccount, isPending: deletingAccount } = useMutation({
       title: "Account deleted",
     });
 
-    userStore.logout();
+    logout();
   },
   onError: (error) => {
     toast({

@@ -1,3 +1,4 @@
+import type { APIError } from "@remoodle/types";
 import { createHC } from "@remoodle/utils";
 import type { AppType } from "@remoodle/backend";
 
@@ -13,3 +14,9 @@ const getAuthHeaders = (token?: string) => {
 };
 
 export { request, requestUnwrap, getAuthHeaders };
+
+declare module "@tanstack/vue-query" {
+  interface Register {
+    defaultError: APIError;
+  }
+}

@@ -19,7 +19,7 @@ const deadlines = ref<{
 }>();
 
 const { isPending, isError, data, error, refetch } = useQuery({
-  queryKey: ["deadlines"],
+  queryKey: ["private", "deadlines"],
   queryFn: async () =>
     await requestUnwrap((client) =>
       client.v2.deadlines.$get({ query: {} }, { headers: getAuthHeaders() }),

@@ -32,7 +32,7 @@ onMounted(async () => {
 const userStore = useUserStore();
 
 const { isPending: loading, data: course } = useQuery<Course>({
-  queryKey: ["course", courseId],
+  queryKey: ["private", "course", courseId],
   queryFn: async () =>
     await requestUnwrap((client) =>
       client.v2.course[":courseId"].$get(
@@ -67,7 +67,7 @@ const {
   data: assignments,
   error: assignmentsError,
 } = useQuery({
-  queryKey: ["course-assignments", courseId],
+  queryKey: ["private", "course-assignments", courseId],
   queryFn: async () =>
     await requestUnwrap((client) =>
       client.v2.course[":courseId"].assignments.$get(
@@ -84,7 +84,7 @@ const {
   data: grades,
   error: gradesError,
 } = useQuery({
-  queryKey: ["course-grades", courseId],
+  queryKey: ["private", "course-grades", courseId],
   queryFn: async () =>
     await requestUnwrap((client) =>
       client.v2.course[":courseId"].grades.$get(

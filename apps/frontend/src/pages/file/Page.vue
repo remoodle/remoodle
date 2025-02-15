@@ -37,7 +37,7 @@ const {
   isError,
   error,
 } = useQuery({
-  queryKey: ["file", getCleanFilepath()],
+  queryKey: ["private", "file", getCleanFilepath()],
   queryFn: fetchFile,
   enabled: !!filepath,
   retry: 2,
