@@ -12,7 +12,7 @@ export default defineConfig((config) => {
 
   const env = loadEnv(mode, process.cwd(), "");
 
-  const sha = env.COMMIT_SHA;
+  const sha = env.COMMIT_SHA || env.CF_PAGES_COMMIT_SHA;
   const buildInfo = {
     version: `${packageJson.version}${sha ? "." + sha.slice(0, 8) : ""}`,
   };
