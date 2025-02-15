@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.5](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.4...remoodle/frontend-v1.8.5) (2025-02-15)
+
+
+### Bug Fixes
+
+* handle private queries invalidation properly ([ce4288d](https://github.com/remoodle/remoodle/commit/ce4288d99621d5de26c0850d79630ecaa406c717))
+
 ## [1.8.4](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.3...remoodle/frontend-v1.8.4) (2025-02-13)
 
 
