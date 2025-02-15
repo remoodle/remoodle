@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.2](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.2.1...remoodle/backend-v2.2.2) (2025-02-15)
+
+
+### Bug Fixes
+
+* **api:** throw 401 after failed token validation ([fce4a57](https://github.com/remoodle/remoodle/commit/fce4a577f23779313f665c593b0f9bb16f46edef))
+
 ## [2.2.1](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.2.0...remoodle/backend-v2.2.1) (2025-02-12)
 
 
