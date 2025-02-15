@@ -29,26 +29,30 @@ const handleTelegramAuth = async (ctx: Context, token: string) => {
 };
 
 const handleJwtAuth = (ctx: Context, token: string) => {
-  const valid = verifyJwtToken(token);
+  try {
+    const valid = verifyJwtToken(token);
 
-  if (!valid) {
+    if (!valid) {
+      throw new HTTPException(401, { message: "Could not verify token" });
+    }
+
+    const payload = decodeJwtToken(token);
+
+    if (
+      !payload ||
+      typeof payload !== "object" ||
+      !("userId" in payload) ||
+      !("moodleId" in payload)
+    ) {
+      throw new HTTPException(401, {
+        message: "Token is missing required fields",
+      });
+    }
+
+    ctx.set("userId", payload.userId);
+  } catch (error) {
     throw new HTTPException(401, { message: "Invalid token" });
   }
-
-  const payload = decodeJwtToken(token);
-
-  if (
-    !payload ||
-    typeof payload !== "object" ||
-    !("userId" in payload) ||
-    !("moodleId" in payload)
-  ) {
-    throw new HTTPException(403, {
-      message: "Token is missing required fields",
-    });
-  }
-
-  ctx.set("userId", payload.userId);
 };
 
 type AuthScheme = "Telegram" | "Bearer";
