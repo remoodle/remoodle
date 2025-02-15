@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, watch, watchEffect } from "vue";
 import { storeToRefs } from "pinia";
-import { useQuery, useQueryClient } from "@tanstack/vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import type { IUser } from "@remoodle/types";
 import { RouterView, useRoute, useRouter } from "vue-router";
 import { useUrlSearchParams } from "@vueuse/core";
@@ -28,8 +28,6 @@ const userStore = useUserStore();
 const { authorized, user } = storeToRefs(userStore);
 
 const { posthog } = useAnalytics();
-
-const queryClient = useQueryClient();
 
 const { data, error } = useQuery({
   queryKey: ["private", "check"],
@@ -61,8 +59,6 @@ const { logout } = useLogout();
 watchEffect(() => {
   if (error.value?.status === 401) {
     logout();
-
-    queryClient.removeQueries({ queryKey: ["private"] });
   }
 });
 
