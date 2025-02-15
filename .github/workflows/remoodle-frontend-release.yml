@@ -1,0 +1,23 @@
+name: "[frontend] Deploy to Production"
+
+on:
+  push:
+    tags:
+      - "remoodle/frontend-*"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Push to production branch
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: frontend-production
+          force: true
+          force_with_lease: false
