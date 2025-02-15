@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.6](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.5...remoodle/frontend-v1.8.6) (2025-02-15)
+
+
+### Code Refactoring
+
+* remove duplicate queryClient call ([5edc8e0](https://github.com/remoodle/remoodle/commit/5edc8e0dfdd41cded3ddc3672e336c8fcdd86d66))
+
 ## [1.8.5](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.4...remoodle/frontend-v1.8.5) (2025-02-15)
 
 
