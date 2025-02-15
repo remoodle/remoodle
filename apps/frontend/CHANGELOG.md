@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.8.7](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.6...remoodle/frontend-v1.8.7) (2025-02-15)
+
+
+### Bug Fixes
+
+* change title ([#368](https://github.com/remoodle/remoodle/issues/368)) ([829ce24](https://github.com/remoodle/remoodle/commit/829ce249d74379495fc71c2021ef2aa08324f9a9))
+
+
+### Build System
+
+* add support for CF_PAGES_COMMIT_SHA env ([b138820](https://github.com/remoodle/remoodle/commit/b138820aca8a892ef8e54af42d65cf8c2683f165))
+
 ## [1.8.6](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.5...remoodle/frontend-v1.8.6) (2025-02-15)
 
 
