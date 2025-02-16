@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.6...remoodle/telegram-bot-v1.0.7) (2025-02-16)
+
+
+### Bug Fixes
+
+* clean up defaults ([1ea88cc](https://github.com/remoodle/remoodle/commit/1ea88cc7d02e2e88d83977de4b90e6b496af7e24))
+
 ## [1.0.6](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.5...remoodle/telegram-bot-v1.0.6) (2025-02-15)
 
 
