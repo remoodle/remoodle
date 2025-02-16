@@ -67,7 +67,7 @@ const getDeadlineText = (deadline: MoodleEvent) => {
 const getGradeText = (grade: MoodleGrade) => {
   let text = "";
   if (!["category", "course"].includes(grade.itemtype)) {
-    text += `${grade.itemname} → <b>${grade.graderaw !== null ? grade.graderaw?.toFixed(2) : "None"}</b>\n`;
+    text += `${grade.itemname} → <b>${grade.graderaw !== null ? grade.graderaw : "None"}</b>\n`;
 
     if (grade.itemname === "Attendance") {
       text += "\n";
