@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.3](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.2.2...remoodle/backend-v2.2.3) (2025-02-16)
+
+
+### Bug Fixes
+
+* clean up defaults ([1ea88cc](https://github.com/remoodle/remoodle/commit/1ea88cc7d02e2e88d83977de4b90e6b496af7e24))
+
 ## [2.2.2](https://github.com/remoodle/remoodle/compare/remoodle/backend-v2.2.1...remoodle/backend-v2.2.2) (2025-02-15)
 
 
