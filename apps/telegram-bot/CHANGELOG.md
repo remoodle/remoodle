@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.8](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.7...remoodle/telegram-bot-v1.0.8) (2025-02-16)
+
+
+### Reverts
+
+* return rounding ([4caa81d](https://github.com/remoodle/remoodle/commit/4caa81dd5a610de7849fac3e9b0b080c11164e77))
+
+
+### Tests
+
+* trigger ci ([cbd010c](https://github.com/remoodle/remoodle/commit/cbd010cf74afc576140a93e7b90d84b96fa58989))
+* trigger ci ([f0ba190](https://github.com/remoodle/remoodle/commit/f0ba190616657de08103aa936e7af9b22ea47657))
+* trigger ci ([38352ab](https://github.com/remoodle/remoodle/commit/38352ab9260911b9c114df9baaca1765f7b9d7ef))
+* trigger ci ([da2d4fa](https://github.com/remoodle/remoodle/commit/da2d4faa29f862613457ea8e1076d8c7c298346b))
+
 ## [1.0.7](https://github.com/remoodle/remoodle/compare/remoodle/telegram-bot-v1.0.6...remoodle/telegram-bot-v1.0.7) (2025-02-16)
 
 
