@@ -14,4 +14,4 @@ jobs:
           token: ${{ secrets.CI_TOKEN }}
           repository: remoodle/remoodle-infra
           event-type: deploy
-          client-payload: '{"registry_package": "${{ github.event.registry_package }}"}'
+          client-payload: '{"registry_package": ${{ toJson(github.event.registry_package) }}}'
