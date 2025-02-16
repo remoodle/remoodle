@@ -27,7 +27,7 @@ const app = new Hono<{
   .use("*", async (ctx, next) => {
     const authorization = ctx.req.header("Authorization");
 
-    if (authorization !== `Bearer ${ctx.env.ALERT_POINT_TOKEN ?? "ALARMA"}`) {
+    if (authorization !== `Bearer ${ctx.env.ALERT_POINT_TOKEN ?? "UpqqN"}`) {
       return ctx.text("Forbidden", 403);
     }
 

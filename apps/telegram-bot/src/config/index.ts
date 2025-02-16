@@ -10,7 +10,7 @@ export const env = cleanEnv(process.env, {
   TELEGRAM_BOT_TOKEN: str(),
 
   BACKEND_URL: str({ default: "http://localhost:9000" }),
-  BACKEND_SECRET: str({ default: "aboba" }),
+  BACKEND_SECRET: str({ default: "mKskw" }),
 
   FRONTEND_URL: str({ default: "https://remoodle.app" }),
 
