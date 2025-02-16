@@ -10,10 +10,14 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: backend
   REGISTRY: ghcr.io
+  IMAGE_NAME: backend
 
-permissions: write-all
+permissions:
+  contents: read
+  packages: write
+  attestations: write
+  id-token: write
 
 jobs:
   build-and-push:
