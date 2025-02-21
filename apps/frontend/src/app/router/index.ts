@@ -7,6 +7,7 @@ import { useUserStore } from "@/shared/stores/user";
 import { RouteName } from "@/shared/lib/routes";
 import AuthPage from "@/pages/auth/Page.vue";
 import HomePage from "@/pages/home/Page.vue";
+import LandingPage from "@/pages/landing/Page.vue";
 import NotFoundPage from "@/pages/404/Page.vue";
 import AccountPage from "@/pages/account/Page.vue";
 import CoursePage from "@/pages/course/Page.vue";
@@ -21,6 +22,12 @@ declare module "vue-router" {
 }
 
 const routes: RouteRecordRaw[] = [
+  {
+    path: "/",
+    name: RouteName.Landing,
+    meta: { auth: "none" },
+    component: LandingPage,
+  },
   {
     path: "/",
     meta: { auth: "required" },
