@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.8](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.7...remoodle/frontend-v1.8.8) (2025-02-21)
+
+
+### Bug Fixes
+
+* migrate on reka-ui ([cdc7604](https://github.com/remoodle/remoodle/commit/cdc7604056f91496b480b09ad615a2073c46cec9))
+
 ## [1.8.7](https://github.com/remoodle/remoodle/compare/remoodle/frontend-v1.8.6...remoodle/frontend-v1.8.7) (2025-02-15)
 
 
