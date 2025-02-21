@@ -4,7 +4,7 @@ import {
   type AlertDialogProps,
   AlertDialogRoot,
   useForwardPropsEmits,
-} from "radix-vue";
+} from "reka-ui";
 
 const props = defineProps<AlertDialogProps>();
 const emits = defineEmits<AlertDialogEmits>();

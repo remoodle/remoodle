@@ -6,7 +6,7 @@ import {
   type ToggleGroupRootEmits,
   type ToggleGroupRootProps,
   useForwardPropsEmits,
-} from "radix-vue";
+} from "reka-ui";
 import type { toggleVariants } from "@/shared/ui/toggle";
 import { cn } from "@/shared/ui/utils";
 

@@ -4,7 +4,7 @@ import {
   ScrollAreaScrollbar,
   type ScrollAreaScrollbarProps,
   ScrollAreaThumb,
-} from "radix-vue";
+} from "reka-ui";
 import { cn } from "@/shared/ui/utils";
 
 const props = withDefaults(

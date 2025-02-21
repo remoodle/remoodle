@@ -5,7 +5,7 @@ import {
   ScrollAreaRoot,
   type ScrollAreaRootProps,
   ScrollAreaViewport,
-} from "radix-vue";
+} from "reka-ui";
 import ScrollBar from "./ScrollBar.vue";
 import { cn } from "@/shared/ui/utils";
 

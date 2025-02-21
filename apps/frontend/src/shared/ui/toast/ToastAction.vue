@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ToastAction, type ToastActionProps } from "radix-vue";
+import { ToastAction, type ToastActionProps } from "reka-ui";
 import { cn } from "@/shared/ui/utils";
 
 const props = defineProps<ToastActionProps & { class?: string }>();

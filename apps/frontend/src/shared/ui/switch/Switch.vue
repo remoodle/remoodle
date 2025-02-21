@@ -5,7 +5,7 @@ import {
   type SwitchRootProps,
   SwitchThumb,
   useForwardPropsEmits,
-} from "radix-vue";
+} from "reka-ui";
 import { cn } from "@/shared/ui/utils";
 
 const props = defineProps<SwitchRootProps & { class?: string }>();

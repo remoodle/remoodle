@@ -5,7 +5,7 @@ import {
   ToggleGroupItem,
   type ToggleGroupItemProps,
   useForwardProps,
-} from "radix-vue";
+} from "reka-ui";
 import { toggleVariants } from "@/shared/ui/toggle";
 import { cn } from "@/shared/ui/utils";
 

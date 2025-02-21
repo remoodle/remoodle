@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/vue-query";
 import type { IUser } from "@remoodle/types";
 import { RouterView, useRoute, useRouter } from "vue-router";
 import { useUrlSearchParams } from "@vueuse/core";
-import { ConfigProvider } from "radix-vue";
+import { ConfigProvider } from "reka-ui";
 import { useAnalytics } from "@/shared/lib/use-analytics";
 import { useLogout } from "@/shared/lib/use-logout";
 import { useUserStore } from "@/shared/stores/user";

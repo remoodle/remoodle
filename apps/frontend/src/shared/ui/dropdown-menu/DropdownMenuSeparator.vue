@@ -3,7 +3,7 @@ import { cn } from "@/shared/ui/utils";
 import {
   DropdownMenuSeparator,
   type DropdownMenuSeparatorProps,
-} from "radix-vue";
+} from "reka-ui";
 import { computed, type HTMLAttributes } from "vue";
 
 const props = defineProps<

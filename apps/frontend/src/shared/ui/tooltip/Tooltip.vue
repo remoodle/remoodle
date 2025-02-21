@@ -4,7 +4,7 @@ import {
   type TooltipRootEmits,
   type TooltipRootProps,
   useForwardPropsEmits,
-} from "radix-vue";
+} from "reka-ui";
 
 const props = defineProps<TooltipRootProps>();
 const emits = defineEmits<TooltipRootEmits>();
