@@ -1,0 +1,1 @@
+ALTER TABLE `sent_reminders` RENAME TO `sent_notifications`;

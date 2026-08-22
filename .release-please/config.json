@@ -1,6 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "separate-pull-requests": true,
+  "commit-search-depth": 100,
   "changelog-sections": [
     {
       "type": "feat",
@@ -52,18 +53,9 @@
     }
   ],
   "packages": {
-    "apps/frontend": {
+    "apps/remoodle": {
       "release-type": "node",
-      "package-name": "remoodle/frontend",
-      "pull-request-title-pattern": "chore${scope}: release ${component} (deploy-as: release-${version})"
-    },
-    "apps/backend": {
-      "release-type": "node",
-      "package-name": "remoodle/backend"
-    },
-    "apps/telegram-bot": {
-      "release-type": "node",
-      "package-name": "remoodle/telegram-bot"
+      "package-name": "remoodle"
     }
   }
 }

@@ -1,0 +1,244 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+
+  "menu_ready": "👋 ReMoodle is ready",
+  "warn_no_group_in_calendar": "⚠️ Save a primary group in Calendar, then reconnect.",
+  "warn_add_calendar_url": "⚠️ Add your Moodle calendar URL in Settings to enable deadlines.",
+  "warn_digest_disabled": "⚠️ Digest is disabled.",
+  "warn_digest_no_days": "⚠️ Digest is enabled, but no weekdays are selected.",
+  "ui_back": "Back ←",
+  "ui_cancel": "Cancel",
+  "ui_close": "✕ Close",
+  "ui_clear": "Clear",
+  "ui_map": "Map",
+  "ui_calendar": "Calendar",
+  "ui_settings": "Settings",
+  "ui_about": "About",
+  "ui_notifications": "Notifications: {status}",
+  "ui_status_on": "✅ On",
+  "ui_status_muted_off": "🔕 Off",
+  "ui_status_off": "☐ Off",
+  "ui_learn": "Learn",
+  "ui_offline": "Offline",
+  "ui_combine_adjacent_pairs": "Combine adjacent pairs",
+  "ui_room_label": "📍 {room}",
+
+  "menu_free_day": "🌴 You have no deadlines and no classes for today",
+  "menu_no_deadlines_today": "🌴 No deadlines for today",
+  "menu_no_classes_today": "🌴 No classes for today",
+  "menu_today_summary": "You have {deadlines} and {classes} for today",
+  "menu_classes_today": "You have {breakdown} for today",
+  "no_deadlines_count": "no deadlines",
+  "no_classes_count": "no classes",
+  "deadline_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} deadline",
+        "countPlural=other": "{count} deadlines"
+      }
+    }
+  ],
+
+  "about_header": "About ReMoodle",
+  "about_description": "ReMoodle helps AITU students keep up with deadlines and schedule",
+  "about_calendar_link": "Calendar: {url}",
+  "about_github_link": "GitHub: {url}",
+  "about_docs_link": "Docs: {url}",
+  "menu_button_deadlines": "📋 Deadlines",
+  "menu_button_schedule": "📆 Schedule",
+  "command_open_menu": "open menu",
+  "command_show_deadlines": "show deadlines",
+  "command_show_deadlines_short": "show deadlines (2 days)",
+  "command_show_today_schedule": "show today's schedule",
+  "command_show_next_week_schedule": "show next week's schedule",
+  "command_open_settings": "open settings",
+  "command_update_calendar_url": "update Moodle calendar URL",
+
+  "setup_welcome": "👋 Welcome to ReMoodle!\n\nHow would you like to set up?\n\n📅 Moodle calendar URL — track assignment deadlines\n🔗 Calendar account — view your class schedule",
+  "setup_button_add_calendar_url": "📅 Add Moodle calendar URL",
+  "setup_button_connect_calendar_account": "🔗 Connect Calendar account",
+  "calendar_url_prompt": "Send your Moodle calendar URL:\n\n{guideUrl}",
+  "connect_calendar_steps": "Go to {accountUrl}\n\n→ Open Account\n→ Click Generate code\n→ Paste the 6-character code here:",
+
+  "account_deleted": "✅ Account deleted. Send /start to set up ReMoodle again.",
+  "not_registered": "You're not registered. Use /start first.",
+  "not_registered_short": "Not registered.",
+  "not_registered_use_start": "You're not registered. Use /start to set up.",
+  "invalid_url": "That doesn't look like a URL. Please send a valid Moodle calendar URL:",
+  "calendar_not_configured": "Calendar integration is not configured. Contact the admin.",
+  "calendar_connect_error": "❌ {error}\n\nTry generating a new code in the Calendar app.",
+  "calendar_url_saved": "✅ Calendar URL saved!",
+  "calendar_connected": "✅ Calendar account connected!",
+  "group_label": "📆 Your group: {group}",
+  "no_group_saved_in_calendar": "⚠️ No saved primary group found in Calendar. Save it in {host}/account, then reconnect here to enable /schedule.",
+
+  "settings_header": "⚙️ Settings\n\nChoose a category to configure:",
+  "settings_button_courses": "📚 Courses",
+  "settings_button_digest": "📰 Digest (new)",
+  "account_header": "👤 Account",
+  "account_button_delete": "🗑 Delete account",
+  "account_button_confirm_delete": "⚠️ Yes, delete",
+  "account_user_id": "User ID: {id}",
+  "account_telegram_id": "Telegram ID: {telegramId}",
+  "account_group": "Group: {group}",
+  "account_no_group": "Group: not set",
+  "account_moodle_calendar_set": "Moodle calendar: ✅",
+  "account_moodle_calendar_unset": "Moodle calendar: not set",
+  "account_calendar_account_linked": "Calendar account: ✅",
+  "account_calendar_account_unlinked": "Calendar account: not set",
+  "delete_account_header": "⚠️ Delete account",
+  "delete_account_body": "This will permanently remove your account, saved calendar events, and reminder history.\n\nAre you sure?",
+
+  "deadlines_settings_header": "📋 Deadlines Settings",
+  "thresholds_header": "Deadline reminder thresholds",
+  "no_thresholds_configured": "No thresholds configured — you won't receive reminders.",
+  "thresholds_active_header": "Active:",
+  "threshold_item": "  • {duration}",
+  "thresholds_toggle_prompt": "Toggle thresholds below:",
+  "deadlines_disabled_warning": "⚠️ Notifications are currently disabled.",
+  "max_thresholds": "Maximum {max} thresholds allowed.",
+  "settings_button_update_calendar_url": "Update Calendar URL",
+
+  "schedule_settings_header": "📆 Schedule Settings",
+  "schedule_group": "Group: {group}",
+  "schedule_no_group": "Group: not set",
+  "schedule_merge_label": "Merge adjacent pairs: {status}",
+  "schedule_configure_hint": "Configure event types, formats, and notifications.",
+  "schedule_no_group_hint": "Schedule integration requires a saved primary group in Calendar. Save it in {host}/account, then reconnect your Calendar account here.",
+  "no_group_for_schedule": "Connect your Calendar account first to enable schedule notifications.",
+  "schedule_button_this_week": "This week →",
+  "schedule_button_next_week": "Next week →",
+  "schedule_button_today_back": "← Today",
+  "schedule_button_this_week_back": "← This week",
+  "schedule_button_remind_before": "🔔 Remind {minutes} min before",
+  "digest_status": "Digest: {status}",
+  "digest_settings_header": "📰 Digest",
+  "digest_settings_body": "Configure the digest message for today's schedule.",
+  "digest_time": "🕗 Digest at {time}",
+  "digest_disable_all": "Disable all days",
+  "digest_warning_disabled": "⚠️ Digest is disabled.",
+  "digest_warning_no_days": "⚠️ Digest is enabled, but no days are selected.",
+
+  "schedule_reminder_settings_header": "🔔 Schedule reminder",
+  "schedule_reminder_settings_body": "Currently set to {minutes} before class.\n\nSend a number (1–240) to set how many minutes before each class you want to be reminded:",
+  "schedule_reminder_saved": "✅ You'll be reminded {minutes} before each class.",
+  "reminder_minutes_invalid": "Please send a number between 1 and 240:",
+  "digest_time_header": "🕗 Digest time",
+  "digest_time_body": "Currently set to {time}.\n\nSend the time you want to receive the digest every active day in 24-hour HH:MM format:",
+  "digest_time_saved": "✅ Digest time set to {time}.",
+  "digest_time_invalid": "Please send a valid 24-hour time like 08:00 or 17:30:",
+
+  "reminder_header": "🔔 Upcoming deadlines 🔔",
+  "reminder_course_label": "🗓 {course}",
+  "reminder_deadline_item": "  • {name}: {timeLeft}, {date}",
+  "deadlines_upcoming_header": "Upcoming deadlines:",
+  "deadline_item": "{icon}  {name}  |  {course}  |  Date → {date}  |  Time left → {timeLeft}",
+  "unknown_course": "Unknown course",
+  "no_upcoming_deadlines": [
+    {
+      "declarations": ["input days", "local daysPlural = days: plural"],
+      "selectors": ["daysPlural"],
+      "match": {
+        "daysPlural=one": "No upcoming deadlines in the next {days} day.",
+        "daysPlural=other": "No upcoming deadlines in the next {days} days."
+      }
+    }
+  ],
+
+  "schedule_header": "📆 Schedule — {group}",
+  "schedule_today_label": "Today\n{date}",
+  "schedule_this_week": "This week",
+  "schedule_next_week": "Next week",
+  "schedule_item": "{time}  {type}\n{course}\n📍 {location}",
+  "no_classes": "No classes.",
+  "no_classes_today": "No classes today.",
+  "no_classes_this_week": "No more classes this week.",
+  "no_classes_next_week": "No classes next week.",
+  "location_online": "Online",
+  "class_type_lecture": "Lecture",
+  "class_type_practice": "Practice",
+  "class_type_class": "Class",
+  "class_kind_lecture": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} lecture",
+        "countPlural=other": "{count} lectures"
+      }
+    }
+  ],
+  "class_kind_online_lecture": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} online lecture",
+        "countPlural=other": "{count} online lectures"
+      }
+    }
+  ],
+  "class_kind_practice": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} practice",
+        "countPlural=other": "{count} practices"
+      }
+    }
+  ],
+  "class_kind_online_practice": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} online practice",
+        "countPlural=other": "{count} online practices"
+      }
+    }
+  ],
+  "class_kind_class": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} class",
+        "countPlural=other": "{count} classes"
+      }
+    }
+  ],
+  "class_kind_online_class": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} online class",
+        "countPlural=other": "{count} online classes"
+      }
+    }
+  ],
+
+  "class_reminder_header": "⏰ Class in {minutes} min",
+  "class_reminder_item": "{time}  {course}\n📍 {location}",
+
+  "courses_no_courses": "📋 Courses\n\nNo courses found for your group.",
+  "courses_header": "📋 Courses\n\nToggle courses to hide them from deadlines, schedule, and notifications.\n\n{active} of {total} active",
+  "courses_no_group": "📋 Courses\n\nConnect your Calendar account first.\n\nGo to /settings → Schedule → Connect Calendar account.",
+  "courses_fetch_failed": "📋 Courses\n\nFailed to fetch schedule. Try again later.",
+
+  "no_group_schedule_command": "No group linked. Connect your Calendar account via /settings → Schedule → Connect Calendar account.",
+  "no_group_schedule_callback": "No group linked. Go to Settings → Schedule to connect.",
+  "schedule_fetch_failed": "Failed to fetch schedule. Try again later.",
+  "schedule_fetch_failed_short": "Failed to fetch schedule.",
+  "no_calendar_url_set": "No Moodle calendar URL set. Use /settings → Deadlines → Update Calendar URL.",
+  "no_calendar_url_callback": "No Moodle calendar URL set. Go to Settings → Deadlines.",
+  "calendar_fetch_failed": "Failed to fetch your calendar. Check your URL with /update.",
+  "calendar_fetch_failed_short": "Failed to fetch your calendar.",
+  "room_no_photo": "📍 {room}\n\nNo photo available.",
+  "error_no_group_linked": "No group linked.",
+  "error_course_not_found": "Course not found.",
+  "unknown_error": "Unknown error"
+}

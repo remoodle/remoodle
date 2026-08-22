@@ -1,19 +1,30 @@
 {
-  "name": "remoodle",
-  "description": "ReMoodle Monorepo",
+  "name": "heresy",
+  "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md,vue}\"",
-    "test": "TZ=UTC turbo test",
-    "type-check": "turbo type-check",
-    "build": "turbo build"
+    "ready": "vp fmt && vp run lint && vp run -r test && vp run -r build",
+    "check": "vp run lint && vp run -r test && vp run -r build",
+    "format": "vp fmt",
+    "prelint": "vp run @heresy/remoodle#paraglide:compile",
+    "lint": "vp lint",
+    "type-check": "vp run -r type-check",
+    "test": "vp run -r test",
+    "build": "vp run -r build",
+    "dev": "vp run -F @heresy/calendar -F @heresy/remoodle dev",
+    "dev:calendar": "vp run @heresy/calendar#dev",
+    "dev:remoodle": "vp run @heresy/remoodle#dev",
+    "clean:remoodle": "rm -f apps/remoodle/remoodle.db apps/remoodle/remoodle.db-shm apps/remoodle/remoodle.db-wal",
+    "generate:remoodle": "vp run @heresy/remoodle#db:generate",
+    "migrate:remoodle": "vp run @heresy/remoodle#db:migrate"
   },
   "devDependencies": {
-    "prettier": "^3.6.2",
-    "prettier-plugin-tailwindcss": "^0.6.14",
-    "turbo": "^2.5.8"
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
   },
-  "packageManager": "pnpm@10.15.1"
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "packageManager": "pnpm@11.22.0"
 }

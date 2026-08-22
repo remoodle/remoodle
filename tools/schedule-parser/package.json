@@ -1,0 +1,25 @@
+{
+  "name": "@heresy/schedule-parser",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "groups": "pnpm build && node dist/src/cli.js groups",
+    "schedule": "pnpm build && node dist/src/cli.js schedule",
+    "check": "tsc --noEmit",
+    "test": "pnpm build && node --test dist/test/**/*.node-test.js"
+  },
+  "dependencies": {
+    "pdf-parse": "^2.4.5",
+    "valibot": "^1.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "packageManager": "pnpm@11.22.0"
+}

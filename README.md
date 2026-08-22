@@ -1,28 +1,11 @@
-# ReMoodle
+# heresy
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/remoodle/remoodle)
+A Vite+ monorepo.
 
-Enhancing Moodle experience with care
+## Commands
 
-## Development
-
-### Requirements
-
-- Node.js v22 ([install](https://github.com/Schniz/fnm))
-- pnpm ([install](https://pnpm.io/installation))
-- Redis ([install](https://redis.io/download))
-- MongoDB ([install](https://www.mongodb.com/docs/manual/installation/))
-
-## Quick Start
-
-1. Create Telegram Bot
-   - Message @BotFather on Telegram
-   - Save the API token
-
-2. Setup & Run
-
-```bash
-node scripts/setup-env.cjs  # Configure env vars
-pnpm install                # Install dependencies
-pnpm run dev                # Start everything needed
-```
+- `vp install`
+- `vp run ready`
+- `vp run dev`
+- `vp run dev:calendar`
+- `vp run dev:remoodle`

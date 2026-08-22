@@ -1,0 +1,22 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "aitumap",
+  "compatibility_date": "2025-09-06",
+  "assets": {
+    "directory": "./build",
+    "not_found_handling": "single-page-application",
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+    },
+    "traces": {
+      "enabled": false,
+    },
+  },
+}

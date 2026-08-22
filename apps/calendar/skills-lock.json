@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "skills": {
+    "better-auth-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "computedHash": "a4c830509e85557b59339d8d93a4e243e9e59c686e7678854d39230e12c2a6dc"
+    },
+    "pinia": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "897b6b0982956f41f5cc85128ca638b625e1b3c8bc619e303cd1e7661c95b7de"
+    },
+    "pnpm": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "318f9fca2441a3e06fedc336e195dd18be5dbe901064e4fa71b76b40b096ab3a"
+    },
+    "vite": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "0293c251e4d6ff4818e8d2faed2a92f98d8d73c2f4819bd754faf93ca134d6fe"
+    },
+    "vue": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "9c241141e07e836e4f0537c63e8f929fba3767c2997250be38e699f19b75e3f2"
+    },
+    "vue-best-practices": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "eef7ee82688c9541f91b3f1050e79a5c978ddcc2c776a4bf31a11ba37c7901e8"
+    },
+    "vue-router-best-practices": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "9184f7143ba1e1930fd9c5f77298299ab94925a589a0880fc3ccb67429e801c5"
+    },
+    "vueuse-functions": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "325e49fd2a009bc2ae6dd974cc0c4a7413a342019c9f0e207e0491d2badb2fc5"
+    },
+    "web-design-guidelines": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "e93e63afa6a7cde48cb41bd271110da942ee99e115b5a5774158b1f239926334"
+    }
+  }
+}

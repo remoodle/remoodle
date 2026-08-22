@@ -1,0 +1,18 @@
+{
+  "name": "cabgen",
+  "version": "1.0.0",
+  "description": "Automated cabinet screenshot generator for AITU Map",
+  "scripts": {
+    "start": "playwright test",
+    "start:headed": "playwright test --headed",
+    "start:debug": "playwright test --debug",
+    "report": "playwright show-report",
+    "install-browsers": "playwright install chromium",
+    "format": "oxfmt ."
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.3.1",
+    "oxfmt": "^0.44.0"
+  }
+}

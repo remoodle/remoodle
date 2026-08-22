@@ -1,0 +1,60 @@
+name: "[cabgen] Generate screenshots and upload to R2"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-and-upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup rclone
+        uses: AnimMouse/setup-rclone@v1
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG }}
+
+      - name: Fetch cabinets from R2
+        run: |
+          mkdir -p ./schedules
+          rclone copy remoodle:calendar-schedule/schedules ./schedules || true
+          if [ -n "$(find ./schedules -type f -name '*.json' -print -quit)" ]; then
+            jq -s '[.[][] | .location | strings | select(. != "" and . != "online")] | unique | sort' ./schedules/*.json > tools/cabgen/cabinets.json
+            echo "Extracted $(jq length tools/cabgen/cabinets.json) cabinets from R2"
+          else
+            echo "No schedules found in R2, using cabinets.json from repo"
+          fi
+
+      - name: Set up pnpm and Node.js
+        uses: pnpm/setup@v2.1.0
+        with:
+          version: 11.22.0
+          runtime: node@22
+          working-directory: tools/cabgen
+          cache: true
+          require-lockfile: true
+
+      - name: Install Chromium
+        working-directory: tools/cabgen
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Generate cabinet screenshots
+        working-directory: tools/cabgen
+        run: pnpm start
+        env:
+          CI: "true"
+
+      - name: Verify generated screenshots
+        run: |
+          if [ ! -d tools/cabgen/screenshots ] || [ -z "$(ls -A tools/cabgen/screenshots)" ]; then
+            echo "No screenshots were generated"
+            exit 1
+          fi
+
+          ls -la tools/cabgen/screenshots
+
+      - name: Upload screenshots to R2 bucket
+        run: rclone sync ./tools/cabgen/screenshots remoodle:cabgen -v --transfers=32 --checkers=16 --multi-thread-streams=4

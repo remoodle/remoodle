@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "docs",
+  "compatibility_date": "2025-09-06",
+  "assets": {
+    "directory": ".vitepress/dist",
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+    },
+    "traces": {
+      "enabled": false,
+    },
+  },
+}

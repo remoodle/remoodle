@@ -1,0 +1,53 @@
+{
+  "name": "@heresy/remoodle",
+  "version": "0.19.3",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "run-s paraglide:compile dev:run",
+    "dev:run": "run-p dev:bot dev:worker",
+    "dev:bot": "tsx watch src/bot/index.ts",
+    "dev:worker": "tsx src/worker/index.ts",
+    "start": "run-p start:bot start:worker",
+    "paraglide:compile": "paraglide-js compile --project ./project.inlang --outdir ./src/library/i18n --strategy baseLocale --emit-ts-declarations --no-emit-prettier-ignore --no-emit-readme",
+    "build": "run-s paraglide:compile build:ts",
+    "build:ts": "vp pack",
+    "test": "run-s paraglide:compile test:vitest",
+    "test:vitest": "vp test",
+    "start:bot": "node dist/db/migrate.mjs && node dist/bot/index.mjs",
+    "start:worker": "node dist/db/migrate.mjs && node dist/worker/index.mjs",
+    "format": "vp fmt .",
+    "lint": "vp lint .",
+    "type-check": "run-s paraglide:compile type-check:ts",
+    "type-check:ts": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@grammyjs/hydrate": "^1.6.0",
+    "@hatchet-dev/typescript-sdk": "catalog:",
+    "@libsql/client": "^0.17.2",
+    "better-all": "catalog:",
+    "callback-data": "^1.1.1",
+    "dayjs": "catalog:",
+    "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
+    "envalid": "catalog:",
+    "evlog": "catalog:",
+    "grammy": "^1.38.3",
+    "hono": "catalog:",
+    "lru-cache": "catalog:"
+  },
+  "devDependencies": {
+    "@inlang/paraglide-js": "catalog:",
+    "@inlang/plugin-message-format": "catalog:",
+    "@types/node": "catalog:",
+    "drizzle-kit": "catalog:",
+    "npm-run-all2": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

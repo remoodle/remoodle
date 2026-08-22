@@ -2,51 +2,22 @@ name: CI
 
 on:
   push:
-    branches: ["trunk"]
+    branches: [trunk]
   pull_request:
-    types: [opened, synchronize]
-  merge_group:
-    types: [checks_requested]
+    branches: [trunk]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    name: Test, Lint, and Type Check
+  check:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out code
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 2
+      - uses: actions/checkout@v4
 
-      - name: Cache turbo build setup
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
+      - uses: voidzero-dev/setup-vp@v1
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - run: vp install
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.9.0
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Type check
-        run: pnpm type-check
-
-      - name: Format
-        run: pnpm format
-
-      - name: Test
-        run: pnpm test
+      - run: vp run check

@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `schedule_reminder_offset` text DEFAULT 'PT30M' NOT NULL;
