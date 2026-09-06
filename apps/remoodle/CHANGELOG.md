@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.4](https://github.com/remoodle/heresy/compare/remoodle-v0.19.3...remoodle-v0.19.4) (2026-09-06)
+
+
+### Miscellaneous Chores
+
+* sync repository contents from remoodle/temp ([b149c94](https://github.com/remoodle/heresy/commit/b149c94ce2cb969f3690eb5619bc3398678832a8))
+
 ## [0.19.3](https://github.com/remoodle/heresy/compare/remoodle-v0.19.2...remoodle-v0.19.3) (2026-05-03)
 
 
