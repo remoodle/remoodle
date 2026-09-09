@@ -5,6 +5,7 @@ import * as schema from "./db/schema";
 
 export function createAuth(env: Env) {
   const db = createDb(env.DB);
+
   const microsoftProvider = {
     clientId: env.MICROSOFT_CLIENT_ID,
     tenantId: env.MICROSOFT_TENANT_ID,
@@ -25,10 +26,10 @@ export function createAuth(env: Env) {
     secret: env.BETTER_AUTH_SECRET,
     basePath: "/api/auth",
     socialProviders: {
-      github: {
-        clientId: env.GITHUB_CLIENT_ID,
-        clientSecret: env.GITHUB_CLIENT_SECRET,
-      },
+      // github: {
+      //   clientId: env.GITHUB_CLIENT_ID,
+      //   clientSecret: env.GITHUB_CLIENT_SECRET,
+      // },
       microsoft: microsoftProvider,
     },
   });

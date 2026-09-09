@@ -27,26 +27,26 @@ scheduleReminderCheck.task({
       .select({
         id: users.id,
         telegramId: users.telegramId,
-        group: users.group,
+        calendarUserId: users.calendarUserId,
         excludedCourses: users.excludedCourses,
         scheduleFilters: users.scheduleFilters,
         scheduleReminderOffset: users.scheduleReminderOffset,
       })
       .from(users)
-      .where(and(eq(users.scheduleEnabled, true), isNotNull(users.group)));
+      .where(and(eq(users.scheduleEnabled, true), isNotNull(users.calendarUserId)));
 
     const digestUsers = await db
       .select({
         id: users.id,
         telegramId: users.telegramId,
-        group: users.group,
+        calendarUserId: users.calendarUserId,
         excludedCourses: users.excludedCourses,
         scheduleFilters: users.scheduleFilters,
         digestTime: users.digestTime,
         digestWeekdays: users.digestWeekdays,
       })
       .from(users)
-      .where(and(eq(users.digestEnabled, true), isNotNull(users.group)));
+      .where(and(eq(users.digestEnabled, true), isNotNull(users.calendarUserId)));
 
     if (eligibleUsers.length === 0 && digestUsers.length === 0) {
       await ctx.logger.info("no users with schedule notifications enabled");
@@ -58,7 +58,7 @@ scheduleReminderCheck.task({
       input: {
         userId: user.id,
         telegramId: user.telegramId,
-        group: user.group!,
+        calendarUserId: user.calendarUserId!,
         excludedCourses: user.excludedCourses,
         scheduleFilters: user.scheduleFilters,
         scheduleReminderOffset: user.scheduleReminderOffset,
@@ -81,7 +81,7 @@ scheduleReminderCheck.task({
       input: {
         userId: user.id,
         telegramId: user.telegramId,
-        group: user.group!,
+        calendarUserId: user.calendarUserId!,
         excludedCourses: user.excludedCourses,
         scheduleFilters: user.scheduleFilters,
         digestTime: user.digestTime,

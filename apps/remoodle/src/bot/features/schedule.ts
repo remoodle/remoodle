@@ -1,3 +1,4 @@
+import { toWeeklySchedule } from "../../library/calendar-api";
 import { eq } from "drizzle-orm";
 import { Composer, InputFile, InlineKeyboard } from "grammy";
 import type { Context } from "../context";
@@ -27,7 +28,7 @@ import {
   roomPhotoCallback,
   closeMessageCallback,
 } from "../callback-data";
-import { fetchCachedGroupSchedule } from "../schedule-cache";
+import { fetchCachedUserSchedule } from "../schedule-cache";
 
 export const composer = new Composer<Context>();
 
@@ -37,23 +38,27 @@ type ScheduleView = "today" | "week" | "next_week";
 
 async function fetchScheduleMessage(
   ctx: Context,
-  group: string,
+  calendarUserId: string,
   excludedCourses: string[],
   scheduleFilters: typeof DEFAULT_SCHEDULE_FILTERS,
   view: ScheduleView,
 ): Promise<{ message: string; rooms: string[]; hasThisWeek: boolean }> {
-  const items = await fetchCachedGroupSchedule(ctx, group);
+  const rawItems = await fetchCachedUserSchedule(ctx, calendarUserId);
+  const now = new Date();
+  const items = toWeeklySchedule(rawItems, now, view === "next_week" ? 1 : 0);
   const filters = normalizeScheduleFilters(scheduleFilters);
   const filtered = applyScheduleFilters(items, filters, excludedCourses);
   const merged = filters.combineAdjacentPairs ? mergeAdjacentScheduleItems(filtered) : filtered;
-  const now = new Date();
-  const hasThisWeek = hasRemainingClassesThisWeek(merged, now);
+  const hasThisWeek = hasRemainingClassesThisWeek(
+    applyScheduleFilters(toWeeklySchedule(rawItems, now), filters, excludedCourses),
+    now,
+  );
   const message =
     view === "week"
-      ? buildWeeklyScheduleMessage(merged, now, group)
+      ? buildWeeklyScheduleMessage(merged, now, "My DU")
       : view === "next_week"
-        ? buildNextWeekScheduleMessage(merged, now, group)
-        : buildTodayScheduleMessage(merged, now, group);
+        ? buildNextWeekScheduleMessage(merged, now, "My DU")
+        : buildTodayScheduleMessage(merged, now, "My DU");
   const visibleItems =
     view === "today"
       ? getScheduleForDay(merged, getDayName(now))
@@ -113,7 +118,7 @@ async function replyWithScheduleView(ctx: Context, view: ScheduleView) {
 
   const user = rows[0]!;
 
-  if (!user.group) {
+  if (!user.calendarUserId) {
     await ctx.reply(m.no_group_schedule_command());
     return;
   }
@@ -124,7 +129,7 @@ async function replyWithScheduleView(ctx: Context, view: ScheduleView) {
   try {
     result = await fetchScheduleMessage(
       ctx,
-      user.group,
+      user.calendarUserId,
       user.excludedCourses,
       user.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS,
       view,
@@ -157,7 +162,7 @@ feature.callbackQuery(scheduleCallback.filter(), async (ctx) => {
 
   const user = rows[0]!;
 
-  if (!user.group) {
+  if (!user.calendarUserId) {
     await ctx.answerCallbackQuery({
       text: m.no_group_schedule_callback(),
       show_alert: true,
@@ -171,7 +176,7 @@ feature.callbackQuery(scheduleCallback.filter(), async (ctx) => {
   try {
     result = await fetchScheduleMessage(
       ctx,
-      user.group,
+      user.calendarUserId,
       user.excludedCourses,
       user.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS,
       "today",
@@ -200,7 +205,7 @@ feature.callbackQuery(scheduleViewCallback.filter(), async (ctx) => {
 
   const user = rows[0]!;
 
-  if (!user.group) {
+  if (!user.calendarUserId) {
     await ctx.answerCallbackQuery({
       text: m.no_group_schedule_callback(),
       show_alert: true,
@@ -214,7 +219,7 @@ feature.callbackQuery(scheduleViewCallback.filter(), async (ctx) => {
   try {
     result = await fetchScheduleMessage(
       ctx,
-      user.group,
+      user.calendarUserId,
       user.excludedCourses,
       user.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS,
       view,

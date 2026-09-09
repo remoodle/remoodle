@@ -19,11 +19,7 @@ const props = defineProps<{
 }>();
 
 const today = Temporal.Now.plainDateISO(CALENDAR_TIME_ZONE);
-const weekStart =
-  today.dayOfWeek === 7 ? today.add({ days: 1 }) : today.subtract({ days: today.dayOfWeek - 1 });
-const selectedDate = today.dayOfWeek === 7 ? today.add({ days: 1 }) : today;
-const minDate = weekStart;
-const maxDate = weekStart.add({ days: 6 });
+const selectedDate = today;
 
 const eventsServicePlugin = createEventsServicePlugin();
 const calendarControlsPlugin = createCalendarControlsPlugin();
@@ -88,8 +84,6 @@ const calendarApp = createCalendar({
   events: props.events,
   locale: "en-GB",
   selectedDate,
-  minDate,
-  maxDate,
   isResponsive: true,
   dayBoundaries: {
     start: "08:00",

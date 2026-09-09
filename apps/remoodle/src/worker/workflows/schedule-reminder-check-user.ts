@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../../db";
 import { m } from "../../library/i18n/messages.js";
 import { sentNotifications } from "../../db/schema";
-import { fetchGroupSchedule } from "../../library/calendar-api";
+import { fetchUserSchedule } from "../../library/calendar-api";
 import { durationToMs } from "../../library/dates";
 import {
   applyScheduleFilters,
@@ -19,7 +19,7 @@ import { telegramSendMessage } from "./telegram-send-message";
 type Input = {
   userId: number;
   telegramId: number;
-  group: string;
+  calendarUserId: string;
   excludedCourses: string[];
   scheduleFilters: ScheduleFilters | null;
   scheduleReminderOffset: string;
@@ -27,46 +27,9 @@ type Input = {
 
 const ALMATY_OFFSET_MS = 5 * 60 * 60 * 1000;
 
-const WEEKDAY_INDEX: Record<string, number> = {
-  Sunday: 0,
-  Monday: 1,
-  Tuesday: 2,
-  Wednesday: 3,
-  Thursday: 4,
-  Friday: 5,
-  Saturday: 6,
-};
-
-function scheduleItemStartToMs(start: string, now: Date): number | null {
-  const parts = start.split(" ");
-  if (parts.length !== 2) return null;
-  const [weekday, timeStr] = parts;
-  const timeParts = timeStr!.split(":").map(Number);
-  if (timeParts.length !== 2) return null;
-  const [hours, minutes] = timeParts as [number, number];
-
-  const targetWeekday = WEEKDAY_INDEX[weekday!];
-  if (targetWeekday === undefined) return null;
-
-  // Shift now into Almaty "fake UTC" space
-  const nowAlmaty = new Date(now.getTime() + ALMATY_OFFSET_MS);
-  const todayWeekday = nowAlmaty.getUTCDay();
-
-  const daysUntil = (targetWeekday - todayWeekday + 7) % 7;
-
-  // Build class time in Almaty space
-  const classAlmatyMs = Date.UTC(
-    nowAlmaty.getUTCFullYear(),
-    nowAlmaty.getUTCMonth(),
-    nowAlmaty.getUTCDate() + daysUntil,
-    hours,
-    minutes,
-    0,
-    0,
-  );
-
-  // Convert back to real UTC
-  return classAlmatyMs - ALMATY_OFFSET_MS;
+function scheduleItemStartToMs(start: string): number | null {
+  const value = Date.parse(start.replace(" ", "T") + "+05:00");
+  return Number.isFinite(value) ? value : null;
 }
 
 function almatyDateStr(utcMs: number): string {
@@ -111,7 +74,7 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
     const nowMs = now.getTime();
     const windowEndMs = nowMs + offsetMs;
 
-    const allItems = await fetchGroupSchedule(input.group);
+    const allItems = await fetchUserSchedule(input.calendarUserId);
     const filters = normalizeScheduleFilters(input.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS);
     const filteredItems = applyScheduleFilters(allItems, filters, input.excludedCourses);
     const items = filters.combineAdjacentPairs
@@ -120,7 +83,7 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
 
     // Find classes starting within the offset window
     const upcoming = items.flatMap((item) => {
-      const startMs = scheduleItemStartToMs(item.start, now);
+      const startMs = scheduleItemStartToMs(item.start);
       if (startMs === null) return [];
       if (startMs <= nowMs || startMs > windowEndMs) return [];
       const dateStr = almatyDateStr(startMs);

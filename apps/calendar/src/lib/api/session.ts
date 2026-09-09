@@ -11,5 +11,8 @@ export const useSessionQuery = () =>
 
 export const useClearSession = () => {
   const queryClient = useQueryClient();
-  return () => queryClient.setQueryData(SESSION_QUERY_KEY, null);
+  return () => {
+    queryClient.clear();
+    queryClient.setQueryData(SESSION_QUERY_KEY, null);
+  };
 };

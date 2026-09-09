@@ -15,7 +15,7 @@
     "format-check": "vp fmt --check src/ server/",
     "format": "vp fmt --write src/ server/",
     "cf-typegen": "wrangler types",
-    "r2:seed": "jiti scripts/seed-r2.ts",
+    "test": "vp test",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply DB --local",
     "db:migrate-remote": "wrangler d1 migrations apply DB --remote",

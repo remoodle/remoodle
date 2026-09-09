@@ -22,13 +22,7 @@
     },
   },
   "preview_urls": true,
-  "r2_buckets": [
-    {
-      "binding": "SCHEDULE_BUCKET",
-      "bucket_name": "calendar-schedule",
-      "preview_bucket_name": "calendar-schedule",
-    },
-  ],
+  "triggers": { "crons": ["* * * * *"] },
   "d1_databases": [
     {
       "binding": "DB",

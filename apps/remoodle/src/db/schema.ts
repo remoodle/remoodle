@@ -8,7 +8,7 @@ export const users = sqliteTable("users", {
     .$type<string[]>()
     .notNull()
     .default(["P1D", "PT3H"]),
-  group: text("group"),
+  calendarUserId: text("calendar_user_id"),
   calendarAccountLinked: integer("calendar_account_linked", { mode: "boolean" })
     .notNull()
     .default(false),

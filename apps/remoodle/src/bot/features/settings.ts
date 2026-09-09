@@ -88,7 +88,7 @@ function buildAccountMessage(user: {
   telegramId: number;
   calendarUrl: string;
   calendarAccountLinked: boolean;
-  group: string | null;
+  calendarUserId: string | null;
 }): string {
   return [
     bold(m.account_header()),
@@ -96,7 +96,7 @@ function buildAccountMessage(user: {
     m.account_user_id({ id: code(user.id) }),
     m.account_telegram_id({ telegramId: code(user.telegramId) }),
     "",
-    user.group ? m.account_group({ group: bold(user.group) }) : m.account_no_group(),
+    user.calendarUserId ? m.account_group({ group: "My DU" }) : m.account_no_group(),
     "",
     user.calendarUrl ? m.account_moodle_calendar_set() : m.account_moodle_calendar_unset(),
     user.calendarAccountLinked
@@ -135,7 +135,7 @@ feature.callbackQuery(accountCallback.filter(), async (ctx) => {
       telegramId: users.telegramId,
       calendarUrl: users.calendarUrl,
       calendarAccountLinked: users.calendarAccountLinked,
-      group: users.group,
+      calendarUserId: users.calendarUserId,
     })
     .from(users)
     .where(eq(users.telegramId, ctx.from.id))
@@ -187,7 +187,7 @@ feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
         telegramId: users.telegramId,
         calendarUrl: users.calendarUrl,
         calendarAccountLinked: users.calendarAccountLinked,
-        group: users.group,
+        calendarUserId: users.calendarUserId,
       })
       .from(users)
       .where(eq(users.telegramId, ctx.from.id))
@@ -418,7 +418,7 @@ function buildScheduleSettingsMessage(
   const lines = [
     bold(m.schedule_settings_header()),
     "",
-    group ? m.schedule_group({ group: bold(group) }) : m.schedule_no_group(),
+    group ? m.schedule_group({ group: "My DU" }) : m.schedule_no_group(),
     m.schedule_merge_label({
       status: filters.combineAdjacentPairs ? m.ui_status_on() : m.ui_status_off(),
     }),
@@ -484,7 +484,7 @@ function buildDigestSettingsMessage(
   const lines = [
     bold(m.digest_settings_header()),
     "",
-    group ? m.schedule_group({ group: bold(group) }) : m.schedule_no_group(),
+    group ? m.schedule_group({ group: "My DU" }) : m.schedule_no_group(),
     m.digest_settings_body(),
   ];
 
@@ -512,12 +512,12 @@ feature.callbackQuery(scheduleSettingsCallback.filter(), async (ctx) => {
   const user = rows[0]!;
   const filters = normalizeScheduleFilters(user.scheduleFilters);
   await ctx.editMessageText(
-    buildScheduleSettingsMessage(user.scheduleEnabled, user.group, filters),
+    buildScheduleSettingsMessage(user.scheduleEnabled, user.calendarUserId, filters),
     {
       parse_mode: "HTML",
       reply_markup: buildScheduleSettingsKeyboard(
         user.scheduleEnabled,
-        !!user.group,
+        !!user.calendarUserId,
         filters,
         user.scheduleReminderOffset,
       ),
@@ -534,7 +534,7 @@ feature.callbackQuery(toggleScheduleCallback.filter(), async (ctx) => {
   }
   const user = rows[0]!;
 
-  if (!user.group && !user.scheduleEnabled) {
+  if (!user.calendarUserId && !user.scheduleEnabled) {
     await ctx.answerCallbackQuery({
       text: m.no_group_for_schedule(),
       show_alert: true,
@@ -546,11 +546,11 @@ feature.callbackQuery(toggleScheduleCallback.filter(), async (ctx) => {
   await db.update(users).set({ scheduleEnabled: updated }).where(eq(users.telegramId, ctx.from.id));
 
   const filters = normalizeScheduleFilters(user.scheduleFilters);
-  await ctx.editMessageText(buildScheduleSettingsMessage(updated, user.group, filters), {
+  await ctx.editMessageText(buildScheduleSettingsMessage(updated, user.calendarUserId, filters), {
     parse_mode: "HTML",
     reply_markup: buildScheduleSettingsKeyboard(
       updated,
-      !!user.group,
+      !!user.calendarUserId,
       filters,
       user.scheduleReminderOffset,
     ),
@@ -569,15 +569,18 @@ feature.callbackQuery(digestSettingsCallback.filter(), async (ctx) => {
   }
   const user = rows[0]!;
   const weekdays = normalizeDigestWeekdays(user.digestWeekdays);
-  await ctx.editMessageText(buildDigestSettingsMessage(user.group, user.digestEnabled, weekdays), {
-    parse_mode: "HTML",
-    reply_markup: buildDigestSettingsKeyboard(
-      !!user.group,
-      user.digestEnabled,
-      user.digestTime,
-      weekdays,
-    ),
-  });
+  await ctx.editMessageText(
+    buildDigestSettingsMessage(user.calendarUserId, user.digestEnabled, weekdays),
+    {
+      parse_mode: "HTML",
+      reply_markup: buildDigestSettingsKeyboard(
+        !!user.calendarUserId,
+        user.digestEnabled,
+        user.digestTime,
+        weekdays,
+      ),
+    },
+  );
   await ctx.answerCallbackQuery();
 });
 
@@ -589,7 +592,7 @@ feature.callbackQuery(toggleDigestCallback.filter(), async (ctx) => {
   }
   const user = rows[0]!;
 
-  if (!user.group && !user.digestEnabled) {
+  if (!user.calendarUserId && !user.digestEnabled) {
     await ctx.answerCallbackQuery({
       text: m.no_group_for_schedule(),
       show_alert: true,
@@ -601,9 +604,14 @@ feature.callbackQuery(toggleDigestCallback.filter(), async (ctx) => {
   await db.update(users).set({ digestEnabled: updated }).where(eq(users.telegramId, ctx.from.id));
 
   const weekdays = normalizeDigestWeekdays(user.digestWeekdays);
-  await ctx.editMessageText(buildDigestSettingsMessage(user.group, updated, weekdays), {
+  await ctx.editMessageText(buildDigestSettingsMessage(user.calendarUserId, updated, weekdays), {
     parse_mode: "HTML",
-    reply_markup: buildDigestSettingsKeyboard(!!user.group, updated, user.digestTime, weekdays),
+    reply_markup: buildDigestSettingsKeyboard(
+      !!user.calendarUserId,
+      updated,
+      user.digestTime,
+      weekdays,
+    ),
   });
   await ctx.answerCallbackQuery();
 });
@@ -631,11 +639,11 @@ feature.callbackQuery(toggleDigestWeekdayCallback.filter(), async (ctx) => {
     .where(eq(users.telegramId, ctx.from.id));
 
   await ctx.editMessageText(
-    buildDigestSettingsMessage(user.group, user.digestEnabled, normalizedUpdated),
+    buildDigestSettingsMessage(user.calendarUserId, user.digestEnabled, normalizedUpdated),
     {
       parse_mode: "HTML",
       reply_markup: buildDigestSettingsKeyboard(
-        !!user.group,
+        !!user.calendarUserId,
         user.digestEnabled,
         user.digestTime,
         normalizedUpdated,
@@ -656,15 +664,18 @@ feature.callbackQuery(disableDigestDaysCallback.filter(), async (ctx) => {
 
   await db.update(users).set({ digestWeekdays: weekdays }).where(eq(users.telegramId, ctx.from.id));
 
-  await ctx.editMessageText(buildDigestSettingsMessage(user.group, user.digestEnabled, weekdays), {
-    parse_mode: "HTML",
-    reply_markup: buildDigestSettingsKeyboard(
-      !!user.group,
-      user.digestEnabled,
-      user.digestTime,
-      weekdays,
-    ),
-  });
+  await ctx.editMessageText(
+    buildDigestSettingsMessage(user.calendarUserId, user.digestEnabled, weekdays),
+    {
+      parse_mode: "HTML",
+      reply_markup: buildDigestSettingsKeyboard(
+        !!user.calendarUserId,
+        user.digestEnabled,
+        user.digestTime,
+        weekdays,
+      ),
+    },
+  );
   await ctx.answerCallbackQuery();
 });
 
@@ -685,12 +696,12 @@ feature.callbackQuery(toggleScheduleTypeCallback.filter(), async (ctx) => {
   await db.update(users).set({ scheduleFilters: filters }).where(eq(users.telegramId, ctx.from.id));
 
   await ctx.editMessageText(
-    buildScheduleSettingsMessage(user.scheduleEnabled, user.group, filters),
+    buildScheduleSettingsMessage(user.scheduleEnabled, user.calendarUserId, filters),
     {
       parse_mode: "HTML",
       reply_markup: buildScheduleSettingsKeyboard(
         user.scheduleEnabled,
-        !!user.group,
+        !!user.calendarUserId,
         filters,
         user.scheduleReminderOffset,
       ),
@@ -716,12 +727,12 @@ feature.callbackQuery(toggleScheduleFormatCallback.filter(), async (ctx) => {
   await db.update(users).set({ scheduleFilters: filters }).where(eq(users.telegramId, ctx.from.id));
 
   await ctx.editMessageText(
-    buildScheduleSettingsMessage(user.scheduleEnabled, user.group, filters),
+    buildScheduleSettingsMessage(user.scheduleEnabled, user.calendarUserId, filters),
     {
       parse_mode: "HTML",
       reply_markup: buildScheduleSettingsKeyboard(
         user.scheduleEnabled,
-        !!user.group,
+        !!user.calendarUserId,
         filters,
         user.scheduleReminderOffset,
       ),
@@ -743,12 +754,12 @@ feature.callbackQuery(toggleScheduleMergeCallback.filter(), async (ctx) => {
   await db.update(users).set({ scheduleFilters: filters }).where(eq(users.telegramId, ctx.from.id));
 
   await ctx.editMessageText(
-    buildScheduleSettingsMessage(user.scheduleEnabled, user.group, filters),
+    buildScheduleSettingsMessage(user.scheduleEnabled, user.calendarUserId, filters),
     {
       parse_mode: "HTML",
       reply_markup: buildScheduleSettingsKeyboard(
         user.scheduleEnabled,
-        !!user.group,
+        !!user.calendarUserId,
         filters,
         user.scheduleReminderOffset,
       ),
@@ -790,14 +801,14 @@ feature.on("message:text", async (ctx, next) => {
   await ctx.reply(
     `${m.schedule_reminder_saved({ minutes: bold(`${mins} minutes`) })}\n\n${buildScheduleSettingsMessage(
       user.scheduleEnabled,
-      user.group,
+      user.calendarUserId,
       filters,
     )}`,
     {
       parse_mode: "HTML",
       reply_markup: buildScheduleSettingsKeyboard(
         user.scheduleEnabled,
-        !!user.group,
+        !!user.calendarUserId,
         filters,
         offset,
       ),
@@ -830,13 +841,18 @@ feature.on("message:text", async (ctx, next) => {
 
   await ctx.reply(
     `${m.digest_time_saved({ time: bold(time) })}\n\n${buildDigestSettingsMessage(
-      user.group,
+      user.calendarUserId,
       user.digestEnabled,
       weekdays,
     )}`,
     {
       parse_mode: "HTML",
-      reply_markup: buildDigestSettingsKeyboard(!!user.group, user.digestEnabled, time, weekdays),
+      reply_markup: buildDigestSettingsKeyboard(
+        !!user.calendarUserId,
+        user.digestEnabled,
+        time,
+        weekdays,
+      ),
     },
   );
 });

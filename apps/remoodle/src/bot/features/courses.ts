@@ -5,14 +5,14 @@ import { db } from "../../db";
 import { users } from "../../db/schema";
 import { m } from "../../library/i18n/messages.js";
 import { coursesCallback, toggleCourseCallback, settingsCallback } from "../callback-data";
-import { fetchCachedGroupSchedule } from "../schedule-cache";
+import { fetchCachedUserSchedule } from "../schedule-cache";
 
 export const composer = new Composer<Context>();
 
 const feature = composer.chatType("private");
 
-async function getGroupCourses(ctx: Context, group: string): Promise<string[]> {
-  const items = await fetchCachedGroupSchedule(ctx, group);
+async function getUserCourses(ctx: Context, userId: string): Promise<string[]> {
+  const items = await fetchCachedUserSchedule(ctx, userId);
   const names = items.map((i) => i.courseName).filter(Boolean);
   return Array.from(new Set(names)).sort();
 }
@@ -53,7 +53,7 @@ feature.command("courses", async (ctx) => {
 
   const user = rows[0]!;
 
-  if (!user.group) {
+  if (!user.calendarUserId) {
     await ctx.reply(m.courses_no_group(), {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard().text(m.ui_back(), settingsCallback.pack({})),
@@ -63,7 +63,7 @@ feature.command("courses", async (ctx) => {
 
   let courses: string[];
   try {
-    courses = await getGroupCourses(ctx, user.group);
+    courses = await getUserCourses(ctx, user.calendarUserId);
   } catch {
     await ctx.reply(m.courses_fetch_failed(), {
       parse_mode: "HTML",
@@ -86,7 +86,7 @@ feature.callbackQuery(coursesCallback.filter(), async (ctx) => {
 
   const user = rows[0]!;
 
-  if (!user.group) {
+  if (!user.calendarUserId) {
     await ctx.answerCallbackQuery();
     await ctx.editMessageText(m.courses_no_group(), {
       parse_mode: "HTML",
@@ -97,7 +97,7 @@ feature.callbackQuery(coursesCallback.filter(), async (ctx) => {
 
   let courses: string[];
   try {
-    courses = await getGroupCourses(ctx, user.group);
+    courses = await getUserCourses(ctx, user.calendarUserId);
   } catch {
     await ctx.answerCallbackQuery(m.schedule_fetch_failed_short());
     return;
@@ -121,14 +121,14 @@ feature.callbackQuery(toggleCourseCallback.filter(), async (ctx) => {
 
   const user = rows[0]!;
 
-  if (!user.group) {
+  if (!user.calendarUserId) {
     await ctx.answerCallbackQuery(m.error_no_group_linked());
     return;
   }
 
   let courses: string[];
   try {
-    courses = await getGroupCourses(ctx, user.group);
+    courses = await getUserCourses(ctx, user.calendarUserId);
   } catch {
     await ctx.answerCallbackQuery(m.schedule_fetch_failed_short());
     return;

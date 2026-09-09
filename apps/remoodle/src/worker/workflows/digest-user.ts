@@ -1,3 +1,4 @@
+import { toWeeklySchedule } from "../../library/calendar-api";
 import { and, eq } from "drizzle-orm";
 import { db } from "../../db";
 import { sentNotifications } from "../../db/schema";
@@ -11,7 +12,7 @@ import {
   normalizeScheduleFilters,
   type ScheduleFilters,
 } from "../../library/schedule";
-import { fetchGroupSchedule } from "../../library/calendar-api";
+import { fetchUserSchedule } from "../../library/calendar-api";
 import { m } from "../../library/i18n/messages.js";
 import { hatchet } from "../hatchet-client";
 import { telegramSendMessage } from "./telegram-send-message";
@@ -21,7 +22,7 @@ const CRON_WINDOW_MINUTES = 10;
 type Input = {
   userId: number;
   telegramId: number;
-  group: string;
+  calendarUserId: string;
   excludedCourses: string[];
   scheduleFilters: ScheduleFilters | null;
   digestTime: string;
@@ -79,14 +80,14 @@ export const digestUser = hatchet.task<Input>({
       return;
     }
 
-    const allItems = await fetchGroupSchedule(input.group);
+    const allItems = await fetchUserSchedule(input.calendarUserId);
     const filters = normalizeScheduleFilters(input.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS);
     const filteredItems = applyScheduleFilters(allItems, filters, input.excludedCourses);
     const items = filters.combineAdjacentPairs
       ? mergeAdjacentScheduleItems(filteredItems)
       : filteredItems;
 
-    const message = buildTodayScheduleMessage(items, now, input.group);
+    const message = buildTodayScheduleMessage(toWeeklySchedule(items, now), now, "My DU");
     const replyMarkup = {
       inline_keyboard: [[{ text: m.ui_close(), callback_data: "remove_message" }]],
     };

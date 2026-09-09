@@ -1,3 +1,4 @@
+import { toWeeklySchedule } from "../../library/calendar-api";
 import { all } from "better-all";
 import { eq } from "drizzle-orm";
 import { Composer, InlineKeyboard } from "grammy";
@@ -30,10 +31,10 @@ import {
   digestSettingsCallback,
 } from "../callback-data";
 import { buildMenuKeyboard } from "../keyboards/menu";
-import { fetchCachedGroupSchedule } from "../schedule-cache";
+import { fetchCachedUserSchedule } from "../schedule-cache";
 
 type MenuUser = {
-  group: string | null;
+  calendarUserId: string | null;
   calendarUrl: string;
   calendarAccountLinked: boolean;
   excludedCourses: string[];
@@ -52,13 +53,13 @@ async function buildMenuMessage(ctx: Context, user: MenuUser): Promise<string> {
   const summary = await buildMenuSummary(ctx, user);
   if (summary) {
     parts.push(summary);
-  } else if (user.calendarAccountLinked && !user.group) {
+  } else if (user.calendarAccountLinked && !user.calendarUserId) {
     parts.push(m.warn_no_group_in_calendar());
   } else if (!user.calendarUrl) {
     parts.push(m.warn_add_calendar_url());
   }
 
-  if (user.group) {
+  if (user.calendarUserId) {
     const digestWeekdays = normalizeDigestWeekdays(user.digestWeekdays);
     if (!user.digestEnabled) {
       parts.push(m.warn_digest_disabled());
@@ -143,14 +144,17 @@ async function getTodayDeadlinesCount(user: Pick<MenuUser, "calendarUrl" | "excl
 
 async function getTodayClasses(
   ctx: Context,
-  user: Pick<MenuUser, "group" | "excludedCourses" | "scheduleFilters">,
+  user: Pick<MenuUser, "calendarUserId" | "excludedCourses" | "scheduleFilters">,
 ) {
-  if (!user.group) {
+  if (!user.calendarUserId) {
     return null;
   }
 
   try {
-    const items = await fetchCachedGroupSchedule(ctx, user.group);
+    const items = toWeeklySchedule(
+      await fetchCachedUserSchedule(ctx, user.calendarUserId),
+      new Date(),
+    );
     const filters = normalizeScheduleFilters(user.scheduleFilters);
     const filtered = applyScheduleFilters(items, filters, user.excludedCourses);
     const merged = filters.combineAdjacentPairs ? mergeAdjacentScheduleItems(filtered) : filtered;
@@ -367,7 +371,7 @@ feature.on("message:text", async (ctx, next) => {
       return;
     }
 
-    let connectResult: { userId: string; email: string; group: string | null };
+    let connectResult: { userId: string; email: string };
     try {
       connectResult = await validateRemoodleConnectToken(code);
     } catch (err) {
@@ -381,14 +385,14 @@ feature.on("message:text", async (ctx, next) => {
       .values({
         telegramId,
         calendarUrl: "",
-        group: connectResult.group ?? undefined,
+        calendarUserId: connectResult.userId,
         calendarAccountLinked: true,
         thresholds: config.reminders.defaultThresholds,
       })
       .onConflictDoUpdate({
         target: users.telegramId,
         set: {
-          group: connectResult.group ?? undefined,
+          calendarUserId: connectResult.userId,
           calendarAccountLinked: true,
         },
       });
@@ -397,17 +401,10 @@ feature.on("message:text", async (ctx, next) => {
 
     ctx.session.awaitingRemoodleToken = false;
 
-    const groupMsg = connectResult.group
-      ? m.group_label({ group: bold(connectResult.group) })
-      : m.no_group_saved_in_calendar({ host: config.calendar.host });
-
-    await ctx.reply(
-      `${m.calendar_connected()}\n\n${groupMsg}\n\n${await buildMenuMessage(ctx, user!)}`,
-      {
-        parse_mode: "HTML",
-        reply_markup: buildMenuKeyboard(),
-      },
-    );
+    await ctx.reply(`${m.calendar_connected()}\n\n${await buildMenuMessage(ctx, user!)}`, {
+      parse_mode: "HTML",
+      reply_markup: buildMenuKeyboard(),
+    });
     return;
   }
 

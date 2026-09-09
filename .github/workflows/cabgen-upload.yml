@@ -17,17 +17,6 @@ jobs:
         with:
           rclone_config: ${{ secrets.RCLONE_CONFIG }}
 
-      - name: Fetch cabinets from R2
-        run: |
-          mkdir -p ./schedules
-          rclone copy remoodle:calendar-schedule/schedules ./schedules || true
-          if [ -n "$(find ./schedules -type f -name '*.json' -print -quit)" ]; then
-            jq -s '[.[][] | .location | strings | select(. != "" and . != "online")] | unique | sort' ./schedules/*.json > tools/cabgen/cabinets.json
-            echo "Extracted $(jq length tools/cabgen/cabinets.json) cabinets from R2"
-          else
-            echo "No schedules found in R2, using cabinets.json from repo"
-          fi
-
       - name: Set up pnpm and Node.js
         uses: pnpm/setup@v2.1.0
         with:

@@ -1,77 +1,38 @@
 import { describe, expect, test } from "vite-plus/test";
-import { generateCalendarEventsIcal, generateScheduleIcal } from "./ical";
+import { generateCalendarEventsIcal, mergeAdjacentCalendarEvents } from "./ical";
 
-describe("generateScheduleIcal", () => {
-  test("exports schedule events with weekly RRULE and respects range end", () => {
-    const ics = generateScheduleIcal(
-      [
-        {
-          id: "oop-lecture",
-          start: "Monday 10:00",
-          end: "Monday 10:50",
-          courseName: "OOP",
-          location: "C1.3.242",
-          isOnline: false,
-          teacher: "A. Teacher",
-          type: "lecture",
-        },
-      ],
-      new Date("2026-04-10T00:00:00Z"),
-      {
-        eventTimeFormat: "utc",
-        rangeStart: new Date("2026-04-13T00:00:00Z"),
-        rangeEnd: new Date("2026-05-10T00:00:00Z"),
-      },
-    );
-
+const event = {
+  id: "mydu-1",
+  title: "Applied project",
+  description: "Teacher",
+  start: "2026-09-07 19:00",
+  end: "2026-09-07 19:50",
+  location: "C1.1",
+};
+describe("dated personal calendar exports", () => {
+  test("uses Almaty time and never invents weekly recurrences", () => {
+    const ics = generateCalendarEventsIcal([event]);
+    expect(ics).toContain("DTSTART:20260907T140000Z");
+    expect(ics).toContain("DTEND:20260907T145000Z");
+    expect(ics).not.toContain("RRULE");
     expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(1);
-    expect(ics).toContain("SUMMARY:OOP");
-    expect(ics).toContain("RRULE:FREQ=WEEKLY;BYDAY=MO;UNTIL=");
-    expect(ics).toContain("DTSTART:20260413T050000Z");
   });
-});
-
-describe("generateCalendarEventsIcal", () => {
-  test("exports weekly events with RRULE instead of duplicating VEVENTs", () => {
-    const ics = generateCalendarEventsIcal(
-      [
-        {
-          id: "learn-ict",
-          title: "Learn ICT",
-          description: "Sunday study block",
-          start: "2026-04-12 23:00",
-          end: "2026-04-12 23:50",
-          location: "Astana IT University",
-        },
-      ],
-      new Date("2026-04-10T00:00:00"),
-      new Date("2026-05-10T00:00:00"),
+  test("does not shift an old class into a later export range", () => {
+    expect(generateCalendarEventsIcal([event], new Date("2026-09-14T00:00:00Z"))).not.toContain(
+      "BEGIN:VEVENT",
     );
-
-    expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(1);
-    expect(ics).toContain("SUMMARY:Learn ICT");
-    expect(ics).toContain("DTSTART;TZID=Asia/Almaty:20260412T230000");
-    expect(ics).toContain("DTEND;TZID=Asia/Almaty:20260412T235000");
-    expect(ics).toContain("RRULE:FREQ=WEEKLY;BYDAY=SU;UNTIL=");
-    expect(ics).not.toContain("learn-ict-2026-");
   });
-
-  test("skips events whose first occurrence is outside the selected export range", () => {
-    const ics = generateCalendarEventsIcal(
-      [
-        {
-          id: "late-event",
-          title: "Late Event",
-          description: "",
-          start: "2026-06-01 10:00",
-          end: "2026-06-01 10:50",
-          location: "Astana IT University",
-        },
-      ],
-      new Date("2026-04-10T00:00:00"),
-      new Date("2026-05-10T00:00:00"),
-    );
-
-    expect(ics.match(/BEGIN:VEVENT/g)).toBeNull();
+  test("merges adjacent slots only on the same date with matching details", () => {
+    const second = { ...event, id: "2", start: "2026-09-07 20:00", end: "2026-09-07 20:50" };
+    const nextWeek = { ...second, id: "3", start: "2026-09-14 20:00", end: "2026-09-14 20:50" };
+    expect(mergeAdjacentCalendarEvents([event, second, nextWeek])).toHaveLength(2);
+    expect(mergeAdjacentCalendarEvents([event, second])[0]?.end).toBe("2026-09-07 20:50");
+  });
+  test("escapes and folds international titles without splitting UTF-8 characters", () => {
+    const title = "Расписание".repeat(20) + "\nInjected";
+    const ics = generateCalendarEventsIcal([{ ...event, title }]);
+    for (const line of ics.split("\r\n"))
+      expect(new TextEncoder().encode(line).length).toBeLessThanOrEqual(75);
+    expect(ics.replace(/\r\n /g, "")).toContain("\\nInjected");
   });
 });

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { computed, ref, watch } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import AccountMenu from "@/components/AccountMenu.vue";
-import GroupSelect from "@/components/GroupSelect.vue";
+import MyDuConnection from "@/components/MyDuConnection.vue";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -17,54 +17,17 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useGroupsQuery } from "@/lib/api";
 import { useClearSession, useSessionQuery } from "@/lib/api/session";
-import { useGenerateRemoodleToken, useSetPrimaryGroup, useUserProfileQuery } from "@/lib/api/user";
+import { useGenerateRemoodleToken } from "@/lib/api/user";
 import { authClient } from "@/lib/auth-client";
 
 const router = useRouter();
 const { data: session } = useSessionQuery();
-const { data: groups } = useGroupsQuery();
-const { data: profile, refetch: refetchProfile } = useUserProfileQuery();
-
-const setPrimaryGroup = useSetPrimaryGroup();
 const generateToken = useGenerateRemoodleToken();
 const clearSession = useClearSession();
 
-const selectedGroup = ref("");
 const generatedCode = ref<string | null>(null);
 const copied = ref(false);
-
-watch(
-  [groups, profile],
-  ([allGroups, userProfile]) => {
-    if (selectedGroup.value) return;
-    if (userProfile?.primaryGroup) {
-      selectedGroup.value = userProfile.primaryGroup;
-      return;
-    }
-    if (allGroups?.length) {
-      selectedGroup.value = allGroups[0]!;
-    }
-  },
-  { immediate: true },
-);
-
-const canSavePrimaryGroup = computed(
-  () =>
-    !!selectedGroup.value &&
-    profile.value?.primaryGroup !== selectedGroup.value &&
-    !!groups.value?.includes(selectedGroup.value),
-);
-
-const hasUnsavedPrimaryGroup = computed(() => canSavePrimaryGroup.value);
-const currentPrimaryGroup = computed(() => profile.value?.primaryGroup || "not set");
-
-async function savePrimaryGroup() {
-  if (!canSavePrimaryGroup.value) return;
-  await setPrimaryGroup.mutateAsync(selectedGroup.value);
-  await refetchProfile();
-}
 
 async function generateCode() {
   const result = await generateToken.mutateAsync();
@@ -105,7 +68,7 @@ async function signOut() {
           <SidebarGroupLabel>Integration</SidebarGroupLabel>
           <SidebarGroupContent>
             <div class="space-y-3 px-1 text-sm text-muted-foreground">
-              <p>Save a primary group first, then generate a short connection code.</p>
+              <p>Connect My DU, then generate a short connection code.</p>
               <p>
                 Send the code to
                 <span class="font-mono text-foreground">@feathermoodbot</span>
@@ -140,51 +103,9 @@ async function signOut() {
         </div>
       </header>
 
-      <div class="flex flex-1 flex-col">
+      <div class="flex flex-1 flex-col overflow-auto">
         <div class="@container/main flex flex-1 flex-col gap-2">
-          <section class="border-b px-5 py-5 sm:px-6">
-            <div class="flex flex-col gap-2">
-              <p class="text-lg font-semibold tracking-tight">Primary group</p>
-              <p class="text-sm text-muted-foreground">
-                Keep one saved group across the schedule, exports, and ReMoodle integration.
-              </p>
-            </div>
-
-            <div class="mt-5 flex flex-col gap-4">
-              <div class="max-w-sm">
-                <GroupSelect v-model="selectedGroup" :all-groups="groups ?? []" />
-              </div>
-
-              <div class="flex flex-wrap items-center gap-3">
-                <Button
-                  :disabled="!canSavePrimaryGroup || setPrimaryGroup.isPending.value"
-                  @click="savePrimaryGroup"
-                >
-                  <Icon icon="lucide:save" class="mr-2 h-4 w-4" />
-                  {{ setPrimaryGroup.isPending.value ? "Saving..." : "Save primary group" }}
-                </Button>
-
-                <p class="text-sm text-muted-foreground">
-                  Current:
-                  <span class="font-medium text-foreground">
-                    {{ currentPrimaryGroup }}
-                  </span>
-                </p>
-              </div>
-
-              <div
-                v-if="hasUnsavedPrimaryGroup"
-                class="rounded-xl px-4 py-3 text-sm text-amber-950 dark:text-amber-100"
-              >
-                Save your primary group before reconnecting ReMoodle. Until then, the app will keep
-                using
-                <span class="font-medium">{{ profile?.primaryGroup || "no group" }}</span>
-                instead of
-                <span class="font-medium">{{ selectedGroup }}</span>
-                .
-              </div>
-            </div>
-          </section>
+          <MyDuConnection />
 
           <section class="px-5 py-5 sm:px-6">
             <div class="flex flex-col gap-2">
@@ -192,7 +113,7 @@ async function signOut() {
               <p class="text-sm text-muted-foreground">
                 Generate a short code and send it to
                 <span class="font-mono text-foreground">@feathermoodbot</span>
-                . Reconnect after changing your primary group.
+                . Your bot will use your personal My DU schedule.
               </p>
             </div>
 

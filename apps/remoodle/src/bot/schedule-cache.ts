@@ -1,6 +1,6 @@
 import type { Context } from "./context";
-import { fetchGroupSchedule } from "../library/calendar-api";
+import { fetchUserSchedule } from "../library/calendar-api";
 
-export async function fetchCachedGroupSchedule(ctx: Context, group: string) {
-  return ctx.shortCache.getOrPut(`schedule:${group}`, async () => fetchGroupSchedule(group));
+export async function fetchCachedUserSchedule(ctx: Context, userId: string) {
+  return ctx.shortCache.getOrPut(`schedule:${userId}`, async () => fetchUserSchedule(userId));
 }

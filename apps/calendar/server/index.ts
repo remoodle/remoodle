@@ -1,16 +1,25 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, lt, isNotNull } from "drizzle-orm";
 import { Hono, type Context } from "hono";
 import { createAuthMiddleware, type BetterAuthInstance } from "evlog/better-auth";
 import { evlog, type EvlogVariables } from "evlog/hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import type { ExtraEnv } from "../env-extra";
-import type { GroupSchedule, Groups, ScheduleFilter } from "./types.d";
+import type { ScheduleFilter } from "../shared/schedule";
+import { filterSchedule } from "../shared/schedule";
 import { createAuth } from "./auth";
 import { createDb } from "./db";
-import { icalTokens, user as userTable, remoodleConnectTokens } from "./db/schema";
+import { icalTokens, user as userTable, remoodleConnectTokens, myDuConnections } from "./db/schema";
 import { generateIcal } from "./ical";
-import { getGroups, getGroupSchedule, putGroups, putGroupSchedule } from "./schedule";
+import {
+  startLogin,
+  completeLogin,
+  readSchedule,
+  syncSchedule,
+  disconnect,
+  syncDue,
+  SYNC_INTERVAL,
+} from "./my-du";
 
 type Bindings = ExtraEnv & Env;
 type AppEnv = {
@@ -87,72 +96,57 @@ function requireInternalToken(c: AppContext) {
   });
 }
 
-function applyFilters(items: GroupSchedule, f: ScheduleFilter) {
-  return items.filter((item) => {
-    if (f.excludedCourses.includes(item.courseName)) return false;
-
-    const isLearn = item.teacher.startsWith("https://learn");
-    if (isLearn && !f.eventTypes.learn) return false;
-    if (!isLearn && item.type === "lecture" && !f.eventTypes.lecture) return false;
-    if (!isLearn && item.type === "practice" && !f.eventTypes.practice) return false;
-
-    if (item.isOnline && !f.eventFormats.online) return false;
-    if (!item.isOnline && !f.eventFormats.offline) return false;
-
-    return true;
-  });
-}
+app.use("/api/user/*", async (c, next) => {
+  c.header("Cache-Control", "no-store");
+  if (!["GET", "HEAD", "OPTIONS"].includes(c.req.method)) {
+    const origin = c.req.header("Origin");
+    if (origin !== new URL(c.env.BETTER_AUTH_URL).origin)
+      throw new HTTPException(403, { message: "Invalid request origin" });
+  }
+  await next();
+});
 
 const route = app
-  .get("/api/groups", async (c) => {
-    await requireSession(c);
-    c.get("log").set({
-      schedule: {
-        scope: "groups",
-      },
-    });
-
-    const groups = await getGroups(c.env.SCHEDULE_BUCKET);
-    if (!groups) throw new HTTPException(404, { message: "Groups not found" });
-
-    return c.json(groups);
+  .get("/api/user/schedule", async (c) => {
+    const session = await requireSession(c);
+    const db = createDb(c.env.DB);
+    const [row] = await db
+      .select()
+      .from(myDuConnections)
+      .where(eq(myDuConnections.userId, session.user.id));
+    if (row && syncDue(row)) c.executionCtx.waitUntil(syncSchedule(c.env, session.user.id));
+    return c.json(await readSchedule(c.env, session.user.id));
   })
-  .get("/api/groups/:group", async (c) => {
-    await requireSession(c);
-    c.get("log").set({
-      schedule: {
-        group: c.req.param("group"),
-      },
-    });
-
-    const group = c.req.param("group");
-    const schedule = await getGroupSchedule(c.env.SCHEDULE_BUCKET, group);
-
-    return c.json(schedule ?? []);
+  .post("/api/user/my-du/start", async (c) => {
+    const session = await requireSession(c);
+    return c.json(await startLogin(c.env, session.user.id));
   })
-  .put("/api/groups", async (c) => {
-    const groups = await c.req.json<Groups>();
-    c.get("log").set({
-      schedule: {
-        scope: "groups",
-      },
-    });
-
-    await putGroups(c.env.SCHEDULE_BUCKET, groups);
-
-    return c.json({ ok: true });
+  .post("/api/user/my-du/connect", async (c) => {
+    const session = await requireSession(c);
+    if (Number(c.req.header("Content-Length") ?? 0) > 24_000)
+      throw new HTTPException(413, { message: "Connection link is too long" });
+    const body = await c.req.json<{
+      callbackUrl: string;
+      studyYear: number;
+      term: number;
+      firstWeekStart: string;
+    }>();
+    return c.json(await completeLogin(c.env, session.user.id, body));
   })
-  .put("/api/groups/:group", async (c) => {
-    const group = c.req.param("group");
-    const schedule = await c.req.json<GroupSchedule>();
-    c.get("log").set({
-      schedule: {
-        group,
-      },
-    });
-
-    await putGroupSchedule(c.env.SCHEDULE_BUCKET, group, schedule);
-
+  .post("/api/user/my-du/sync", async (c) => {
+    const session = await requireSession(c);
+    const [row] = await createDb(c.env.DB)
+      .select()
+      .from(myDuConnections)
+      .where(eq(myDuConnections.userId, session.user.id));
+    if (!row?.credentials) throw new HTTPException(400, { message: "Connect My DU first." });
+    if (!row.lastAttemptAt || row.lastAttemptAt < Date.now() - 60_000)
+      await syncSchedule(c.env, session.user.id);
+    return c.json(await readSchedule(c.env, session.user.id));
+  })
+  .delete("/api/user/my-du", async (c) => {
+    const session = await requireSession(c);
+    await disconnect(c.env, session.user.id);
     return c.json({ ok: true });
   })
   .all("/api/auth/**", async (c) => {
@@ -178,14 +172,13 @@ const route = app
       throw new HTTPException(404, { message: "Token not found" });
     }
 
-    const schedule = await getGroupSchedule(c.env.SCHEDULE_BUCKET, tokenRow.group);
+    const { events: schedule } = await readSchedule(c.env, tokenRow.userId);
     if (!schedule) {
       throw new HTTPException(404, { message: "Schedule not found" });
     }
 
     c.get("log").set({
       ical: {
-        group: tokenRow.group,
         hasFilters: Boolean(tokenRow.filters),
       },
     });
@@ -193,7 +186,7 @@ const route = app
     let items = schedule;
 
     if (tokenRow.filters) {
-      items = applyFilters(items, tokenRow.filters as ScheduleFilter);
+      items = filterSchedule(items, tokenRow.filters);
     }
 
     const tokenFilters = (tokenRow.filters ?? {}) as ScheduleFilter;
@@ -216,36 +209,6 @@ const route = app
         "Content-Disposition": 'inline; filename="calendar.ics"',
       },
     });
-  })
-  .get("/api/user/profile", async (c) => {
-    const session = await requireSession(c);
-
-    const db = createDb(c.env.DB);
-    const [row] = await db
-      .select({ primaryGroup: userTable.primaryGroup })
-      .from(userTable)
-      .where(eq(userTable.id, session.user.id))
-      .limit(1);
-
-    return c.json({ primaryGroup: row?.primaryGroup ?? null });
-  })
-  .patch("/api/user/profile", async (c) => {
-    const session = await requireSession(c);
-
-    const { primaryGroup } = await c.req.json<{ primaryGroup: string }>();
-    c.get("log").set({
-      profile: {
-        primaryGroup,
-      },
-    });
-
-    const db = createDb(c.env.DB);
-    await db
-      .update(userTable)
-      .set({ primaryGroup, updatedAt: new Date() })
-      .where(eq(userTable.id, session.user.id));
-
-    return c.json({ ok: true });
   })
   .post("/api/user/remoodle-token", async (c) => {
     const session = await requireSession(c);
@@ -282,22 +245,11 @@ const route = app
   .get("/api/user/ical-token", async (c) => {
     const session = await requireSession(c);
 
-    const group = c.req.query("group");
-    if (!group) {
-      throw new HTTPException(400, { message: "group is required" });
-    }
-
-    c.get("log").set({
-      ical: {
-        group,
-      },
-    });
-
     const db = createDb(c.env.DB);
     const [tokenRow] = await db
       .select()
       .from(icalTokens)
-      .where(and(eq(icalTokens.userId, session.user.id), eq(icalTokens.group, group)))
+      .where(eq(icalTokens.userId, session.user.id))
       .limit(1);
 
     if (!tokenRow) {
@@ -307,7 +259,6 @@ const route = app
     const url = `${c.env.BETTER_AUTH_URL}/api/ical/${tokenRow.token}`;
     return c.json({
       token: tokenRow.token,
-      group: tokenRow.group,
       url,
       filters: tokenRow.filters ?? null,
     });
@@ -315,14 +266,10 @@ const route = app
   .post("/api/user/ical-token", async (c) => {
     const session = await requireSession(c);
 
-    const body = await c.req.json<{ group: string; filters: ScheduleFilter }>();
-    if (!body.group) {
-      throw new HTTPException(400, { message: "group is required" });
-    }
+    const body = await c.req.json<{ filters: ScheduleFilter }>();
 
     c.get("log").set({
       ical: {
-        group: body.group,
         hasFilters: Boolean(body.filters),
       },
     });
@@ -332,7 +279,7 @@ const route = app
     const [existing] = await db
       .select()
       .from(icalTokens)
-      .where(and(eq(icalTokens.userId, session.user.id), eq(icalTokens.group, body.group)))
+      .where(eq(icalTokens.userId, session.user.id))
       .limit(1);
 
     const token = crypto.randomUUID();
@@ -347,26 +294,21 @@ const route = app
         id: crypto.randomUUID(),
         userId: session.user.id,
         token,
-        group: body.group,
         filters: body.filters ?? null,
         createdAt: new Date(),
       });
     }
 
     const url = `${c.env.BETTER_AUTH_URL}/api/ical/${token}`;
-    return c.json({ token, group: body.group, url });
+    return c.json({ token, url });
   })
   .patch("/api/user/ical-token", async (c) => {
     const session = await requireSession(c);
 
-    const body = await c.req.json<{ group: string; filters: ScheduleFilter }>();
-    if (!body.group) {
-      throw new HTTPException(400, { message: "group is required" });
-    }
+    const body = await c.req.json<{ filters: ScheduleFilter }>();
 
     c.get("log").set({
       ical: {
-        group: body.group,
         hasFilters: Boolean(body.filters),
       },
     });
@@ -376,7 +318,7 @@ const route = app
     const [existing] = await db
       .select()
       .from(icalTokens)
-      .where(and(eq(icalTokens.userId, session.user.id), eq(icalTokens.group, body.group)))
+      .where(eq(icalTokens.userId, session.user.id))
       .limit(1);
 
     if (!existing) {
@@ -415,7 +357,6 @@ const route = app
       .select({
         id: userTable.id,
         email: userTable.email,
-        primaryGroup: userTable.primaryGroup,
       })
       .from(userTable)
       .where(eq(userTable.id, tokenRow.userId))
@@ -428,36 +369,43 @@ const route = app
     c.get("log").set({
       remoodleConnect: {
         userId: u.id,
-        hasPrimaryGroup: Boolean(u.primaryGroup),
       },
     });
 
-    return c.json({ userId: u.id, email: u.email, group: u.primaryGroup });
+    return c.json({ userId: u.id, email: u.email });
   })
-  .get("/api/internal/schedule/:group", async (c) => {
+  .get("/api/internal/schedule/:userId", async (c) => {
     requireInternalToken(c);
-
-    const group = c.req.param("group");
-    c.get("log").set({
-      schedule: {
-        group,
-        scope: "internal",
-      },
-    });
-    const schedule = await getGroupSchedule(c.env.SCHEDULE_BUCKET, group);
-    if (!schedule) {
-      throw new HTTPException(404, { message: "Schedule not found" });
-    }
-
-    return c.json(schedule);
+    const { events } = await readSchedule(c.env, c.req.param("userId"));
+    return c.json(events);
   });
 
 app.onError((error, ctx) => {
   const status = error instanceof HTTPException ? error.status : 500;
   ctx.get("log").error(error, { status });
-  return ctx.json({ status, message: error.message, stack: error.stack }, status);
+  return ctx.json(
+    { status, message: status === 500 ? "Something went wrong. Please try again." : error.message },
+    status,
+  );
 });
 
 export type AppType = typeof route;
 
-export default app;
+export default {
+  fetch: app.fetch,
+  async scheduled(_event: ScheduledController, env: Bindings, ctx: ExecutionContext) {
+    // A small batch each minute stays within the Worker subrequest budget.
+    const rows = await createDb(env.DB)
+      .select({ userId: myDuConnections.userId })
+      .from(myDuConnections)
+      .where(
+        and(
+          isNotNull(myDuConnections.credentials),
+          lt(myDuConnections.lockUntil, Date.now()),
+          lt(myDuConnections.lastAttemptAt, Date.now() - SYNC_INTERVAL),
+        ),
+      )
+      .limit(1);
+    for (const row of rows) ctx.waitUntil(syncSchedule(env, row.userId));
+  },
+};

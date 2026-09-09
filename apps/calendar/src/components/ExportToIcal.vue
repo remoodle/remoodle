@@ -41,7 +41,6 @@ import type { ScheduleFilter } from "@/lib/types";
 import { generateCalendarEventsIcal, mergeAdjacentCalendarEvents } from "../../shared/ical";
 
 const props = defineProps<{
-  group: string;
   filters: ScheduleFilter | undefined;
   events: CalendarEvent[];
   buttonClass?: string;
@@ -53,7 +52,7 @@ const value = ref(today(getLocalTimeZone()).add({ days: 14 })) as Ref<DateValue>
 const open = ref<boolean>(false);
 
 const { data: session } = useSessionQuery();
-const { data: tokenData, isPending: tokenPending } = useIcalTokenQuery(() => props.group);
+const { data: tokenData, isPending: tokenPending } = useIcalTokenQuery();
 const { mutate: generate, isPending: generating } = useUpsertIcalToken();
 const { mutate: updateFilters, isPending: updatingFilters } = useUpdateIcalFilters();
 const copied = ref(false);
@@ -156,7 +155,6 @@ watch(
     }
 
     updateFilters({
-      group: props.group,
       filters: effectiveFilters.value,
     });
   },
@@ -173,7 +171,6 @@ function regenerateUrl() {
   if (!effectiveFilters.value) return;
 
   generate({
-    group: props.group,
     filters: effectiveFilters.value,
   });
 }
@@ -183,8 +180,8 @@ const df = new DateFormatter("en-US", {
 });
 
 const getIcsString = () => {
-  const start = startValue.value.toDate(getLocalTimeZone());
-  const end = value.value.toDate(getLocalTimeZone());
+  const start = new Date(`${startValue.value.toString()}T00:00:00Z`);
+  const end = new Date(`${value.value.toString()}T23:59:59Z`);
   const sourceEvents = combineAdjacentPairs.value
     ? mergeAdjacentCalendarEvents(normalizedEvents.value)
     : normalizedEvents.value;
@@ -206,7 +203,7 @@ const getIcsString = () => {
         description: event.description,
         start: event.start,
         end: event.end,
-        location: "Astana IT University",
+        location: typeof event.location === "string" ? event.location : "",
       })),
     start,
     end,
@@ -244,14 +241,12 @@ const getICalFile = (): void => {
       </DialogHeader>
 
       <div class="mt-2">
-        <h1 class="flex items-center font-bold">
-          {{ group }}
-        </h1>
+        <h1 class="flex items-center font-bold">My DU schedule</h1>
       </div>
 
       <div class="flex flex-col gap-3 rounded-xl border p-4">
         <div class="flex flex-col gap-1.5">
-          <span class="text-sm font-medium">Event Types</span>
+          <span class="text-sm font-medium">Event types</span>
           <div class="flex flex-wrap gap-1 select-none">
             <Badge
               v-for="(enabled, type) in filters?.eventTypes"
@@ -263,7 +258,7 @@ const getICalFile = (): void => {
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <span class="text-sm font-medium">Event Formats</span>
+          <span class="text-sm font-medium">Event formats</span>
           <div class="flex flex-wrap gap-1 select-none">
             <Badge
               v-for="(enabled, format) in filters?.eventFormats"
@@ -275,7 +270,7 @@ const getICalFile = (): void => {
         </div>
 
         <div v-if="filters?.excludedCourses?.length" class="flex flex-col gap-1.5">
-          <span class="text-sm font-medium">Excluded Courses</span>
+          <span class="text-sm font-medium">Excluded courses</span>
           <div class="flex flex-wrap gap-1 select-none">
             <Badge v-for="course in filters?.excludedCourses" :key="course" variant="destructive">{{
               course
@@ -285,7 +280,7 @@ const getICalFile = (): void => {
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <span class="text-sm font-medium">Start Date</span>
+        <span class="text-sm font-medium">Start date</span>
         <Popover>
           <PopoverTrigger as-child>
             <Button variant="outline" class="w-full justify-start text-left font-normal">
@@ -302,7 +297,7 @@ const getICalFile = (): void => {
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <span class="text-sm font-medium">End Date</span>
+        <span class="text-sm font-medium">End date</span>
         <Popover>
           <PopoverTrigger as-child>
             <Button variant="outline" class="w-full justify-start text-left font-normal">
@@ -329,7 +324,7 @@ const getICalFile = (): void => {
       <template v-if="session?.data">
         <div class="flex flex-col gap-3 rounded-xl border p-4">
           <div>
-            <p class="text-sm font-medium">iCal Subscription</p>
+            <p class="text-sm font-medium">iCal subscription</p>
             <p class="mt-0.5 text-xs text-muted-foreground">
               Paste this URL into Google Calendar, Apple Calendar, or any app that supports calendar
               subscriptions.
@@ -372,8 +367,8 @@ const getICalFile = (): void => {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Regenerate subscription URL?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will create a new subscription link for this group. Re-add the new URL
-                        in Google Calendar if you are replacing an old cached subscription.
+                        This will create a new subscription link for your schedule. Re-add the new
+                        URL in Google Calendar if you are replacing an old cached subscription.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -387,7 +382,7 @@ const getICalFile = (): void => {
                   size="sm"
                   class="shrink-0 text-muted-foreground"
                   :disabled="busy || !effectiveFilters"
-                  @click="updateFilters({ group, filters: effectiveFilters! })"
+                  @click="updateFilters({ filters: effectiveFilters! })"
                 >
                   Update filters
                 </Button>
@@ -398,7 +393,7 @@ const getICalFile = (): void => {
             <Button
               variant="outline"
               :disabled="busy || !effectiveFilters"
-              @click="generate({ group, filters: effectiveFilters! })"
+              @click="generate({ filters: effectiveFilters! })"
             >
               Generate link
             </Button>

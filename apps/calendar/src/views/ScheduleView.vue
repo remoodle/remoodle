@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { Icon } from "@iconify/vue";
-import { CalendarDays } from "lucide-vue-next";
+import MyDuConnection from "@/components/MyDuConnection.vue";
 import { storeToRefs } from "pinia";
-import { ref, watchEffect } from "vue";
+import { watch } from "vue";
 import { useRouter } from "vue-router";
 import AccountMenu from "@/components/AccountMenu.vue";
 import AuthDialog from "@/components/AuthDialog.vue";
@@ -24,70 +24,26 @@ import {
 } from "@/components/ui/sidebar";
 import { useSchedule } from "@/composables/use-schedule";
 import { useSessionQuery, useClearSession } from "@/lib/api/session";
-import { useSetPrimaryGroup, useUserProfileQuery } from "@/lib/api/user";
+import { defaultFilters } from "../../shared/schedule";
 import { authClient } from "@/lib/auth-client";
 import { useAppStore } from "@/stores/app";
 
 const appStore = useAppStore();
 const router = useRouter();
-const { group, filters } = storeToRefs(appStore);
+const { filters } = storeToRefs(appStore);
 
-const { groupSchedule, allGroups, groupCourses } = useSchedule(
-  () => group.value,
-  () => filters.value,
+const { events, courses, data, isPending, error, refetch } = useSchedule(() => filters.value);
+const { data: session } = useSessionQuery();
+const clearSession = useClearSession();
+watch(
+  () => session.value?.data?.user.id,
+  () => {
+    filters.value = defaultFilters();
+  },
 );
 
-const { data: session } = useSessionQuery();
-const { data: profile, isPending: profilePending } = useUserProfileQuery();
-const setPrimaryGroup = useSetPrimaryGroup();
-const clearSession = useClearSession();
-const hasTriedPrimaryGroupMigration = ref(false);
-const pendingPrimaryGroup = ref("");
-
-async function migratePrimaryGroup(primaryGroup: string) {
-  try {
-    pendingPrimaryGroup.value = primaryGroup;
-    await setPrimaryGroup.mutateAsync(primaryGroup);
-  } catch {
-    hasTriedPrimaryGroupMigration.value = false;
-  } finally {
-    if (pendingPrimaryGroup.value === primaryGroup) {
-      pendingPrimaryGroup.value = "";
-    }
-  }
-}
-
-watchEffect(() => {
-  const primaryGroup = pendingPrimaryGroup.value || profile.value?.primaryGroup || "";
-  const storedGroup = group.value;
-
-  if (primaryGroup && group.value !== primaryGroup) {
-    group.value = primaryGroup;
-    return;
-  }
-
-  if (
-    session.value?.data &&
-    !profilePending.value &&
-    !primaryGroup &&
-    storedGroup &&
-    allGroups.value?.includes(storedGroup) &&
-    !setPrimaryGroup.isPending.value &&
-    !hasTriedPrimaryGroupMigration.value
-  ) {
-    hasTriedPrimaryGroupMigration.value = true;
-    void migratePrimaryGroup(storedGroup);
-    return;
-  }
-
-  if (group.value && allGroups.value && !allGroups.value.includes(group.value)) {
-    group.value = "";
-  }
-});
-
 function toggleCourse(course: string) {
-  if (!group.value || !filters.value[group.value]) return;
-  const f = filters.value[group.value]!;
+  const f = filters.value;
   if (f.excludedCourses.includes(course)) {
     f.excludedCourses = f.excludedCourses.filter((c) => c !== course);
   } else {
@@ -96,11 +52,7 @@ function toggleCourse(course: string) {
 }
 
 function isCourseIncluded(course: string): boolean {
-  return (
-    !!group.value &&
-    !!filters.value[group.value] &&
-    !filters.value[group.value]!.excludedCourses.includes(course)
-  );
+  return !filters.value.excludedCourses.includes(course);
 }
 
 async function signOut() {
@@ -125,12 +77,11 @@ function openAccountSettings() {
           <span class="text-sm font-semibold tracking-tight">ReMoodle Calendar</span>
         </div>
 
-        <template v-if="group && filters[group]">
+        <template v-if="data?.connection">
           <div class="px-1">
             <ExportToIcal
-              :events="groupSchedule"
-              :group="group"
-              :filters="filters[group]"
+              :events="events"
+              :filters="filters"
               button-class="w-full justify-between"
             />
           </div>
@@ -138,27 +89,23 @@ function openAccountSettings() {
       </SidebarHeader>
 
       <SidebarContent>
-        <template v-if="group && filters[group]">
+        <template v-if="data?.connection">
           <SidebarGroup>
-            <SidebarGroupLabel>Event Types</SidebarGroupLabel>
+            <SidebarGroupLabel>Event types</SidebarGroupLabel>
             <SidebarGroupContent>
               <div class="flex flex-col px-1">
                 <label
                   v-for="key in ['lecture', 'practice', 'learn'] as const"
                   :key="key"
                   class="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent"
-                  @click.prevent="
-                    filters[group]!.eventTypes[key] = !filters[group]!.eventTypes[key]
-                  "
+                  @click.prevent="filters.eventTypes[key] = !filters.eventTypes[key]"
                 >
                   <div
                     class="flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors"
-                    :class="
-                      filters[group]!.eventTypes[key] ? 'border-primary bg-primary' : 'border-input'
-                    "
+                    :class="filters.eventTypes[key] ? 'border-primary bg-primary' : 'border-input'"
                   >
                     <Icon
-                      v-if="filters[group]!.eventTypes[key]"
+                      v-if="filters.eventTypes[key]"
                       icon="lucide:check"
                       class="size-3 text-primary-foreground"
                     />
@@ -170,27 +117,23 @@ function openAccountSettings() {
           </SidebarGroup>
 
           <SidebarGroup>
-            <SidebarGroupLabel>Event Formats</SidebarGroupLabel>
+            <SidebarGroupLabel>Event formats</SidebarGroupLabel>
             <SidebarGroupContent>
               <div class="flex flex-col px-1">
                 <label
                   v-for="key in ['online', 'offline'] as const"
                   :key="key"
                   class="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent"
-                  @click.prevent="
-                    filters[group]!.eventFormats[key] = !filters[group]!.eventFormats[key]
-                  "
+                  @click.prevent="filters.eventFormats[key] = !filters.eventFormats[key]"
                 >
                   <div
                     class="flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors"
                     :class="
-                      filters[group]!.eventFormats[key]
-                        ? 'border-primary bg-primary'
-                        : 'border-input'
+                      filters.eventFormats[key] ? 'border-primary bg-primary' : 'border-input'
                     "
                   >
                     <Icon
-                      v-if="filters[group]!.eventFormats[key]"
+                      v-if="filters.eventFormats[key]"
                       icon="lucide:check"
                       class="size-3 text-primary-foreground"
                     />
@@ -206,7 +149,7 @@ function openAccountSettings() {
             <SidebarGroupContent>
               <div class="flex flex-col px-1">
                 <label
-                  v-for="course in groupCourses"
+                  v-for="course in courses"
                   :key="course"
                   class="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent"
                   @click.prevent="toggleCourse(course)"
@@ -229,7 +172,7 @@ function openAccountSettings() {
         </template>
 
         <div v-else class="px-2 py-6 text-center text-xs text-muted-foreground">
-          Choose your primary group to load your schedule
+          Connect My DU to load your personal schedule
         </div>
       </SidebarContent>
 
@@ -255,14 +198,32 @@ function openAccountSettings() {
               <Button variant="ghost" size="sm" class="text-muted-foreground">Sign in</Button>
             </AuthDialog>
           </template>
-          <Button v-if="group" variant="ghost" size="sm" @click="openAccountSettings">
-            {{ group }}
-          </Button>
+          <Button variant="ghost" size="sm" @click="openAccountSettings"> My DU connection </Button>
         </div>
       </header>
 
-      <div class="min-h-0 flex-1 overflow-hidden">
-        <Schedule class="h-full w-full" :events="groupSchedule" :theme="appStore.theme" />
+      <div class="min-h-0 flex-1 overflow-auto">
+        <p v-if="isPending" class="p-6 text-sm text-muted-foreground" role="status">
+          Loading your schedule…
+        </p>
+        <div v-else-if="error" class="space-y-3 p-6">
+          <p role="alert">Could not load your schedule.</p>
+          <Button variant="outline" @click="refetch()">Try again</Button>
+        </div>
+        <MyDuConnection v-else-if="!data?.connection" />
+        <template v-else>
+          <p
+            v-if="data.connection.syncError || !data.connection.connected"
+            role="status"
+            class="border-b px-4 py-2 text-sm text-muted-foreground"
+          >
+            {{ data.connection.syncError || "Disconnected. Showing saved classes." }}
+          </p>
+          <p v-if="!data.events.length" class="px-4 py-3 text-sm text-muted-foreground">
+            No classes were found for this term. Check your My DU connection settings.
+          </p>
+          <Schedule class="h-full w-full" :events="events" :theme="appStore.theme" />
+        </template>
       </div>
     </SidebarInset>
   </SidebarProvider>

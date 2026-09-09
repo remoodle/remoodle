@@ -1,4 +1,5 @@
 import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import type { ScheduleFilter, ScheduleItem } from "../../shared/schedule";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -6,7 +7,6 @@ export const user = sqliteTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: integer("email_verified", { mode: "boolean" }).notNull(),
   image: text("image"),
-  primaryGroup: text("primary_group"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
@@ -66,16 +66,38 @@ export const remoodleConnectTokens = sqliteTable("remoodle_connect_tokens", {
 });
 
 export const icalTokens = sqliteTable(
-  "ical_tokens",
+  "personal_ical_tokens",
   {
     id: text("id").primaryKey(),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     token: text("token").notNull().unique(),
-    group: text("group").notNull(),
-    filters: text("filters", { mode: "json" }),
+    filters: text("filters", { mode: "json" }).$type<ScheduleFilter>(),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   },
-  (t) => [uniqueIndex("ical_tokens_user_group_unique").on(t.userId, t.group)],
+  (t) => [uniqueIndex("ical_tokens_user_unique").on(t.userId)],
 );
+
+export const myDuLoginRequests = sqliteTable("my_du_login_requests", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  state: text("state").notNull(),
+  expiresAt: integer("expires_at").notNull(),
+});
+
+export const myDuConnections = sqliteTable("my_du_connections", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  credentials: text("credentials"),
+  studyYear: integer("study_year").notNull(),
+  term: integer("term").notNull(),
+  firstWeekStart: text("first_week_start").notNull(),
+  events: text("events", { mode: "json" }).$type<ScheduleItem[]>().notNull().default([]),
+  lastSyncedAt: integer("last_synced_at"),
+  lastAttemptAt: integer("last_attempt_at"),
+  syncError: text("sync_error"),
+  lockUntil: integer("lock_until").notNull().default(0),
+});

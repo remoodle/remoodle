@@ -3,6 +3,35 @@ import { DetailedError, parseResponse } from "hono/client";
 import type { AppType } from "../../../calendar/server/index";
 import { config } from "../config";
 
+// Bot messages are a weekly view of dated personal events, not a repeating source timetable.
+export function toWeeklySchedule<T extends { start: string; end: string }>(
+  items: T[],
+  now: Date,
+  weekOffset = 0,
+): T[] {
+  const local = new Date(now.getTime() + 5 * 60 * 60_000);
+  const monday = new Date(
+    Date.UTC(
+      local.getUTCFullYear(),
+      local.getUTCMonth(),
+      local.getUTCDate() - ((local.getUTCDay() + 6) % 7) + weekOffset * 7,
+    ),
+  );
+  const end = new Date(monday.getTime() + 7 * 86_400_000).toISOString().slice(0, 10);
+  const start = monday.toISOString().slice(0, 10);
+  const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  return items
+    .filter((item) => item.start.slice(0, 10) >= start && item.start.slice(0, 10) < end)
+    .map((item) => {
+      const day = weekdays[new Date(item.start.slice(0, 10) + "T12:00:00Z").getUTCDay()];
+      return {
+        ...item,
+        start: `${day} ${item.start.slice(11)}`,
+        end: `${day} ${item.end.slice(11)}`,
+      };
+    });
+}
+
 const calendarClient = hc<AppType>(config.calendarApi.url, {
   headers: {
     "Content-Type": "application/json",
@@ -28,11 +57,11 @@ export async function validateRemoodleConnectToken(token: string) {
   }
 }
 
-export async function fetchGroupSchedule(group: string) {
+export async function fetchUserSchedule(userId: string) {
   try {
     return await parseResponse(
-      calendarClient.api.internal.schedule[":group"].$get({
-        param: { group },
+      calendarClient.api.internal.schedule[":userId"].$get({
+        param: { userId },
       }),
     );
   } catch (error) {
