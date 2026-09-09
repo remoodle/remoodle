@@ -1,9 +1,16 @@
 <script lang="ts" setup>
 import { Icon } from "@iconify/vue";
-import MyDuConnection from "@/components/MyDuConnection.vue";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyContent,
+} from "@/components/ui/empty";
 import { storeToRefs } from "pinia";
 import { watch } from "vue";
-import { useRouter } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import AccountMenu from "@/components/AccountMenu.vue";
 import AuthDialog from "@/components/AuthDialog.vue";
 import ExportToIcal from "@/components/ExportToIcal.vue";
@@ -19,7 +26,6 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarProvider,
-  SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useSchedule } from "@/composables/use-schedule";
@@ -60,10 +66,6 @@ async function signOut() {
   clearSession();
   await router.replace("/");
 }
-
-function openAccountSettings() {
-  router.push("/account");
-}
 </script>
 
 <template>
@@ -95,21 +97,11 @@ function openAccountSettings() {
             <SidebarGroupContent>
               <div class="flex flex-col px-1">
                 <label
-                  v-for="key in ['lecture', 'practice', 'learn'] as const"
+                  v-for="key in ['lecture', 'practice'] as const"
                   :key="key"
                   class="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent"
-                  @click.prevent="filters.eventTypes[key] = !filters.eventTypes[key]"
                 >
-                  <div
-                    class="flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors"
-                    :class="filters.eventTypes[key] ? 'border-primary bg-primary' : 'border-input'"
-                  >
-                    <Icon
-                      v-if="filters.eventTypes[key]"
-                      icon="lucide:check"
-                      class="size-3 text-primary-foreground"
-                    />
-                  </div>
+                  <Checkbox v-model="filters.eventTypes[key]" />
                   <span class="leading-tight capitalize">{{ key }}</span>
                 </label>
               </div>
@@ -124,20 +116,8 @@ function openAccountSettings() {
                   v-for="key in ['online', 'offline'] as const"
                   :key="key"
                   class="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent"
-                  @click.prevent="filters.eventFormats[key] = !filters.eventFormats[key]"
                 >
-                  <div
-                    class="flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors"
-                    :class="
-                      filters.eventFormats[key] ? 'border-primary bg-primary' : 'border-input'
-                    "
-                  >
-                    <Icon
-                      v-if="filters.eventFormats[key]"
-                      icon="lucide:check"
-                      class="size-3 text-primary-foreground"
-                    />
-                  </div>
+                  <Checkbox v-model="filters.eventFormats[key]" />
                   <span class="leading-tight capitalize">{{ key }}</span>
                 </label>
               </div>
@@ -152,18 +132,11 @@ function openAccountSettings() {
                   v-for="course in courses"
                   :key="course"
                   class="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent"
-                  @click.prevent="toggleCourse(course)"
                 >
-                  <div
-                    class="flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors"
-                    :class="isCourseIncluded(course) ? 'border-primary bg-primary' : 'border-input'"
-                  >
-                    <Icon
-                      v-if="isCourseIncluded(course)"
-                      icon="lucide:check"
-                      class="size-3 text-primary-foreground"
-                    />
-                  </div>
+                  <Checkbox
+                    :model-value="isCourseIncluded(course)"
+                    @update:model-value="toggleCourse(course)"
+                  />
                   <span class="leading-tight">{{ course }}</span>
                 </label>
               </div>
@@ -198,11 +171,15 @@ function openAccountSettings() {
               <Button variant="ghost" size="sm" class="text-muted-foreground">Sign in</Button>
             </AuthDialog>
           </template>
-          <Button variant="ghost" size="sm" @click="openAccountSettings"> My DU connection </Button>
+          <Button as-child variant="ghost" size="sm"
+            ><RouterLink to="/account"
+              ><Icon icon="lucide:settings-2" class="size-4" />Settings</RouterLink
+            ></Button
+          >
         </div>
       </header>
 
-      <div class="min-h-0 flex-1 overflow-auto">
+      <div class="flex min-h-0 flex-1 flex-col overflow-auto">
         <p v-if="isPending" class="p-6 text-sm text-muted-foreground" role="status">
           Loading your schedule…
         </p>
@@ -210,7 +187,18 @@ function openAccountSettings() {
           <p role="alert">Could not load your schedule.</p>
           <Button variant="outline" @click="refetch()">Try again</Button>
         </div>
-        <MyDuConnection v-else-if="!data?.connection" />
+        <Empty v-else-if="!data?.connection" class="h-full"
+          ><EmptyHeader
+            ><EmptyTitle>Your schedule starts here</EmptyTitle
+            ><EmptyDescription
+              >Connect My DU in Settings to import your university classes.</EmptyDescription
+            ></EmptyHeader
+          ><EmptyContent
+            ><Button as-child
+              ><RouterLink to="/account">Connect My DU</RouterLink></Button
+            ></EmptyContent
+          ></Empty
+        >
         <template v-else>
           <p
             v-if="data.connection.syncError || !data.connection.connected"
@@ -222,7 +210,7 @@ function openAccountSettings() {
           <p v-if="!data.events.length" class="px-4 py-3 text-sm text-muted-foreground">
             No classes were found for this term. Check your My DU connection settings.
           </p>
-          <Schedule class="h-full w-full" :events="events" :theme="appStore.theme" />
+          <Schedule class="min-h-0 w-full flex-1" :events="events" :theme="appStore.theme" />
         </template>
       </div>
     </SidebarInset>

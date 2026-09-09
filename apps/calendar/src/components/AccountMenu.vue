@@ -2,7 +2,7 @@
 import { Icon } from "@iconify/vue";
 import { Moon, Sun } from "lucide-vue-next";
 import { computed } from "vue";
-import { useRouter } from "vue-router";
+import { RouterLink } from "vue-router";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,8 +26,6 @@ const emit = defineEmits<{
   signOut: [];
 }>();
 
-const router = useRouter();
-
 const displayName = computed(() => props.name || props.email || "Account");
 const initials = computed(
   () =>
@@ -38,10 +36,6 @@ const initials = computed(
       .map((part) => part[0]?.toUpperCase() ?? "")
       .join("") || "A",
 );
-
-function openAccount() {
-  router.push("/account");
-}
 </script>
 
 <template>
@@ -95,10 +89,11 @@ function openAccount() {
           <DropdownMenuSeparator />
 
           <DropdownMenuGroup>
-            <DropdownMenuItem @click="openAccount">
-              <Icon icon="lucide:user-round" class="size-4" />
-              Account
-            </DropdownMenuItem>
+            <DropdownMenuItem as-child
+              ><RouterLink to="/account"
+                ><Icon icon="lucide:settings-2" class="size-4" />Settings</RouterLink
+              ></DropdownMenuItem
+            >
           </DropdownMenuGroup>
 
           <DropdownMenuSeparator />
@@ -107,7 +102,13 @@ function openAccount() {
             <span class="text-muted-foreground">Theme</span>
 
             <ThemeSwitcher v-slot="{ theme, toggleTheme }">
-              <Button variant="outline" size="icon" class="size-8" @click="toggleTheme">
+              <Button
+                variant="outline"
+                size="icon"
+                class="size-8"
+                :aria-label="`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`"
+                @click="toggleTheme"
+              >
                 <Sun v-if="theme === 'light'" class="h-4 w-4" />
                 <Moon v-else class="h-4 w-4" />
               </Button>
@@ -134,7 +135,7 @@ function openAccount() {
           <DropdownMenuGroup>
             <DropdownMenuItem @click="emit('signOut')">
               <Icon icon="lucide:log-out" class="size-4" />
-              Log out
+              Sign out
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
