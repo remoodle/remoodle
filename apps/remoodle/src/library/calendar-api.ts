@@ -2,6 +2,7 @@ import { hc } from "hono/client";
 import { DetailedError, parseResponse } from "hono/client";
 import type { AppType } from "../../../calendar/server/index";
 import { config } from "../config";
+import { moodleToDeadlineEvents } from "./calendar";
 
 // Bot messages are a weekly view of dated personal events, not a repeating source timetable.
 export function toWeeklySchedule<T extends { start: string; end: string }>(
@@ -70,4 +71,11 @@ export async function fetchUserSchedule(userId: string) {
     }
     throw error;
   }
+}
+
+export async function fetchUserMoodleEvents(userId: string) {
+  const { events } = await parseResponse(
+    calendarClient.api.internal.moodle[":userId"].$get({ param: { userId } }),
+  );
+  return moodleToDeadlineEvents(events);
 }

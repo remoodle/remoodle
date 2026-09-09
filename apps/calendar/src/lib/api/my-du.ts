@@ -8,7 +8,8 @@ export function useMyDuSchedule() {
     queryKey: ["my-du-schedule", () => session.value?.data?.user.id],
     enabled: () => !!session.value?.data,
     queryFn: () => parseResponse(client.api.user.schedule.$get()),
-    refetchInterval: 60_000,
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: true,
   });
 }
 

@@ -7,9 +7,11 @@ import { HTTPException } from "hono/http-exception";
 import type { ExtraEnv } from "../env-extra";
 import type { ScheduleFilter } from "../shared/schedule";
 import { filterSchedule } from "../shared/schedule";
+import { filterMoodle } from "../shared/moodle";
 import { createAuth } from "./auth";
 import { createDb } from "./db";
 import { icalTokens, user as userTable, remoodleConnectTokens, myDuConnections } from "./db/schema";
+import { readMoodle, connectMoodle, disconnectMoodle } from "./moodle";
 import { generateIcal } from "./ical";
 import {
   startLogin,
@@ -107,6 +109,21 @@ app.use("/api/user/*", async (c, next) => {
 });
 
 const route = app
+  .get("/api/user/moodle", async (c) => {
+    const session = await requireSession(c);
+    c.header("Cache-Control", "private, no-store");
+    return c.json(await readMoodle(c.env, session.user.id));
+  })
+  .post("/api/user/moodle", async (c) => {
+    const session = await requireSession(c);
+    const body = await c.req.json<{ url: unknown }>();
+    return c.json(await connectMoodle(c.env, session.user.id, body.url));
+  })
+  .delete("/api/user/moodle", async (c) => {
+    const session = await requireSession(c);
+    await disconnectMoodle(c.env, session.user.id);
+    return c.json({ ok: true });
+  })
   .get("/api/user/schedule", async (c) => {
     const session = await requireSession(c);
     const db = createDb(c.env.DB);
@@ -198,6 +215,10 @@ const route = app
       : undefined;
 
     const ical = generateIcal(items, new Date(), {
+      moodleEvents: filterMoodle(
+        (await readMoodle(c.env, tokenRow.userId)).events,
+        tokenFilters.moodle,
+      ),
       combineAdjacentPairs: tokenFilters.ical?.combineAdjacentPairs,
       rangeStart,
       rangeEnd,
@@ -373,6 +394,11 @@ const route = app
     });
 
     return c.json({ userId: u.id, email: u.email });
+  })
+  .get("/api/internal/moodle/:userId", async (c) => {
+    requireInternalToken(c);
+    c.header("Cache-Control", "private, no-store");
+    return c.json(await readMoodle(c.env, c.req.param("userId")));
   })
   .get("/api/internal/schedule/:userId", async (c) => {
     requireInternalToken(c);

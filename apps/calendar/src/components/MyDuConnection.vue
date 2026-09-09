@@ -145,7 +145,7 @@ async function submit() {
         >
         {{
           data.connection.connected
-            ? "Updates automatically."
+            ? "Syncs daily."
             : "Your saved classes are still available. Reconnect to resume updates."
         }}
       </p>

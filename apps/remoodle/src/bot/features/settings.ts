@@ -86,7 +86,6 @@ function buildDeleteAccountKeyboard() {
 function buildAccountMessage(user: {
   id: number;
   telegramId: number;
-  calendarUrl: string;
   calendarAccountLinked: boolean;
   calendarUserId: string | null;
 }): string {
@@ -98,7 +97,7 @@ function buildAccountMessage(user: {
     "",
     user.calendarUserId ? m.account_group({ group: "My DU" }) : m.account_no_group(),
     "",
-    user.calendarUrl ? m.account_moodle_calendar_set() : m.account_moodle_calendar_unset(),
+    m.account_moodle_managed_in_calendar(),
     user.calendarAccountLinked
       ? m.account_calendar_account_linked()
       : m.account_calendar_account_unlinked(),
@@ -133,7 +132,6 @@ feature.callbackQuery(accountCallback.filter(), async (ctx) => {
     .select({
       id: users.id,
       telegramId: users.telegramId,
-      calendarUrl: users.calendarUrl,
       calendarAccountLinked: users.calendarAccountLinked,
       calendarUserId: users.calendarUserId,
     })
@@ -185,7 +183,6 @@ feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
       .select({
         id: users.id,
         telegramId: users.telegramId,
-        calendarUrl: users.calendarUrl,
         calendarAccountLinked: users.calendarAccountLinked,
         calendarUserId: users.calendarUserId,
       })
@@ -223,7 +220,6 @@ feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
   await db.delete(calendarEvents).where(eq(calendarEvents.userId, userId));
   await db.delete(users).where(eq(users.id, userId));
 
-  ctx.session.awaitingCalendarUrl = false;
   ctx.session.awaitingRemoodleToken = false;
 
   await ctx.editMessageText(m.account_deleted());

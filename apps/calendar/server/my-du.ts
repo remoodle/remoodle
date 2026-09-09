@@ -1,3 +1,4 @@
+import { encryptSecret, decryptSecret } from "./secrets";
 import { and, eq, lt } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import { Temporal } from "temporal-polyfill";
@@ -7,7 +8,7 @@ import { myDuConnections, myDuLoginRequests } from "./db/schema";
 
 const ORIGIN = "https://my-du.astanait.edu.kz";
 const LOGIN_TTL = 10 * 60_000;
-export const SYNC_INTERVAL = 60 * 60_000;
+export const SYNC_INTERVAL = 24 * 60 * 60_000;
 type Credentials = { access_token: string; refresh_token: string };
 type Connection = typeof myDuConnections.$inferSelect;
 
@@ -38,53 +39,11 @@ function tokens(value: unknown): Credentials {
   return { access_token, refresh_token };
 }
 
-// Tokens are encrypted at rest, bound to their calendar owner, and never returned to the UI.
-async function key(secret: string) {
-  const material = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(secret),
-    "HKDF",
-    false,
-    ["deriveKey"],
-  );
-  return crypto.subtle.deriveKey(
-    {
-      name: "HKDF",
-      hash: "SHA-256",
-      salt: new TextEncoder().encode("my-du-v1"),
-      info: new TextEncoder().encode("credentials"),
-    },
-    material,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["encrypt", "decrypt"],
-  );
-}
 export async function encryptCredentials(value: Credentials, secret: string, userId: string) {
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const data = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv, additionalData: new TextEncoder().encode(userId) },
-    await key(secret),
-    new TextEncoder().encode(JSON.stringify(value)),
-  );
-  const encrypted = new Uint8Array(data);
-  const payload = new Uint8Array(iv.length + encrypted.length);
-  payload.set(iv);
-  payload.set(encrypted, iv.length);
-  let encoded = "";
-  for (let index = 0; index < payload.length; index++) {
-    encoded += String.fromCharCode(payload[index]!);
-  }
-  return btoa(encoded);
+  return encryptSecret(JSON.stringify(value), secret, userId);
 }
 export async function decryptCredentials(value: string, secret: string, userId: string) {
-  const bytes = Uint8Array.from(atob(value), (c) => c.charCodeAt(0));
-  const data = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: bytes.slice(0, 12), additionalData: new TextEncoder().encode(userId) },
-    await key(secret),
-    bytes.slice(12),
-  );
-  return tokens(JSON.parse(new TextDecoder().decode(data)));
+  return tokens(JSON.parse(await decryptSecret(value, secret, userId)));
 }
 
 export function parseCallback(callbackUrl: string, state: string) {

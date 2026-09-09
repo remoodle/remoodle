@@ -3,7 +3,6 @@ import { integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 export const users = sqliteTable("users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   telegramId: integer("telegram_id").notNull().unique(),
-  calendarUrl: text("calendar_url").notNull().default(""),
   thresholds: text("thresholds", { mode: "json" })
     .$type<string[]>()
     .notNull()

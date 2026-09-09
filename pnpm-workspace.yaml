@@ -37,6 +37,7 @@ catalog:
   envalid: ^8.1.1
   evlog: ^2.14.1
   hono: ^4.12.14
+  ical.js: ^2.2.1
   lru-cache: ^11.3.5
   npm-run-all2: ^8.0.4
   oxc-minify: ^0.124.0
@@ -49,6 +50,7 @@ catalog:
   vite-plus: 0.3.0
   vitepress: 2.0.0-alpha.17
   wrangler: ^4.127.1
+  zod: ^4.5.4
 
 catalogMode: prefer
 

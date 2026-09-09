@@ -6,7 +6,7 @@ import type { Context } from "../context";
 import { config } from "../../config";
 import { db } from "../../db";
 import { users } from "../../db/schema";
-import { fetchCalendarEvents } from "../../library/calendar";
+import { fetchUserMoodleEvents } from "../../library/calendar-api";
 import { validateRemoodleConnectToken } from "../../library/calendar-api";
 import { bold, link } from "../../library/telegram-html";
 import {
@@ -19,7 +19,6 @@ import {
   normalizeScheduleFilters,
 } from "../../library/schedule";
 import { m } from "../../library/i18n/messages.js";
-import { calendarFetchUser } from "../../worker/workflows/calendar-fetch-user";
 import {
   aboutCallback,
   menuCallback,
@@ -35,7 +34,6 @@ import { fetchCachedUserSchedule } from "../schedule-cache";
 
 type MenuUser = {
   calendarUserId: string | null;
-  calendarUrl: string;
   calendarAccountLinked: boolean;
   excludedCourses: string[];
   scheduleFilters?: {
@@ -55,7 +53,7 @@ async function buildMenuMessage(ctx: Context, user: MenuUser): Promise<string> {
     parts.push(summary);
   } else if (user.calendarAccountLinked && !user.calendarUserId) {
     parts.push(m.warn_no_group_in_calendar());
-  } else if (!user.calendarUrl) {
+  } else if (!user.calendarUserId) {
     parts.push(m.warn_add_calendar_url());
   }
 
@@ -123,14 +121,14 @@ function getAlmatyDateKey(value: number | Date) {
   }).format(value);
 }
 
-async function getTodayDeadlinesCount(user: Pick<MenuUser, "calendarUrl" | "excludedCourses">) {
-  if (!user.calendarUrl) {
+async function getTodayDeadlinesCount(user: Pick<MenuUser, "calendarUserId" | "excludedCourses">) {
+  if (!user.calendarUserId) {
     return null;
   }
 
   try {
     const todayKey = getAlmatyDateKey(Date.now());
-    const events = await fetchCalendarEvents(user.calendarUrl);
+    const events = await fetchUserMoodleEvents(user.calendarUserId);
     return events.filter(
       (event) =>
         event.timestampMs > Date.now() &&
@@ -230,10 +228,9 @@ feature.command("start", async (ctx) => {
 });
 
 feature.command("update", async (ctx) => {
-  ctx.session.awaitingCalendarUrl = true;
   await ctx.reply(
     m.calendar_url_prompt({
-      guideUrl: link(config.docs.moodleCalendarGuideUrl, "Where to get it?"),
+      guideUrl: link(config.calendar.accountUrl, "Calendar settings"),
     }),
     {
       parse_mode: "HTML",
@@ -243,7 +240,6 @@ feature.command("update", async (ctx) => {
 
 feature.callbackQuery(menuCallback.filter(), async (ctx) => {
   ctx.session.awaitingRemoodleToken = false;
-  ctx.session.awaitingCalendarUrl = false;
   const telegramId = ctx.from.id;
   const rows = await db.select().from(users).where(eq(users.telegramId, telegramId)).limit(1);
 
@@ -269,7 +265,6 @@ feature.callbackQuery(aboutCallback.filter(), async (ctx) => {
 
 feature.callbackQuery(setupCallback.filter(), async (ctx) => {
   ctx.session.awaitingRemoodleToken = false;
-  ctx.session.awaitingCalendarUrl = false;
   await ctx.editMessageText(m.setup_welcome(), {
     parse_mode: "HTML",
     reply_markup: buildSetupKeyboard(),
@@ -281,11 +276,10 @@ feature.callbackQuery(updateCalendarCallback.filter(), async (ctx) => {
   const { from } = updateCalendarCallback.unpack(ctx.callbackQuery.data) as {
     from: "setup" | "deadlines_settings";
   };
-  ctx.session.awaitingCalendarUrl = true;
   ctx.session.awaitingRemoodleToken = false;
   const keyboard = buildUpdateCalendarKeyboard(from);
   const prompt = m.calendar_url_prompt({
-    guideUrl: link(config.docs.moodleCalendarGuideUrl, "Where to get it?"),
+    guideUrl: link(config.calendar.accountUrl, "Calendar settings"),
   });
   try {
     await ctx.editMessageText(prompt, { parse_mode: "HTML", reply_markup: keyboard });
@@ -300,7 +294,6 @@ feature.callbackQuery(connectCalendarCallback.filter(), async (ctx) => {
     from: "setup" | "schedule_settings" | "digest_settings";
   };
   ctx.session.awaitingRemoodleToken = true;
-  ctx.session.awaitingCalendarUrl = false;
   const steps = m.connect_calendar_steps({
     accountUrl: link(config.calendar.accountUrl, `${config.calendar.host}/account`),
   });
@@ -319,45 +312,6 @@ feature.callbackQuery(connectCalendarCallback.filter(), async (ctx) => {
 });
 
 feature.on("message:text", async (ctx, next) => {
-  if (ctx.session.awaitingCalendarUrl) {
-    const url = ctx.message.text.trim();
-
-    if (!url.startsWith("http")) {
-      await ctx.reply(m.invalid_url());
-      return;
-    }
-
-    const telegramId = ctx.from.id;
-
-    await db
-      .insert(users)
-      .values({
-        telegramId,
-        calendarUrl: url,
-        thresholds: config.reminders.defaultThresholds,
-      })
-      .onConflictDoUpdate({
-        target: users.telegramId,
-        set: { calendarUrl: url },
-      });
-
-    const [user] = await db.select().from(users).where(eq(users.telegramId, telegramId)).limit(1);
-
-    ctx.session.awaitingCalendarUrl = false;
-
-    await calendarFetchUser.run({
-      userId: user!.id,
-      telegramId,
-      calendarUrl: url,
-      thresholds: user!.thresholds,
-    });
-
-    await ctx.reply(`${m.calendar_url_saved()}\n\n${await buildMenuMessage(ctx, user!)}`, {
-      reply_markup: buildMenuKeyboard(),
-    });
-    return;
-  }
-
   const rawText = ctx.message.text.trim();
   const isRemoodleCode = /^RE_[A-Z0-9]{6}$/i.test(rawText);
 
@@ -384,7 +338,6 @@ feature.on("message:text", async (ctx, next) => {
       .insert(users)
       .values({
         telegramId,
-        calendarUrl: "",
         calendarUserId: connectResult.userId,
         calendarAccountLinked: true,
         thresholds: config.reminders.defaultThresholds,

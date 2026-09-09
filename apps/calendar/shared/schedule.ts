@@ -12,6 +12,8 @@ export type ScheduleItem = {
 };
 
 export type ScheduleFilter = {
+  classes?: boolean;
+  moodle?: import("./moodle").MoodleFilters;
   eventTypes: { lecture: boolean; practice: boolean; learn: boolean };
   eventFormats: { online: boolean; offline: boolean };
   excludedCourses: string[];
@@ -20,6 +22,8 @@ export type ScheduleFilter = {
 
 export function defaultFilters(): ScheduleFilter {
   return {
+    classes: true,
+    moodle: { attendance: false, assignment: true, other: true },
     eventTypes: { lecture: true, practice: true, learn: true },
     eventFormats: { online: true, offline: true },
     excludedCourses: [],
@@ -27,6 +31,7 @@ export function defaultFilters(): ScheduleFilter {
 }
 
 export function filterSchedule(items: ScheduleItem[], filters: ScheduleFilter) {
+  if (filters.classes === false) return [];
   return items.filter(
     (item) =>
       !filters.excludedCourses.includes(item.courseName) &&

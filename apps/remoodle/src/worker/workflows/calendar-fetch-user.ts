@@ -1,14 +1,14 @@
 import { and, eq, notInArray, sql } from "drizzle-orm";
 import { db } from "../../db";
 import { calendarEvents } from "../../db/schema";
-import { fetchCalendarEvents } from "../../library/calendar";
+import { fetchUserMoodleEvents } from "../../library/calendar-api";
 import { hatchet } from "../hatchet-client";
 import { deadlineCheckUser } from "./deadline-check-user";
 
 type Input = {
   userId: number;
   telegramId: number;
-  calendarUrl: string;
+  calendarUserId: string;
   thresholds: string[];
 };
 
@@ -16,17 +16,8 @@ export const calendarFetchUser = hatchet.task<Input>({
   name: "calendar-fetch-user",
   executionTimeout: "2m",
   fn: async (input, ctx) => {
-    if (!input.calendarUrl) {
-      await deadlineCheckUser.runNoWait({
-        userId: input.userId,
-        telegramId: input.telegramId,
-        thresholds: input.thresholds,
-      });
-      return;
-    }
-
     try {
-      const events = await fetchCalendarEvents(input.calendarUrl);
+      const events = await fetchUserMoodleEvents(input.calendarUserId);
 
       if (events.length > 0) {
         await db

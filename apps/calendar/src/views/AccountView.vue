@@ -3,6 +3,7 @@ import { Icon } from "@iconify/vue";
 import { ref } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import MyDuConnection from "@/components/MyDuConnection.vue";
+import MoodleConnection from "@/components/MoodleConnection.vue";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/ui/theme-switcher";
 import { useClearSession, useSessionQuery } from "@/lib/api/session";
@@ -76,6 +77,7 @@ async function signOut() {
       </div>
       <div class="divide-y">
         <MyDuConnection class="pb-8" />
+        <MoodleConnection />
         <section class="space-y-5 py-8" aria-labelledby="telegram-heading">
           <div class="space-y-1.5">
             <h2 id="telegram-heading" class="text-base font-semibold">Telegram</h2>

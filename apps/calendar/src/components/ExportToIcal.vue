@@ -39,6 +39,7 @@ import { useIcalTokenQuery, useUpsertIcalToken, useUpdateIcalFilters } from "@/l
 import { useSessionQuery } from "@/lib/api/session";
 import type { ScheduleFilter } from "@/lib/types";
 import { generateCalendarEventsIcal, mergeAdjacentCalendarEvents } from "../../shared/ical";
+import { moodleToIcalEvents, type MoodleEvent } from "../../shared/moodle";
 
 const props = defineProps<{
   filters: ScheduleFilter | undefined;
@@ -76,11 +77,15 @@ function toCalendarEventDateTime(value: CalendarEvent["start"] | CalendarEvent["
 }
 
 const normalizedEvents = computed(() =>
-  props.events.map((event) => ({
-    ...event,
-    start: toCalendarEventDateTime(event.start),
-    end: toCalendarEventDateTime(event.end),
-  })),
+  props.events.map((event) =>
+    event.moodleEvent
+      ? moodleToIcalEvents([event.moodleEvent as MoodleEvent])[0]!
+      : {
+          ...event,
+          start: toCalendarEventDateTime(event.start),
+          end: toCalendarEventDateTime(event.end),
+        },
+  ),
 );
 
 function toStoredDate(value: DateValue) {

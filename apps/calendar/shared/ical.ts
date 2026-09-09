@@ -8,6 +8,7 @@ export type IcalCalendarEvent = {
   start: string;
   end?: string;
   location: string;
+  allDay?: boolean;
 };
 
 export function mergeAdjacentCalendarEvents<
@@ -114,8 +115,12 @@ export function generateCalendarEventsIcal(
       "BEGIN:VEVENT",
       `UID:${escapeText(String(event.id))}@calendar.remoodle.app`,
       `DTSTAMP:${stamp}`,
-      `DTSTART:${timestamp(event.start)}`,
-      `DTEND:${timestamp(event.end ?? event.start)}`,
+      event.allDay
+        ? `DTSTART;VALUE=DATE:${event.start.replace(/-/g, "")}`
+        : `DTSTART:${timestamp(event.start)}`,
+      event.allDay
+        ? `DTEND;VALUE=DATE:${(event.end ?? event.start).replace(/-/g, "")}`
+        : `DTEND:${timestamp(event.end ?? event.start)}`,
       `SUMMARY:${escapeText(event.title)}`,
       `DESCRIPTION:${escapeText(event.description)}`,
       `LOCATION:${escapeText(event.location)}`,

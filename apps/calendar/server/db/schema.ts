@@ -79,6 +79,13 @@ export const icalTokens = sqliteTable(
   (t) => [uniqueIndex("ical_tokens_user_unique").on(t.userId)],
 );
 
+export const moodleConnections = sqliteTable("moodle_connections", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  encryptedUrl: text("encrypted_url").notNull(),
+});
+
 export const myDuLoginRequests = sqliteTable("my_du_login_requests", {
   userId: text("user_id")
     .primaryKey()

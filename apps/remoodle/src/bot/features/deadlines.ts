@@ -3,7 +3,7 @@ import { Composer } from "grammy";
 import type { Context } from "../context";
 import { db } from "../../db";
 import { users } from "../../db/schema";
-import { fetchCalendarEvents } from "../../library/calendar";
+import { fetchUserMoodleEvents } from "../../library/calendar-api";
 import { buildDeadlinesMessage } from "../../library/deadline-reminders";
 import { m } from "../../library/i18n/messages.js";
 import { deadlinesCallback } from "../callback-data";
@@ -14,11 +14,11 @@ export const composer = new Composer<Context>();
 const feature = composer.chatType(["private", "group", "supergroup"]);
 
 async function fetchDeadlinesMessage(
-  calendarUrl: string,
+  calendarUserId: string,
   excludedCourses: string[],
   daysLimit?: number,
 ) {
-  const events = await fetchCalendarEvents(calendarUrl);
+  const events = await fetchUserMoodleEvents(calendarUserId);
   const filtered =
     excludedCourses.length > 0
       ? events.filter((e) => !excludedCourses.includes(e.courseName ?? ""))
@@ -41,7 +41,7 @@ feature.command(["deadlines", "d", "ds"], async (ctx) => {
 
   const user = rows[0]!;
 
-  if (!user.calendarUrl) {
+  if (!user.calendarUserId) {
     await ctx.reply(m.no_calendar_url_set());
     return;
   }
@@ -53,7 +53,7 @@ feature.command(["deadlines", "d", "ds"], async (ctx) => {
 
   let message: string;
   try {
-    message = await fetchDeadlinesMessage(user.calendarUrl, user.excludedCourses, daysLimit);
+    message = await fetchDeadlinesMessage(user.calendarUserId, user.excludedCourses, daysLimit);
   } catch {
     await ctx.reply(m.calendar_fetch_failed());
     return;
@@ -72,7 +72,7 @@ feature.chatType("private").callbackQuery(deadlinesCallback.filter(), async (ctx
 
   const user = rows[0]!;
 
-  if (!user.calendarUrl) {
+  if (!user.calendarUserId) {
     await ctx.answerCallbackQuery({
       text: m.no_calendar_url_callback(),
       show_alert: true,
@@ -84,7 +84,7 @@ feature.chatType("private").callbackQuery(deadlinesCallback.filter(), async (ctx
 
   let message: string;
   try {
-    message = await fetchDeadlinesMessage(user.calendarUrl, user.excludedCourses);
+    message = await fetchDeadlinesMessage(user.calendarUserId, user.excludedCourses);
   } catch {
     await ctx.editMessageText(m.calendar_fetch_failed_short(), {
       reply_markup: buildBackToMenuKeyboard(),
