@@ -30,7 +30,7 @@ app.use("/api/user/*", async (c, next) => {
   await next();
 });
 
-app.all("/api/auth/**", (c) => createAuth(c.env).handler(c.req.raw));
+app.on(["GET", "POST"], "/api/auth/*", (c) => createAuth(c.env).handler(c.req.raw));
 
 export const route = app.route("/", apiRouter);
 
