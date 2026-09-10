@@ -14,7 +14,7 @@ export type ScheduleItem = {
 export type ScheduleFilter = {
   classes?: boolean;
   moodle?: import("./moodle").MoodleFilters;
-  eventTypes: { lecture: boolean; practice: boolean; learn: boolean };
+  eventTypes: { lecture: boolean; practice: boolean };
   eventFormats: { online: boolean; offline: boolean };
   excludedCourses: string[];
   ical?: { combineAdjacentPairs?: boolean; startDate?: string; endDate?: string };
@@ -24,7 +24,7 @@ export function defaultFilters(): ScheduleFilter {
   return {
     classes: true,
     moodle: { attendance: false, assignment: true, other: true },
-    eventTypes: { lecture: true, practice: true, learn: true },
+    eventTypes: { lecture: true, practice: true },
     eventFormats: { online: true, offline: true },
     excludedCourses: [],
   };

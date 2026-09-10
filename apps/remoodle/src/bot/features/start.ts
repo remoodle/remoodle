@@ -6,8 +6,13 @@ import type { Context } from "../context";
 import { config } from "../../config";
 import { db } from "../../db";
 import { users } from "../../db/schema";
-import { fetchUserMoodleEvents } from "../../library/calendar-api";
-import { validateRemoodleConnectToken } from "../../library/calendar-api";
+import {
+  connectUserMoodle,
+  fetchMoodleUrlEvents,
+  fetchUserMoodle,
+  validateRemoodleConnectToken,
+} from "../../library/calendar-api";
+import { fetchMoodleEvents } from "../../library/moodle";
 import { bold, link } from "../../library/telegram-html";
 import {
   applyScheduleFilters,
@@ -34,6 +39,7 @@ import { fetchCachedUserSchedule } from "../schedule-cache";
 
 type MenuUser = {
   calendarUserId: string | null;
+  moodleCalendarUrl: string | null;
   excludedCourses: string[];
   scheduleFilters?: {
     eventTypes: { lecture: boolean; practice: boolean; learn: boolean };
@@ -44,14 +50,39 @@ type MenuUser = {
   digestWeekdays: number[];
 };
 
+async function moveLocalMoodleToCalendar(user: {
+  telegramId: number;
+  calendarUserId: string | null;
+  moodleCalendarUrl: string | null;
+}) {
+  if (!user.calendarUserId || !user.moodleCalendarUrl) return;
+  const remote = await fetchUserMoodle(user.calendarUserId);
+  if (!remote.connection) {
+    await connectUserMoodle(user.calendarUserId, user.moodleCalendarUrl);
+  }
+  await db
+    .update(users)
+    .set({ moodleCalendarUrl: null })
+    .where(eq(users.telegramId, user.telegramId));
+}
+
 async function buildMenuMessage(ctx: Context, user: MenuUser): Promise<string> {
   const parts: string[] = [m.menu_ready()];
 
   const summary = await buildMenuSummary(ctx, user);
   if (summary) {
     parts.push(summary);
-  } else if (!user.calendarUserId) {
+  } else if (!user.calendarUserId && !user.moodleCalendarUrl) {
     parts.push(m.warn_add_calendar_url());
+  }
+
+  if (user.calendarUserId) {
+    try {
+      const moodle = await fetchUserMoodle(user.calendarUserId);
+      if (!moodle.connection) parts.push(m.warn_add_moodle_in_calendar());
+    } catch {
+      // The summary already omits unavailable Moodle data.
+    }
   }
 
   if (user.calendarUserId) {
@@ -118,14 +149,16 @@ function getAlmatyDateKey(value: number | Date) {
   }).format(value);
 }
 
-async function getTodayDeadlinesCount(user: Pick<MenuUser, "calendarUserId" | "excludedCourses">) {
-  if (!user.calendarUserId) {
+async function getTodayDeadlinesCount(
+  user: Pick<MenuUser, "calendarUserId" | "moodleCalendarUrl" | "excludedCourses">,
+) {
+  if (!user.calendarUserId && !user.moodleCalendarUrl) {
     return null;
   }
 
   try {
     const todayKey = getAlmatyDateKey(Date.now());
-    const events = await fetchUserMoodleEvents(user.calendarUserId);
+    const events = await fetchMoodleEvents(user);
     return events.filter(
       (event) =>
         event.timestampMs > Date.now() &&
@@ -206,12 +239,25 @@ export const composer = new Composer<Context>();
 const feature = composer.chatType("private");
 
 feature.command("start", async (ctx) => {
+  ctx.session.awaitingRemoodleToken = false;
+  ctx.session.awaitingMoodleCalendarUrl = false;
   const telegramId = ctx.from.id;
 
   const existing = await db.select().from(users).where(eq(users.telegramId, telegramId)).limit(1);
 
   if (existing.length > 0) {
-    const user = existing[0]!;
+    let user = existing[0]!;
+    try {
+      await moveLocalMoodleToCalendar(user);
+      const [updated] = await db
+        .select()
+        .from(users)
+        .where(eq(users.telegramId, telegramId))
+        .limit(1);
+      user = updated!;
+    } catch {
+      // Keep the local URL so deadlines continue working and retry on the next /start.
+    }
     await ctx.reply(await buildMenuMessage(ctx, user), {
       reply_markup: buildMenuKeyboard(),
     });
@@ -225,18 +271,25 @@ feature.command("start", async (ctx) => {
 });
 
 feature.command("update", async (ctx) => {
-  await ctx.reply(
-    m.calendar_url_prompt({
-      guideUrl: link(config.calendar.accountUrl, "Calendar settings"),
-    }),
-    {
-      parse_mode: "HTML",
-    },
-  );
+  const [user] = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+  ctx.session.awaitingRemoodleToken = false;
+  ctx.session.awaitingMoodleCalendarUrl = false;
+  if (user?.calendarUserId) {
+    await ctx.reply(
+      m.calendar_url_managed_prompt({
+        guideUrl: link(config.calendar.accountUrl, "Calendar settings"),
+      }),
+      { parse_mode: "HTML" },
+    );
+    return;
+  }
+  ctx.session.awaitingMoodleCalendarUrl = true;
+  await ctx.reply(m.calendar_url_prompt());
 });
 
 feature.callbackQuery(menuCallback.filter(), async (ctx) => {
   ctx.session.awaitingRemoodleToken = false;
+  ctx.session.awaitingMoodleCalendarUrl = false;
   const telegramId = ctx.from.id;
   const rows = await db.select().from(users).where(eq(users.telegramId, telegramId)).limit(1);
 
@@ -262,6 +315,7 @@ feature.callbackQuery(aboutCallback.filter(), async (ctx) => {
 
 feature.callbackQuery(setupCallback.filter(), async (ctx) => {
   ctx.session.awaitingRemoodleToken = false;
+  ctx.session.awaitingMoodleCalendarUrl = false;
   await ctx.editMessageText(m.setup_welcome(), {
     parse_mode: "HTML",
     reply_markup: buildSetupKeyboard(),
@@ -274,10 +328,15 @@ feature.callbackQuery(updateCalendarCallback.filter(), async (ctx) => {
     from: "setup" | "deadlines_settings";
   };
   ctx.session.awaitingRemoodleToken = false;
+  const [user] = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
   const keyboard = buildUpdateCalendarKeyboard(from);
-  const prompt = m.calendar_url_prompt({
-    guideUrl: link(config.calendar.accountUrl, "Calendar settings"),
-  });
+  const connected = Boolean(user?.calendarUserId);
+  ctx.session.awaitingMoodleCalendarUrl = !connected;
+  const prompt = connected
+    ? m.calendar_url_managed_prompt({
+        guideUrl: link(config.calendar.accountUrl, "Calendar settings"),
+      })
+    : m.calendar_url_prompt();
   try {
     await ctx.editMessageText(prompt, { parse_mode: "HTML", reply_markup: keyboard });
   } catch {
@@ -291,6 +350,7 @@ feature.callbackQuery(connectCalendarCallback.filter(), async (ctx) => {
     from: "setup" | "schedule_settings" | "digest_settings";
   };
   ctx.session.awaitingRemoodleToken = true;
+  ctx.session.awaitingMoodleCalendarUrl = false;
   const steps = m.connect_calendar_steps({
     accountUrl: link(config.calendar.accountUrl, `${config.calendar.host}/account`),
   });
@@ -311,6 +371,32 @@ feature.callbackQuery(connectCalendarCallback.filter(), async (ctx) => {
 feature.on("message:text", async (ctx, next) => {
   const rawText = ctx.message.text.trim();
   const isRemoodleCode = /^RE_[A-Z0-9]{6}$/i.test(rawText);
+
+  if (ctx.session.awaitingMoodleCalendarUrl) {
+    try {
+      await fetchMoodleUrlEvents(rawText);
+    } catch {
+      await ctx.reply(m.calendar_url_invalid());
+      return;
+    }
+    await db
+      .insert(users)
+      .values({
+        telegramId: ctx.from.id,
+        moodleCalendarUrl: rawText,
+        thresholds: config.reminders.defaultThresholds,
+      })
+      .onConflictDoUpdate({
+        target: users.telegramId,
+        set: { moodleCalendarUrl: rawText },
+      });
+    const [user] = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+    ctx.session.awaitingMoodleCalendarUrl = false;
+    await ctx.reply(`${m.calendar_url_saved()}\n\n${await buildMenuMessage(ctx, user!)}`, {
+      reply_markup: buildMenuKeyboard(),
+    });
+    return;
+  }
 
   if (ctx.session.awaitingRemoodleToken || isRemoodleCode) {
     const code = rawText.toUpperCase();
@@ -345,7 +431,13 @@ feature.on("message:text", async (ctx, next) => {
         },
       });
 
-    const [user] = await db.select().from(users).where(eq(users.telegramId, telegramId)).limit(1);
+    let [user] = await db.select().from(users).where(eq(users.telegramId, telegramId)).limit(1);
+    try {
+      await moveLocalMoodleToCalendar(user!);
+      [user] = await db.select().from(users).where(eq(users.telegramId, telegramId)).limit(1);
+    } catch {
+      // Keep the local URL and retry migration on the next /start.
+    }
 
     ctx.session.awaitingRemoodleToken = false;
 

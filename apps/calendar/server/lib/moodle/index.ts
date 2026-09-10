@@ -2,8 +2,8 @@ import { eq } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import { createDb } from "../../db";
 import { moodleConnections } from "../../db/schema";
-import { decryptSecret } from "../crypto";
-import { fetchMoodleFeed } from "./feed";
+import { decryptSecret, encryptSecret } from "../crypto";
+import { fetchMoodleFeed, validateMoodleUrl } from "./feed";
 import type { MoodleEvent } from "../../../shared/moodle";
 
 // Only the credential is persisted. Both the page and the bot request live events.
@@ -23,4 +23,15 @@ export async function readMoodle(env: Env, userId: string) {
       message: "Could not load Moodle events. Try again or replace your calendar URL in Settings.",
     });
   }
+}
+
+export async function connectMoodle(env: Env, userId: string, value: unknown) {
+  const url = validateMoodleUrl(value);
+  const events = await fetchMoodleFeed(url);
+  const encryptedUrl = await encryptSecret(url, env.BETTER_AUTH_SECRET, "moodle:" + userId);
+  await createDb(env.DB)
+    .insert(moodleConnections)
+    .values({ userId, encryptedUrl })
+    .onConflictDoUpdate({ target: moodleConnections.userId, set: { encryptedUrl } });
+  return { connection: { connected: true }, events, fetchedAt: Date.now() };
 }

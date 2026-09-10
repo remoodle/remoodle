@@ -87,6 +87,7 @@ function buildAccountMessage(user: {
   id: number;
   telegramId: number;
   calendarUserId: string | null;
+  moodleCalendarUrl: string | null;
 }): string {
   return [
     bold(m.account_header()),
@@ -96,7 +97,11 @@ function buildAccountMessage(user: {
     "",
     user.calendarUserId ? m.account_group({ group: "My DU" }) : m.account_no_group(),
     "",
-    m.account_moodle_managed_in_calendar(),
+    user.calendarUserId
+      ? m.account_moodle_managed_in_calendar()
+      : user.moodleCalendarUrl
+        ? m.account_moodle_managed_locally()
+        : m.account_moodle_not_set(),
     user.calendarUserId
       ? m.account_calendar_account_linked()
       : m.account_calendar_account_unlinked(),
@@ -119,6 +124,7 @@ feature.command("settings", async (ctx) => {
 });
 
 feature.callbackQuery(settingsCallback.filter(), async (ctx) => {
+  ctx.session.awaitingMoodleCalendarUrl = false;
   await ctx.editMessageText(m.settings_header(), {
     parse_mode: "HTML",
     reply_markup: buildSettingsKeyboard(),
@@ -132,6 +138,7 @@ feature.callbackQuery(accountCallback.filter(), async (ctx) => {
       id: users.id,
       telegramId: users.telegramId,
       calendarUserId: users.calendarUserId,
+      moodleCalendarUrl: users.moodleCalendarUrl,
     })
     .from(users)
     .where(eq(users.telegramId, ctx.from.id))
@@ -182,6 +189,7 @@ feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
         id: users.id,
         telegramId: users.telegramId,
         calendarUserId: users.calendarUserId,
+        moodleCalendarUrl: users.moodleCalendarUrl,
       })
       .from(users)
       .where(eq(users.telegramId, ctx.from.id))
@@ -218,6 +226,7 @@ feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
   await db.delete(users).where(eq(users.id, userId));
 
   ctx.session.awaitingRemoodleToken = false;
+  ctx.session.awaitingMoodleCalendarUrl = false;
 
   await ctx.editMessageText(m.account_deleted());
   await ctx.answerCallbackQuery({ text: m.account_deleted() });
@@ -263,6 +272,7 @@ function buildDeadlinesMessage(thresholds: string[], deadlinesEnabled: boolean):
 }
 
 feature.callbackQuery(deadlinesSettingsCallback.filter(), async (ctx) => {
+  ctx.session.awaitingMoodleCalendarUrl = false;
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());

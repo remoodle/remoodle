@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `moodle_calendar_url` text;

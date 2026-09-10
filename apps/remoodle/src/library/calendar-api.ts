@@ -79,3 +79,23 @@ export async function fetchUserMoodleEvents(userId: string) {
   );
   return moodleToDeadlineEvents(events);
 }
+
+export async function fetchMoodleUrlEvents(url: string) {
+  const { events } = await parseResponse(
+    calendarClient.api.internal.moodle.feed.$post({ json: { url } }),
+  );
+  return moodleToDeadlineEvents(events);
+}
+
+export async function connectUserMoodle(userId: string, url: string) {
+  return parseResponse(
+    calendarClient.api.internal.moodle[":userId"].$post({
+      param: { userId },
+      json: { url },
+    }),
+  );
+}
+
+export async function fetchUserMoodle(userId: string) {
+  return parseResponse(calendarClient.api.internal.moodle[":userId"].$get({ param: { userId } }));
+}

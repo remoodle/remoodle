@@ -4,6 +4,7 @@ import type { ShortCache } from "../library/short-cache";
 
 export type SessionData = {
   awaitingRemoodleToken?: boolean;
+  awaitingMoodleCalendarUrl?: boolean;
   awaitingScheduleReminderMinutes?: boolean;
   awaitingDigestTime?: boolean;
 };

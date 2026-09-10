@@ -1,4 +1,4 @@
-import { and, eq, isNotNull } from "drizzle-orm";
+import { and, eq, isNotNull, or } from "drizzle-orm";
 import { db } from "../../db";
 import { users } from "../../db/schema";
 import { hatchet } from "../hatchet-client";
@@ -24,14 +24,20 @@ deadlineCheck.task({
     const allUsers = await db
       .select()
       .from(users)
-      .where(and(eq(users.deadlinesEnabled, true), isNotNull(users.calendarUserId)));
+      .where(
+        and(
+          eq(users.deadlinesEnabled, true),
+          or(isNotNull(users.calendarUserId), isNotNull(users.moodleCalendarUrl)),
+        ),
+      );
 
     const childTasks = allUsers.map((user) => ({
       workflow: calendarFetchUser.name,
       input: {
         userId: user.id,
         telegramId: user.telegramId,
-        calendarUserId: user.calendarUserId!,
+        calendarUserId: user.calendarUserId,
+        moodleCalendarUrl: user.moodleCalendarUrl,
         thresholds: user.thresholds,
       },
       options: {
