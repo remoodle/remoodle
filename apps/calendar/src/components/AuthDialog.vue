@@ -27,7 +27,9 @@ const {
     authClient.signIn
       .social({ provider: "microsoft", callbackURL: props.callbackURL })
       .then(({ error }) => {
-        if (error) throw new Error(error.message ?? "Sign in failed");
+        if (error) {
+          throw new Error(error.message ?? "Sign in failed");
+        }
       }),
 });
 </script>

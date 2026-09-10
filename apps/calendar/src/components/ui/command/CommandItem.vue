@@ -37,7 +37,9 @@ const isRender = computed(() => {
 const itemRef = ref();
 const currentElement = useCurrentElement(itemRef);
 onMounted(() => {
-  if (!(currentElement.value instanceof HTMLElement)) return;
+  if (!(currentElement.value instanceof HTMLElement)) {
+    return;
+  }
 
   // textValue to perform filter
   allItems.value.set(id, currentElement.value.textContent ?? props.value?.toString() ?? "");

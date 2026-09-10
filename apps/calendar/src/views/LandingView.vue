@@ -5,7 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import AuthDialog from "@/components/AuthDialog.vue";
 import LandingCalendar from "@/components/LandingCalendar.vue";
 import { Button } from "@/components/ui/button";
-import { ThemeSwitcher } from "@/components/ui/theme-switcher";
+import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 import { useSessionQuery } from "@/lib/api/session";
 
 const route = useRoute();
@@ -16,7 +16,9 @@ const next = Array.isArray(route.query.next) ? route.query.next[0] : route.query
 const callbackURL = next || "/schedule";
 
 watch(session, (currentSession) => {
-  if (currentSession?.data) router.replace(callbackURL);
+  if (currentSession?.data) {
+    router.replace(callbackURL);
+  }
 });
 </script>
 

@@ -23,8 +23,11 @@ const label = computed(
   () =>
     `${week.value.toLocaleString("en-GB", { day: "numeric", month: "short" })} – ${week.value.add({ days: 6 }).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`,
 );
+
 watchEffect(() => {
-  if (!canvas.value) return;
+  if (!canvas.value) {
+    return;
+  }
   try {
     drawScheduleImage(canvas.value, props.events, week.value, store.theme === "dark");
     error.value = "";
@@ -32,8 +35,11 @@ watchEffect(() => {
     error.value = "Could not create the image. Please try again.";
   }
 });
+
 function download() {
-  if (!canvas.value) return;
+  if (!canvas.value) {
+    return;
+  }
   exporting.value = true;
   canvas.value.toBlob((blob) => {
     exporting.value = false;

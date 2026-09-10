@@ -37,7 +37,9 @@ export function drawScheduleImage(
   dark: boolean,
 ) {
   const context = canvas.getContext("2d");
-  if (!context) throw new Error("Image export is unavailable in this browser.");
+  if (!context) {
+    throw new Error("Image export is unavailable in this browser.");
+  }
   const days = scheduleImageDays(events, week);
   const width = 1680;
   const column = 224;
@@ -64,7 +66,9 @@ export function drawScheduleImage(
         current += character;
       }
     }
-    if (current) lines.push(current.trim());
+    if (current) {
+      lines.push(current.trim());
+    }
     return lines;
   }
   const layouts = days.map((day) =>
@@ -111,11 +115,15 @@ export function drawScheduleImage(
     const x = 56 + index * column;
     context.fillStyle = line;
     context.fillRect(x, 86, column, 1);
-    if (index) context.fillRect(x - 8, 104, 1, height - 160);
+    if (index) {
+      context.fillRect(x - 8, 104, 1, height - 160);
+    }
     text(day.date.toLocaleString("en-GB", { weekday: "short" }), x + 8, 124, 16, muted);
     text(String(day.date.day), x + 8, 157, 26, foreground, 600);
     let y = 180;
-    if (!day.events.length) text("No events", x + 8, y + 24, 15, muted);
+    if (!day.events.length) {
+      text("No events", x + 8, y + 24, 15, muted);
+    }
     for (const item of layouts[index]!) {
       const h = 66 + item.title.length * 24 + item.location.length * 20;
       const color = item.event.calendarId === "offline" ? "#ef9a9a" : "#93b8ed";

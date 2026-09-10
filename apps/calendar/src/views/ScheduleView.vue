@@ -29,8 +29,8 @@ import {
 } from "@/components/ui/sidebar";
 import { useSchedule } from "@/composables/use-schedule";
 import { useSessionQuery, useClearSession } from "@/lib/api/session";
-import { moodleKinds, defaultMoodleFilters } from "../../shared/moodle";
-import { defaultCourseFilter, type CourseScheduleFilter } from "../../shared/schedule";
+import MoodleFilters from "@/components/MoodleFilters.vue";
+import ScheduleFilters from "@/components/ScheduleFilters.vue";
 import { authClient } from "@/lib/auth-client";
 import { useAppStore } from "@/stores/app";
 
@@ -43,14 +43,6 @@ const { events, scheduleEvents, courses, data, moodle, isPending, error, refetch
 );
 const { data: session } = useSessionQuery();
 const clearSession = useClearSession();
-
-function courseFilter(course: string): CourseScheduleFilter {
-  return filters.value.courses[course] ?? defaultCourseFilter();
-}
-
-function setCourseFilter(course: string, key: keyof CourseScheduleFilter, value: boolean) {
-  filters.value.courses[course] = { ...courseFilter(course), [key]: value };
-}
 
 async function signOut() {
   await authClient.signOut();
@@ -83,44 +75,7 @@ async function signOut() {
           />
         </div>
         <template v-if="data?.connection">
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <div class="flex flex-col gap-1 px-1">
-                <div
-                  v-for="course in courses"
-                  :key="course"
-                  class="rounded-md px-2 py-2 transition-colors hover:bg-sidebar-accent"
-                >
-                  <label class="flex cursor-pointer items-start gap-2.5 text-sm font-medium">
-                    <Checkbox
-                      class="mt-0.5"
-                      :model-value="courseFilter(course).enabled"
-                      @update:model-value="setCourseFilter(course, 'enabled', $event === true)"
-                    />
-                    <span class="leading-tight">{{ course }}</span>
-                  </label>
-                  <div
-                    class="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 pl-7 text-xs text-muted-foreground"
-                    :class="{ 'opacity-45': !courseFilter(course).enabled }"
-                  >
-                    <label
-                      v-for="key in ['lecture', 'practice', 'online', 'offline'] as const"
-                      :key="key"
-                      class="flex cursor-pointer items-center gap-2 capitalize"
-                    >
-                      <Checkbox
-                        class="size-3.5"
-                        :disabled="!courseFilter(course).enabled"
-                        :model-value="courseFilter(course)[key]"
-                        @update:model-value="setCourseFilter(course, key, $event === true)"
-                      />
-                      {{ key }}
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          <ScheduleFilters :courses="courses" v-model="filters.courses" />
         </template>
 
         <div v-else-if="!isPending" class="px-4 py-3 text-xs text-muted-foreground">
@@ -133,27 +88,7 @@ async function signOut() {
             >Moodle</SidebarGroupLabel
           >
           <SidebarGroupContent>
-            <div v-if="moodle.data.value?.connection" class="flex flex-col px-1">
-              <label
-                v-for="(label, key) in moodleKinds"
-                :key="key"
-                class="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent"
-              >
-                <Checkbox
-                  :model-value="filters.moodle?.[key] ?? defaultMoodleFilters()[key]"
-                  @update:model-value="
-                    (value) => {
-                      filters.moodle ??= defaultMoodleFilters();
-                      filters.moodle[key] = value === true;
-                    }
-                  "
-                />
-                <span>{{ label }}</span>
-              </label>
-              <p class="px-2 pt-3 text-xs text-muted-foreground">
-                Attendance is hidden by default to avoid duplicating classes.
-              </p>
-            </div>
+            <MoodleFilters v-if="moodle.data.value?.connection" v-model="filters.moodle" />
             <p v-else-if="!moodle.isPending.value" class="px-2 py-3 text-xs text-muted-foreground">
               <RouterLink to="/account" class="underline underline-offset-4"
                 >Connect Moodle</RouterLink

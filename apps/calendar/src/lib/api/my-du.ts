@@ -20,12 +20,8 @@ export function useMyDuActions() {
     mutationFn: () => parseResponse(client.api.user["my-du"].start.$post()),
   });
   const connect = useMutation({
-    mutationFn: (json: {
-      callbackUrl: string;
-      studyYear: number;
-      term: number;
-      firstWeekStart: string;
-    }) => parseResponse(client.api.user["my-du"].connect.$post({ json })),
+    mutationFn: (json: MyDuConnectionInput) =>
+      parseResponse(client.api.user["my-du"].connect.$post({ json })),
     onSuccess: invalidate,
   });
   const sync = useMutation({
@@ -38,3 +34,10 @@ export function useMyDuActions() {
   });
   return { start, connect, sync, disconnect };
 }
+
+export type MyDuConnectionInput = {
+  callbackUrl: string;
+  studyYear: number;
+  term: number;
+  firstWeekStart: string;
+};

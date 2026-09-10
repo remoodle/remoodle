@@ -31,4 +31,10 @@ export default defineConfigWithVueTs(
 
   oxlint.configs["flat/recommended"],
   skipFormatting,
+
+  {
+    rules: {
+      curly: ["error", "all"],
+    },
+  },
 );

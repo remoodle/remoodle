@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { ThemeSwitcher } from "@/components/ui/theme-switcher";
+import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 
 const props = defineProps<{
   name?: string | null;

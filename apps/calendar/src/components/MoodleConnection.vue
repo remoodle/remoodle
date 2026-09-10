@@ -33,10 +33,12 @@ const error = ref("");
 const busy = computed(
   () => connect.isPending.value || isFetching.value || disconnect.isPending.value,
 );
+
 watch(open, () => {
   url.value = "";
   error.value = "";
 });
+
 async function act(action: () => Promise<unknown>) {
   error.value = "";
   try {
@@ -47,6 +49,7 @@ async function act(action: () => Promise<unknown>) {
     return false;
   }
 }
+
 async function submit() {
   const link = url.value;
   if (

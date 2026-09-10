@@ -48,7 +48,9 @@ function filterItems() {
   for (const [id, value] of allItems.value) {
     const score = contains(value, filterState.search);
     filterState.filtered.items.set(id, score ? 1 : 0);
-    if (score) itemCount++;
+    if (score) {
+      itemCount++;
+    }
   }
 
   // Check which groups have at least 1 item shown

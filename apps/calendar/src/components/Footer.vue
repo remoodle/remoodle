@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { ThemeSwitcher } from "@/components/ui/theme-switcher";
+import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 </script>
 
 <template>
