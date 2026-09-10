@@ -6,6 +6,7 @@ import { HTTPException } from "hono/http-exception";
 import type { AppEnv } from "./context";
 import { createEvlogAuth } from "./api/middleware/auth";
 import { apiRouter } from "./api/router";
+import { createAuth } from "./lib/auth";
 
 const app = new Hono<AppEnv>();
 
@@ -28,6 +29,8 @@ app.use("/api/user/*", async (c, next) => {
   }
   await next();
 });
+
+app.all("/api/auth/**", (c) => createAuth(c.env).handler(c.req.raw));
 
 export const route = app.route("/", apiRouter);
 
