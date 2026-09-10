@@ -354,35 +354,13 @@ function buildScheduleSettingsKeyboard(
 
   keyboard.row().text(notificationsLabel(scheduleEnabled), toggleScheduleCallback.pack({}));
 
-  const { eventTypes, eventFormats } = filters;
-
-  keyboard
-    .row()
-    .text(
-      checkboxLabel(eventTypes.lecture, m.class_type_lecture()),
-      toggleScheduleTypeCallback.pack({ key: "lecture" }),
-    )
-    .text(
-      checkboxLabel(eventTypes.practice, m.class_type_practice()),
-      toggleScheduleTypeCallback.pack({ key: "practice" }),
-    );
+  const { eventTypes } = filters;
 
   keyboard
     .row()
     .text(
       checkboxLabel(eventTypes.learn, m.ui_learn()),
       toggleScheduleTypeCallback.pack({ key: "learn" }),
-    );
-
-  keyboard
-    .row()
-    .text(
-      checkboxLabel(eventFormats.online, m.location_online()),
-      toggleScheduleFormatCallback.pack({ key: "online" }),
-    )
-    .text(
-      checkboxLabel(eventFormats.offline, m.ui_offline()),
-      toggleScheduleFormatCallback.pack({ key: "offline" }),
     );
 
   keyboard

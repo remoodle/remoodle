@@ -15,7 +15,22 @@ type CalendarScheduleItem = {
 export type ScheduleFilters = {
   eventTypes: { lecture: boolean; practice: boolean; learn: boolean };
   eventFormats: { online: boolean; offline: boolean };
+  courses?: Record<string, CourseScheduleFilters>;
   combineAdjacentPairs?: boolean;
+};
+
+export type CourseScheduleFilters = {
+  lecture: boolean;
+  practice: boolean;
+  online: boolean;
+  offline: boolean;
+};
+
+export const DEFAULT_COURSE_SCHEDULE_FILTERS: CourseScheduleFilters = {
+  lecture: true,
+  practice: true,
+  online: true,
+  offline: true,
 };
 
 export const DEFAULT_SCHEDULE_FILTERS: ScheduleFilters = {
@@ -220,6 +235,7 @@ export function normalizeScheduleFilters(
       ...DEFAULT_SCHEDULE_FILTERS.eventFormats,
       ...filters?.eventFormats,
     },
+    courses: filters?.courses ?? {},
     combineAdjacentPairs:
       filters?.combineAdjacentPairs ?? DEFAULT_SCHEDULE_FILTERS.combineAdjacentPairs,
   };
@@ -317,17 +333,18 @@ export function applyScheduleFilters(
     if (isLearn && !filters.eventTypes.learn) {
       return false;
     }
-    if (!isLearn && item.type === "lecture" && !filters.eventTypes.lecture) {
+    const course = filters.courses?.[item.courseName] ?? DEFAULT_COURSE_SCHEDULE_FILTERS;
+    if (!isLearn && item.type === "lecture" && !course.lecture) {
       return false;
     }
-    if (!isLearn && item.type === "practice" && !filters.eventTypes.practice) {
+    if (!isLearn && item.type === "practice" && !course.practice) {
       return false;
     }
 
-    if (item.isOnline && !filters.eventFormats.online) {
+    if (item.isOnline && !course.online) {
       return false;
     }
-    if (!item.isOnline && !filters.eventFormats.offline) {
+    if (!item.isOnline && !course.offline) {
       return false;
     }
 

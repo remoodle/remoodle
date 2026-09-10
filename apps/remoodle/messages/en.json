@@ -230,6 +230,7 @@
   "courses_header": "📋 Courses\n\nToggle courses to hide them from deadlines, schedule, and notifications.\n\n{active} of {total} active",
   "courses_no_group": "📋 Courses\n\nConnect your Calendar account first.\n\nGo to /settings → Schedule → Connect Calendar account.",
   "courses_fetch_failed": "📋 Courses\n\nFailed to fetch schedule. Try again later.",
+  "courses_filter_hint": "Choose which classes to include.",
 
   "no_group_schedule_command": "No group linked. Connect your Calendar account via /settings → Schedule → Connect Calendar account.",
   "no_group_schedule_callback": "No group linked. Go to Settings → Schedule to connect.",

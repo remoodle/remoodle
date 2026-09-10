@@ -19,6 +19,10 @@ export const users = sqliteTable("users", {
     .$type<{
       eventTypes: { lecture: boolean; practice: boolean; learn: boolean };
       eventFormats: { online: boolean; offline: boolean };
+      courses?: Record<
+        string,
+        { lecture: boolean; practice: boolean; online: boolean; offline: boolean }
+      >;
       combineAdjacentPairs?: boolean;
     }>()
     .notNull()

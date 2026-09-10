@@ -4,8 +4,20 @@ import type { Context } from "../context";
 import { db } from "../../db";
 import { users } from "../../db/schema";
 import { m } from "../../library/i18n/messages.js";
-import { coursesCallback, toggleCourseCallback, settingsCallback } from "../callback-data";
+import { bold } from "../../library/telegram-html";
+import {
+  courseScheduleCallback,
+  coursesCallback,
+  settingsCallback,
+  toggleCourseCallback,
+  toggleCourseScheduleFilterCallback,
+} from "../callback-data";
 import { fetchCachedUserSchedule } from "../schedule-cache";
+import {
+  DEFAULT_COURSE_SCHEDULE_FILTERS,
+  normalizeScheduleFilters,
+  type CourseScheduleFilters,
+} from "../../library/schedule";
 
 export const composer = new Composer<Context>();
 
@@ -25,11 +37,46 @@ function buildCoursesKeyboard(courses: string[], excluded: string[]) {
     const isExcluded = excluded.includes(course);
     keyboard
       .row()
-      .text(`${isExcluded ? "❌" : "✅"} ${course}`, toggleCourseCallback.pack({ idx: String(i) }));
+      .text(isExcluded ? "❌" : "✅", toggleCourseCallback.pack({ idx: String(i) }))
+      .text(course, courseScheduleCallback.pack({ idx: String(i) }));
   }
 
   keyboard.row().text(m.ui_back(), settingsCallback.pack({}));
   return keyboard;
+}
+
+function buildCourseScheduleKeyboard(
+  index: number,
+  filters: CourseScheduleFilters,
+): InlineKeyboard {
+  return new InlineKeyboard()
+    .text(
+      `${filters.lecture ? "✅" : "☐"} ${m.class_type_lecture()}`,
+      toggleCourseScheduleFilterCallback.pack({ idx: String(index), key: "lecture" }),
+    )
+    .text(
+      `${filters.practice ? "✅" : "☐"} ${m.class_type_practice()}`,
+      toggleCourseScheduleFilterCallback.pack({ idx: String(index), key: "practice" }),
+    )
+    .row()
+    .text(
+      `${filters.online ? "✅" : "☐"} ${m.location_online()}`,
+      toggleCourseScheduleFilterCallback.pack({ idx: String(index), key: "online" }),
+    )
+    .text(
+      `${filters.offline ? "✅" : "☐"} ${m.ui_offline()}`,
+      toggleCourseScheduleFilterCallback.pack({ idx: String(index), key: "offline" }),
+    )
+    .row()
+    .text(m.ui_back(), coursesCallback.pack({}));
+}
+
+async function getCourseContext(ctx: Context) {
+  if (!ctx.from) return null;
+  const [user] = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+  if (!user?.calendarUserId) return null;
+  const courses = await getUserCourses(ctx, user.calendarUserId);
+  return { user, courses };
 }
 
 function buildCoursesMessage(courses: string[], excluded: string[]): string {
@@ -151,6 +198,47 @@ feature.callbackQuery(toggleCourseCallback.filter(), async (ctx) => {
     parse_mode: "HTML",
     reply_markup: buildCoursesKeyboard(courses, updated),
   });
+  await ctx.answerCallbackQuery();
+});
+
+feature.callbackQuery(courseScheduleCallback.filter(), async (ctx) => {
+  const { idx } = courseScheduleCallback.unpack(ctx.callbackQuery.data) as { idx: string };
+  const context = await getCourseContext(ctx);
+  const index = Number(idx);
+  const course = context?.courses[index];
+  if (!context || !course) {
+    await ctx.answerCallbackQuery(m.error_course_not_found());
+    return;
+  }
+  const filters = normalizeScheduleFilters(context.user.scheduleFilters);
+  await ctx.editMessageText(`${bold(course)}\n\n${m.courses_filter_hint()}`, {
+    parse_mode: "HTML",
+    reply_markup: buildCourseScheduleKeyboard(
+      index,
+      filters.courses?.[course] ?? DEFAULT_COURSE_SCHEDULE_FILTERS,
+    ),
+  });
+  await ctx.answerCallbackQuery();
+});
+
+feature.callbackQuery(toggleCourseScheduleFilterCallback.filter(), async (ctx) => {
+  const { idx, key } = toggleCourseScheduleFilterCallback.unpack(ctx.callbackQuery.data) as {
+    idx: string;
+    key: keyof CourseScheduleFilters;
+  };
+  const context = await getCourseContext(ctx);
+  const index = Number(idx);
+  const course = context?.courses[index];
+  if (!context || !course || !(key in DEFAULT_COURSE_SCHEDULE_FILTERS)) {
+    await ctx.answerCallbackQuery(m.error_course_not_found());
+    return;
+  }
+  const filters = normalizeScheduleFilters(context.user.scheduleFilters);
+  const courseFilters = filters.courses?.[course] ?? { ...DEFAULT_COURSE_SCHEDULE_FILTERS };
+  const updated = { ...courseFilters, [key]: !courseFilters[key] };
+  filters.courses = { ...filters.courses, [course]: updated };
+  await db.update(users).set({ scheduleFilters: filters }).where(eq(users.telegramId, ctx.from.id));
+  await ctx.editMessageReplyMarkup({ reply_markup: buildCourseScheduleKeyboard(index, updated) });
   await ctx.answerCallbackQuery();
 });
 
