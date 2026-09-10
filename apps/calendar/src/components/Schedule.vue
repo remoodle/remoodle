@@ -13,6 +13,7 @@ import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 import { Temporal } from "temporal-polyfill";
 import { computed, ref, watchEffect } from "vue";
 import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { CALENDAR_TIME_ZONE } from "../../shared/ical";
 
 const props = defineProps<{
@@ -161,6 +162,7 @@ watchEffect(() => {
 <template>
   <div class="flex min-h-0 flex-col">
     <div class="flex h-12 shrink-0 items-center gap-1 border-b px-3">
+      <SidebarTrigger class="-ml-1 mr-1" />
       <Button variant="outline" size="sm" @click="goToday">Today</Button>
       <Button
         variant="ghost"

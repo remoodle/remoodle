@@ -44,7 +44,7 @@ async function signOut() {
           to="/schedule"
           class="flex items-center gap-2 rounded-sm text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
         >
-          <Icon icon="lucide:arrow-left" class="size-4" /> Schedule
+          <Icon icon="lucide:arrow-left" class="size-4" /> Calendar
         </RouterLink>
         <span class="text-border" aria-hidden="true">/</span>
         <span class="text-sm font-medium" aria-current="page">Settings</span>

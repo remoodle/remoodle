@@ -25,6 +25,7 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarProvider,
+  SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useSchedule } from "@/composables/use-schedule";
@@ -57,9 +58,9 @@ async function signOut() {
     class="h-svh overflow-hidden bg-background"
   >
     <Sidebar variant="inset" collapsible="offcanvas">
-      <SidebarHeader class="gap-4 p-3">
+      <SidebarHeader class="p-3">
         <div class="flex items-center gap-2 px-1">
-          <span class="text-sm font-semibold tracking-tight">ReMoodle Calendar</span>
+          <span class="text-sm font-semibold tracking-tight">Calendar</span>
         </div>
       </SidebarHeader>
 
@@ -107,42 +108,39 @@ async function signOut() {
             @sign-out="signOut"
           />
         </template>
+        <template v-else>
+          <div class="flex items-center gap-2">
+            <AuthDialog>
+              <Button variant="outline" size="sm" class="flex-1">Sign in</Button>
+            </AuthDialog>
+            <Button as-child variant="ghost" size="icon" class="size-8 shrink-0">
+              <RouterLink to="/account" aria-label="Settings">
+                <Icon icon="lucide:settings-2" class="size-4" />
+              </RouterLink>
+            </Button>
+          </div>
+        </template>
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
 
     <SidebarInset class="overflow-hidden bg-background">
-      <header class="flex h-12 shrink-0 items-center gap-2 border-b px-4">
-        <SidebarTrigger class="-ml-1" />
-        <div class="mx-2 h-4 w-px bg-border" />
-        <span class="text-sm font-medium">Schedule</span>
-        <div class="ml-auto flex items-center gap-2">
-          <template v-if="!session?.data">
-            <AuthDialog>
-              <Button variant="ghost" size="sm" class="text-muted-foreground">Sign in</Button>
-            </AuthDialog>
-          </template>
-          <Button as-child variant="ghost" size="sm"
-            ><RouterLink to="/account"
-              ><Icon icon="lucide:settings-2" class="size-4" />Settings</RouterLink
-            ></Button
-          >
-        </div>
-      </header>
-
       <div class="flex min-h-0 flex-1 flex-col overflow-auto">
-        <p
+        <div
           v-if="isPending || moodle.isPending.value"
-          class="p-6 text-sm text-muted-foreground"
+          class="flex items-center gap-2 p-6 text-sm text-muted-foreground"
           role="status"
         >
-          Loading your schedule…
-        </p>
+          <SidebarTrigger />
+          <span>Loading your schedule…</span>
+        </div>
         <div
           v-else-if="
             (error || moodle.error.value) && !data?.connection && !moodle.data.value?.connection
           "
           class="space-y-3 p-6"
         >
+          <SidebarTrigger />
           <p role="alert">Could not load your schedule.</p>
           <Button
             variant="outline"
@@ -153,18 +151,26 @@ async function signOut() {
             >Try again</Button
           >
         </div>
-        <Empty v-else-if="!data?.connection && !moodle.data.value?.connection" class="h-full"
-          ><EmptyHeader
-            ><EmptyTitle>Your schedule starts here</EmptyTitle
-            ><EmptyDescription
-              >Connect My DU or Moodle in Settings to build your calendar.</EmptyDescription
-            ></EmptyHeader
-          ><EmptyContent
-            ><Button as-child
-              ><RouterLink to="/account">Open settings</RouterLink></Button
-            ></EmptyContent
-          ></Empty
+        <div
+          v-else-if="!data?.connection && !moodle.data.value?.connection"
+          class="flex h-full flex-col"
         >
+          <div class="p-3">
+            <SidebarTrigger />
+          </div>
+          <Empty class="flex-1"
+            ><EmptyHeader
+              ><EmptyTitle>Your schedule starts here</EmptyTitle
+              ><EmptyDescription
+                >Connect My DU or Moodle in Settings to build your calendar.</EmptyDescription
+              ></EmptyHeader
+            ><EmptyContent
+              ><Button as-child
+                ><RouterLink to="/account">Open settings</RouterLink></Button
+              ></EmptyContent
+            ></Empty
+          >
+        </div>
         <template v-else>
           <p
             v-if="data?.connection && (data.connection.syncError || !data.connection.connected)"
