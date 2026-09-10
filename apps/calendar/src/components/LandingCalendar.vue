@@ -35,134 +35,168 @@ const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
 <style scoped>
 .calendar-scene {
-  display: grid;
-  place-items: center;
   width: 100%;
-  height: clamp(210px, 32svh, 270px);
   margin: 0;
-  padding: 16px 24px;
-  perspective: 1000px;
 }
 .calendar-paper {
   width: 100%;
-  max-width: 450px;
+  max-width: 680px;
   margin: 0 auto;
+  padding: 16px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 20px;
   background: var(--background);
-  box-shadow: 0 18px 40px #00000018;
+  box-shadow:
+    0 0 64px 8px #8b7be526,
+    0 16px 48px #00000008;
   overflow: hidden;
-  transform: scale(0.76) rotateX(8deg) rotateY(-4deg) rotateZ(-2deg);
+}
+:global(.dark) .calendar-paper {
+  box-shadow:
+    0 0 80px 12px #8b7be538,
+    0 0 24px #8b7be512;
 }
 .calendar-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid var(--border);
+  padding: 8px 14px 20px;
   font-size: 16px;
   font-weight: 600;
+  letter-spacing: -0.035em;
 }
 .calendar-heading span:last-child {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 400;
+  letter-spacing: 0;
   color: var(--muted-foreground);
 }
 .calendar-week {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  border-bottom: 1px solid var(--border);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border: 1px solid var(--border);
+  border-radius: 7px 7px 0 0;
 }
 .calendar-day {
   display: grid;
-  gap: 5px;
-  padding: 12px;
+  gap: 6px;
+  padding: 12px 16px;
   border-right: 1px solid var(--border);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted-foreground);
 }
 .calendar-day:last-child {
   border: 0;
 }
 .calendar-day strong {
-  font-size: 21px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   color: var(--foreground);
 }
 .calendar-grid {
   position: relative;
-  height: 176px;
+  height: 200px;
+  border: 1px solid var(--border);
+  border-top: 0;
+  border-radius: 0 0 7px 7px;
   background-image:
     linear-gradient(to right, var(--border) 1px, transparent 1px),
     linear-gradient(to bottom, var(--border) 1px, transparent 1px);
   background-size:
     20% 100%,
-    100% 48px;
+    100% 50px;
   background-position: -1px -1px;
 }
 .calendar-event {
   position: absolute;
   display: grid;
   gap: 3px;
-  width: calc(20% - 8px);
-  padding: 7px;
-  border-left: 2px solid #259d78;
-  border-radius: 3px;
+  width: calc(20% - 12px);
+  padding: 9px 10px;
+  border: 1px solid #a7dfcb;
+  border-radius: 6px;
   background: #d7f3e8;
   color: #16583f;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
 }
 .calendar-event span,
 .calendar-event small {
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 400;
 }
 .event-one {
-  left: 4px;
-  top: 8px;
+  left: 6px;
+  top: 0;
 }
 .event-two {
-  left: calc(20% + 4px);
-  top: 62px;
+  left: calc(20% + 6px);
+  top: 66px;
+  background: #dceeff;
+  border-color: #b0d6f5;
+  color: #24567e;
 }
 .event-three {
-  left: calc(40% + 4px);
-  top: 8px;
+  left: calc(40% + 6px);
+  top: 0;
 }
 .event-four {
-  left: calc(60% + 4px);
-  top: 108px;
+  left: calc(60% + 6px);
+  top: 114px;
+  background: #fff4d6;
+  border-color: #ead6a1;
+  color: #715520;
 }
 .event-deadline {
-  left: calc(80% + 4px);
-  top: 74px;
+  left: calc(80% + 6px);
+  top: 66px;
   background: #eee3ff;
-  border-color: #9971ce;
+  border-color: #d5bbee;
   color: #62418b;
 }
-:global(.dark) .calendar-event {
-  background: #183e32;
-  color: #a5e8ca;
-}
-:global(.dark) .event-deadline {
-  background: #352840;
-  color: #dec5fb;
-}
-@media (max-width: 480px) {
-  .calendar-scene {
-    padding: 12px 0;
+@media (max-width: 600px) {
+  .calendar-paper {
+    padding: 8px;
+    border-radius: 14px;
   }
   .calendar-heading {
-    padding: 14px;
+    padding: 8px 6px 16px;
+    font-size: 16px;
+  }
+  .calendar-heading span:last-child {
+    font-size: 12px;
+  }
+  .calendar-day {
+    padding: 10px 6px;
+    font-size: 10px;
+  }
+  .calendar-day strong {
+    font-size: 18px;
   }
   .calendar-event {
-    padding: 5px 3px;
-    font-size: 8px;
+    width: calc(20% - 4px);
+    padding: 7px 3px;
+    font-size: clamp(8px, 2.2vw, 12px);
+    overflow-wrap: anywhere;
   }
   .calendar-event span,
   .calendar-event small {
-    font-size: 7px;
+    font-size: clamp(7px, 1.8vw, 10px);
+  }
+  .event-one {
+    left: 2px;
+  }
+  .event-two {
+    left: calc(20% + 2px);
+  }
+  .event-three {
+    left: calc(40% + 2px);
+  }
+  .event-four {
+    left: calc(60% + 2px);
+  }
+  .event-deadline {
+    left: calc(80% + 2px);
   }
 }
 </style>

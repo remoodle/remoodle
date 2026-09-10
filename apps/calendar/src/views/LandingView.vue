@@ -24,13 +24,18 @@ watch(session, (currentSession) => {
 
 <template>
   <div class="landing-page">
-    <header class="landing-header landing-rule">
+    <header class="landing-header">
       <a href="/" class="landing-brand">ReMoodle Calendar</a>
       <ThemeSwitcher />
     </header>
     <main>
-      <LandingCalendar />
-      <section class="landing-action landing-rule" aria-label="Get started">
+      <section class="landing-copy" aria-labelledby="landing-title">
+        <h1 id="landing-title" class="landing-title">Know what's next<span>.</span></h1>
+        <p class="landing-description">
+          Your AITU classes and Moodle deadlines, together in one calendar.
+        </p>
+      </section>
+      <section class="landing-action" aria-label="Get started">
         <AuthDialog v-if="!isLoading" :callback-u-r-l="callbackURL">
           <Button class="landing-sign-in">
             Access your schedule
@@ -41,31 +46,9 @@ watch(session, (currentSession) => {
           >Checking your session…</Button
         >
       </section>
-      <section class="landing-copy landing-rule" aria-labelledby="landing-title">
-        <h1 id="landing-title">Know what's next.</h1>
-        <p class="landing-description">
-          Your AITU classes and Moodle deadlines, together in one calendar.
-        </p>
-        <ul class="landing-features">
-          <li>
-            <Icon icon="lucide:calendar-days" aria-hidden="true" /><span
-              >Plan your week around your classes</span
-            >
-          </li>
-          <li>
-            <Icon icon="lucide:circle-check" aria-hidden="true" /><span
-              >See which assignments are due next</span
-            >
-          </li>
-          <li>
-            <Icon icon="lucide:calendar-arrow-down" aria-hidden="true" /><span
-              >Add your schedule to your calendar app</span
-            >
-          </li>
-        </ul>
-      </section>
+      <LandingCalendar />
     </main>
-    <footer class="landing-footer landing-rule">
+    <footer class="landing-footer">
       <span>Made for AITU students</span>
       <a href="https://github.com/remoodle/heresy" target="_blank" rel="noopener noreferrer">
         GitHub <Icon icon="lucide:arrow-up-right" aria-hidden="true" />
@@ -76,105 +59,87 @@ watch(session, (currentSession) => {
 
 <style scoped>
 .landing-page {
-  width: min(100% - 40px, 672px);
+  width: min(100% - 48px, 960px);
   min-height: 100svh;
   margin-inline: auto;
-  border-inline: 1px solid var(--border);
   color: var(--foreground);
-}
-/* Extend the section rules beyond the column without creating horizontal overflow. */
-.landing-rule {
-  position: relative;
-}
-.landing-rule::before {
-  position: absolute;
-  inset: 0 calc((100% - 100vw) / 2) auto;
-  height: 1px;
-  background: var(--border);
-  content: "";
-  pointer-events: none;
 }
 .landing-header {
   display: flex;
-  min-height: 56px;
+  max-width: 680px;
+  margin-inline: auto;
+  min-height: 64px;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 24px;
-}
-.landing-header::before {
-  top: auto;
-  bottom: 0;
 }
 .landing-brand {
   font-size: 14px;
   font-weight: 600;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.035em;
   text-decoration: none;
 }
 .landing-action {
-  padding: 10px 24px;
+  max-width: 260px;
+  margin: 0 auto 32px;
 }
 .landing-sign-in {
+  position: relative;
   width: 100%;
-  height: 42px;
-  justify-content: space-between;
-  padding-inline: 16px;
+  height: 36px;
+  justify-content: center;
+  padding-inline: 48px;
+  border-radius: var(--radius);
   font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
   box-shadow: none;
+}
+.landing-sign-in :deep(svg) {
+  position: absolute;
+  right: 14px;
+  width: 16px;
+  height: 16px;
 }
 .landing-sign-in:focus-visible {
   outline: 2px solid var(--foreground);
   outline-offset: 4px;
 }
 .landing-copy {
-  padding: 22px 32px 24px;
+  padding: 36px 0 28px;
+  text-align: center;
 }
-h1 {
+.landing-title {
   margin: 0;
-  font-size: clamp(1.75rem, 3vw, 2rem);
+  font-size: 28px;
   line-height: 1.12;
-  font-weight: 550;
-  letter-spacing: -0.045em;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+}
+.landing-title span {
+  color: #9b87f5;
 }
 .landing-description {
-  max-width: 510px;
-  margin: 12px 0 0;
+  margin: 10px auto 0;
   color: var(--muted-foreground);
   font-size: 14px;
   line-height: 1.6;
 }
-.landing-features {
-  display: grid;
-  gap: 10px;
-  margin: 18px 0 0;
-  padding: 0;
-  list-style: none;
-}
-.landing-features li {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  font-size: 14px;
-}
-.landing-features svg {
-  flex-shrink: 0;
-  width: 17px;
-  height: 17px;
-  color: var(--primary);
-}
 .landing-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 14px 24px;
+  justify-content: center;
+  gap: 20px;
+  padding: 26px 0;
+  margin-top: 32px;
   color: var(--muted-foreground);
-  font-size: 12px;
+  font-size: 13px;
 }
 .landing-footer a {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  padding-left: 20px;
+  border-left: 1px solid var(--border);
   text-underline-offset: 4px;
 }
 .landing-footer a:hover {
@@ -187,21 +152,32 @@ h1 {
 }
 @media (max-width: 480px) {
   .landing-page {
-    width: calc(100% - 24px);
+    width: calc(100% - 32px);
   }
-  .landing-header,
-  .landing-action,
-  .landing-footer {
-    padding-inline: 16px;
-  }
-  .landing-copy {
-    padding: 20px;
+  .landing-header {
+    min-height: 64px;
   }
   .landing-brand {
+    font-size: 14px;
+  }
+  .landing-action {
+    margin-bottom: 24px;
+  }
+  .landing-sign-in {
+    font-size: 14px;
+  }
+  .landing-copy {
+    padding: 24px 0;
+  }
+  .landing-description {
+    font-size: 14px;
+  }
+  .landing-footer {
+    gap: 14px;
     font-size: 12px;
   }
-  .landing-features li {
-    font-size: 13px;
+  .landing-footer a {
+    padding-left: 14px;
   }
 }
 </style>
