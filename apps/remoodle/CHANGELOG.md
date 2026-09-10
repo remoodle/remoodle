@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.20.0](https://github.com/remoodle/heresy/compare/remoodle-v0.19.3...remoodle-v0.20.0) (2026-09-10)
+
+
+### Features
+
+* replace schedule parser with du integration ([402fe5a](https://github.com/remoodle/heresy/commit/402fe5a9a3a2634378df781d63f67b74a66ab29e))
+* update moodle integration flow ([61b86d8](https://github.com/remoodle/heresy/commit/61b86d89e7fa9b26d7a19358de226ab33d54fd54))
+
+
+### Miscellaneous Chores
+
+* sync repository contents from remoodle/temp ([b149c94](https://github.com/remoodle/heresy/commit/b149c94ce2cb969f3690eb5619bc3398678832a8))
+
 ## [0.19.3](https://github.com/remoodle/heresy/compare/remoodle-v0.19.2...remoodle-v0.19.3) (2026-05-03)
 
 
