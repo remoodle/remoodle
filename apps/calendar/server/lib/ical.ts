@@ -1,5 +1,4 @@
 import type { ScheduleItem } from "../../shared/schedule";
-import { moodleToIcalEvents, type MoodleEvent } from "../../shared/moodle";
 import {
   generateCalendarEventsIcal,
   mergeAdjacentCalendarEvents,
@@ -12,15 +11,11 @@ export function generateIcal(
     combineAdjacentPairs?: boolean;
     rangeStart?: string;
     rangeEnd?: string;
-    moodleEvents?: MoodleEvent[];
   },
 ) {
   const events = scheduleToCalendarEvents(items);
   return generateCalendarEventsIcal(
-    [
-      ...(options?.combineAdjacentPairs ? mergeAdjacentCalendarEvents(events) : events),
-      ...moodleToIcalEvents(options?.moodleEvents ?? []),
-    ],
+    options?.combineAdjacentPairs ? mergeAdjacentCalendarEvents(events) : events,
     options?.rangeStart,
     options?.rangeEnd,
   );

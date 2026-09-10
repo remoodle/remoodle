@@ -12,7 +12,7 @@ import { storeToRefs } from "pinia";
 import { RouterLink, useRouter } from "vue-router";
 import AccountMenu from "@/components/AccountMenu.vue";
 import AuthDialog from "@/components/AuthDialog.vue";
-import ExportToIcal from "@/components/ExportToIcal.vue";
+import ExportSchedule from "@/components/ExportSchedule.vue";
 import Schedule from "@/components/Schedule.vue";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +38,7 @@ const appStore = useAppStore();
 const router = useRouter();
 const { filters } = storeToRefs(appStore);
 
-const { events, courses, data, moodle, isPending, error, refetch } = useSchedule(
+const { events, scheduleEvents, courses, data, moodle, isPending, error, refetch } = useSchedule(
   () => filters.value,
 );
 const { data: session } = useSessionQuery();
@@ -73,14 +73,17 @@ async function signOut() {
 
       <SidebarContent>
         <div class="flex items-center justify-between px-4 pt-3 text-sm font-semibold">
-          <span>Classes</span><Checkbox v-model="filters.classes" aria-label="Show classes" />
+          <span>Schedule</span><Checkbox v-model="filters.classes" aria-label="Show schedule" />
         </div>
-        <div v-if="data?.connection || moodle.data.value?.connection" class="px-3 pt-3">
-          <ExportToIcal :events="events" :filters="filters" button-class="w-full justify-between" />
+        <div v-if="data?.connection" class="px-3 pt-3">
+          <ExportSchedule
+            :events="scheduleEvents"
+            :filters="filters"
+            button-class="w-full justify-between"
+          />
         </div>
         <template v-if="data?.connection">
           <SidebarGroup>
-            <SidebarGroupLabel>Courses</SidebarGroupLabel>
             <SidebarGroupContent>
               <div class="flex flex-col gap-1 px-1">
                 <div

@@ -3,20 +3,15 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 import { filterSchedule } from "../../../shared/schedule";
-import { filterMoodle } from "../../../shared/moodle";
 import { createDb } from "../../db";
 import { icalTokens } from "../../db/schema";
 import { generateIcal } from "../../lib/ical";
-import { readMoodle } from "../../lib/moodle";
 import { readSchedule } from "../../lib/my-du/service";
 import type { AppEnv } from "../../context";
 import { requireSession } from "../middleware/auth";
 
 const filtersSchema = z.object({
   classes: z.boolean().optional(),
-  moodle: z
-    .object({ attendance: z.boolean(), assignment: z.boolean(), other: z.boolean() })
-    .optional(),
   courses: z.record(
     z.string(),
     z.object({
@@ -60,9 +55,7 @@ export const subscriptionsController = new Hono<AppEnv>()
     if (!tokenRow) throw new HTTPException(404, { message: "Token not found" });
     const filters = filtersSchema.parse(tokenRow.filters);
     const schedule = await readSchedule(c.env, tokenRow.userId);
-    const moodle = await readMoodle(c.env, tokenRow.userId);
     const ical = generateIcal(filterSchedule(schedule.events, filters), {
-      moodleEvents: filterMoodle(moodle.events, filters.moodle),
       combineAdjacentPairs: filters.ical?.combineAdjacentPairs,
       rangeStart: filters.ical?.startDate,
       rangeEnd: filters.ical?.endDate,

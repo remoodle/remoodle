@@ -13,8 +13,8 @@ export function useSchedule(filters: () => ScheduleFilter) {
   const query = useMyDuSchedule();
   const moodle = useMoodleSchedule();
   const items = computed(() => filterSchedule(query.data.value?.events ?? [], filters()));
-  const events = computed((): CalendarEvent[] => [
-    ...scheduleToCalendarEvents(items.value).map((item, index) => ({
+  const scheduleEvents = computed((): CalendarEvent[] =>
+    scheduleToCalendarEvents(items.value).map((item, index) => ({
       ...item,
       start: Temporal.PlainDateTime.from(item.start.replace(" ", "T")).toZonedDateTime(
         CALENDAR_TIME_ZONE,
@@ -29,10 +29,13 @@ export function useSchedule(filters: () => ScheduleFilter) {
             ? "online"
             : "offline",
     })),
+  );
+  const events = computed((): CalendarEvent[] => [
+    ...scheduleEvents.value,
     ...moodleToCalendarEvents(filterMoodle(moodle.data.value?.events ?? [], filters().moodle)),
   ]);
   const courses = computed(() => [
     ...new Set(query.data.value?.events.map((item) => item.courseName) ?? []),
   ]);
-  return { ...query, moodle, items, events, courses };
+  return { ...query, moodle, items, events, scheduleEvents, courses };
 }
