@@ -25,6 +25,11 @@ export function createAuth(env: Env) {
     baseURL: env.BETTER_AUTH_URL,
     secret: env.BETTER_AUTH_SECRET,
     basePath: "/api/auth",
+    account: {
+      accountLinking: {
+        trustedProviders: ["microsoft"],
+      },
+    },
     socialProviders: {
       // github: {
       //   clientId: env.GITHUB_CLIENT_ID,
