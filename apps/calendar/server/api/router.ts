@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { createAuth } from "../lib/auth";
 import type { AppEnv } from "../context";
 import { moodleController } from "./controllers/moodle";
 import { myDuController } from "./controllers/my-du";
@@ -9,4 +10,5 @@ export const apiRouter = new Hono<AppEnv>()
   .route("/", moodleController)
   .route("/", myDuController)
   .route("/", subscriptionsController)
-  .route("/", remoodleController);
+  .route("/", remoodleController)
+  .on(["GET", "POST"], "/api/auth/*", (c) => createAuth(c.env).handler(c.req.raw));
