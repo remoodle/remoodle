@@ -14,7 +14,7 @@ export function useSchedule(filters: () => ScheduleFilter) {
   const moodle = useMoodleSchedule();
   const items = computed(() => filterSchedule(query.data.value?.events ?? [], filters()));
   const events = computed((): CalendarEvent[] => [
-    ...scheduleToCalendarEvents(items.value).map((item) => ({
+    ...scheduleToCalendarEvents(items.value).map((item, index) => ({
       ...item,
       start: Temporal.PlainDateTime.from(item.start.replace(" ", "T")).toZonedDateTime(
         CALENDAR_TIME_ZONE,
@@ -22,7 +22,12 @@ export function useSchedule(filters: () => ScheduleFilter) {
       end: Temporal.PlainDateTime.from(item.end!.replace(" ", "T")).toZonedDateTime(
         CALENDAR_TIME_ZONE,
       ),
-      calendarId: item.location === "Online" ? "online" : "offline",
+      calendarId:
+        items.value[index]?.type === "lecture"
+          ? "lecture"
+          : item.location === "Online"
+            ? "online"
+            : "offline",
     })),
     ...moodleToCalendarEvents(filterMoodle(moodle.data.value?.events ?? [], filters().moodle)),
   ]);

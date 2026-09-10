@@ -45,6 +45,20 @@ const calendarApp = createCalendar({
     }),
   ],
   calendars: {
+    lecture: {
+      colorName: "blue",
+      label: "Lectures",
+      lightColors: {
+        main: "#2563EB",
+        container: "#DBEAFE",
+        onContainer: "#1E3A8A",
+      },
+      darkColors: {
+        main: "#93C5FD",
+        container: "#1E3A5F",
+        onContainer: "#EFF6FF",
+      },
+    },
     online: {
       colorName: "blue",
       label: "Online",
