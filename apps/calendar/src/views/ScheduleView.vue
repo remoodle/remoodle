@@ -143,7 +143,7 @@ async function signOut() {
           </SidebarGroup>
         </template>
 
-        <div v-else class="px-4 py-3 text-xs text-muted-foreground">
+        <div v-else-if="!isPending" class="px-4 py-3 text-xs text-muted-foreground">
           <RouterLink to="/account" class="underline underline-offset-4">Connect My DU</RouterLink>
           to add your classes.
         </div>
@@ -174,7 +174,7 @@ async function signOut() {
                 Attendance is hidden by default to avoid duplicating classes.
               </p>
             </div>
-            <p v-else class="px-2 py-3 text-xs text-muted-foreground">
+            <p v-else-if="!moodle.isPending.value" class="px-2 py-3 text-xs text-muted-foreground">
               <RouterLink to="/account" class="underline underline-offset-4"
                 >Connect Moodle</RouterLink
               >
@@ -216,7 +216,7 @@ async function signOut() {
 
       <div class="flex min-h-0 flex-1 flex-col overflow-auto">
         <p
-          v-if="isPending && moodle.isPending.value"
+          v-if="isPending || moodle.isPending.value"
           class="p-6 text-sm text-muted-foreground"
           role="status"
         >
