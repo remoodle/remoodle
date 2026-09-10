@@ -1,5 +1,8 @@
 import type { ScheduleItem } from "./schedule";
-export const CALENDAR_TIME_ZONE = "Asia/Almaty";
+
+// Use Kazakhstan's fixed UTC+5 offset. Some browsers still ship timezone data
+// from before the 2024 change and resolve Asia/Almaty as UTC+6.
+export const CALENDAR_TIME_ZONE = "Etc/GMT-5";
 
 export type IcalCalendarEvent = {
   id: string | number;

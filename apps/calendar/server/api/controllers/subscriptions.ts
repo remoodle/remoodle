@@ -17,9 +17,16 @@ const filtersSchema = z.object({
   moodle: z
     .object({ attendance: z.boolean(), assignment: z.boolean(), other: z.boolean() })
     .optional(),
-  eventTypes: z.object({ lecture: z.boolean(), practice: z.boolean() }),
-  eventFormats: z.object({ online: z.boolean(), offline: z.boolean() }),
-  excludedCourses: z.array(z.string()),
+  courses: z.record(
+    z.string(),
+    z.object({
+      enabled: z.boolean(),
+      lecture: z.boolean(),
+      practice: z.boolean(),
+      online: z.boolean(),
+      offline: z.boolean(),
+    }),
+  ),
   ical: z
     .object({
       combineAdjacentPairs: z.boolean().optional(),

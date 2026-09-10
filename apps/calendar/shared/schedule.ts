@@ -14,28 +14,38 @@ export type ScheduleItem = {
 export type ScheduleFilter = {
   classes?: boolean;
   moodle?: import("./moodle").MoodleFilters;
-  eventTypes: { lecture: boolean; practice: boolean };
-  eventFormats: { online: boolean; offline: boolean };
-  excludedCourses: string[];
+  courses: Record<string, CourseScheduleFilter>;
   ical?: { combineAdjacentPairs?: boolean; startDate?: string; endDate?: string };
 };
+
+export type CourseScheduleFilter = {
+  enabled: boolean;
+  lecture: boolean;
+  practice: boolean;
+  online: boolean;
+  offline: boolean;
+};
+
+export function defaultCourseFilter(): CourseScheduleFilter {
+  return { enabled: true, lecture: true, practice: true, online: true, offline: true };
+}
 
 export function defaultFilters(): ScheduleFilter {
   return {
     classes: true,
     moodle: { attendance: false, assignment: true, other: true },
-    eventTypes: { lecture: true, practice: true },
-    eventFormats: { online: true, offline: true },
-    excludedCourses: [],
+    courses: {},
   };
 }
 
 export function filterSchedule(items: ScheduleItem[], filters: ScheduleFilter) {
   if (filters.classes === false) return [];
-  return items.filter(
-    (item) =>
-      !filters.excludedCourses.includes(item.courseName) &&
-      (item.type === null || filters.eventTypes[item.type]) &&
-      filters.eventFormats[item.isOnline ? "online" : "offline"],
-  );
+  return items.filter((item) => {
+    const course = filters.courses[item.courseName] ?? defaultCourseFilter();
+    return (
+      course.enabled &&
+      (item.type === null || course[item.type]) &&
+      course[item.isOnline ? "online" : "offline"]
+    );
+  });
 }

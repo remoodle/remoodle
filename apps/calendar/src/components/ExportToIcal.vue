@@ -250,38 +250,24 @@ const getICalFile = (): void => {
       </div>
 
       <div class="flex flex-col gap-3 rounded-xl border p-4">
-        <div class="flex flex-col gap-1.5">
-          <span class="text-sm font-medium">Event types</span>
-          <div class="flex flex-wrap gap-1 select-none">
-            <Badge
-              v-for="(enabled, type) in filters?.eventTypes"
-              :key="type"
-              :variant="enabled ? 'default' : 'destructive'"
-              >{{ type }}</Badge
-            >
+        <div v-if="Object.keys(filters?.courses ?? {}).length" class="flex flex-col gap-2">
+          <span class="text-sm font-medium">Course filters</span>
+          <div v-for="(courseFilter, course) in filters?.courses" :key="course" class="text-xs">
+            <p class="font-medium">{{ course }}</p>
+            <p class="mt-1 flex flex-wrap gap-1 capitalize text-muted-foreground">
+              <Badge :variant="courseFilter.enabled ? 'default' : 'destructive'">
+                {{ courseFilter.enabled ? "Included" : "Excluded" }}
+              </Badge>
+              <Badge
+                v-for="key in ['lecture', 'practice', 'online', 'offline'] as const"
+                :key="key"
+                :variant="courseFilter[key] ? 'secondary' : 'destructive'"
+                >{{ key }}</Badge
+              >
+            </p>
           </div>
         </div>
-
-        <div class="flex flex-col gap-1.5">
-          <span class="text-sm font-medium">Event formats</span>
-          <div class="flex flex-wrap gap-1 select-none">
-            <Badge
-              v-for="(enabled, format) in filters?.eventFormats"
-              :key="format"
-              :variant="enabled ? 'default' : 'destructive'"
-              >{{ format }}</Badge
-            >
-          </div>
-        </div>
-
-        <div v-if="filters?.excludedCourses?.length" class="flex flex-col gap-1.5">
-          <span class="text-sm font-medium">Excluded courses</span>
-          <div class="flex flex-wrap gap-1 select-none">
-            <Badge v-for="course in filters?.excludedCourses" :key="course" variant="destructive">{{
-              course
-            }}</Badge>
-          </div>
-        </div>
+        <p v-else class="text-sm text-muted-foreground">All classes are included.</p>
       </div>
 
       <div class="flex flex-col gap-1.5">

@@ -9,7 +9,6 @@ import {
   EmptyContent,
 } from "@/components/ui/empty";
 import { storeToRefs } from "pinia";
-import { watch } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import AccountMenu from "@/components/AccountMenu.vue";
 import AuthDialog from "@/components/AuthDialog.vue";
@@ -31,7 +30,7 @@ import {
 import { useSchedule } from "@/composables/use-schedule";
 import { useSessionQuery, useClearSession } from "@/lib/api/session";
 import { moodleKinds, defaultMoodleFilters } from "../../shared/moodle";
-import { defaultFilters } from "../../shared/schedule";
+import { defaultCourseFilter, type CourseScheduleFilter } from "../../shared/schedule";
 import { authClient } from "@/lib/auth-client";
 import { useAppStore } from "@/stores/app";
 
@@ -44,24 +43,13 @@ const { events, courses, data, moodle, isPending, error, refetch } = useSchedule
 );
 const { data: session } = useSessionQuery();
 const clearSession = useClearSession();
-watch(
-  () => session.value?.data?.user.id,
-  () => {
-    filters.value = defaultFilters();
-  },
-);
 
-function toggleCourse(course: string) {
-  const f = filters.value;
-  if (f.excludedCourses.includes(course)) {
-    f.excludedCourses = f.excludedCourses.filter((c) => c !== course);
-  } else {
-    f.excludedCourses = [...f.excludedCourses, course];
-  }
+function courseFilter(course: string): CourseScheduleFilter {
+  return filters.value.courses[course] ?? defaultCourseFilter();
 }
 
-function isCourseIncluded(course: string): boolean {
-  return !filters.value.excludedCourses.includes(course);
+function setCourseFilter(course: string, key: keyof CourseScheduleFilter, value: boolean) {
+  filters.value.courses[course] = { ...courseFilter(course), [key]: value };
 }
 
 async function signOut() {
@@ -92,52 +80,41 @@ async function signOut() {
         </div>
         <template v-if="data?.connection">
           <SidebarGroup>
-            <SidebarGroupLabel>Event types</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <div class="flex flex-col px-1">
-                <label
-                  v-for="key in ['lecture', 'practice'] as const"
-                  :key="key"
-                  class="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent"
-                >
-                  <Checkbox v-model="filters.eventTypes[key]" />
-                  <span class="leading-tight capitalize">{{ key }}</span>
-                </label>
-              </div>
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          <SidebarGroup>
-            <SidebarGroupLabel>Event formats</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <div class="flex flex-col px-1">
-                <label
-                  v-for="key in ['online', 'offline'] as const"
-                  :key="key"
-                  class="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent"
-                >
-                  <Checkbox v-model="filters.eventFormats[key]" />
-                  <span class="leading-tight capitalize">{{ key }}</span>
-                </label>
-              </div>
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          <SidebarGroup>
             <SidebarGroupLabel>Courses</SidebarGroupLabel>
             <SidebarGroupContent>
-              <div class="flex flex-col px-1">
-                <label
+              <div class="flex flex-col gap-1 px-1">
+                <div
                   v-for="course in courses"
                   :key="course"
-                  class="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent"
+                  class="rounded-md px-2 py-2 transition-colors hover:bg-sidebar-accent"
                 >
-                  <Checkbox
-                    :model-value="isCourseIncluded(course)"
-                    @update:model-value="toggleCourse(course)"
-                  />
-                  <span class="leading-tight">{{ course }}</span>
-                </label>
+                  <label class="flex cursor-pointer items-start gap-2.5 text-sm font-medium">
+                    <Checkbox
+                      class="mt-0.5"
+                      :model-value="courseFilter(course).enabled"
+                      @update:model-value="setCourseFilter(course, 'enabled', $event === true)"
+                    />
+                    <span class="leading-tight">{{ course }}</span>
+                  </label>
+                  <div
+                    class="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 pl-7 text-xs text-muted-foreground"
+                    :class="{ 'opacity-45': !courseFilter(course).enabled }"
+                  >
+                    <label
+                      v-for="key in ['lecture', 'practice', 'online', 'offline'] as const"
+                      :key="key"
+                      class="flex cursor-pointer items-center gap-2 capitalize"
+                    >
+                      <Checkbox
+                        class="size-3.5"
+                        :disabled="!courseFilter(course).enabled"
+                        :model-value="courseFilter(course)[key]"
+                        @update:model-value="setCourseFilter(course, key, $event === true)"
+                      />
+                      {{ key }}
+                    </label>
+                  </div>
+                </div>
               </div>
             </SidebarGroupContent>
           </SidebarGroup>

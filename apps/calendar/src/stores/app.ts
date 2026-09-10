@@ -1,8 +1,8 @@
-import { useColorMode } from "@vueuse/core";
+import { useColorMode, useStorage } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { getStorageKey } from "@/lib/helpers";
-import { defaultFilters } from "../../shared/schedule";
+import { defaultFilters, type ScheduleFilter } from "../../shared/schedule";
 
 export const useAppStore = defineStore("app", () => {
   const { store: storedTheme, system: systemTheme } = useColorMode({
@@ -15,6 +15,13 @@ export const useAppStore = defineStore("app", () => {
   const theme = computed<"light" | "dark">(() =>
     storedTheme.value === "auto" ? systemTheme.value : storedTheme.value,
   );
-  const filters = ref(defaultFilters());
+  const filters = useStorage<ScheduleFilter>(
+    getStorageKey("schedule-filters"),
+    defaultFilters(),
+    undefined,
+    {
+      mergeDefaults: true,
+    },
+  );
   return { theme, toggleTheme, filters };
 });

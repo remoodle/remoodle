@@ -49,6 +49,20 @@ describe("Moodle import", () => {
     expect(ics).toContain("DTSTART:20260913T185900Z");
     expect(ics).toContain("DTEND:20260913T185900Z");
   });
+  test("uses Kazakhstan's current UTC+5 offset without regional timezone data", () => {
+    const events = parseMoodleFeed(
+      feed(
+        "SUMMARY:Attendance (Group CSE-2507M)\r\nDTSTART:20260907T140000Z\r\nDTEND:20260907T160000Z",
+      ),
+    );
+    expect(events[0]).toMatchObject({
+      start: "2026-09-07T19:00:00",
+      end: "2026-09-07T21:00:00",
+    });
+    const display = moodleToCalendarEvents(events)[0]!;
+    expect(display.start.toString()).toBe("2026-09-07T19:00:00+05:00[Etc/GMT-5]");
+    expect(display.end.toString()).toBe("2026-09-07T21:00:00+05:00[Etc/GMT-5]");
+  });
   test("handles TZID, folded text, quiz classification, and all-day exclusive ends", () => {
     const timed = parseMoodleFeed(
       feed(

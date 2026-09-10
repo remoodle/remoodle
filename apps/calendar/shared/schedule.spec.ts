@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vite-plus/test";
-import { defaultFilters, filterSchedule, type ScheduleItem } from "./schedule";
+import { defaultCourseFilter, defaultFilters, filterSchedule, type ScheduleItem } from "./schedule";
 
 const lecture: ScheduleItem = {
   id: "lecture",
@@ -23,15 +23,43 @@ const practice: ScheduleItem = {
 describe("filterSchedule", () => {
   test("filters lectures independently", () => {
     const filters = defaultFilters();
-    filters.eventTypes.lecture = false;
+    filters.courses[lecture.courseName] = { ...defaultCourseFilter(), lecture: false };
 
     expect(filterSchedule([lecture, practice], filters)).toEqual([practice]);
   });
 
   test("filters practical classes independently", () => {
     const filters = defaultFilters();
-    filters.eventTypes.practice = false;
+    filters.courses[lecture.courseName] = { ...defaultCourseFilter(), practice: false };
 
     expect(filterSchedule([lecture, practice], filters)).toEqual([lecture]);
+  });
+
+  test("applies event type and format filters to one course only", () => {
+    const otherLecture = { ...lecture, id: "other", courseName: "Fault tolerance" };
+    const onlinePractice = { ...practice, id: "online", isOnline: true };
+    const filters = defaultFilters();
+    filters.courses[lecture.courseName] = {
+      ...defaultCourseFilter(),
+      lecture: false,
+      online: false,
+    };
+
+    expect(filterSchedule([lecture, practice, onlinePractice, otherLecture], filters)).toEqual([
+      practice,
+      otherLecture,
+    ]);
+  });
+
+  test("disables a whole course without losing its detailed filters", () => {
+    const filters = defaultFilters();
+    filters.courses[lecture.courseName] = {
+      ...defaultCourseFilter(),
+      enabled: false,
+      practice: false,
+    };
+
+    expect(filterSchedule([lecture, practice], filters)).toEqual([]);
+    expect(filters.courses[lecture.courseName]?.practice).toBe(false);
   });
 });
