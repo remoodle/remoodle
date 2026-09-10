@@ -2,7 +2,6 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
 
   "menu_ready": "👋 ReMoodle is ready",
-  "warn_no_group_in_calendar": "⚠️ Save a primary group in Calendar, then reconnect.",
   "warn_add_calendar_url": "⚠️ Add your Moodle calendar URL in Settings to enable deadlines.",
   "warn_digest_disabled": "⚠️ Digest is disabled.",
   "warn_digest_no_days": "⚠️ Digest is enabled, but no weekdays are selected.",
@@ -72,7 +71,6 @@
   "calendar_url_saved": "✅ Calendar URL saved!",
   "calendar_connected": "✅ Calendar account connected!",
   "group_label": "📆 Your group: {group}",
-  "no_group_saved_in_calendar": "⚠️ No saved primary group found in Calendar. Save it in {host}/account, then reconnect here to enable /schedule.",
 
   "settings_header": "⚙️ Settings\n\nChoose a category to configure:",
   "settings_button_courses": "📚 Courses",
@@ -105,7 +103,7 @@
   "schedule_no_group": "Group: not set",
   "schedule_merge_label": "Merge adjacent pairs: {status}",
   "schedule_configure_hint": "Configure event types, formats, and notifications.",
-  "schedule_no_group_hint": "Schedule integration requires a saved primary group in Calendar. Save it in {host}/account, then reconnect your Calendar account here.",
+  "schedule_no_group_hint": "Connect your Calendar account to enable schedule features.",
   "no_group_for_schedule": "Connect your Calendar account first to enable schedule notifications.",
   "schedule_button_this_week": "This week →",
   "schedule_button_next_week": "Next week →",

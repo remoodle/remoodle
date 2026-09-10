@@ -8,9 +8,6 @@ export const users = sqliteTable("users", {
     .notNull()
     .default(["P1D", "PT3H"]),
   calendarUserId: text("calendar_user_id"),
-  calendarAccountLinked: integer("calendar_account_linked", { mode: "boolean" })
-    .notNull()
-    .default(false),
   deadlinesEnabled: integer("deadlines_enabled", { mode: "boolean" }).notNull().default(true),
   scheduleEnabled: integer("schedule_enabled", { mode: "boolean" }).notNull().default(false),
   excludedCourses: text("excluded_courses", { mode: "json" })

@@ -86,7 +86,6 @@ function buildDeleteAccountKeyboard() {
 function buildAccountMessage(user: {
   id: number;
   telegramId: number;
-  calendarAccountLinked: boolean;
   calendarUserId: string | null;
 }): string {
   return [
@@ -98,7 +97,7 @@ function buildAccountMessage(user: {
     user.calendarUserId ? m.account_group({ group: "My DU" }) : m.account_no_group(),
     "",
     m.account_moodle_managed_in_calendar(),
-    user.calendarAccountLinked
+    user.calendarUserId
       ? m.account_calendar_account_linked()
       : m.account_calendar_account_unlinked(),
   ].join("\n");
@@ -132,7 +131,6 @@ feature.callbackQuery(accountCallback.filter(), async (ctx) => {
     .select({
       id: users.id,
       telegramId: users.telegramId,
-      calendarAccountLinked: users.calendarAccountLinked,
       calendarUserId: users.calendarUserId,
     })
     .from(users)
@@ -183,7 +181,6 @@ feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
       .select({
         id: users.id,
         telegramId: users.telegramId,
-        calendarAccountLinked: users.calendarAccountLinked,
         calendarUserId: users.calendarUserId,
       })
       .from(users)

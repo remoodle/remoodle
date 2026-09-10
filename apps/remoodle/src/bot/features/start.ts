@@ -34,7 +34,6 @@ import { fetchCachedUserSchedule } from "../schedule-cache";
 
 type MenuUser = {
   calendarUserId: string | null;
-  calendarAccountLinked: boolean;
   excludedCourses: string[];
   scheduleFilters?: {
     eventTypes: { lecture: boolean; practice: boolean; learn: boolean };
@@ -51,8 +50,6 @@ async function buildMenuMessage(ctx: Context, user: MenuUser): Promise<string> {
   const summary = await buildMenuSummary(ctx, user);
   if (summary) {
     parts.push(summary);
-  } else if (user.calendarAccountLinked && !user.calendarUserId) {
-    parts.push(m.warn_no_group_in_calendar());
   } else if (!user.calendarUserId) {
     parts.push(m.warn_add_calendar_url());
   }
@@ -339,14 +336,12 @@ feature.on("message:text", async (ctx, next) => {
       .values({
         telegramId,
         calendarUserId: connectResult.userId,
-        calendarAccountLinked: true,
         thresholds: config.reminders.defaultThresholds,
       })
       .onConflictDoUpdate({
         target: users.telegramId,
         set: {
           calendarUserId: connectResult.userId,
-          calendarAccountLinked: true,
         },
       });
 
