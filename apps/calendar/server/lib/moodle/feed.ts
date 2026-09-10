@@ -1,7 +1,7 @@
 import ICAL from "ical.js";
 import { Temporal } from "temporal-polyfill";
-import type { MoodleEvent } from "../shared/moodle";
-import { CALENDAR_TIME_ZONE } from "../shared/ical";
+import type { MoodleEvent } from "../../../shared/moodle";
+import { CALENDAR_TIME_ZONE } from "../../../shared/ical";
 
 export function validateMoodleUrl(input: unknown) {
   if (typeof input !== "string" || input.length > 4096)
@@ -87,7 +87,7 @@ export function parseMoodleFeed(text: string): MoodleEvent[] {
       courseName: typeof categories === "string" ? categories.split("|")[0]!.trim() : "",
     });
   }
-  return [...result.values()];
+  return Array.from(result.values());
 }
 
 export async function fetchMoodleFeed(url: string) {

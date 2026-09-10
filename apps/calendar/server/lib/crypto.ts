@@ -1,4 +1,4 @@
-// Tokens are encrypted at rest, bound to their calendar owner, and never returned to the UI.
+// Secrets are encrypted at rest, bound to their owner, and never returned to the UI.
 async function key(secret: string) {
   const material = await crypto.subtle.importKey(
     "raw",

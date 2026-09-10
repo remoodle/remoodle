@@ -1,18 +1,17 @@
-import type { ScheduleItem } from "../shared/schedule";
-import { moodleToIcalEvents, type MoodleEvent } from "../shared/moodle";
+import type { ScheduleItem } from "../../shared/schedule";
+import { moodleToIcalEvents, type MoodleEvent } from "../../shared/moodle";
 import {
   generateCalendarEventsIcal,
   mergeAdjacentCalendarEvents,
   scheduleToCalendarEvents,
-} from "../shared/ical";
+} from "../../shared/ical";
 
 export function generateIcal(
   items: ScheduleItem[],
-  _now = new Date(),
   options?: {
     combineAdjacentPairs?: boolean;
-    rangeStart?: Date;
-    rangeEnd?: Date;
+    rangeStart?: string;
+    rangeEnd?: string;
     moodleEvents?: MoodleEvent[];
   },
 ) {

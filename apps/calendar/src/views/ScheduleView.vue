@@ -81,21 +81,14 @@ async function signOut() {
         <div class="flex items-center gap-2 px-1">
           <span class="text-sm font-semibold tracking-tight">ReMoodle Calendar</span>
         </div>
-
-        <template v-if="data?.connection || moodle.data.value?.connection">
-          <div class="px-1">
-            <ExportToIcal
-              :events="events"
-              :filters="filters"
-              button-class="w-full justify-between"
-            />
-          </div>
-        </template>
       </SidebarHeader>
 
       <SidebarContent>
         <div class="flex items-center justify-between px-4 pt-3 text-sm font-semibold">
           <span>Classes</span><Checkbox v-model="filters.classes" aria-label="Show classes" />
+        </div>
+        <div v-if="data?.connection || moodle.data.value?.connection" class="px-3 pt-3">
+          <ExportToIcal :events="events" :filters="filters" button-class="w-full justify-between" />
         </div>
         <template v-if="data?.connection">
           <SidebarGroup>

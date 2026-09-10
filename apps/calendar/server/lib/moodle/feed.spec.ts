@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vite-plus/test";
-import { parseMoodleFeed, validateMoodleUrl } from "./moodle-feed";
-import { filterMoodle, moodleToIcalEvents } from "../shared/moodle";
-import { generateCalendarEventsIcal } from "../shared/ical";
-import { moodleToCalendarEvents } from "../src/lib/moodle-calendar";
-import { encryptSecret, decryptSecret } from "./secrets";
+import { parseMoodleFeed, validateMoodleUrl } from "./feed";
+import { filterMoodle, moodleToIcalEvents } from "../../../shared/moodle";
+import { generateCalendarEventsIcal } from "../../../shared/ical";
+import { moodleToCalendarEvents } from "../../../src/lib/moodle-calendar";
+import { encryptSecret, decryptSecret } from "../crypto";
 
 const feed = (event: string, uid = "test") =>
   "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:" +

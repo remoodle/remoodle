@@ -86,8 +86,8 @@ export function scheduleToCalendarEvents(items: ScheduleItem[]): IcalCalendarEve
 
 export function generateCalendarEventsIcal(
   events: IcalCalendarEvent[],
-  rangeStart?: Date,
-  rangeEnd?: Date,
+  rangeStart?: Date | string,
+  rangeEnd?: Date | string,
 ) {
   const lines = [
     "BEGIN:VCALENDAR",
@@ -109,8 +109,11 @@ export function generateCalendarEventsIcal(
     .replace(/\.\d{3}Z$/, "Z");
   for (const event of events) {
     const date = event.start.slice(0, 10);
-    if (rangeStart && date < rangeStart.toISOString().slice(0, 10)) continue;
-    if (rangeEnd && date > rangeEnd.toISOString().slice(0, 10)) continue;
+    const startDate =
+      typeof rangeStart === "string" ? rangeStart : rangeStart?.toISOString().slice(0, 10);
+    const endDate = typeof rangeEnd === "string" ? rangeEnd : rangeEnd?.toISOString().slice(0, 10);
+    if (startDate && date < startDate) continue;
+    if (endDate && date > endDate) continue;
     lines.push(
       "BEGIN:VEVENT",
       `UID:${escapeText(String(event.id))}@calendar.remoodle.app`,
