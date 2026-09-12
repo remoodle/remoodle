@@ -29,6 +29,7 @@ export const useIcalTokenQuery = () =>
 
 export const useUpsertIcalToken = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (payload: { filters: ScheduleFilter }) =>
       parseResponse(
@@ -45,6 +46,7 @@ export const useUpsertIcalToken = () => {
 
 export const useUpdateIcalFilters = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (payload: { filters: ScheduleFilter }) =>
       parseResponse(

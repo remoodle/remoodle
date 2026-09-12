@@ -30,8 +30,11 @@ const emits = defineEmits<{
 }>();
 
 const isMobile = useMediaQuery("(max-width: 768px)");
+
 const openMobile = ref(false);
 
+// SAFETY: passive mode is selected exactly when the optional controlled prop is absent;
+// VueUse's overload cannot infer that runtime relationship from this optional prop.
 const open = useVModel(props, "open", emits, {
   defaultValue: props.defaultOpen ?? false,
   passive: (props.open === undefined) as false,

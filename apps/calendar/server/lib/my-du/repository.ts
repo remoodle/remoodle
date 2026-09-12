@@ -26,6 +26,7 @@ export async function consumeLoginRequest(db: DB, userId: string, state: string)
     .delete(myDuLoginRequests)
     .where(and(eq(myDuLoginRequests.userId, userId), eq(myDuLoginRequests.state, state)))
     .returning({ userId: myDuLoginRequests.userId });
+
   return deleted.length === 1;
 }
 
@@ -58,6 +59,7 @@ export async function acquireSyncLease(db: DB, userId: string, now: number, leas
     .set({ lockUntil: leaseUntil, lastAttemptAt: now })
     .where(and(eq(myDuConnections.userId, userId), lt(myDuConnections.lockUntil, now)))
     .returning();
+
   return row;
 }
 

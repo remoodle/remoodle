@@ -4,6 +4,7 @@ import { useSessionQuery } from "./session";
 
 export function useMoodleSchedule() {
   const { data: session } = useSessionQuery();
+
   return useQuery({
     queryKey: ["moodle-schedule", () => session.value?.data?.user.id],
     enabled: () => !!session.value?.data,
@@ -14,9 +15,11 @@ export function useMoodleSchedule() {
     retry: false,
   });
 }
+
 export function useMoodleActions() {
   const queryClient = useQueryClient();
   const onSuccess = () => queryClient.invalidateQueries({ queryKey: ["moodle-schedule"] });
+
   return {
     connect: useMutation({
       mutationFn: (url: string) => parseResponse(client.api.user.moodle.$post({ json: { url } })),

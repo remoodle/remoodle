@@ -10,13 +10,14 @@ import type { AppEnv } from "../../context";
 import { requireInternalToken, requireSession } from "../middleware/auth";
 import { connectMoodle, readMoodle } from "../../lib/moodle";
 
-const connectSchema = z.object({ url: z.unknown() });
+const connectSchema = z.object({ url: z.string() });
 
 export const moodleController = new Hono<AppEnv>()
   .get("/api/user/moodle", async (c) => {
     const session = await requireSession(c);
     c.header("Cache-Control", "private, no-store");
     const moodle = await readMoodle(c.env, session.user.id);
+
     return c.json(moodle);
   })
   .post(
@@ -26,6 +27,7 @@ export const moodleController = new Hono<AppEnv>()
       const session = await requireSession(c);
       const body = c.req.valid("json");
       let url: string;
+
       try {
         url = validateMoodleUrl(body.url);
       } catch (error) {
@@ -34,8 +36,10 @@ export const moodleController = new Hono<AppEnv>()
           cause: error,
         });
       }
+
       try {
         const moodle = await connectMoodle(c.env, session.user.id, url);
+
         return c.json(moodle);
       } catch (error) {
         throw new HTTPException(400, {
@@ -50,12 +54,14 @@ export const moodleController = new Hono<AppEnv>()
     await createDb(c.env.DB)
       .delete(moodleConnections)
       .where(eq(moodleConnections.userId, session.user.id));
+
     return c.json({ ok: true });
   })
   .get("/api/internal/moodle/:userId", async (c) => {
     requireInternalToken(c);
     c.header("Cache-Control", "private, no-store");
     const moodle = await readMoodle(c.env, c.req.param("userId"));
+
     return c.json(moodle);
   })
   .post(
@@ -66,6 +72,7 @@ export const moodleController = new Hono<AppEnv>()
       const body = c.req.valid("json");
       const url = validateMoodleUrl(body.url);
       const events = await fetchMoodleFeed(url);
+
       return c.json({ events, fetchedAt: Date.now() });
     },
   )
@@ -75,8 +82,10 @@ export const moodleController = new Hono<AppEnv>()
     async (c) => {
       requireInternalToken(c);
       const body = c.req.valid("json");
+
       try {
         const moodle = await connectMoodle(c.env, c.req.param("userId"), body.url);
+
         return c.json(moodle);
       } catch (error) {
         throw new HTTPException(400, {

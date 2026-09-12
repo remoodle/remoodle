@@ -19,15 +19,18 @@ async function fetchDeadlinesMessage(
   daysLimit?: number,
 ) {
   const events = await fetchMoodleEvents(user);
+
   const filtered =
     excludedCourses.length > 0
       ? events.filter((e) => !excludedCourses.includes(e.courseName ?? ""))
       : events;
+
   return buildDeadlinesMessage(filtered, daysLimit);
 }
 
 feature.command(["deadlines", "d", "ds"], async (ctx) => {
   const telegramId = ctx.from?.id;
+
   if (!telegramId) {
     return;
   }
@@ -36,6 +39,7 @@ feature.command(["deadlines", "d", "ds"], async (ctx) => {
 
   if (rows.length === 0) {
     await ctx.reply(m.not_registered_use_start());
+
     return;
   }
 
@@ -43,6 +47,7 @@ feature.command(["deadlines", "d", "ds"], async (ctx) => {
 
   if (!user.calendarUserId && !user.moodleCalendarUrl) {
     await ctx.reply(m.no_calendar_url_set());
+
     return;
   }
 
@@ -52,10 +57,12 @@ feature.command(["deadlines", "d", "ds"], async (ctx) => {
   const daysLimit = command === "ds" ? 2 : undefined;
 
   let message: string;
+
   try {
     message = await fetchDeadlinesMessage(user, user.excludedCourses, daysLimit);
   } catch {
     await ctx.reply(m.calendar_fetch_failed());
+
     return;
   }
 
@@ -67,6 +74,7 @@ feature.chatType("private").callbackQuery(deadlinesCallback.filter(), async (ctx
 
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
 
@@ -77,18 +85,21 @@ feature.chatType("private").callbackQuery(deadlinesCallback.filter(), async (ctx
       text: m.no_calendar_url_callback(),
       show_alert: true,
     });
+
     return;
   }
 
   await ctx.answerCallbackQuery();
 
   let message: string;
+
   try {
     message = await fetchDeadlinesMessage(user, user.excludedCourses);
   } catch {
     await ctx.editMessageText(m.calendar_fetch_failed_short(), {
       reply_markup: buildBackToMenuKeyboard(),
     });
+
     return;
   }
 

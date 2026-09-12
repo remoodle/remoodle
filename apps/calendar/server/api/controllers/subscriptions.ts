@@ -30,16 +30,19 @@ const filtersSchema = z.object({
     })
     .optional(),
 });
+
 const bodySchema = z.object({ filters: filtersSchema });
 
 async function parseFilters(c: Parameters<typeof requireSession>[0]) {
   const result = bodySchema.safeParse(await c.req.json());
+
   if (!result.success) {
     throw new HTTPException(400, {
       message: "Invalid calendar filters",
       cause: result.error,
     });
   }
+
   return result.data.filters;
 }
 
@@ -47,19 +50,23 @@ export const subscriptionsController = new Hono<AppEnv>()
   .get("/api/ical/:token", async (c) => {
     c.get("log").set({ ical: { tokenProvided: true } });
     const db = createDb(c.env.DB);
+
     const [tokenRow] = await db
       .select()
       .from(icalTokens)
       .where(eq(icalTokens.token, c.req.param("token")))
       .limit(1);
+
     if (!tokenRow) throw new HTTPException(404, { message: "Token not found" });
     const filters = filtersSchema.parse(tokenRow.filters);
     const schedule = await readSchedule(c.env, tokenRow.userId);
+
     const ical = generateIcal(filterSchedule(schedule.events, filters), {
       combineAdjacentPairs: filters.ical?.combineAdjacentPairs,
       rangeStart: filters.ical?.startDate,
       rangeEnd: filters.ical?.endDate,
     });
+
     return new Response(ical, {
       headers: {
         "Content-Type": "text/calendar; charset=utf-8",
@@ -69,11 +76,13 @@ export const subscriptionsController = new Hono<AppEnv>()
   })
   .get("/api/user/ical-token", async (c) => {
     const session = await requireSession(c);
+
     const [row] = await createDb(c.env.DB)
       .select()
       .from(icalTokens)
       .where(eq(icalTokens.userId, session.user.id))
       .limit(1);
+
     const subscription = row
       ? {
           token: row.token,
@@ -81,6 +90,7 @@ export const subscriptionsController = new Hono<AppEnv>()
           filters: row.filters ?? null,
         }
       : null;
+
     return c.json(subscription);
   })
   .post("/api/user/ical-token", async (c) => {
@@ -103,17 +113,21 @@ export const subscriptionsController = new Hono<AppEnv>()
       });
     c.get("log").set({ ical: { hasFilters: true } });
     const subscription = { token, url: `${c.env.BETTER_AUTH_URL}/api/ical/${token}` };
+
     return c.json(subscription);
   })
   .patch("/api/user/ical-token", async (c) => {
     const session = await requireSession(c);
     const filters = await parseFilters(c);
+
     const changed = await createDb(c.env.DB)
       .update(icalTokens)
       .set({ filters })
       .where(eq(icalTokens.userId, session.user.id))
       .returning({ id: icalTokens.id });
+
     if (!changed.length) throw new HTTPException(404, { message: "Token not found" });
     c.get("log").set({ ical: { hasFilters: true } });
+
     return c.json({ ok: true });
   });

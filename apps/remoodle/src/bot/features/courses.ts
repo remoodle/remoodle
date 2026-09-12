@@ -26,6 +26,7 @@ const feature = composer.chatType("private");
 async function getUserCourses(ctx: Context, userId: string): Promise<string[]> {
   const items = await fetchCachedUserSchedule(ctx, userId);
   const names = items.map((i) => i.courseName).filter(Boolean);
+
   return Array.from(new Set(names)).sort();
 }
 
@@ -42,6 +43,7 @@ function buildCoursesKeyboard(courses: string[], excluded: string[]) {
   }
 
   keyboard.row().text(m.ui_back(), settingsCallback.pack({}));
+
   return keyboard;
 }
 
@@ -74,8 +76,10 @@ function buildCourseScheduleKeyboard(
 async function getCourseContext(ctx: Context) {
   if (!ctx.from) return null;
   const [user] = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (!user?.calendarUserId) return null;
   const courses = await getUserCourses(ctx, user.calendarUserId);
+
   return { user, courses };
 }
 
@@ -83,7 +87,9 @@ function buildCoursesMessage(courses: string[], excluded: string[]): string {
   if (courses.length === 0) {
     return m.courses_no_courses();
   }
+
   const active = courses.length - excluded.filter((e) => courses.includes(e)).length;
+
   return m.courses_header({ active, total: courses.length });
 }
 
@@ -93,8 +99,10 @@ feature.command("courses", async (ctx) => {
   }
 
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.reply(m.not_registered());
+
     return;
   }
 
@@ -105,16 +113,19 @@ feature.command("courses", async (ctx) => {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard().text(m.ui_back(), settingsCallback.pack({})),
     });
+
     return;
   }
 
   let courses: string[];
+
   try {
     courses = await getUserCourses(ctx, user.calendarUserId);
   } catch {
     await ctx.reply(m.courses_fetch_failed(), {
       parse_mode: "HTML",
     });
+
     return;
   }
 
@@ -126,8 +137,10 @@ feature.command("courses", async (ctx) => {
 
 feature.callbackQuery(coursesCallback.filter(), async (ctx) => {
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
 
@@ -139,14 +152,17 @@ feature.callbackQuery(coursesCallback.filter(), async (ctx) => {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard().text(m.ui_back(), settingsCallback.pack({})),
     });
+
     return;
   }
 
   let courses: string[];
+
   try {
     courses = await getUserCourses(ctx, user.calendarUserId);
   } catch {
     await ctx.answerCallbackQuery(m.schedule_fetch_failed_short());
+
     return;
   }
 
@@ -158,11 +174,13 @@ feature.callbackQuery(coursesCallback.filter(), async (ctx) => {
 });
 
 feature.callbackQuery(toggleCourseCallback.filter(), async (ctx) => {
-  const { idx } = toggleCourseCallback.unpack(ctx.callbackQuery.data) as { idx: string };
+  const { idx } = toggleCourseCallback.unpack(ctx.callbackQuery.data);
 
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
 
@@ -170,24 +188,30 @@ feature.callbackQuery(toggleCourseCallback.filter(), async (ctx) => {
 
   if (!user.calendarUserId) {
     await ctx.answerCallbackQuery(m.error_no_group_linked());
+
     return;
   }
 
   let courses: string[];
+
   try {
     courses = await getUserCourses(ctx, user.calendarUserId);
   } catch {
     await ctx.answerCallbackQuery(m.schedule_fetch_failed_short());
+
     return;
   }
 
   const course = courses[Number(idx)];
+
   if (!course) {
     await ctx.answerCallbackQuery(m.error_course_not_found());
+
     return;
   }
 
   const isExcluded = user.excludedCourses.includes(course);
+
   const updated = isExcluded
     ? user.excludedCourses.filter((c) => c !== course)
     : [...user.excludedCourses, course];
@@ -202,14 +226,17 @@ feature.callbackQuery(toggleCourseCallback.filter(), async (ctx) => {
 });
 
 feature.callbackQuery(courseScheduleCallback.filter(), async (ctx) => {
-  const { idx } = courseScheduleCallback.unpack(ctx.callbackQuery.data) as { idx: string };
+  const { idx } = courseScheduleCallback.unpack(ctx.callbackQuery.data);
   const context = await getCourseContext(ctx);
   const index = Number(idx);
   const course = context?.courses[index];
+
   if (!context || !course) {
     await ctx.answerCallbackQuery(m.error_course_not_found());
+
     return;
   }
+
   const filters = normalizeScheduleFilters(context.user.scheduleFilters);
   await ctx.editMessageText(`${bold(course)}\n\n${m.courses_filter_hint()}`, {
     parse_mode: "HTML",
@@ -222,17 +249,22 @@ feature.callbackQuery(courseScheduleCallback.filter(), async (ctx) => {
 });
 
 feature.callbackQuery(toggleCourseScheduleFilterCallback.filter(), async (ctx) => {
-  const { idx, key } = toggleCourseScheduleFilterCallback.unpack(ctx.callbackQuery.data) as {
-    idx: string;
-    key: keyof CourseScheduleFilters;
-  };
+  const { idx, key } = toggleCourseScheduleFilterCallback.unpack(ctx.callbackQuery.data);
+
   const context = await getCourseContext(ctx);
   const index = Number(idx);
   const course = context?.courses[index];
-  if (!context || !course || !(key in DEFAULT_COURSE_SCHEDULE_FILTERS)) {
+
+  if (
+    !context ||
+    !course ||
+    (key !== "lecture" && key !== "practice" && key !== "online" && key !== "offline")
+  ) {
     await ctx.answerCallbackQuery(m.error_course_not_found());
+
     return;
   }
+
   const filters = normalizeScheduleFilters(context.user.scheduleFilters);
   const courseFilters = filters.courses?.[course] ?? { ...DEFAULT_COURSE_SCHEDULE_FILTERS };
   const updated = { ...courseFilters, [key]: !courseFilters[key] };

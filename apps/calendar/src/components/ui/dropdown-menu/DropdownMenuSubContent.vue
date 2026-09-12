@@ -6,6 +6,7 @@ import { DropdownMenuSubContent, useForwardPropsEmits } from "reka-ui";
 import { cn } from "@/lib/utils";
 
 const props = defineProps<DropdownMenuSubContentProps & { class?: HTMLAttributes["class"] }>();
+
 const emits = defineEmits<DropdownMenuSubContentEmits>();
 
 const delegatedProps = reactiveOmit(props, "class");

@@ -9,16 +9,20 @@ export type CalendarEvent = {
 };
 
 export function moodleToDeadlineEvents(events: MoodleEvent[]): CalendarEvent[] {
-  return events
-    .filter((event) => event.kind !== "attendance")
-    .map((event) => ({
-      // Match the upstream UIDs already recorded in reminder history.
-      uid: event.id.slice("moodle-".length),
-      summary: event.title,
-      timestampMs: Date.parse(
-        event.allDay ? event.start + "T00:00:00+05:00" : event.start + "+05:00",
-      ),
-      courseName: event.courseName,
-      description: event.description,
-    }));
+  return events.flatMap((event) =>
+    event.kind === "attendance"
+      ? []
+      : [
+          {
+            // Match the upstream UIDs already recorded in reminder history.
+            uid: event.id.slice("moodle-".length),
+            summary: event.title,
+            timestampMs: Date.parse(
+              event.allDay ? event.start + "T00:00:00+05:00" : event.start + "+05:00",
+            ),
+            courseName: event.courseName,
+            description: event.description,
+          },
+        ],
+  );
 }

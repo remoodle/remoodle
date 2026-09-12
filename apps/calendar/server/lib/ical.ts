@@ -14,6 +14,7 @@ export function generateIcal(
   },
 ) {
   const events = scheduleToCalendarEvents(items);
+
   return generateCalendarEventsIcal(
     options?.combineAdjacentPairs ? mergeAdjacentCalendarEvents(events) : events,
     options?.rangeStart,

@@ -26,10 +26,15 @@ import {
 import { useMoodleSchedule, useMoodleActions } from "@/lib/api/moodle";
 
 const { data, isPending, isFetching, error: loadError, refetch } = useMoodleSchedule();
+
 const { connect, disconnect } = useMoodleActions();
+
 const open = ref(false);
+
 const url = ref("");
+
 const error = ref("");
+
 const busy = computed(
   () => connect.isPending.value || isFetching.value || disconnect.isPending.value,
 );
@@ -39,19 +44,23 @@ watch(open, () => {
   error.value = "";
 });
 
-async function act(action: () => Promise<unknown>) {
+async function act<Result>(action: () => Promise<Result>) {
   error.value = "";
+
   try {
     await action();
+
     return true;
   } catch {
     error.value = "Could not update the Moodle connection. Check your calendar URL and try again.";
+
     return false;
   }
 }
 
 async function submit() {
   const link = url.value;
+
   if (
     await act(async () => {
       await connect.mutateAsync(link);

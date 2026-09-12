@@ -36,13 +36,17 @@ import { authClient } from "@/lib/auth-client";
 import { useAppStore } from "@/stores/app";
 
 const appStore = useAppStore();
+
 const router = useRouter();
+
 const { filters } = storeToRefs(appStore);
 
 const { events, scheduleEvents, courses, data, moodle, isPending, error, refetch } = useSchedule(
   () => filters.value,
 );
+
 const { data: session } = useSessionQuery();
+
 const clearSession = useClearSession();
 
 async function signOut() {

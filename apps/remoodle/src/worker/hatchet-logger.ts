@@ -29,12 +29,15 @@ function emitHatchetLog(event: HatchetLogEvent) {
   switch (event.hatchet.level) {
     case "DEBUG":
       log.debug(event);
+
       return;
     case "WARN":
       log.warn(event);
+
       return;
     case "ERROR":
       log.error(event);
+
       return;
     default:
       log.info(event);
@@ -60,20 +63,33 @@ export class EvlogHatchetLogger extends Logger {
       return;
     }
 
-    emitHatchetLog({
+    const hatchet: HatchetLogEvent["hatchet"] = {
+      context: this.context,
+      configuredLevel: this.logLevel,
+      level,
+    };
+
+    if (extra && Object.keys(extra).length > 0) {
+      hatchet.extra = extra;
+    }
+
+    if (utilKey) {
+      hatchet.utilKey = utilKey;
+    }
+
+    const event: HatchetLogEvent = {
       source: "hatchet",
       module: "worker",
       operation: "hatchet",
       message,
-      ...(error ? { error } : {}),
-      hatchet: {
-        context: this.context,
-        configuredLevel: this.logLevel,
-        level,
-        ...(extra && Object.keys(extra).length > 0 ? { extra } : {}),
-        ...(utilKey ? { utilKey } : {}),
-      },
-    });
+      hatchet,
+    };
+
+    if (error) {
+      event.error = error;
+    }
+
+    emitHatchetLog(event);
   }
 
   override debug(message: string, extra?: LogExtra) {

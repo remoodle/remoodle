@@ -3,6 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { moodleKinds, defaultMoodleFilters, type MoodleFilters } from "../../shared/moodle";
 
 const props = defineProps<{ modelValue: MoodleFilters | undefined }>();
+
 const emit = defineEmits<{ "update:modelValue": [value: MoodleFilters] }>();
 
 function setFilter(key: keyof MoodleFilters, value: boolean) {

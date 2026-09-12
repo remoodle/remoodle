@@ -21,15 +21,20 @@ const props = defineProps<{
 }>();
 
 const open = defineModel<boolean>("open", { required: true });
+
 const emit = defineEmits<{ submit: [value: MyDuConnectionInput]; restart: [] }>();
 
 const callbackUrl = shallowRef("");
+
 const academicYear = shallowRef(new Date().getFullYear());
+
 const term = shallowRef(1);
+
 const firstWeekStart = shallowRef("");
 
 watch(open, (isOpen) => {
   callbackUrl.value = "";
+
   if (isOpen && props.connection) {
     academicYear.value = props.connection.studyYear;
     term.value = props.connection.term;
@@ -51,6 +56,7 @@ function submit() {
     term: term.value,
     firstWeekStart: firstWeekStart.value,
   };
+
   callbackUrl.value = "";
   emit("submit", payload);
 }

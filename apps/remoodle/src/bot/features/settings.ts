@@ -112,11 +112,15 @@ feature.command("settings", async (ctx) => {
   if (!ctx.from?.id) {
     return;
   }
+
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.reply(m.not_registered());
+
     return;
   }
+
   await ctx.reply(m.settings_header(), {
     parse_mode: "HTML",
     reply_markup: buildSettingsKeyboard(),
@@ -146,6 +150,7 @@ feature.callbackQuery(accountCallback.filter(), async (ctx) => {
 
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
 
@@ -165,6 +170,7 @@ feature.callbackQuery(deleteAccountCallback.filter(), async (ctx) => {
 
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
 
@@ -179,9 +185,13 @@ feature.callbackQuery(deleteAccountCallback.filter(), async (ctx) => {
 });
 
 feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
-  const { confirmed } = confirmDeleteAccountCallback.unpack(ctx.callbackQuery.data) as {
-    confirmed: "yes" | "no";
-  };
+  const { confirmed } = confirmDeleteAccountCallback.unpack(ctx.callbackQuery.data);
+
+  if (confirmed !== "yes" && confirmed !== "no") {
+    await ctx.answerCallbackQuery();
+
+    return;
+  }
 
   if (confirmed === "no") {
     const rows = await db
@@ -197,6 +207,7 @@ feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
 
     if (rows.length === 0) {
       await ctx.answerCallbackQuery(m.not_registered_short());
+
       return;
     }
 
@@ -205,6 +216,7 @@ feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
       reply_markup: buildAccountKeyboard(),
     });
     await ctx.answerCallbackQuery();
+
     return;
   }
 
@@ -216,6 +228,7 @@ feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
 
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
 
@@ -242,6 +255,7 @@ function buildDeadlinesKeyboard(activeThresholds: string[], deadlinesEnabled: bo
   for (let i = 0; i < AVAILABLE_THRESHOLDS.length; i += 2) {
     const row = AVAILABLE_THRESHOLDS.slice(i, i + 2);
     const keyboardRow = keyboard.row();
+
     for (const threshold of row) {
       const isActive = activeThresholds.includes(threshold);
       keyboardRow.text(
@@ -265,19 +279,24 @@ function buildDeadlinesKeyboard(activeThresholds: string[], deadlinesEnabled: bo
 
 function buildDeadlinesMessage(thresholds: string[], deadlinesEnabled: boolean): string {
   const parts = [bold(m.deadlines_settings_header()), "", buildThresholdsMessage(thresholds)];
+
   if (!deadlinesEnabled) {
     parts.push("", m.deadlines_disabled_warning());
   }
+
   return parts.join("\n");
 }
 
 feature.callbackQuery(deadlinesSettingsCallback.filter(), async (ctx) => {
   ctx.session.awaitingMoodleCalendarUrl = false;
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
+
   const user = rows[0]!;
   await ctx.editMessageText(buildDeadlinesMessage(user.thresholds, user.deadlinesEnabled), {
     parse_mode: "HTML",
@@ -288,10 +307,13 @@ feature.callbackQuery(deadlinesSettingsCallback.filter(), async (ctx) => {
 
 feature.callbackQuery(toggleDeadlinesCallback.filter(), async (ctx) => {
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
+
   const user = rows[0]!;
   const updated = !user.deadlinesEnabled;
   await db
@@ -306,13 +328,13 @@ feature.callbackQuery(toggleDeadlinesCallback.filter(), async (ctx) => {
 });
 
 feature.callbackQuery(toggleThresholdCallback.filter(), async (ctx) => {
-  const { threshold } = toggleThresholdCallback.unpack(ctx.callbackQuery.data) as {
-    threshold: string;
-  };
+  const { threshold } = toggleThresholdCallback.unpack(ctx.callbackQuery.data);
 
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
 
@@ -320,6 +342,7 @@ feature.callbackQuery(toggleThresholdCallback.filter(), async (ctx) => {
   const isActive = user.thresholds.includes(threshold);
 
   let updated: string[];
+
   if (isActive) {
     updated = user.thresholds.filter((t) => t !== threshold);
   } else {
@@ -328,8 +351,10 @@ feature.callbackQuery(toggleThresholdCallback.filter(), async (ctx) => {
         text: m.max_thresholds({ max: config.reminders.maxThresholds }),
         show_alert: true,
       });
+
       return;
     }
+
     updated = [...user.thresholds, threshold].sort((a, b) => durationToMs(a) - durationToMs(b));
   }
 
@@ -406,9 +431,11 @@ function buildScheduleSettingsMessage(
     "",
     m.schedule_configure_hint(),
   ];
+
   if (!group) {
     lines.push("", italic(m.schedule_no_group_hint({ host: config.calendar.host })));
   }
+
   return lines.join("\n");
 }
 
@@ -431,8 +458,10 @@ function buildDigestSettingsKeyboard(
     .text(m.digest_time({ time: digestTime }), setDigestTimeCallback.pack({}));
 
   const activeWeekdays = new Set(digestWeekdays);
+
   for (let i = 0; i < DIGEST_WEEKDAYS.length; i += 2) {
     const row = keyboard.row();
+
     for (const day of DIGEST_WEEKDAYS.slice(i, i + 2)) {
       row.text(
         checkboxLabel(activeWeekdays.has(day.value), day.shortLabel),
@@ -472,6 +501,7 @@ function buildDigestSettingsMessage(
   if (!group) {
     lines.push("", italic(m.schedule_no_group_hint({ host: config.calendar.host })));
   }
+
   if (!digestEnabled) {
     lines.push("", italic(m.digest_warning_disabled()));
   } else if (digestWeekdays.length === 0) {
@@ -486,10 +516,13 @@ feature.callbackQuery(scheduleSettingsCallback.filter(), async (ctx) => {
   ctx.session.awaitingScheduleReminderMinutes = false;
   ctx.session.awaitingDigestTime = false;
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
+
   const user = rows[0]!;
   const filters = normalizeScheduleFilters(user.scheduleFilters);
   await ctx.editMessageText(
@@ -509,10 +542,13 @@ feature.callbackQuery(scheduleSettingsCallback.filter(), async (ctx) => {
 
 feature.callbackQuery(toggleScheduleCallback.filter(), async (ctx) => {
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
+
   const user = rows[0]!;
 
   if (!user.calendarUserId && !user.scheduleEnabled) {
@@ -520,6 +556,7 @@ feature.callbackQuery(toggleScheduleCallback.filter(), async (ctx) => {
       text: m.no_group_for_schedule(),
       show_alert: true,
     });
+
     return;
   }
 
@@ -544,10 +581,13 @@ feature.callbackQuery(digestSettingsCallback.filter(), async (ctx) => {
   ctx.session.awaitingScheduleReminderMinutes = false;
   ctx.session.awaitingDigestTime = false;
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
+
   const user = rows[0]!;
   const weekdays = normalizeDigestWeekdays(user.digestWeekdays);
   await ctx.editMessageText(
@@ -567,10 +607,13 @@ feature.callbackQuery(digestSettingsCallback.filter(), async (ctx) => {
 
 feature.callbackQuery(toggleDigestCallback.filter(), async (ctx) => {
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
+
   const user = rows[0]!;
 
   if (!user.calendarUserId && !user.digestEnabled) {
@@ -578,6 +621,7 @@ feature.callbackQuery(toggleDigestCallback.filter(), async (ctx) => {
       text: m.no_group_for_schedule(),
       show_alert: true,
     });
+
     return;
   }
 
@@ -598,17 +642,20 @@ feature.callbackQuery(toggleDigestCallback.filter(), async (ctx) => {
 });
 
 feature.callbackQuery(toggleDigestWeekdayCallback.filter(), async (ctx) => {
-  const { day } = toggleDigestWeekdayCallback.unpack(ctx.callbackQuery.data) as {
-    day: string;
-  };
+  const { day } = toggleDigestWeekdayCallback.unpack(ctx.callbackQuery.data);
+
   const dayValue = Number(day);
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
+
   const user = rows[0]!;
   const weekdays = normalizeDigestWeekdays(user.digestWeekdays);
+
   const updated = weekdays.includes(dayValue)
     ? weekdays.filter((weekday) => weekday !== dayValue)
     : [...weekdays, dayValue];
@@ -636,10 +683,13 @@ feature.callbackQuery(toggleDigestWeekdayCallback.filter(), async (ctx) => {
 
 feature.callbackQuery(disableDigestDaysCallback.filter(), async (ctx) => {
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
+
   const user = rows[0]!;
   const weekdays: number[] = [];
 
@@ -661,17 +711,27 @@ feature.callbackQuery(disableDigestDaysCallback.filter(), async (ctx) => {
 });
 
 feature.callbackQuery(toggleScheduleTypeCallback.filter(), async (ctx) => {
-  const { key } = toggleScheduleTypeCallback.unpack(ctx.callbackQuery.data) as { key: string };
-  const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
-  if (rows.length === 0) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
+  const { key } = toggleScheduleTypeCallback.unpack(ctx.callbackQuery.data);
+
+  if (key !== "lecture" && key !== "practice" && key !== "learn") {
+    await ctx.answerCallbackQuery();
+
     return;
   }
+
+  const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
+  if (rows.length === 0) {
+    await ctx.answerCallbackQuery(m.not_registered_short());
+
+    return;
+  }
+
   const user = rows[0]!;
   const filters = normalizeScheduleFilters(user.scheduleFilters);
   filters.eventTypes = {
     ...filters.eventTypes,
-    [key]: !filters.eventTypes[key as keyof typeof filters.eventTypes],
+    [key]: !filters.eventTypes[key],
   };
 
   await db.update(users).set({ scheduleFilters: filters }).where(eq(users.telegramId, ctx.from.id));
@@ -692,17 +752,27 @@ feature.callbackQuery(toggleScheduleTypeCallback.filter(), async (ctx) => {
 });
 
 feature.callbackQuery(toggleScheduleFormatCallback.filter(), async (ctx) => {
-  const { key } = toggleScheduleFormatCallback.unpack(ctx.callbackQuery.data) as { key: string };
-  const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
-  if (rows.length === 0) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
+  const { key } = toggleScheduleFormatCallback.unpack(ctx.callbackQuery.data);
+
+  if (key !== "online" && key !== "offline") {
+    await ctx.answerCallbackQuery();
+
     return;
   }
+
+  const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
+  if (rows.length === 0) {
+    await ctx.answerCallbackQuery(m.not_registered_short());
+
+    return;
+  }
+
   const user = rows[0]!;
   const filters = normalizeScheduleFilters(user.scheduleFilters);
   filters.eventFormats = {
     ...filters.eventFormats,
-    [key]: !filters.eventFormats[key as keyof typeof filters.eventFormats],
+    [key]: !filters.eventFormats[key],
   };
 
   await db.update(users).set({ scheduleFilters: filters }).where(eq(users.telegramId, ctx.from.id));
@@ -724,10 +794,13 @@ feature.callbackQuery(toggleScheduleFormatCallback.filter(), async (ctx) => {
 
 feature.callbackQuery(toggleScheduleMergeCallback.filter(), async (ctx) => {
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
+
   const user = rows[0]!;
   const filters = normalizeScheduleFilters(user.scheduleFilters);
   filters.combineAdjacentPairs = !filters.combineAdjacentPairs;
@@ -761,6 +834,7 @@ feature.on("message:text", async (ctx, next) => {
 
   if (!Number.isInteger(mins) || mins < 1 || mins > 240) {
     await ctx.reply(m.reminder_minutes_invalid());
+
     return;
   }
 
@@ -773,9 +847,11 @@ feature.on("message:text", async (ctx, next) => {
     .where(eq(users.telegramId, ctx.from.id));
 
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     return;
   }
+
   const user = rows[0]!;
   const filters = normalizeScheduleFilters(user.scheduleFilters);
 
@@ -806,6 +882,7 @@ feature.on("message:text", async (ctx, next) => {
 
   if (!isValidDigestTime(time)) {
     await ctx.reply(m.digest_time_invalid());
+
     return;
   }
 
@@ -814,9 +891,11 @@ feature.on("message:text", async (ctx, next) => {
   await db.update(users).set({ digestTime: time }).where(eq(users.telegramId, ctx.from.id));
 
   const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+
   if (rows.length === 0) {
     return;
   }
+
   const user = rows[0]!;
   const weekdays = normalizeDigestWeekdays(user.digestWeekdays);
 
@@ -841,6 +920,7 @@ feature.on("message:text", async (ctx, next) => {
 feature.callbackQuery(setScheduleReminderCallback.filter(), async (ctx) => {
   ctx.session.awaitingScheduleReminderMinutes = true;
   ctx.session.awaitingDigestTime = false;
+
   const rows = await db
     .select({ scheduleReminderOffset: users.scheduleReminderOffset })
     .from(users)
@@ -849,11 +929,13 @@ feature.callbackQuery(setScheduleReminderCallback.filter(), async (ctx) => {
 
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
 
   const current = rows[0]!.scheduleReminderOffset;
   const currentMins = Math.round(durationToMs(current) / 60000);
+
   const reminderMsg = [
     bold(m.schedule_reminder_settings_header()),
     "",
@@ -871,12 +953,14 @@ feature.callbackQuery(setScheduleReminderCallback.filter(), async (ctx) => {
       reply_markup: new InlineKeyboard().text(m.ui_cancel(), scheduleSettingsCallback.pack({})),
     });
   }
+
   await ctx.answerCallbackQuery();
 });
 
 feature.callbackQuery(setDigestTimeCallback.filter(), async (ctx) => {
   ctx.session.awaitingDigestTime = true;
   ctx.session.awaitingScheduleReminderMinutes = false;
+
   const rows = await db
     .select({ digestTime: users.digestTime })
     .from(users)
@@ -885,10 +969,12 @@ feature.callbackQuery(setDigestTimeCallback.filter(), async (ctx) => {
 
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
 
   const current = rows[0]!.digestTime;
+
   const reminderMsg = [
     bold(m.digest_time_header()),
     "",
@@ -906,6 +992,7 @@ feature.callbackQuery(setDigestTimeCallback.filter(), async (ctx) => {
       reply_markup: new InlineKeyboard().text(m.ui_cancel(), scheduleSettingsCallback.pack({})),
     });
   }
+
   await ctx.answerCallbackQuery();
 });
 

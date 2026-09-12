@@ -19,6 +19,7 @@ import {
 } from ".";
 
 const props = defineProps<CalendarRootProps & { class?: HTMLAttributes["class"] }>();
+
 const emits = defineEmits<CalendarRootEmits>();
 
 const delegatedProps = reactiveOmit(props, "class");

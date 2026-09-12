@@ -9,10 +9,13 @@ import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 import { useSessionQuery } from "@/lib/api/session";
 
 const route = useRoute();
+
 const router = useRouter();
+
 const { data: session, isLoading } = useSessionQuery();
 
 const next = Array.isArray(route.query.next) ? route.query.next[0] : route.query.next;
+
 const callbackURL = next || "/schedule";
 
 watch(session, (currentSession) => {

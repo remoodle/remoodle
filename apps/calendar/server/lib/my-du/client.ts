@@ -12,9 +12,29 @@ export class MyDuConnectionError extends Error {
   }
 }
 
-async function request(path: string, credentials?: MyDuCredentials, body?: unknown) {
+type ExternalLoginRequest = {
+  provider: string;
+  token: string;
+  email: null;
+  device_info: { platform: string; device_id: null };
+  avatar_url: null;
+  first_name: null;
+  last_name: null;
+};
+
+type ScheduleSearchRequest = {
+  filters: Array<{ id: string; value: string }>;
+  start: number;
+  size: number;
+};
+
+type RequestBody = ExternalLoginRequest | ScheduleSearchRequest | Record<never, never>;
+
+async function request(path: string, credentials?: MyDuCredentials, body?: RequestBody) {
   const headers = new Headers({ Accept: "application/json" });
+
   if (body !== undefined) headers.set("Content-Type", "application/json");
+
   if (credentials) {
     headers.set(
       "Cookie",
@@ -23,6 +43,7 @@ async function request(path: string, credentials?: MyDuCredentials, body?: unkno
   }
 
   let response: Response;
+
   try {
     response = await fetch(`${MY_DU_ORIGIN}/api${path}${path.includes("?") ? "&" : "?"}lang=en`, {
       method: body === undefined ? "GET" : "POST",
@@ -39,6 +60,7 @@ async function request(path: string, credentials?: MyDuCredentials, body?: unkno
   if (response.status >= 300 && response.status < 400) {
     throw new Error("My DU returned an unexpected redirect.");
   }
+
   return response;
 }
 
@@ -52,7 +74,9 @@ export async function exchangeLoginCode(code: string) {
     first_name: null,
     last_name: null,
   });
+
   if (!response.ok) throw new Error("My DU rejected the login.");
+
   return parseMyDuResponse(credentialsSchema, await response.json());
 }
 
@@ -63,25 +87,30 @@ export function createMyDuClient(
 ) {
   let credentials = initialCredentials;
 
-  return async function get(path: string, body?: unknown): Promise<unknown> {
+  return async function get(path: string, body?: RequestBody) {
     let response = await request(path, credentials, body);
+
     if (response.status === 401) {
       const refreshed = await request("/auth/refresh", credentials, {});
+
       if ([401, 403].includes(refreshed.status)) {
         await onCredentialsRejected();
         throw new Error("Reconnect My DU to update your saved classes.");
       }
+
       if (!refreshed.ok)
         throw new Error("My DU could not refresh your session. Try syncing again later.");
       credentials = parseMyDuResponse(credentialsSchema, await refreshed.json());
       await onCredentialsChanged(credentials);
       response = await request(path, credentials, body);
     }
+
     if (!response.ok) {
       throw new Error(
         `My DU schedule request failed (${response.status}). Saved classes are unchanged.`,
       );
     }
+
     return response.json();
   };
 }

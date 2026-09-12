@@ -16,14 +16,17 @@ export function moodleToCalendarEvents(events: MoodleEvent[]): CalendarEvent[] {
     // Zero-duration deadlines belong in the date row, not an invisible time-grid
     // rectangle. Keep the actual deadline in the label and export metadata.
     const dateRow = event.allDay || point;
+
     const start = dateRow
       ? Temporal.PlainDate.from(event.start.slice(0, 10))
       : Temporal.PlainDateTime.from(event.start).toZonedDateTime(CALENDAR_TIME_ZONE);
+
     const end = dateRow
       ? event.allDay && event.end > event.start
         ? Temporal.PlainDate.from(event.end).subtract({ days: 1 })
         : Temporal.PlainDate.from(event.start.slice(0, 10))
       : Temporal.PlainDateTime.from(event.end).toZonedDateTime(CALENDAR_TIME_ZONE);
+
     return {
       // Normalize at render time too, so rows imported before IDs were encoded
       // do not crash Schedule-X and do not require users to reconnect.

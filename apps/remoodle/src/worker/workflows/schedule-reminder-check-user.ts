@@ -29,6 +29,7 @@ const ALMATY_OFFSET_MS = 5 * 60 * 60 * 1000;
 
 function scheduleItemStartToMs(start: string): number | null {
   const value = Date.parse(start.replace(" ", "T") + "+05:00");
+
   return Number.isFinite(value) ? value : null;
 }
 
@@ -37,6 +38,7 @@ function almatyDateStr(utcMs: number): string {
   const y = d.getUTCFullYear();
   const m = String(d.getUTCMonth() + 1).padStart(2, "0");
   const day = String(d.getUTCDate()).padStart(2, "0");
+
   return `${y}-${m}-${day}`;
 }
 
@@ -54,6 +56,7 @@ function buildClassReminderMessage(
     const startTime = item.start.split(" ")[1] ?? item.start;
     const endTime = item.end.split(" ")[1] ?? item.end;
     const location = item.isOnline ? m.location_online() : item.location;
+
     return m.class_reminder_item({
       time: bold(`${startTime} – ${endTime}`),
       course: item.courseName,
@@ -62,6 +65,7 @@ function buildClassReminderMessage(
   });
 
   const minsUntil = items[0]!.minsUntil;
+
   return `${bold(m.class_reminder_header({ minutes: minsUntil }))}\n\n${lines.join("\n\n")}`;
 }
 
@@ -77,6 +81,7 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
     const allItems = await fetchUserSchedule(input.calendarUserId);
     const filters = normalizeScheduleFilters(input.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS);
     const filteredItems = applyScheduleFilters(allItems, filters, input.excludedCourses);
+
     const items = filters.combineAdjacentPairs
       ? mergeAdjacentScheduleItems(filteredItems)
       : filteredItems;
@@ -84,10 +89,13 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
     // Find classes starting within the offset window
     const upcoming = items.flatMap((item) => {
       const startMs = scheduleItemStartToMs(item.start);
+
       if (startMs === null) return [];
+
       if (startMs <= nowMs || startMs > windowEndMs) return [];
       const dateStr = almatyDateStr(startMs);
       const eventId = `sched:${item.id}:${dateStr}`;
+
       return [{ item, startMs, eventId, minsUntil: Math.round((startMs - nowMs) / 60000) }];
     });
 
@@ -126,15 +134,18 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
 
     // Build keyboard: room photo buttons for each unique offline room, then close
     const seenRooms = new Set<string>();
+
     for (const { item } of toSend) {
       if (!item.isOnline) {
         const code = extractRoomCode(item.location);
+
         if (code) seenRooms.add(code);
       }
     }
 
     const roomRows: { text: string; callback_data: string }[][] = [];
     const roomEntries = Array.from(seenRooms);
+
     for (let i = 0; i < roomEntries.length; i += 3) {
       roomRows.push(
         roomEntries.slice(i, i + 3).map((code) => ({

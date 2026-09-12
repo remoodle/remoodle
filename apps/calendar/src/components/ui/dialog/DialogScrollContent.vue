@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const props = defineProps<DialogContentProps & { class?: HTMLAttributes["class"] }>();
+
 const emits = defineEmits<DialogContentEmits>();
 
 const delegatedProps = reactiveOmit(props, "class");

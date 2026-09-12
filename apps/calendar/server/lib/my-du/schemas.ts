@@ -28,6 +28,7 @@ export const connectMyDuSchema = z
   .superRefine((settings, context) => {
     try {
       const monday = Temporal.PlainDate.from(settings.firstWeekStart);
+
       if (
         monday.dayOfWeek !== 1 ||
         monday.year < settings.studyYear ||
@@ -76,8 +77,10 @@ export const termLengthSchema = z.object({
   value: z.coerce.number().int().min(1).max(30),
 });
 
-export function parseMyDuResponse<T>(schema: z.ZodType<T>, value: unknown): T {
+export function parseMyDuResponse<T>(schema: z.ZodType<T>, value: z.input<typeof schema>): T {
   const result = schema.safeParse(value);
+
   if (!result.success) throw new Error(responseError);
+
   return result.data;
 }

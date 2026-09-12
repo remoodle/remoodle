@@ -43,13 +43,15 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const session = await authClient.getSession();
-  const next =
-    typeof to.query.next === "string" && to.query.next.startsWith("/") ? to.query.next : null;
+
+  const nextValue = Array.isArray(to.query.next) ? to.query.next[0] : to.query.next;
+  const next = nextValue?.startsWith("/") ? nextValue : null;
 
   if (to.meta.requiresAuth) {
     if (!session.data) {
       return { path: "/login", query: { next: to.fullPath } };
     }
+
     return true;
   }
 

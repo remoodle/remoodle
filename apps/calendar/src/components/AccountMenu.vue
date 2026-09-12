@@ -27,6 +27,7 @@ const emit = defineEmits<{
 }>();
 
 const displayName = computed(() => props.name || props.email || "Account");
+
 const initials = computed(
   () =>
     displayName.value

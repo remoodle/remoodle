@@ -10,15 +10,23 @@ import { drawScheduleImage, scheduleImageDays } from "@/lib/schedule-image";
 import { CALENDAR_TIME_ZONE } from "../../shared/ical";
 
 const props = defineProps<{ events: CalendarEvent[] }>();
+
 const store = useAppStore();
+
 const today = Temporal.Now.plainDateISO(CALENDAR_TIME_ZONE);
+
 const week = ref(today.subtract({ days: today.dayOfWeek - 1 }));
+
 const canvas = useTemplateRef<HTMLCanvasElement>("preview");
+
 const error = ref("");
+
 const exporting = ref(false);
+
 const count = computed(() =>
   scheduleImageDays(props.events, week.value).reduce((total, day) => total + day.events.length, 0),
 );
+
 const label = computed(
   () =>
     `${week.value.toLocaleString("en-GB", { day: "numeric", month: "short" })} – ${week.value.add({ days: 6 }).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`,
@@ -28,6 +36,7 @@ watchEffect(() => {
   if (!canvas.value) {
     return;
   }
+
   try {
     drawScheduleImage(canvas.value, props.events, week.value, store.theme === "dark");
     error.value = "";
@@ -40,13 +49,17 @@ function download() {
   if (!canvas.value) {
     return;
   }
+
   exporting.value = true;
   canvas.value.toBlob((blob) => {
     exporting.value = false;
+
     if (!blob) {
       error.value = "Could not create the image. Please try again.";
+
       return;
     }
+
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;

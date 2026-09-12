@@ -16,6 +16,7 @@ const props = withDefaults(
     sideOffset: 4,
   },
 );
+
 const emits = defineEmits<PopoverContentEmits>();
 
 const delegatedProps = reactiveOmit(props, "class");

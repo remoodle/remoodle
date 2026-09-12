@@ -13,8 +13,10 @@ export function fetchMoodleEvents(source: MoodleSource) {
   if (source.moodleCalendarUrl) {
     return fetchMoodleUrlEvents(source.moodleCalendarUrl);
   }
+
   if (source.calendarUserId) {
     return fetchUserMoodleEvents(source.calendarUserId);
   }
+
   throw new Error("Moodle calendar URL is not configured.");
 }

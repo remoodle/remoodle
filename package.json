@@ -20,6 +20,8 @@
     "migrate:remoodle": "vp run @heresy/remoodle#db:migrate"
   },
   "devDependencies": {
+    "@oxlint/plugins": "catalog:",
+    "oxlint": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
   },

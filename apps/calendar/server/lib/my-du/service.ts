@@ -21,11 +21,14 @@ import { normalizeWeek } from "./schedule";
 import { connectMyDuSchema, parseMyDuResponse, termLengthSchema } from "./schemas";
 
 const LOGIN_TTL = 10 * 60_000;
+
 const SYNC_LEASE = 12 * 60_000;
+
 export const SYNC_INTERVAL = 24 * 60 * 60_000;
 
 function parseCallback(callbackUrl: string, state: string) {
   let url: URL;
+
   try {
     url = new URL(callbackUrl);
   } catch {
@@ -33,7 +36,9 @@ function parseCallback(callbackUrl: string, state: string) {
       message: "Paste the full My DU address after signing in.",
     });
   }
+
   const fragment = new URLSearchParams(url.hash.slice(1));
+
   if (
     url.origin !== MY_DU_ORIGIN ||
     url.pathname !== "/login" ||
@@ -46,12 +51,15 @@ function parseCallback(callbackUrl: string, state: string) {
       message: "This link does not match your connection request. Start sign-in again.",
     });
   }
+
   const code = fragment.get("code");
+
   if (!code || code.length > 16_000) {
     throw new HTTPException(400, {
       message: "The link has no login code. Finish Microsoft sign-in and copy the final address.",
     });
   }
+
   return code;
 }
 
@@ -59,9 +67,11 @@ export async function startLogin(env: Env, userId: string) {
   const state = crypto.randomUUID();
   const expiresAt = Date.now() + LOGIN_TTL;
   await saveLoginRequest(createDb(env.DB), userId, state, expiresAt);
+
   const url = new URL(
     "https://login.microsoftonline.com/158f15f3-83e0-4906-824c-69bdc50d9d61/oauth2/v2.0/authorize",
   );
+
   url.search = new URLSearchParams({
     client_id: "9f15860b-4243-4610-845e-428dc4ae43a8",
     response_type: "code",
@@ -70,27 +80,37 @@ export async function startLogin(env: Env, userId: string) {
     scope: "offline_access user.read mail.read",
     state,
   }).toString();
+
   return { url: url.href, expiresAt };
 }
 
-export async function completeLogin(env: Env, userId: string, input: unknown) {
+export async function completeLogin(
+  env: Env,
+  userId: string,
+  input: Parameters<typeof connectMyDuSchema.safeParse>[0],
+) {
   const result = connectMyDuSchema.safeParse(input);
+
   if (!result.success) {
     throw new HTTPException(400, {
       message: "Check the connection link, academic year, period, and Monday of teaching week 1.",
       cause: result.error,
     });
   }
+
   const { callbackUrl, ...settings } = result.data;
   const db = createDb(env.DB);
   const pending = await findLoginRequest(db, userId);
+
   if (!pending || pending.expiresAt < Date.now()) {
     throw new HTTPException(400, {
       message: "Your connection request expired. Start sign-in again.",
     });
   }
+
   const code = parseCallback(callbackUrl, pending.state);
   let credentials;
+
   try {
     credentials = await exchangeLoginCode(code);
   } catch (error) {
@@ -99,11 +119,13 @@ export async function completeLogin(env: Env, userId: string, input: unknown) {
       cause: error,
     });
   }
+
   if (!(await consumeLoginRequest(db, userId, pending.state))) {
     throw new HTTPException(409, {
       message: "This connection request has already been used.",
     });
   }
+
   await replaceConnection(
     db,
     userId,
@@ -111,11 +133,13 @@ export async function completeLogin(env: Env, userId: string, input: unknown) {
     settings,
   );
   await syncSchedule(env, userId);
+
   return readSchedule(env, userId);
 }
 
 export async function readSchedule(env: Env, userId: string) {
   const row = await findConnection(createDb(env.DB), userId);
+
   return {
     connection: row
       ? {
@@ -136,10 +160,13 @@ export async function syncSchedule(env: Env, userId: string) {
   const now = Date.now();
   const leaseUntil = now + SYNC_LEASE;
   const row = await acquireSyncLease(db, userId, now, leaseUntil);
+
   if (!row) return;
+
   try {
     if (!row.credentials) return;
     const credentials = await decryptCredentials(row.credentials, env.BETTER_AUTH_SECRET, userId);
+
     const get = createMyDuClient(
       credentials,
       async (rotated) => {
@@ -154,13 +181,16 @@ export async function syncSchedule(env: Env, userId: string) {
         await updateCredentials(db, userId, leaseUntil, null);
       },
     );
+
     const setting = parseMyDuResponse(
       termLengthSchema,
       await get(
         `/admin/client/settings/${row.term === -1 ? "add_term_week_count" : "term_week_count"}`,
       ),
     );
+
     const events: ScheduleItem[] = [];
+
     for (let week = 1; week <= setting.value; week++) {
       const data = await get("/edu-process/classSchedule/student/me/search", {
         filters: [
@@ -171,8 +201,10 @@ export async function syncSchedule(env: Env, userId: string) {
         start: 0,
         size: 100,
       });
+
       events.push(...normalizeWeek(data, row, week));
     }
+
     await saveSchedule(db, userId, leaseUntil, events, Date.now());
   } catch (error) {
     const message =
@@ -181,6 +213,7 @@ export async function syncSchedule(env: Env, userId: string) {
         : error instanceof Error
           ? error.message
           : "Could not update your My DU schedule.";
+
     await saveSyncError(db, userId, leaseUntil, message.slice(0, 250));
   } finally {
     await releaseSyncLease(db, userId, leaseUntil);

@@ -45,12 +45,14 @@ export const deadlineCheckUser = hatchet.task<Input>({
 
     // Filter out excluded courses
     const excluded = userRow.excludedCourses;
+
     if (excluded.length > 0) {
       events = events.filter((e) => !excluded.includes(e.courseName ?? ""));
     }
 
     if (events.length === 0) {
       await ctx.logger.info("no cached calendar events found", { userId: input.userId });
+
       return;
     }
 

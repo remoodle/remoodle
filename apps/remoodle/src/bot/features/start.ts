@@ -57,9 +57,11 @@ async function moveLocalMoodleToCalendar(user: {
 }) {
   if (!user.calendarUserId || !user.moodleCalendarUrl) return;
   const remote = await fetchUserMoodle(user.calendarUserId);
+
   if (!remote.connection) {
     await connectUserMoodle(user.calendarUserId, user.moodleCalendarUrl);
   }
+
   await db
     .update(users)
     .set({ moodleCalendarUrl: null })
@@ -70,6 +72,7 @@ async function buildMenuMessage(ctx: Context, user: MenuUser): Promise<string> {
   const parts: string[] = [m.menu_ready()];
 
   const summary = await buildMenuSummary(ctx, user);
+
   if (summary) {
     parts.push(summary);
   } else if (!user.calendarUserId && !user.moodleCalendarUrl) {
@@ -79,6 +82,7 @@ async function buildMenuMessage(ctx: Context, user: MenuUser): Promise<string> {
   if (user.calendarUserId) {
     try {
       const moodle = await fetchUserMoodle(user.calendarUserId);
+
       if (!moodle.connection) parts.push(m.warn_add_moodle_in_calendar());
     } catch {
       // The summary already omits unavailable Moodle data.
@@ -87,6 +91,7 @@ async function buildMenuMessage(ctx: Context, user: MenuUser): Promise<string> {
 
   if (user.calendarUserId) {
     const digestWeekdays = normalizeDigestWeekdays(user.digestWeekdays);
+
     if (!user.digestEnabled) {
       parts.push(m.warn_digest_disabled());
     } else if (digestWeekdays.length === 0) {
@@ -113,13 +118,17 @@ async function buildMenuSummary(ctx: Context, user: MenuUser): Promise<string | 
 
   if (hasBoth) {
     const freeDay = deadlinesCount === 0 && todayClasses.length === 0;
+
     if (freeDay) {
       return m.menu_free_day();
     }
+
     const deadlinePart =
       deadlinesCount === 0 ? m.no_deadlines_count() : m.deadline_count({ count: deadlinesCount });
+
     const classPart =
       todayClasses.length === 0 ? m.no_classes_count() : buildClassBreakdown(todayClasses);
+
     return m.menu_today_summary({ deadlines: deadlinePart, classes: classPart });
   }
 
@@ -127,6 +136,7 @@ async function buildMenuSummary(ctx: Context, user: MenuUser): Promise<string | 
     if (deadlinesCount === 0) {
       return m.menu_no_deadlines_today();
     }
+
     return m.menu_classes_today({ breakdown: m.deadline_count({ count: deadlinesCount }) });
   }
 
@@ -134,6 +144,7 @@ async function buildMenuSummary(ctx: Context, user: MenuUser): Promise<string | 
     if (todayClasses.length === 0) {
       return m.menu_no_classes_today();
     }
+
     return m.menu_classes_today({ breakdown: buildClassBreakdown(todayClasses) });
   }
 
@@ -159,6 +170,7 @@ async function getTodayDeadlinesCount(
   try {
     const todayKey = getAlmatyDateKey(Date.now());
     const events = await fetchMoodleEvents(user);
+
     return events.filter(
       (event) =>
         event.timestampMs > Date.now() &&
@@ -183,9 +195,11 @@ async function getTodayClasses(
       await fetchCachedUserSchedule(ctx, user.calendarUserId),
       new Date(),
     );
+
     const filters = normalizeScheduleFilters(user.scheduleFilters);
     const filtered = applyScheduleFilters(items, filters, user.excludedCourses);
     const merged = filters.combineAdjacentPairs ? mergeAdjacentScheduleItems(filtered) : filtered;
+
     return getScheduleForDay(merged, getDayName(new Date()));
   } catch {
     return null;
@@ -247,20 +261,25 @@ feature.command("start", async (ctx) => {
 
   if (existing.length > 0) {
     let user = existing[0]!;
+
     try {
       await moveLocalMoodleToCalendar(user);
+
       const [updated] = await db
         .select()
         .from(users)
         .where(eq(users.telegramId, telegramId))
         .limit(1);
+
       user = updated!;
     } catch {
       // Keep the local URL so deadlines continue working and retry on the next /start.
     }
+
     await ctx.reply(await buildMenuMessage(ctx, user), {
       reply_markup: buildMenuKeyboard(),
     });
+
     return;
   }
 
@@ -274,6 +293,7 @@ feature.command("update", async (ctx) => {
   const [user] = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
   ctx.session.awaitingRemoodleToken = false;
   ctx.session.awaitingMoodleCalendarUrl = false;
+
   if (user?.calendarUserId) {
     await ctx.reply(
       m.calendar_url_managed_prompt({
@@ -281,8 +301,10 @@ feature.command("update", async (ctx) => {
       }),
       { parse_mode: "HTML" },
     );
+
     return;
   }
+
   ctx.session.awaitingMoodleCalendarUrl = true;
   await ctx.reply(m.calendar_url_prompt());
 });
@@ -295,6 +317,7 @@ feature.callbackQuery(menuCallback.filter(), async (ctx) => {
 
   if (rows.length === 0) {
     await ctx.answerCallbackQuery(m.not_registered_short());
+
     return;
   }
 
@@ -324,36 +347,51 @@ feature.callbackQuery(setupCallback.filter(), async (ctx) => {
 });
 
 feature.callbackQuery(updateCalendarCallback.filter(), async (ctx) => {
-  const { from } = updateCalendarCallback.unpack(ctx.callbackQuery.data) as {
-    from: "setup" | "deadlines_settings";
-  };
+  const { from } = updateCalendarCallback.unpack(ctx.callbackQuery.data);
+
+  if (from !== "setup" && from !== "deadlines_settings") {
+    await ctx.answerCallbackQuery();
+
+    return;
+  }
+
   ctx.session.awaitingRemoodleToken = false;
   const [user] = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
   const keyboard = buildUpdateCalendarKeyboard(from);
   const connected = Boolean(user?.calendarUserId);
   ctx.session.awaitingMoodleCalendarUrl = !connected;
+
   const prompt = connected
     ? m.calendar_url_managed_prompt({
         guideUrl: link(config.calendar.accountUrl, "Calendar settings"),
       })
     : m.calendar_url_prompt();
+
   try {
     await ctx.editMessageText(prompt, { parse_mode: "HTML", reply_markup: keyboard });
   } catch {
     await ctx.reply(prompt, { parse_mode: "HTML", reply_markup: keyboard });
   }
+
   await ctx.answerCallbackQuery();
 });
 
 feature.callbackQuery(connectCalendarCallback.filter(), async (ctx) => {
-  const { from } = connectCalendarCallback.unpack(ctx.callbackQuery.data) as {
-    from: "setup" | "schedule_settings" | "digest_settings";
-  };
+  const { from } = connectCalendarCallback.unpack(ctx.callbackQuery.data);
+
+  if (from !== "setup" && from !== "schedule_settings" && from !== "digest_settings") {
+    await ctx.answerCallbackQuery();
+
+    return;
+  }
+
   ctx.session.awaitingRemoodleToken = true;
   ctx.session.awaitingMoodleCalendarUrl = false;
+
   const steps = m.connect_calendar_steps({
     accountUrl: link(config.calendar.accountUrl, `${config.calendar.host}/account`),
   });
+
   try {
     await ctx.editMessageText(steps, {
       parse_mode: "HTML",
@@ -365,6 +403,7 @@ feature.callbackQuery(connectCalendarCallback.filter(), async (ctx) => {
       reply_markup: buildConnectCalendarKeyboard(from),
     });
   }
+
   await ctx.answerCallbackQuery();
 });
 
@@ -377,8 +416,10 @@ feature.on("message:text", async (ctx, next) => {
       await fetchMoodleUrlEvents(rawText);
     } catch {
       await ctx.reply(m.calendar_url_invalid());
+
       return;
     }
+
     await db
       .insert(users)
       .values({
@@ -395,6 +436,7 @@ feature.on("message:text", async (ctx, next) => {
     await ctx.reply(`${m.calendar_url_saved()}\n\n${await buildMenuMessage(ctx, user!)}`, {
       reply_markup: buildMenuKeyboard(),
     });
+
     return;
   }
 
@@ -405,15 +447,18 @@ feature.on("message:text", async (ctx, next) => {
     if (!config.calendarApi.url) {
       await ctx.reply(m.calendar_not_configured());
       ctx.session.awaitingRemoodleToken = false;
+
       return;
     }
 
     let connectResult: { userId: string; email: string };
+
     try {
       connectResult = await validateRemoodleConnectToken(code);
     } catch (err) {
       const msg = err instanceof Error ? err.message : m.unknown_error();
       await ctx.reply(m.calendar_connect_error({ error: msg }));
+
       return;
     }
 
@@ -432,6 +477,7 @@ feature.on("message:text", async (ctx, next) => {
       });
 
     let [user] = await db.select().from(users).where(eq(users.telegramId, telegramId)).limit(1);
+
     try {
       await moveLocalMoodleToCalendar(user!);
       [user] = await db.select().from(users).where(eq(users.telegramId, telegramId)).limit(1);
@@ -445,6 +491,7 @@ feature.on("message:text", async (ctx, next) => {
       parse_mode: "HTML",
       reply_markup: buildMenuKeyboard(),
     });
+
     return;
   }
 

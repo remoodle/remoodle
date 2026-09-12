@@ -45,6 +45,7 @@ function getICalFile() {
     value.value.toString(),
     combineAdjacentPairs.value,
   );
+
   const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);

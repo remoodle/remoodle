@@ -7,6 +7,7 @@ import { DropdownMenuCheckboxItem, DropdownMenuItemIndicator, useForwardPropsEmi
 import { cn } from "@/lib/utils";
 
 const props = defineProps<DropdownMenuCheckboxItemProps & { class?: HTMLAttributes["class"] }>();
+
 const emits = defineEmits<DropdownMenuCheckboxItemEmits>();
 
 const delegatedProps = reactiveOmit(props, "class");

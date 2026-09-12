@@ -8,6 +8,7 @@ import {
 } from "../../shared/schedule";
 
 const props = defineProps<{ courses: string[]; modelValue: ScheduleFilter["courses"] }>();
+
 const emit = defineEmits<{ "update:modelValue": [value: ScheduleFilter["courses"]] }>();
 
 function courseFilter(course: string): CourseScheduleFilter {

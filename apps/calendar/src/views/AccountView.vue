@@ -11,18 +11,25 @@ import TelegramConnection from "@/components/TelegramConnection.vue";
 import { authClient } from "@/lib/auth-client";
 
 const router = useRouter();
+
 const { data: session } = useSessionQuery();
+
 const clearSession = useClearSession();
+
 const signingOut = ref(false);
+
 const error = ref("");
 
 async function signOut() {
   signingOut.value = true;
+
   try {
     const result = await authClient.signOut();
+
     if (result.error) {
       throw result.error;
     }
+
     clearSession();
     await router.replace("/");
   } catch {

@@ -5,11 +5,12 @@ import { parseMyDuResponse, scheduleWeekSchema } from "./schemas";
 type ScheduleSettings = { studyYear: number; term: number; firstWeekStart: string };
 
 export function normalizeWeek(
-  value: unknown,
+  value: Parameters<typeof parseMyDuResponse>[1],
   settings: ScheduleSettings,
   week: number,
 ): ScheduleItem[] {
   const data = parseMyDuResponse(scheduleWeekSchema, value);
+
   if (
     data.studyYear !== settings.studyYear ||
     data.term !== settings.term ||
@@ -19,18 +20,25 @@ export function normalizeWeek(
   }
 
   const monday = Temporal.PlainDate.from(settings.firstWeekStart).add({ weeks: week - 1 });
+
   return data.slots.flatMap((slot) => {
     const date = monday.add({ days: slot.weekDay.id - 1 }).toString();
+
     return slot.items.map((item): ScheduleItem => {
       const match = item.classTime.title.match(/^(\d{1,2}:\d{2})\s*[–—-]\s*(\d{1,2}:\d{2})$/);
+
       if (!match) throw new Error("Unexpected My DU lesson time.");
+
       const start = Temporal.PlainTime.from(match[1]!.padStart(5, "0")).toString({
         smallestUnit: "minute",
       });
+
       const end = Temporal.PlainTime.from(match[2]!.padStart(5, "0")).toString({
         smallestUnit: "minute",
       });
+
       if (end <= start) throw new Error("Unexpected My DU lesson duration.");
+
       return {
         id: `mydu-${settings.studyYear}-${settings.term}-${week}-${item.uid}-${item.classTime.id}`,
         start: `${date} ${start}`,

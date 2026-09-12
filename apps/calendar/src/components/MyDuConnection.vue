@@ -17,9 +17,13 @@ import { Button } from "@/components/ui/button";
 import { useMyDuActions, useMyDuSchedule, type MyDuConnectionInput } from "@/lib/api/my-du";
 
 const { data, isPending, error: loadError } = useMyDuSchedule();
+
 const { start, connect, sync, disconnect } = useMyDuActions();
+
 const editing = ref(false);
+
 const error = ref("");
+
 const busy = computed(
   () =>
     start.isPending.value ||
@@ -28,17 +32,13 @@ const busy = computed(
     disconnect.isPending.value,
 );
 
-async function act(action: () => Promise<unknown>) {
+async function act<Result>(action: () => Promise<Result>) {
   error.value = "";
+
   try {
     await action();
-  } catch (e) {
-    const detail = e && typeof e === "object" && "detail" in e ? e.detail : null;
-    const cause = detail && typeof detail === "object" && "data" in detail ? detail.data : null;
-    error.value =
-      cause && typeof cause === "object" && "message" in cause && typeof cause.message === "string"
-        ? cause.message
-        : "The request failed. Please try again.";
+  } catch (cause) {
+    error.value = cause instanceof Error ? cause.message : "The request failed. Please try again.";
   }
 }
 

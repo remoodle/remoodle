@@ -19,6 +19,7 @@ defineOptions({
 const props = withDefaults(defineProps<SheetContentProps>(), {
   side: "right",
 });
+
 const emits = defineEmits<DialogContentEmits>();
 
 const delegatedProps = reactiveOmit(props, "class", "side");

@@ -11,14 +11,17 @@ export function sanitizeRoomFilename(room: string): string {
 export function getUniqueRooms(items: { isOnline: boolean; location: string }[]): string[] {
   const seen = new Set<string>();
   const rooms: string[] = [];
+
   for (const item of items) {
     if (!item.isOnline) {
       const code = extractRoomCode(item.location);
+
       if (code && !seen.has(code)) {
         seen.add(code);
         rooms.push(code);
       }
     }
   }
+
   return rooms;
 }

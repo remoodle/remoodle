@@ -40,8 +40,10 @@ export function defaultFilters(): ScheduleFilter {
 
 export function filterSchedule(items: ScheduleItem[], filters: ScheduleFilter) {
   if (filters.classes === false) return [];
+
   return items.filter((item) => {
     const course = filters.courses[item.courseName] ?? defaultCourseFilter();
+
     return (
       course.enabled &&
       (item.type === null || course[item.type]) &&

@@ -23,6 +23,7 @@ export function useIcalExport(filters: () => ScheduleFilter | undefined) {
 
   const effectiveFilters = computed<ScheduleFilter | undefined>(() => {
     const currentFilters = filters();
+
     if (!currentFilters) {
       return undefined;
     }
@@ -106,6 +107,7 @@ export function useIcalExport(filters: () => ScheduleFilter | undefined) {
     if (!tokenData.value?.url) {
       return;
     }
+
     await navigator.clipboard.writeText(tokenData.value.url);
     copied.value = true;
     setTimeout(() => (copied.value = false), 2000);

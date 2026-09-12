@@ -5,12 +5,16 @@ import { Button } from "@/components/ui/button";
 import { useGenerateRemoodleToken } from "@/lib/api/user";
 
 const generateToken = useGenerateRemoodleToken();
+
 const generatedCode = ref<string | null>(null);
+
 const copied = ref(false);
+
 const error = ref("");
 
 async function generateCode() {
   error.value = "";
+
   try {
     const result = await generateToken.mutateAsync();
     generatedCode.value = result.token;
@@ -24,6 +28,7 @@ async function copyCode() {
   if (!generatedCode.value) {
     return;
   }
+
   try {
     await navigator.clipboard.writeText(generatedCode.value);
     copied.value = true;

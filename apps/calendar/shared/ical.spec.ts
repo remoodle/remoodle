@@ -9,6 +9,7 @@ const event = {
   end: "2026-09-07 19:50",
   location: "C1.1",
 };
+
 describe("dated personal calendar exports", () => {
   test("uses Almaty time and never invents weekly recurrences", () => {
     const ics = generateCalendarEventsIcal([event]);
@@ -31,6 +32,7 @@ describe("dated personal calendar exports", () => {
   test("escapes and folds international titles without splitting UTF-8 characters", () => {
     const title = "Расписание".repeat(20) + "\nInjected";
     const ics = generateCalendarEventsIcal([{ ...event, title }]);
+
     for (const line of ics.split("\r\n"))
       expect(new TextEncoder().encode(line).length).toBeLessThanOrEqual(75);
     expect(ics.replace(/\r\n /g, "")).toContain("\\nInjected");

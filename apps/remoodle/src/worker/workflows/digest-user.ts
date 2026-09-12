@@ -33,22 +33,28 @@ function timeToMinutes(time: string): number | null {
   const [hoursRaw, minutesRaw] = time.split(":");
   const hours = Number(hoursRaw);
   const minutes = Number(minutesRaw);
+
   if (!Number.isInteger(hours) || !Number.isInteger(minutes)) {
     return null;
   }
+
   if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
     return null;
   }
+
   return hours * 60 + minutes;
 }
 
 function isWithinDigestWindow(currentTime: string, targetTime: string): boolean {
   const current = timeToMinutes(currentTime);
   const target = timeToMinutes(targetTime);
+
   if (current === null || target === null) {
     return false;
   }
+
   const diff = current - target;
+
   return diff >= 0 && diff < CRON_WINDOW_MINUTES;
 }
 
@@ -63,11 +69,13 @@ export const digestUser = hatchet.task<Input>({
     if (weekdays.length === 0 || !weekdays.includes(dateParts.weekday)) {
       return;
     }
+
     if (!isWithinDigestWindow(dateParts.time, input.digestTime)) {
       return;
     }
 
     const eventId = `digest:${dateParts.dateKey}`;
+
     const existing = await db
       .select({ eventId: sentNotifications.eventId })
       .from(sentNotifications)
@@ -83,11 +91,13 @@ export const digestUser = hatchet.task<Input>({
     const allItems = await fetchUserSchedule(input.calendarUserId);
     const filters = normalizeScheduleFilters(input.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS);
     const filteredItems = applyScheduleFilters(allItems, filters, input.excludedCourses);
+
     const items = filters.combineAdjacentPairs
       ? mergeAdjacentScheduleItems(filteredItems)
       : filteredItems;
 
     const message = buildTodayScheduleMessage(toWeeklySchedule(items, now), now, "My DU");
+
     const replyMarkup = {
       inline_keyboard: [[{ text: m.ui_close(), callback_data: "remove_message" }]],
     };

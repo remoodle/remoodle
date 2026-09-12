@@ -10,6 +10,7 @@ const props = defineProps<
 >();
 
 const delegatedProps = reactiveOmit(props, "class", "inset");
+
 const forwardedProps = useForwardProps(delegatedProps);
 </script>
 

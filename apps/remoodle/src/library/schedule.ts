@@ -40,6 +40,7 @@ export const DEFAULT_SCHEDULE_FILTERS: ScheduleFilters = {
 };
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
 const WEEK_DAY_ORDER = [
   "Monday",
   "Tuesday",
@@ -62,6 +63,18 @@ export const DIGEST_WEEKDAYS = [
 
 export const DEFAULT_DIGEST_WEEKDAYS = DIGEST_WEEKDAYS.map((day) => day.value);
 
+type AlmatyDateParts = {
+  dateKey: string;
+  weekday: number;
+  time: string;
+};
+
+type ScheduleTime = {
+  weekday: string;
+  hours: number;
+  minutes: number;
+};
+
 const ALMATY_TIME_ZONE = "Asia/Almaty";
 
 export function normalizeDigestWeekdays(weekdays?: number[] | null): number[] {
@@ -70,6 +83,7 @@ export function normalizeDigestWeekdays(weekdays?: number[] | null): number[] {
   }
 
   const valid = new Set<number>(DIGEST_WEEKDAYS.map((day) => day.value));
+
   return weekdays.filter((day, index) => valid.has(day) && weekdays.indexOf(day) === index);
 }
 
@@ -77,11 +91,7 @@ export function isValidDigestTime(value: string): boolean {
   return /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
 }
 
-export function getAlmatyDateParts(date: Date): {
-  dateKey: string;
-  weekday: number;
-  time: string;
-} {
+export function getAlmatyDateParts(date: Date): AlmatyDateParts {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: ALMATY_TIME_ZONE,
     year: "numeric",
@@ -95,6 +105,7 @@ export function getAlmatyDateParts(date: Date): {
 
   const get = (type: Intl.DateTimeFormatPartTypes) =>
     parts.find((part) => part.type === type)?.value ?? "";
+
   const weekdayLabel = get("weekday");
   const weekday = DIGEST_WEEKDAYS.find((day) => day.shortLabel === weekdayLabel)?.value ?? 0;
 
@@ -133,6 +144,7 @@ export function getDayName(date: Date): string {
 
 function extractTime(timeStr: string): string {
   const parts = timeStr.split(" ");
+
   return parts.length === 2 ? parts[1]! : timeStr;
 }
 
@@ -140,23 +152,22 @@ import { extractRoomCode } from "./rooms";
 
 const SLOT_BREAK_THRESHOLD_MINUTES = 15;
 
-function parseScheduleTime(timeStr: string): {
-  weekday: string;
-  hours: number;
-  minutes: number;
-} {
+function parseScheduleTime(timeStr: string): ScheduleTime {
   const parts = timeStr.split(" ");
+
   if (parts.length === 2) {
     const weekday = parts[0]!;
     const [hours, minutes] = parts[1]!.split(":").map(Number);
+
     return { weekday, hours: hours!, minutes: minutes! };
   }
 
   const [hours, minutes] = timeStr.split(":").map(Number);
+
   return { weekday: "Monday", hours: hours!, minutes: minutes! };
 }
 
-function toMinutes(time: { hours: number; minutes: number }) {
+function toMinutes(time: Pick<ScheduleTime, "hours" | "minutes">) {
   return time.hours * 60 + time.minutes;
 }
 
@@ -168,23 +179,29 @@ function canMergeScheduleItems(current: CalendarScheduleItem, next: CalendarSche
   if (currentStart.weekday !== nextStart.weekday) {
     return false;
   }
+
   if (current.courseName !== next.courseName) {
     return false;
   }
+
   if (current.teacher !== next.teacher) {
     return false;
   }
+
   if (current.type !== next.type) {
     return false;
   }
+
   if (current.location !== next.location) {
     return false;
   }
+
   if (current.isOnline !== next.isOnline) {
     return false;
   }
 
   const gap = toMinutes(nextStart) - toMinutes(currentEnd);
+
   return gap >= 0 && gap <= SLOT_BREAK_THRESHOLD_MINUTES;
 }
 
@@ -198,12 +215,14 @@ export function mergeAdjacentScheduleItems(items: CalendarScheduleItem[]): Calen
     const bStart = parseScheduleTime(b.start);
     const aWeekdayIndex = WEEK_DAY_ORDER.indexOf(aStart.weekday);
     const bWeekdayIndex = WEEK_DAY_ORDER.indexOf(bStart.weekday);
+
     const weekdayDiff =
       (aWeekdayIndex === -1 ? 99 : aWeekdayIndex) - (bWeekdayIndex === -1 ? 99 : bWeekdayIndex);
 
     if (weekdayDiff !== 0) {
       return weekdayDiff;
     }
+
     return toMinutes(aStart) - toMinutes(bStart);
   });
 
@@ -244,12 +263,14 @@ export function normalizeScheduleFilters(
 function formatScheduleItem(item: CalendarScheduleItem): string {
   const start = extractTime(item.start);
   const end = extractTime(item.end);
+
   const type =
     item.type === "lecture"
       ? m.class_type_lecture()
       : item.type === "practice"
         ? m.class_type_practice()
         : m.class_type_class();
+
   const location = item.isOnline ? m.location_online() : item.location;
 
   return m.schedule_item({
@@ -263,15 +284,18 @@ function formatScheduleItem(item: CalendarScheduleItem): string {
 export function getUniqueRooms(items: CalendarScheduleItem[]): string[] {
   const seen = new Set<string>();
   const rooms: string[] = [];
+
   for (const item of items) {
     if (!item.isOnline) {
       const code = extractRoomCode(item.location);
+
       if (code && !seen.has(code)) {
         seen.add(code);
         rooms.push(code);
       }
     }
   }
+
   return rooms;
 }
 
@@ -290,9 +314,11 @@ export function classifyScheduleItem(item: {
   if (item.type === "lecture") {
     return item.isOnline ? "online lecture" : "lecture";
   }
+
   if (item.type === "practice") {
     return item.isOnline ? "online practice" : "practice";
   }
+
   return item.isOnline ? "online class" : "class";
 }
 
@@ -309,6 +335,7 @@ export function buildClassBreakdown(
   items: { type: "lecture" | "practice" | null; isOnline: boolean }[],
 ): string {
   const counts = new Map<ClassKind, number>();
+
   for (const item of items) {
     const kind = classifyScheduleItem(item);
     counts.set(kind, (counts.get(kind) ?? 0) + 1);
@@ -330,13 +357,17 @@ export function applyScheduleFilters(
     }
 
     const isLearn = item.teacher.startsWith("https://learn");
+
     if (isLearn && !filters.eventTypes.learn) {
       return false;
     }
+
     const course = filters.courses?.[item.courseName] ?? DEFAULT_COURSE_SCHEDULE_FILTERS;
+
     if (!isLearn && item.type === "lecture" && !course.lecture) {
       return false;
     }
+
     if (!isLearn && item.type === "practice" && !course.practice) {
       return false;
     }
@@ -344,6 +375,7 @@ export function applyScheduleFilters(
     if (item.isOnline && !course.online) {
       return false;
     }
+
     if (!item.isOnline && !course.offline) {
       return false;
     }
@@ -380,6 +412,7 @@ export function buildScheduleMessage(
 
   if (dayItems.length === 0) {
     parts.push(m.no_classes());
+
     return parts.join("\n");
   }
 
@@ -414,6 +447,7 @@ export function buildTodayScheduleMessage(
 
   if (dayItems.length === 0) {
     parts.push(m.no_classes_today());
+
     return parts.join("\n");
   }
 
@@ -432,13 +466,16 @@ export function buildWeeklyScheduleMessage(
   const orderedDays = getRemainingDaysOfWeek(date);
 
   const sections: string[] = [];
+
   for (const dayName of orderedDays) {
     const dayItems = getScheduleForDay(items, dayName);
+
     if (dayItems.length === 0) {
       continue;
     }
 
     const lines = [bold(dayName)];
+
     for (const item of dayItems) {
       lines.push(formatScheduleItem(item));
     }
@@ -461,13 +498,16 @@ export function buildNextWeekScheduleMessage(
   group: string,
 ): string {
   const sections: string[] = [];
+
   for (const dayName of WEEK_DAY_ORDER) {
     const dayItems = getScheduleForDay(items, dayName);
+
     if (dayItems.length === 0) {
       continue;
     }
 
     const lines = [bold(dayName)];
+
     for (const item of dayItems) {
       lines.push(formatScheduleItem(item));
     }

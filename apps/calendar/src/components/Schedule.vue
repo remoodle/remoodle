@@ -22,7 +22,9 @@ const props = defineProps<{
 }>();
 
 const today = Temporal.Now.plainDateISO(CALENDAR_TIME_ZONE);
+
 const selectedDate = ref(today);
+
 const dateLabel = computed(() =>
   new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric" }).format(
     new Date(selectedDate.value.year, selectedDate.value.month - 1, selectedDate.value.day),
@@ -30,6 +32,7 @@ const dateLabel = computed(() =>
 );
 
 const eventsServicePlugin = createEventsServicePlugin();
+
 const calendarControlsPlugin = createCalendarControlsPlugin();
 
 const calendarApp = createCalendar({
@@ -137,9 +140,11 @@ const calendarApp = createCalendar({
 
 function movePeriod(direction: -1 | 1) {
   const current = calendarControlsPlugin.getDate();
+
   const duration = calendarControlsPlugin.getView().includes("month")
     ? { months: direction }
     : { weeks: direction };
+
   const next = current.add(duration);
   calendarControlsPlugin.setDate(next);
   selectedDate.value = next;

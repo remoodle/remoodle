@@ -113,6 +113,7 @@ describe("schedule merging", () => {
         },
       },
     });
+
     const otherCourse = { ...sampleItems[0]!, id: "other", courseName: "Fault tolerance" };
 
     expect(applyScheduleFilters([...sampleItems, otherCourse], filters, [])).toContain(otherCourse);

@@ -50,6 +50,7 @@ scheduleReminderCheck.task({
 
     if (eligibleUsers.length === 0 && digestUsers.length === 0) {
       await ctx.logger.info("no users with schedule notifications enabled");
+
       return { dispatched: 0, digestDispatched: 0 };
     }
 

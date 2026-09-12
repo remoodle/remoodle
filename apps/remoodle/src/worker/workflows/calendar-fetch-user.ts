@@ -47,6 +47,7 @@ export const calendarFetchUser = hatchet.task<Input>({
       }
 
       const currentIds = events.map((e) => e.uid);
+
       const deleteWhere =
         currentIds.length > 0
           ? and(

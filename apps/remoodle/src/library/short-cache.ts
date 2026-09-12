@@ -19,6 +19,7 @@ class MemoryShortCache implements ShortCache {
   }
 
   async get<T>(key: string) {
+    // SAFETY: values can only enter through the matching generic put method; callers own each key's type.
     return (this.cache.get(key) as T | undefined) ?? null;
   }
 
@@ -32,12 +33,14 @@ class MemoryShortCache implements ShortCache {
 
   async getOrPut<T>(key: string, load: () => Promise<T>) {
     const cached = await this.get<T>(key);
+
     if (cached !== null) {
       return cached;
     }
 
     const value = await load();
     await this.put(key, value);
+
     return value;
   }
 }

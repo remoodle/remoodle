@@ -9,12 +9,15 @@ export const useAppStore = defineStore("app", () => {
     modes: { light: "light", dark: "dark" },
     storageKey: getStorageKey("theme"),
   });
+
   const toggleTheme = () => {
     storedTheme.value = storedTheme.value === "light" ? "dark" : "light";
   };
+
   const theme = computed<"light" | "dark">(() =>
     storedTheme.value === "auto" ? systemTheme.value : storedTheme.value,
   );
+
   const filters = useStorage<ScheduleFilter>(
     getStorageKey("schedule-filters"),
     defaultFilters(),
@@ -23,5 +26,6 @@ export const useAppStore = defineStore("app", () => {
       mergeDefaults: true,
     },
   );
+
   return { theme, toggleTheme, filters };
 });

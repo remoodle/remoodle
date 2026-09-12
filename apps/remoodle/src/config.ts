@@ -2,7 +2,9 @@ import { cleanEnv, num, str } from "envalid";
 import "dotenv/config";
 
 const CALENDAR_URL = "https://calendar.remoodle.app";
+
 const AITUMAP_URL = "https://aitumap.remoodle.app";
+
 const DOCS_URL = "https://docs.remoodle.app";
 
 export const env = cleanEnv(process.env, {

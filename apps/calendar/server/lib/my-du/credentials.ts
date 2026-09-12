@@ -8,6 +8,6 @@ export function encryptCredentials(value: MyDuCredentials, secret: string, userI
 export async function decryptCredentials(value: string, secret: string, userId: string) {
   return parseMyDuResponse(
     credentialsSchema,
-    JSON.parse(await decryptSecret(value, secret, userId)) as unknown,
+    JSON.parse(await decryptSecret(value, secret, userId)),
   );
 }

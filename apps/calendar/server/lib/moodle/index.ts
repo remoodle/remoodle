@@ -12,10 +12,17 @@ export async function readMoodle(env: Env, userId: string) {
     .select()
     .from(moodleConnections)
     .where(eq(moodleConnections.userId, userId));
-  if (!row) return { connection: null, events: [] as MoodleEvent[], fetchedAt: null };
+
+  if (!row) {
+    const events: MoodleEvent[] = [];
+
+    return { connection: null, events, fetchedAt: null };
+  }
+
   try {
     const url = await decryptSecret(row.encryptedUrl, env.BETTER_AUTH_SECRET, "moodle:" + userId);
     const events = await fetchMoodleFeed(url);
+
     return { connection: { connected: true }, events, fetchedAt: Date.now() };
   } catch {
     // Never turn a failed fetch into an empty feed, or the bot would erase its cache.
@@ -25,7 +32,11 @@ export async function readMoodle(env: Env, userId: string) {
   }
 }
 
-export async function connectMoodle(env: Env, userId: string, value: unknown) {
+export async function connectMoodle(
+  env: Env,
+  userId: string,
+  value: Parameters<typeof validateMoodleUrl>[0],
+) {
   const url = validateMoodleUrl(value);
   const events = await fetchMoodleFeed(url);
   const encryptedUrl = await encryptSecret(url, env.BETTER_AUTH_SECRET, "moodle:" + userId);
@@ -33,5 +44,6 @@ export async function connectMoodle(env: Env, userId: string, value: unknown) {
     .insert(moodleConnections)
     .values({ userId, encryptedUrl })
     .onConflictDoUpdate({ target: moodleConnections.userId, set: { encryptedUrl } });
+
   return { connection: { connected: true }, events, fetchedAt: Date.now() };
 }

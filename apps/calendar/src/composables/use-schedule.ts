@@ -13,6 +13,7 @@ export function useSchedule(filters: () => ScheduleFilter) {
   const query = useMyDuSchedule();
   const moodle = useMoodleSchedule();
   const items = computed(() => filterSchedule(query.data.value?.events ?? [], filters()));
+
   const scheduleEvents = computed((): CalendarEvent[] =>
     scheduleToCalendarEvents(items.value).map((item, index) => ({
       ...item,
@@ -30,12 +31,15 @@ export function useSchedule(filters: () => ScheduleFilter) {
             : "offline",
     })),
   );
+
   const events = computed((): CalendarEvent[] => [
     ...scheduleEvents.value,
     ...moodleToCalendarEvents(filterMoodle(moodle.data.value?.events ?? [], filters().moodle)),
   ]);
+
   const courses = computed(() => [
     ...new Set(query.data.value?.events.map((item) => item.courseName) ?? []),
   ]);
+
   return { ...query, moodle, items, events, scheduleEvents, courses };
 }

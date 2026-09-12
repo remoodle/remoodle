@@ -67,6 +67,7 @@ function getCourseLabel(event: Pick<CalendarEvent, "courseName">): string {
 
 function getDeadlineIcon(timestampMs: number, fireThresholdHours = 3): string {
   const hoursLeft = (timestampMs - Date.now()) / (60 * 60 * 1000);
+
   return hoursLeft <= fireThresholdHours ? "🔥" : "📅";
 }
 
@@ -75,6 +76,7 @@ export function buildReminderMessage(
   reminders: PendingReminder[],
 ): string {
   const eventMap = new Map(events.map((e) => [e.uid, e]));
+
   type ReminderItem = {
     uid: string;
     summary: string;
@@ -85,6 +87,7 @@ export function buildReminderMessage(
 
   for (const reminder of reminders) {
     const event = eventMap.get(reminder.eventId);
+
     if (!event) {
       continue;
     }
@@ -179,5 +182,6 @@ export function buildThresholdsMessage(thresholds: string[]): string {
   }
 
   parts.push(m.thresholds_toggle_prompt());
+
   return parts.join("\n");
 }

@@ -3,14 +3,23 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createDb } from "../db";
 import * as schema from "../db/schema";
 
+type MicrosoftProvider = {
+  clientId: string;
+  tenantId: string;
+  clientSecret?: string;
+};
+
 export function createAuth(env: Env) {
   const db = createDb(env.DB);
 
-  const microsoftProvider = {
+  const microsoftProvider: MicrosoftProvider = {
     clientId: env.MICROSOFT_CLIENT_ID,
     tenantId: env.MICROSOFT_TENANT_ID,
-    ...(env.MICROSOFT_CLIENT_SECRET ? { clientSecret: env.MICROSOFT_CLIENT_SECRET } : {}),
   };
+
+  if (env.MICROSOFT_CLIENT_SECRET) {
+    microsoftProvider.clientSecret = env.MICROSOFT_CLIENT_SECRET;
+  }
 
   return betterAuth({
     database: drizzleAdapter(db, {

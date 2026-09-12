@@ -7,6 +7,7 @@ import { CheckboxIndicator, CheckboxRoot, useForwardPropsEmits } from "reka-ui";
 import { cn } from "@/lib/utils";
 
 const props = defineProps<CheckboxRootProps & { class?: HTMLAttributes["class"] }>();
+
 const emits = defineEmits<CheckboxRootEmits>();
 
 const delegatedProps = reactiveOmit(props, "class");

@@ -16,6 +16,7 @@ export const moodleKinds = {
 } as const;
 
 export type MoodleFilters = Record<MoodleEvent["kind"], boolean>;
+
 export const defaultMoodleFilters = (): MoodleFilters => ({
   attendance: false,
   assignment: true,

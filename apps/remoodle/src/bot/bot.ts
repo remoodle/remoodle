@@ -39,6 +39,7 @@ export function createBot(token: string, shortCache: ShortCache) {
     } catch {
       await ctx.editMessageReplyMarkup().catch(() => {});
     }
+
     await ctx.answerCallbackQuery();
   });
 

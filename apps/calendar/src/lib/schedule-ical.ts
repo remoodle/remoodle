@@ -6,9 +6,6 @@ function toCalendarEventDateTime(value: CalendarEvent["start"]) {
   if (!value) {
     return undefined;
   }
-  if (typeof value === "string") {
-    return value;
-  }
 
   if (value instanceof Temporal.ZonedDateTime) {
     return `${value.toPlainDate().toString()} ${value.toPlainTime().toString({ smallestUnit: "minute" })}`;
@@ -18,7 +15,7 @@ function toCalendarEventDateTime(value: CalendarEvent["start"]) {
     return `${value.toString()} 00:00`;
   }
 
-  return undefined;
+  return String(value);
 }
 
 export function createScheduleIcal(
@@ -32,8 +29,10 @@ export function createScheduleIcal(
     start: toCalendarEventDateTime(event.start),
     end: toCalendarEventDateTime(event.end),
   }));
+
   const start = new Date(`${startDate}T00:00:00Z`);
   const end = new Date(`${endDate}T23:59:59Z`);
+
   const sourceEvents = combineAdjacentPairs
     ? mergeAdjacentCalendarEvents(normalizedEvents)
     : normalizedEvents;
@@ -55,7 +54,7 @@ export function createScheduleIcal(
         description: event.description,
         start: event.start,
         end: event.end,
-        location: typeof event.location === "string" ? event.location : "",
+        location: String(event.location ?? ""),
       })),
     start,
     end,
