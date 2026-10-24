@@ -14,7 +14,7 @@ import { Temporal } from "temporal-polyfill";
 import { computed, ref, watchEffect } from "vue";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { CALENDAR_TIME_ZONE } from "../../shared/ical";
+import { CALENDAR_TIME_ZONE } from "@remoodle/shared/ical";
 
 const props = defineProps<{
   events: CalendarEvent[];

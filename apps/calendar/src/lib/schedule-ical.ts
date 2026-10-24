@@ -1,6 +1,6 @@
 import type { CalendarEvent } from "@schedule-x/calendar";
 import { Temporal } from "temporal-polyfill";
-import { generateCalendarEventsIcal, mergeAdjacentCalendarEvents } from "../../shared/ical";
+import { generateCalendarEventsIcal, mergeAdjacentCalendarEvents } from "@remoodle/shared/ical";
 
 function toCalendarEventDateTime(value: CalendarEvent["start"]) {
   if (!value) {

@@ -5,7 +5,7 @@ import {
   defaultCourseFilter,
   type CourseScheduleFilter,
   type ScheduleFilter,
-} from "../../shared/schedule";
+} from "@remoodle/shared/schedule";
 
 const props = defineProps<{ courses: string[]; modelValue: ScheduleFilter["courses"] }>();
 

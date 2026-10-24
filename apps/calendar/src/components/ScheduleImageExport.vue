@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
 import { useAppStore } from "@/stores/app";
 import { drawScheduleImage, scheduleImageDays } from "@/lib/schedule-image";
-import { CALENDAR_TIME_ZONE } from "../../shared/ical";
+import { CALENDAR_TIME_ZONE } from "@remoodle/shared/ical";
 
 const props = defineProps<{ events: CalendarEvent[] }>();
 

@@ -13,7 +13,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import IcalExportOptions from "@/components/IcalExportOptions.vue";
 import ScheduleImageExport from "@/components/ScheduleImageExport.vue";
-import type { ScheduleFilter } from "@/lib/types";
+import type { ScheduleFilter } from "@remoodle/shared/schedule";
 
 defineProps<{
   filters: ScheduleFilter | undefined;

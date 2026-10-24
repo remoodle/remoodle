@@ -1,11 +1,9 @@
-import { toWeeklySchedule } from "../../library/calendar-api";
-import { eq } from "drizzle-orm";
 import { Composer, InputFile, InlineKeyboard } from "grammy";
 import type { Context } from "../context";
 import { config } from "../../config";
 import { m } from "../../library/i18n/messages.js";
-import { db } from "../../db";
-import { users } from "../../db/schema";
+import * as myDuRepository from "../../db/repositories/my-du";
+import * as usersRepository from "../../db/repositories/users";
 import {
   buildTodayScheduleMessage,
   buildWeeklyScheduleMessage,
@@ -19,6 +17,7 @@ import {
   hasRemainingClassesThisWeek,
   mergeAdjacentScheduleItems,
   normalizeScheduleFilters,
+  toWeeklySchedule,
 } from "../../library/schedule";
 import { getUniqueRooms, sanitizeRoomFilename } from "../../library/rooms";
 import {
@@ -28,7 +27,6 @@ import {
   roomPhotoCallback,
   closeMessageCallback,
 } from "../callback-data";
-import { fetchCachedUserSchedule } from "../schedule-cache";
 
 export const composer = new Composer<Context>();
 
@@ -37,13 +35,12 @@ const feature = composer.chatType("private");
 type ScheduleView = "today" | "week" | "next_week";
 
 async function fetchScheduleMessage(
-  ctx: Context,
-  calendarUserId: string,
+  userId: number,
   excludedCourses: string[],
   scheduleFilters: typeof DEFAULT_SCHEDULE_FILTERS,
   view: ScheduleView,
 ): Promise<{ message: string; rooms: string[]; hasThisWeek: boolean }> {
-  const rawItems = await fetchCachedUserSchedule(ctx, calendarUserId);
+  const rawItems = await myDuRepository.findSchedule(userId);
   const now = new Date();
   const items = toWeeklySchedule(rawItems, now, view === "next_week" ? 1 : 0);
   const filters = normalizeScheduleFilters(scheduleFilters);
@@ -119,17 +116,15 @@ async function replyWithScheduleView(ctx: Context, view: ScheduleView) {
     return;
   }
 
-  const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+  const user = await usersRepository.findByTelegramId(ctx.from.id);
 
-  if (rows.length === 0) {
+  if (!user) {
     await ctx.reply(m.not_registered());
 
     return;
   }
 
-  const user = rows[0]!;
-
-  if (!user.calendarUserId) {
+  if (!user.hasSchedule) {
     await ctx.reply(m.no_group_schedule_command());
 
     return;
@@ -141,8 +136,7 @@ async function replyWithScheduleView(ctx: Context, view: ScheduleView) {
 
   try {
     result = await fetchScheduleMessage(
-      ctx,
-      user.calendarUserId,
+      user.id,
       user.excludedCourses,
       user.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS,
       view,
@@ -168,17 +162,15 @@ feature.command("schedule", async (ctx) => {
 });
 
 feature.callbackQuery(scheduleCallback.filter(), async (ctx) => {
-  const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+  const user = await usersRepository.findByTelegramId(ctx.from.id);
 
-  if (rows.length === 0) {
+  if (!user) {
     await ctx.answerCallbackQuery(m.not_registered_short());
 
     return;
   }
 
-  const user = rows[0]!;
-
-  if (!user.calendarUserId) {
+  if (!user.hasSchedule) {
     await ctx.answerCallbackQuery({
       text: m.no_group_schedule_callback(),
       show_alert: true,
@@ -193,8 +185,7 @@ feature.callbackQuery(scheduleCallback.filter(), async (ctx) => {
 
   try {
     result = await fetchScheduleMessage(
-      ctx,
-      user.calendarUserId,
+      user.id,
       user.excludedCourses,
       user.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS,
       "today",
@@ -222,17 +213,15 @@ feature.callbackQuery(scheduleViewCallback.filter(), async (ctx) => {
     return;
   }
 
-  const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+  const user = await usersRepository.findByTelegramId(ctx.from.id);
 
-  if (rows.length === 0) {
+  if (!user) {
     await ctx.answerCallbackQuery(m.not_registered_short());
 
     return;
   }
 
-  const user = rows[0]!;
-
-  if (!user.calendarUserId) {
+  if (!user.hasSchedule) {
     await ctx.answerCallbackQuery({
       text: m.no_group_schedule_callback(),
       show_alert: true,
@@ -247,8 +236,7 @@ feature.callbackQuery(scheduleViewCallback.filter(), async (ctx) => {
 
   try {
     result = await fetchScheduleMessage(
-      ctx,
-      user.calendarUserId,
+      user.id,
       user.excludedCourses,
       user.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS,
       view,

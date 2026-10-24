@@ -1,15 +1,12 @@
-import { and, eq, notInArray, sql } from "drizzle-orm";
-import { db } from "../../db";
-import { calendarEvents } from "../../db/schema";
-import { fetchMoodleEvents } from "../../library/moodle";
+import * as calendarEventsRepository from "../../db/repositories/calendar-events";
+import { fetchDeadlineEvents } from "../../library/moodle/service";
 import { hatchet } from "../hatchet-client";
 import { deadlineCheckUser } from "./deadline-check-user";
 
 type Input = {
   userId: number;
   telegramId: number;
-  calendarUserId: string | null;
-  moodleCalendarUrl: string | null;
+  moodleCalendarUrl: string;
   thresholds: string[];
 };
 
@@ -18,45 +15,8 @@ export const calendarFetchUser = hatchet.task<Input>({
   executionTimeout: "2m",
   fn: async (input, ctx) => {
     try {
-      const events = await fetchMoodleEvents(input);
-
-      if (events.length > 0) {
-        await db
-          .insert(calendarEvents)
-          .values(
-            events.map((event) => ({
-              userId: input.userId,
-              eventId: event.uid,
-              summary: event.summary,
-              timestampMs: event.timestampMs,
-              categories: event.courseName,
-              description: event.description,
-              fetchedAt: new Date(),
-            })),
-          )
-          .onConflictDoUpdate({
-            target: [calendarEvents.userId, calendarEvents.eventId],
-            set: {
-              summary: sql`excluded.summary`,
-              timestampMs: sql`excluded.timestamp_ms`,
-              categories: sql`excluded.categories`,
-              description: sql`excluded.description`,
-              fetchedAt: sql`excluded.fetched_at`,
-            },
-          });
-      }
-
-      const currentIds = events.map((e) => e.uid);
-
-      const deleteWhere =
-        currentIds.length > 0
-          ? and(
-              eq(calendarEvents.userId, input.userId),
-              notInArray(calendarEvents.eventId, currentIds),
-            )
-          : eq(calendarEvents.userId, input.userId);
-
-      await db.delete(calendarEvents).where(deleteWhere);
+      const events = await fetchDeadlineEvents(input.moodleCalendarUrl);
+      await calendarEventsRepository.replaceForUser(input.userId, events);
 
       await ctx.logger.info("fetched and stored calendar events", {
         userId: input.userId,

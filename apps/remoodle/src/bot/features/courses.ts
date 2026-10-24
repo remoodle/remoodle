@@ -1,8 +1,7 @@
-import { eq } from "drizzle-orm";
 import { Composer, InlineKeyboard } from "grammy";
 import type { Context } from "../context";
-import { db } from "../../db";
-import { users } from "../../db/schema";
+import * as myDuRepository from "../../db/repositories/my-du";
+import * as usersRepository from "../../db/repositories/users";
 import { m } from "../../library/i18n/messages.js";
 import { bold } from "../../library/telegram-html";
 import {
@@ -12,7 +11,6 @@ import {
   toggleCourseCallback,
   toggleCourseScheduleFilterCallback,
 } from "../callback-data";
-import { fetchCachedUserSchedule } from "../schedule-cache";
 import {
   DEFAULT_COURSE_SCHEDULE_FILTERS,
   normalizeScheduleFilters,
@@ -23,8 +21,8 @@ export const composer = new Composer<Context>();
 
 const feature = composer.chatType("private");
 
-async function getUserCourses(ctx: Context, userId: string): Promise<string[]> {
-  const items = await fetchCachedUserSchedule(ctx, userId);
+async function getUserCourses(userId: number): Promise<string[]> {
+  const items = await myDuRepository.findSchedule(userId);
   const names = items.map((i) => i.courseName).filter(Boolean);
 
   return Array.from(new Set(names)).sort();
@@ -75,10 +73,10 @@ function buildCourseScheduleKeyboard(
 
 async function getCourseContext(ctx: Context) {
   if (!ctx.from) return null;
-  const [user] = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+  const user = await usersRepository.findByTelegramId(ctx.from.id);
 
-  if (!user?.calendarUserId) return null;
-  const courses = await getUserCourses(ctx, user.calendarUserId);
+  if (!user?.hasSchedule) return null;
+  const courses = await getUserCourses(user.id);
 
   return { user, courses };
 }
@@ -98,17 +96,15 @@ feature.command("courses", async (ctx) => {
     return;
   }
 
-  const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+  const user = await usersRepository.findByTelegramId(ctx.from.id);
 
-  if (rows.length === 0) {
+  if (!user) {
     await ctx.reply(m.not_registered());
 
     return;
   }
 
-  const user = rows[0]!;
-
-  if (!user.calendarUserId) {
+  if (!user.hasSchedule) {
     await ctx.reply(m.courses_no_group(), {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard().text(m.ui_back(), settingsCallback.pack({})),
@@ -120,7 +116,7 @@ feature.command("courses", async (ctx) => {
   let courses: string[];
 
   try {
-    courses = await getUserCourses(ctx, user.calendarUserId);
+    courses = await getUserCourses(user.id);
   } catch {
     await ctx.reply(m.courses_fetch_failed(), {
       parse_mode: "HTML",
@@ -136,17 +132,15 @@ feature.command("courses", async (ctx) => {
 });
 
 feature.callbackQuery(coursesCallback.filter(), async (ctx) => {
-  const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+  const user = await usersRepository.findByTelegramId(ctx.from.id);
 
-  if (rows.length === 0) {
+  if (!user) {
     await ctx.answerCallbackQuery(m.not_registered_short());
 
     return;
   }
 
-  const user = rows[0]!;
-
-  if (!user.calendarUserId) {
+  if (!user.hasSchedule) {
     await ctx.answerCallbackQuery();
     await ctx.editMessageText(m.courses_no_group(), {
       parse_mode: "HTML",
@@ -159,7 +153,7 @@ feature.callbackQuery(coursesCallback.filter(), async (ctx) => {
   let courses: string[];
 
   try {
-    courses = await getUserCourses(ctx, user.calendarUserId);
+    courses = await getUserCourses(user.id);
   } catch {
     await ctx.answerCallbackQuery(m.schedule_fetch_failed_short());
 
@@ -176,17 +170,15 @@ feature.callbackQuery(coursesCallback.filter(), async (ctx) => {
 feature.callbackQuery(toggleCourseCallback.filter(), async (ctx) => {
   const { idx } = toggleCourseCallback.unpack(ctx.callbackQuery.data);
 
-  const rows = await db.select().from(users).where(eq(users.telegramId, ctx.from.id)).limit(1);
+  const user = await usersRepository.findByTelegramId(ctx.from.id);
 
-  if (rows.length === 0) {
+  if (!user) {
     await ctx.answerCallbackQuery(m.not_registered_short());
 
     return;
   }
 
-  const user = rows[0]!;
-
-  if (!user.calendarUserId) {
+  if (!user.hasSchedule) {
     await ctx.answerCallbackQuery(m.error_no_group_linked());
 
     return;
@@ -195,7 +187,7 @@ feature.callbackQuery(toggleCourseCallback.filter(), async (ctx) => {
   let courses: string[];
 
   try {
-    courses = await getUserCourses(ctx, user.calendarUserId);
+    courses = await getUserCourses(user.id);
   } catch {
     await ctx.answerCallbackQuery(m.schedule_fetch_failed_short());
 
@@ -216,7 +208,7 @@ feature.callbackQuery(toggleCourseCallback.filter(), async (ctx) => {
     ? user.excludedCourses.filter((c) => c !== course)
     : [...user.excludedCourses, course];
 
-  await db.update(users).set({ excludedCourses: updated }).where(eq(users.telegramId, ctx.from.id));
+  await usersRepository.update(user.id, { excludedCourses: updated });
 
   await ctx.editMessageText(buildCoursesMessage(courses, updated), {
     parse_mode: "HTML",
@@ -269,7 +261,7 @@ feature.callbackQuery(toggleCourseScheduleFilterCallback.filter(), async (ctx) =
   const courseFilters = filters.courses?.[course] ?? { ...DEFAULT_COURSE_SCHEDULE_FILTERS };
   const updated = { ...courseFilters, [key]: !courseFilters[key] };
   filters.courses = { ...filters.courses, [course]: updated };
-  await db.update(users).set({ scheduleFilters: filters }).where(eq(users.telegramId, ctx.from.id));
+  await usersRepository.update(context.user.id, { scheduleFilters: filters });
   await ctx.editMessageReplyMarkup({ reply_markup: buildCourseScheduleKeyboard(index, updated) });
   await ctx.answerCallbackQuery();
 });

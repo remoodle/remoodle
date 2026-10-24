@@ -1,6 +1,6 @@
 import { m } from "./i18n/messages.js";
 import { bold } from "./telegram-html";
-import type { CalendarEvent } from "./calendar";
+import type { DeadlineEvent } from "./moodle/deadlines";
 import { durationToMs, getTimeLeft, formatDate, humanizeDuration } from "./dates";
 
 export type PendingReminder = {
@@ -15,7 +15,7 @@ export type ExistingReminder = {
 
 export function trackDeadlineReminders(
   thresholds: string[],
-  events: CalendarEvent[],
+  events: DeadlineEvent[],
   existing: ExistingReminder[],
 ): PendingReminder[] {
   const pending: PendingReminder[] = [];
@@ -61,7 +61,7 @@ export function getDeadlineName(summary: string): string {
   return summary.replace(/ is due( to be graded)?$/i, "").trim();
 }
 
-function getCourseLabel(event: Pick<CalendarEvent, "courseName">): string {
+function getCourseLabel(event: Pick<DeadlineEvent, "courseName">): string {
   return event.courseName?.trim() || m.unknown_course();
 }
 
@@ -72,7 +72,7 @@ function getDeadlineIcon(timestampMs: number, fireThresholdHours = 3): string {
 }
 
 export function buildReminderMessage(
-  events: CalendarEvent[],
+  events: DeadlineEvent[],
   reminders: PendingReminder[],
 ): string {
   const eventMap = new Map(events.map((e) => [e.uid, e]));
@@ -125,7 +125,7 @@ export function buildReminderMessage(
   return parts.join("\n").trim();
 }
 
-export function buildDeadlinesMessage(events: CalendarEvent[], daysLimit = 14): string {
+export function buildDeadlinesMessage(events: DeadlineEvent[], daysLimit = 14): string {
   const nowMs = Date.now();
   const limitMs = nowMs + daysLimit * 24 * 60 * 60 * 1000;
 

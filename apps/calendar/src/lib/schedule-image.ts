@@ -1,6 +1,6 @@
 import type { CalendarEvent } from "@schedule-x/calendar";
 import { Temporal } from "temporal-polyfill";
-import { CALENDAR_TIME_ZONE } from "../../shared/ical";
+import { CALENDAR_TIME_ZONE } from "@remoodle/shared/ical";
 
 function dateTime(value: CalendarEvent["start"]) {
   return value instanceof Temporal.ZonedDateTime

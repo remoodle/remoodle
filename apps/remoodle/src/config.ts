@@ -1,8 +1,6 @@
 import { cleanEnv, num, str } from "envalid";
 import "dotenv/config";
 
-const CALENDAR_URL = "https://calendar.remoodle.app";
-
 const AITUMAP_URL = "https://aitumap.remoodle.app";
 
 const DOCS_URL = "https://docs.remoodle.app";
@@ -15,15 +13,22 @@ export const env = cleanEnv(process.env, {
   TELEGRAM_BOT_TOKEN: str(),
   HATCHET_CLIENT_TOKEN: str({ default: "" }),
   DATABASE_URL: str({ default: "./remoodle.db" }),
-  CALENDAR_API_URL: str({ default: "" }),
-  CALENDAR_INTERNAL_TOKEN: str({ default: "" }),
+  TELEGRAM_BOT_USERNAME: str({ default: "feathermoodbot" }),
+  API_PORT: num({ default: 3000 }),
+  // Public origin of the API, used in iCal subscription links.
+  API_URL: str({ default: "http://localhost:5173" }),
+  // The web calendar origin: allowed by CORS and required on cookie-authenticated writes.
+  CALENDAR_URL: str({ default: "http://localhost:5173" }),
+  // Encrypts stored My DU tokens. Changing it disconnects every My DU connection.
+  ENCRYPTION_KEY: str(),
   CABGEN_CDN_URL: str({ default: "https://cabgen.remoodle.app" }),
-  SHORT_CACHE_TTL_SECONDS: num({ default: 30 }),
 });
 
 export const config = {
   telegram: {
     token: env.TELEGRAM_BOT_TOKEN,
+    username: env.TELEGRAM_BOT_USERNAME,
+    url: `https://t.me/${env.TELEGRAM_BOT_USERNAME}`,
   },
   hatchet: {
     token: env.HATCHET_CLIENT_TOKEN,
@@ -31,14 +36,14 @@ export const config = {
   database: {
     url: env.DATABASE_URL,
   },
-  calendarApi: {
-    url: env.CALENDAR_API_URL,
-    internalToken: env.CALENDAR_INTERNAL_TOKEN,
+  api: {
+    port: env.API_PORT,
+    url: env.API_URL,
+    encryptionKey: env.ENCRYPTION_KEY,
   },
   calendar: {
-    url: CALENDAR_URL,
-    host: "calendar.remoodle.app",
-    accountUrl: `${CALENDAR_URL}/account`,
+    url: env.CALENDAR_URL,
+    host: new URL(env.CALENDAR_URL).host,
   },
   aitumap: {
     url: AITUMAP_URL,
@@ -53,8 +58,5 @@ export const config = {
   reminders: {
     defaultThresholds: ["P1D", "PT3H"],
     maxThresholds: 10,
-  },
-  cache: {
-    shortCacheTtlSeconds: env.SHORT_CACHE_TTL_SECONDS,
   },
 };

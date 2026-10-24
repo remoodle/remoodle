@@ -1,6 +1,9 @@
-import { DetailedError, hc, parseResponse } from "hono/client";
-import type { AppType } from "../../../server/index.ts";
+import { hc, parseResponse } from "hono/client";
+import type { AppType } from "@remoodle/api/app";
 
-export const client = hc<AppType>("/");
+// The session cookie belongs to the API origin, so every request must include credentials.
+export const client = hc<AppType>(import.meta.env.VITE_API_URL ?? "/", {
+  init: { credentials: "include" },
+});
 
-export { DetailedError, parseResponse };
+export { parseResponse };

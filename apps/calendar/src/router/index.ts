@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { authClient } from "@/lib/auth-client";
+import { sessionQuery } from "@/lib/api/session";
+import { queryClient } from "@/lib/query-client";
 import AccountView from "../views/AccountView.vue";
-import AuthCallbackView from "../views/AuthCallbackView.vue";
 import LandingView from "../views/LandingView.vue";
 import ScheduleView from "../views/ScheduleView.vue";
 
@@ -31,10 +31,6 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/api/auth/callback/:provider",
-      component: AuthCallbackView,
-    },
-    {
       path: "/:pathMatch(.*)*",
       redirect: "/",
     },
@@ -42,20 +38,21 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  const session = await authClient.getSession();
+  // An unreachable API reads as signed out, so public pages still render.
+  const session = await queryClient.ensureQueryData(sessionQuery).catch(() => ({ user: null }));
 
   const nextValue = Array.isArray(to.query.next) ? to.query.next[0] : to.query.next;
   const next = nextValue?.startsWith("/") ? nextValue : null;
 
   if (to.meta.requiresAuth) {
-    if (!session.data) {
+    if (!session.user) {
       return { path: "/login", query: { next: to.fullPath } };
     }
 
     return true;
   }
 
-  if ((to.name === "landing" || to.name === "login") && session.data) {
+  if ((to.name === "landing" || to.name === "login") && session.user) {
     return { path: next ?? "/schedule" };
   }
 

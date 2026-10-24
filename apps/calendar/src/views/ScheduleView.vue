@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { Icon } from "@iconify/vue";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Empty,
@@ -9,9 +8,8 @@ import {
   EmptyContent,
 } from "@/components/ui/empty";
 import { storeToRefs } from "pinia";
-import { RouterLink, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import AccountMenu from "@/components/AccountMenu.vue";
-import AuthDialog from "@/components/AuthDialog.vue";
 import ExportSchedule from "@/components/ExportSchedule.vue";
 import Schedule from "@/components/Schedule.vue";
 import { Button } from "@/components/ui/button";
@@ -29,10 +27,9 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useSchedule } from "@/composables/use-schedule";
-import { useSessionQuery, useClearSession } from "@/lib/api/session";
+import { useSessionQuery, useSignOut } from "@/lib/api/session";
 import MoodleFilters from "@/components/MoodleFilters.vue";
 import ScheduleFilters from "@/components/ScheduleFilters.vue";
-import { authClient } from "@/lib/auth-client";
 import { useAppStore } from "@/stores/app";
 
 const appStore = useAppStore();
@@ -47,11 +44,10 @@ const { events, scheduleEvents, courses, data, moodle, isPending, error, refetch
 
 const { data: session } = useSessionQuery();
 
-const clearSession = useClearSession();
+const signOutSession = useSignOut();
 
 async function signOut() {
-  await authClient.signOut();
-  clearSession();
+  await signOutSession();
   await router.replace("/");
 }
 </script>
@@ -84,8 +80,14 @@ async function signOut() {
         </template>
 
         <div v-else-if="!isPending" class="px-4 py-3 text-xs text-muted-foreground">
-          <RouterLink to="/account" class="underline underline-offset-4">Connect My DU</RouterLink>
-          to add your classes.
+          <a
+            :href="session?.links.myDu"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline underline-offset-4"
+            >Connect My DU</a
+          >
+          in the bot to add your classes.
         </div>
         <div class="mx-4 my-2 border-t" />
         <SidebarGroup>
@@ -93,37 +95,28 @@ async function signOut() {
             >Moodle</SidebarGroupLabel
           >
           <SidebarGroupContent>
-            <MoodleFilters v-if="moodle.data.value?.connection" v-model="filters.moodle" />
+            <MoodleFilters v-if="moodle.data.value?.connected" v-model="filters.moodle" />
             <p v-else-if="!moodle.isPending.value" class="px-2 py-3 text-xs text-muted-foreground">
-              <RouterLink to="/account" class="underline underline-offset-4"
-                >Connect Moodle</RouterLink
+              <a
+                :href="session?.links.moodle"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="underline underline-offset-4"
+                >Connect Moodle</a
               >
-              to add deadlines and events.
+              in the bot to add deadlines and events.
             </p>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter class="gap-3 p-3">
-        <template v-if="session?.data">
-          <AccountMenu
-            :name="session.data.user.name"
-            :email="session.data.user.email"
-            @sign-out="signOut"
-          />
-        </template>
-        <template v-else>
-          <div class="flex items-center gap-2">
-            <AuthDialog>
-              <Button variant="outline" size="sm" class="flex-1">Sign in</Button>
-            </AuthDialog>
-            <Button as-child variant="ghost" size="icon" class="size-8 shrink-0">
-              <RouterLink to="/account" aria-label="Settings">
-                <Icon icon="lucide:settings-2" class="size-4" />
-              </RouterLink>
-            </Button>
-          </div>
-        </template>
+        <AccountMenu
+          v-if="session?.user"
+          :name="session.user.name"
+          :username="session.user.username"
+          @sign-out="signOut"
+        />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
@@ -140,7 +133,7 @@ async function signOut() {
         </div>
         <div
           v-else-if="
-            (error || moodle.error.value) && !data?.connection && !moodle.data.value?.connection
+            (error || moodle.error.value) && !data?.connection && !moodle.data.value?.connected
           "
           class="space-y-3 p-6"
         >
@@ -156,7 +149,7 @@ async function signOut() {
           >
         </div>
         <div
-          v-else-if="!data?.connection && !moodle.data.value?.connection"
+          v-else-if="!data?.connection && !moodle.data.value?.connected"
           class="flex h-full flex-col"
         >
           <div class="p-3">
@@ -166,11 +159,18 @@ async function signOut() {
             ><EmptyHeader
               ><EmptyTitle>Your schedule starts here</EmptyTitle
               ><EmptyDescription
-                >Connect My DU or Moodle in Settings to build your calendar.</EmptyDescription
+                >Connect My DU or Moodle in the ReMoodle bot to build your
+                calendar.</EmptyDescription
               ></EmptyHeader
-            ><EmptyContent
+            ><EmptyContent v-if="session" class="flex-row justify-center"
               ><Button as-child
-                ><RouterLink to="/account">Open settings</RouterLink></Button
+                ><a :href="session.links.myDu" target="_blank" rel="noopener noreferrer"
+                  >Connect My DU</a
+                ></Button
+              ><Button as-child variant="outline"
+                ><a :href="session.links.moodle" target="_blank" rel="noopener noreferrer"
+                  >Connect Moodle</a
+                ></Button
               ></EmptyContent
             ></Empty
           >
@@ -181,7 +181,10 @@ async function signOut() {
             role="status"
             class="border-b px-4 py-2 text-sm text-muted-foreground"
           >
-            {{ data.connection.syncError || "Disconnected. Showing saved classes." }}
+            {{
+              data.connection.syncError ||
+              "Updates paused. Reconnect My DU in the bot; showing saved classes."
+            }}
           </p>
           <p
             v-if="moodle.error.value"
@@ -195,7 +198,7 @@ async function signOut() {
             v-if="data?.connection && !data.events.length"
             class="px-4 py-3 text-sm text-muted-foreground"
           >
-            No classes were found for this term. Check your My DU connection settings.
+            No classes were found for this period. Check the period with /mydu in the bot.
           </p>
           <Schedule class="min-h-0 w-full flex-1" :events="events" :theme="appStore.theme" />
         </template>

@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "run-s paraglide:compile dev:run",
-    "dev:run": "run-p dev:bot dev:worker",
+    "dev:run": "run-p dev:bot dev:worker dev:api",
     "dev:bot": "tsx watch src/bot/index.ts | pino-pretty",
     "dev:worker": "tsx src/worker/index.ts | pino-pretty",
-    "start": "run-p start:bot start:worker",
+    "dev:api": "tsx watch src/api/index.ts | pino-pretty",
+    "start": "run-p start:bot start:worker start:api",
     "paraglide:compile": "paraglide-js compile --project ./project.inlang --outdir ./src/library/i18n --strategy baseLocale --emit-ts-declarations --no-emit-prettier-ignore --no-emit-readme",
     "build": "run-s paraglide:compile build:ts",
     "build:ts": "vp pack",
@@ -16,6 +17,7 @@
     "test:vitest": "vp test",
     "start:bot": "node dist/db/migrate.mjs && node dist/bot/index.mjs",
     "start:worker": "node dist/db/migrate.mjs && node dist/worker/index.mjs",
+    "start:api": "node dist/db/migrate.mjs && node dist/api/index.mjs",
     "format": "vp fmt .",
     "lint": "vp lint .",
     "type-check": "run-s paraglide:compile type-check:ts",
@@ -27,7 +29,10 @@
   "dependencies": {
     "@grammyjs/hydrate": "^1.6.0",
     "@hatchet-dev/typescript-sdk": "catalog:",
+    "@hono/node-server": "catalog:",
+    "@hono/zod-validator": "catalog:",
     "@libsql/client": "^0.17.2",
+    "@loglayer/hono": "catalog:",
     "@loglayer/transport-pino": "catalog:",
     "better-all": "catalog:",
     "callback-data": "^1.1.1",
@@ -37,9 +42,11 @@
     "envalid": "catalog:",
     "grammy": "^1.38.3",
     "hono": "catalog:",
+    "ical.js": "catalog:",
     "loglayer": "catalog:",
-    "lru-cache": "catalog:",
-    "pino": "catalog:"
+    "pino": "catalog:",
+    "temporal-polyfill": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@inlang/paraglide-js": "catalog:",

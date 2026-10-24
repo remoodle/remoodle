@@ -7,27 +7,6 @@ settings:
 
 catalogs:
   default:
-    '@hatchet-dev/typescript-sdk':
-      specifier: ^1.19.1
-      version: 1.21.0
-    '@hono/zod-validator':
-      specifier: ^0.9.1
-      version: 0.9.1
-    '@inlang/paraglide-js':
-      specifier: ^2.16.0
-      version: 2.16.0
-    '@inlang/plugin-message-format':
-      specifier: ^4.4.0
-      version: 4.4.0
-    '@loglayer/hono':
-      specifier: ^2.4.0
-      version: 2.4.0
-    '@loglayer/transport-pino':
-      specifier: ^3.3.0
-      version: 3.3.0
-    '@oxlint/plugins':
-      specifier: 1.82.0
-      version: 1.82.0
     '@schedule-x/calendar':
       specifier: ^4.5.0
       version: 4.5.0
@@ -64,57 +43,21 @@ catalogs:
     '@types/node':
       specifier: ^24.12.2
       version: 24.12.2
-    better-all:
-      specifier: ^0.0.7
-      version: 0.0.7
     dayjs:
       specifier: ^1.11.19
       version: 1.11.20
-    dotenv:
-      specifier: ^17.4.2
-      version: 17.4.2
-    drizzle-kit:
-      specifier: 1.0.0-beta.20
-      version: 1.0.0-beta.20
-    drizzle-orm:
-      specifier: 1.0.0-beta.20
-      version: 1.0.0-beta.20
-    envalid:
-      specifier: ^8.1.1
-      version: 8.1.1
     hono:
       specifier: ^4.12.14
       version: 4.12.14
     ical.js:
       specifier: ^2.2.1
       version: 2.2.1
-    loglayer:
-      specifier: ^9.4.0
-      version: 9.4.0
-    lru-cache:
-      specifier: ^11.3.5
-      version: 11.3.5
     npm-run-all2:
       specifier: ^8.0.4
       version: 8.0.4
-    oxc-minify:
-      specifier: ^0.124.0
-      version: 0.124.0
-    oxlint:
-      specifier: 1.82.0
-      version: 1.82.0
-    pino:
-      specifier: ^10.1.1
-      version: 10.3.1
-    pino-pretty:
-      specifier: ^13.1.3
-      version: 13.1.3
     temporal-polyfill:
       specifier: 0.3.0
       version: 0.3.0
-    tsx:
-      specifier: ^4.21.0
-      version: 4.21.0
     typescript:
       specifier: ^5.9.3
       version: 5.9.3
@@ -124,15 +67,9 @@ catalogs:
     vite-plus:
       specifier: 0.3.0
       version: 0.3.0
-    vitepress:
-      specifier: 2.0.0-alpha.17
-      version: 2.0.0-alpha.17
     wrangler:
       specifier: ^4.127.1
       version: 4.130.0
-    zod:
-      specifier: ^4.5.4
-      version: 4.5.4
 
 overrides:
   vite@*: npm:@voidzero-dev/vite-plus-core@0.3.0
@@ -156,21 +93,12 @@ importers:
 
   apps/calendar:
     dependencies:
-      '@hono/zod-validator':
-        specifier: 'catalog:'
-        version: 0.9.1(hono@4.12.14)(zod@4.5.4)
       '@iconify/vue':
         specifier: ^5.0.0
         version: 5.0.0(vue@3.5.32(typescript@5.9.3))
       '@internationalized/date':
         specifier: ^3.8.2
         version: 3.12.0
-      '@loglayer/hono':
-        specifier: 'catalog:'
-        version: 2.4.0(hono@4.12.14)(loglayer@9.4.0)
-      '@loglayer/transport-pino':
-        specifier: 'catalog:'
-        version: 3.3.0(pino@10.3.1)
       '@schedule-x/calendar':
         specifier: 'catalog:'
         version: 4.5.0(@preact/signals@2.9.0(preact@10.29.1))(preact@10.29.1)(temporal-polyfill@0.3.0)
@@ -219,9 +147,6 @@ importers:
       '@vueuse/core':
         specifier: ^13.7.0
         version: 13.9.0(vue@3.5.32(typescript@5.9.3))
-      better-auth:
-        specifier: ^1.5.4
-        version: 1.6.2(@opentelemetry/api@1.9.1)(better-sqlite3@12.8.0)(drizzle-kit@1.0.0-beta.20)(drizzle-orm@1.0.0-beta.20(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(@types/better-sqlite3@7.6.13)(@types/mssql@9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(better-sqlite3@12.8.0)(mssql@11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(zod@4.5.4))(vitest@4.1.11)(vue@3.5.32(typescript@5.9.3))
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -231,27 +156,18 @@ importers:
       dayjs:
         specifier: 'catalog:'
         version: 1.11.20
-      drizzle-orm:
-        specifier: 'catalog:'
-        version: 1.0.0-beta.20(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(@types/better-sqlite3@7.6.13)(@types/mssql@9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(better-sqlite3@12.8.0)(mssql@11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(zod@4.5.4)
       hono:
         specifier: 'catalog:'
         version: 4.12.14
       ical.js:
         specifier: 'catalog:'
         version: 2.2.1
-      loglayer:
-        specifier: 'catalog:'
-        version: 9.4.0
       lucide-vue-next:
         specifier: ^0.540.0
         version: 0.540.0(vue@3.5.32(typescript@5.9.3))
       pinia:
         specifier: ^3.0.3
         version: 3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3))
-      pino:
-        specifier: 'catalog:'
-        version: 10.3.1
       reka-ui:
         specifier: ^2.4.1
         version: 2.9.5(vue@3.5.32(typescript@5.9.3))
@@ -276,22 +192,13 @@ importers:
       vue-router:
         specifier: ^4.5.1
         version: 4.6.4(vue@3.5.32(typescript@5.9.3))
-      zod:
-        specifier: 'catalog:'
-        version: 4.5.4
     devDependencies:
-      '@cloudflare/vite-plugin':
-        specifier: ^1.26.1
-        version: 1.54.6(@voidzero-dev/vite-plus-core@0.3.0(@types/node@24.12.2)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))(wrangler@4.130.0)
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.19(tailwindcss@4.2.2)
       '@tsconfig/node24':
         specifier: ^24.0.4
         version: 24.0.4
-      '@types/better-sqlite3':
-        specifier: ^7.6.13
-        version: 7.6.13
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.2
@@ -307,21 +214,12 @@ importers:
       '@vue/tsconfig':
         specifier: ^0.8.1
         version: 0.8.1(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3))
-      better-sqlite3:
-        specifier: ^12.6.2
-        version: 12.8.0
-      dotenv:
-        specifier: 'catalog:'
-        version: 17.4.2
-      drizzle-kit:
-        specifier: 'catalog:'
-        version: 1.0.0-beta.20
       eslint:
         specifier: ^9.33.0
         version: 9.39.4(jiti@2.6.1)(supports-color@10.2.2)
       eslint-plugin-oxlint:
         specifier: ^1.12.0
-        version: 1.59.0(oxlint@1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.0(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@voidzero-dev/vite-plus-core@0.3.0(@types/node@24.12.2)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3)))
+        version: 1.59.0(oxlint@1.59.0(oxlint-tsgolint@7.0.2001))
       eslint-plugin-vue:
         specifier: ^10.4.0
         version: 10.8.0(@typescript-eslint/parser@8.58.1(eslint@9.39.4(jiti@2.6.1)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1)(supports-color@10.2.2))(vue-eslint-parser@10.4.0(eslint@9.39.4(jiti@2.6.1)(supports-color@10.2.2))(supports-color@10.2.2))
@@ -358,9 +256,18 @@ importers:
       '@hatchet-dev/typescript-sdk':
         specifier: 'catalog:'
         version: 1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
+      '@hono/node-server':
+        specifier: 'catalog:'
+        version: 2.1.5(hono@4.12.14)
+      '@hono/zod-validator':
+        specifier: 'catalog:'
+        version: 0.9.1(hono@4.12.14)(zod@4.5.4)
       '@libsql/client':
         specifier: ^0.17.2
         version: 0.17.2
+      '@loglayer/hono':
+        specifier: 'catalog:'
+        version: 2.4.0(hono@4.12.14)(loglayer@9.4.0)
       '@loglayer/transport-pino':
         specifier: 'catalog:'
         version: 3.3.0(pino@10.3.1)
@@ -378,7 +285,7 @@ importers:
         version: 17.4.2
       drizzle-orm:
         specifier: 'catalog:'
-        version: 1.0.0-beta.20(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(@types/better-sqlite3@7.6.13)(@types/mssql@9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(better-sqlite3@12.8.0)(mssql@11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(zod@3.25.76)
+        version: 1.0.0-beta.20(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(@types/better-sqlite3@7.6.13)(@types/mssql@9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(better-sqlite3@12.8.0)(mssql@11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(zod@4.5.4)
       envalid:
         specifier: 'catalog:'
         version: 8.1.1
@@ -388,15 +295,21 @@ importers:
       hono:
         specifier: 'catalog:'
         version: 4.12.14
+      ical.js:
+        specifier: 'catalog:'
+        version: 2.2.1
       loglayer:
         specifier: 'catalog:'
         version: 9.4.0
-      lru-cache:
-        specifier: 'catalog:'
-        version: 11.3.5
       pino:
         specifier: 'catalog:'
         version: 10.3.1
+      temporal-polyfill:
+        specifier: 'catalog:'
+        version: 0.3.0
+      zod:
+        specifier: 'catalog:'
+        version: 4.5.4
     devDependencies:
       '@inlang/paraglide-js':
         specifier: 'catalog:'
@@ -433,10 +346,10 @@ importers:
     devDependencies:
       oxc-minify:
         specifier: 'catalog:'
-        version: 0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
+        version: 0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)
       vitepress:
         specifier: 'catalog:'
-        version: 2.0.0-alpha.17(@types/node@25.6.0)(axios@1.15.0(debug@4.4.3(supports-color@10.2.2)))(esbuild@0.28.1)(jiti@2.6.1)(oxc-minify@0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2))(postcss@8.5.9)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3)
+        version: 2.0.0-alpha.17(@types/node@25.6.0)(axios@1.15.0(debug@4.4.3(supports-color@10.2.2)))(esbuild@0.28.1)(jiti@2.6.1)(oxc-minify@0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3))(postcss@8.5.9)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3)
       wrangler:
         specifier: ^4
         version: 4.81.1
@@ -658,83 +571,6 @@ packages:
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
 
-  '@better-auth/core@1.6.2':
-    resolution: {integrity: sha512-nBftDp+eN1fwXor1O4KQorCXa0tJNDgpab7O1z4NcWUU+3faDpdzqLn5mbXZer2E8ZD4VhjqOfYZ041xnBF5NA==}
-    peerDependencies:
-      '@better-auth/utils': 0.4.0
-      '@better-fetch/fetch': 1.1.21
-      '@cloudflare/workers-types': '>=4'
-      '@opentelemetry/api': ^1.9.0
-      better-call: 1.3.5
-      jose: ^6.1.0
-      kysely: ^0.28.5
-      nanostores: ^1.0.1
-    peerDependenciesMeta:
-      '@cloudflare/workers-types':
-        optional: true
-
-  '@better-auth/drizzle-adapter@1.6.2':
-    resolution: {integrity: sha512-KawrNNuhgmpcc5PgLs6HesMckxCscz5J+BQ99iRmU1cLzG/A87IcydrmYtep+K8WHPN0HmZ/i4z/nOBCtxE2qA==}
-    peerDependencies:
-      '@better-auth/core': ^1.6.2
-      '@better-auth/utils': 0.4.0
-      drizzle-orm: '>=0.41.0'
-    peerDependenciesMeta:
-      drizzle-orm:
-        optional: true
-
-  '@better-auth/kysely-adapter@1.6.2':
-    resolution: {integrity: sha512-YMMm75jek/MNCAFWTAaq/U3VPmFnrwZW4NhBjjAwruHQJEIrSZZaOaUEXuUpFRRBhWqg7OOltQcHMwU/45CkuA==}
-    peerDependencies:
-      '@better-auth/core': ^1.6.2
-      '@better-auth/utils': 0.4.0
-      kysely: ^0.27.0 || ^0.28.0
-    peerDependenciesMeta:
-      kysely:
-        optional: true
-
-  '@better-auth/memory-adapter@1.6.2':
-    resolution: {integrity: sha512-QvuK5m7NFgkzLPHyab+NORu3J683nj36Tix58qq6DPcniyY6KZk5gY2yyh4+z1wgSjrxwY5NFx/DC2qz8B8NJg==}
-    peerDependencies:
-      '@better-auth/core': ^1.6.2
-      '@better-auth/utils': 0.4.0
-
-  '@better-auth/mongo-adapter@1.6.2':
-    resolution: {integrity: sha512-IvR2Q+1pjzxA4JXI3ED76+6fsqervIpZ2K5MxoX/+miLQhLEmNcbqqcItg4O2kfkxN8h33/ev57sjTW8QH9Tuw==}
-    peerDependencies:
-      '@better-auth/core': ^1.6.2
-      '@better-auth/utils': 0.4.0
-      mongodb: ^6.0.0 || ^7.0.0
-    peerDependenciesMeta:
-      mongodb:
-        optional: true
-
-  '@better-auth/prisma-adapter@1.6.2':
-    resolution: {integrity: sha512-bQkXYTo1zPau+xAiMpo1yCjEDSy7i7oeYlkYO+fSfRDCo52DE/9oPOOuI+EStmFkPUNSk9L2rhk8Fulifi8WCg==}
-    peerDependencies:
-      '@better-auth/core': ^1.6.2
-      '@better-auth/utils': 0.4.0
-      '@prisma/client': ^5.0.0 || ^6.0.0 || ^7.0.0
-      prisma: ^5.0.0 || ^6.0.0 || ^7.0.0
-    peerDependenciesMeta:
-      '@prisma/client':
-        optional: true
-      prisma:
-        optional: true
-
-  '@better-auth/telemetry@1.6.2':
-    resolution: {integrity: sha512-o4gHKXqizUxVUUYChZZTowLEzdsz3ViBE/fKFzfHqNFUnF+aVt8QsbLSfipq1WpTIXyJVT/SnH0hgSdWxdssbQ==}
-    peerDependencies:
-      '@better-auth/core': ^1.6.2
-      '@better-auth/utils': 0.4.0
-      '@better-fetch/fetch': 1.1.21
-
-  '@better-auth/utils@0.4.0':
-    resolution: {integrity: sha512-RpMtLUIQAEWMgdPLNVbIF5ON2mm+CH0U3rCdUCU1VyeAUui4m38DyK7/aXMLZov2YDjG684pS1D0MBllrmgjQA==}
-
-  '@better-fetch/fetch@1.1.21':
-    resolution: {integrity: sha512-/ImESw0sskqlVR94jB+5+Pxjf+xBwDZF/N5+y2/q4EqD7IARUTSpPfIo8uf39SYpCxyOCtbyYpUrZ3F/k0zT4A==}
-
   '@blazediff/core@1.9.1':
     resolution: {integrity: sha512-ehg3jIkYKulZh+8om/O25vkvSsXXwC+skXmyA87FFx6A/45eqOkZsBltMw/TVteb0mloiGT8oGRTcjRAz66zaA==}
 
@@ -766,13 +602,6 @@ packages:
     peerDependenciesMeta:
       workerd:
         optional: true
-
-  '@cloudflare/vite-plugin@1.54.6':
-    resolution: {integrity: sha512-7G85rvY9gaLYOLA/0Q1rQPx6l7wrY763b67FEVXyWoFUriiLljemBkbsFsnVYjrJyZ+yqHQ6gNCRX//hAzSc0g==}
-    hasBin: true
-    peerDependencies:
-      vite: ^6.1.0 || ^7.0.0 || ^8.0.0
-      wrangler: ^4.130.0
 
   '@cloudflare/workerd-darwin-64@1.20260409.1':
     resolution: {integrity: sha512-h/bkaC0HJL63aqAGnV0oagqpBiTSstabODThkeMSbG8kctl0Jb4jlq1pNHJPmYGazFNtfyagrUZFb6HN22GX7w==}
@@ -1557,6 +1386,12 @@ packages:
   '@hatchet-dev/typescript-sdk@1.21.0':
     resolution: {integrity: sha512-qKBhwWVYWDoAfja6i2JBtIQtkZbLyFXTqmUSJ0tu3uD+56Mu5+atu+VcM6mzHt4s72HKURadBf/sOne1UgyJhg==}
 
+  '@hono/node-server@2.1.5':
+    resolution: {integrity: sha512-MgP/I06GdvsilDspMk/qmRzpk8LOUStP6jFAbSRi40W09DhoyUn+Mj7eyKICPqeYKybOjVFLVIAQzvu1bfIa7Q==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      hono: ^4 || ^5.0.0-0
+
   '@hono/zod-validator@0.9.1':
     resolution: {integrity: sha512-iiv6w0qrIc0arfvCtUqBWsvl4fXjzaTcQcCJTTtCnkawF9HHGE+KjEl0ox3gQJ6rKZEgE3mLExlQCF72M+mNuw==}
     peerDependencies:
@@ -2059,14 +1894,6 @@ packages:
   '@neon-rs/load@0.0.4':
     resolution: {integrity: sha512-kTPhdZyTQxB+2wpiRcFWrDcejc4JI6tkPuS7UZCG4l6Zvc5kU/gGQ/ozvHTh1XR5tS+UlfAfGuPajjzQjCiHCw==}
 
-  '@noble/ciphers@2.1.1':
-    resolution: {integrity: sha512-bysYuiVfhxNJuldNXlFEitTVdNnYUc+XNJZd7Qm2a5j1vZHgY+fazadNFWFaMK/2vye0JVlxV3gHmC0WDfAOQw==}
-    engines: {node: '>= 20.19.0'}
-
-  '@noble/hashes@2.0.1':
-    resolution: {integrity: sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw==}
-    engines: {node: '>= 20.19.0'}
-
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -2144,6 +1971,7 @@ packages:
   '@opentelemetry/sdk-trace-base@2.6.1':
     resolution: {integrity: sha512-r86ut4T1e8vNwB35CqCcKd45yzqH6/6Wzvpk2/cZB8PsPLlZFTvrh8yfOS3CYZYcUmAx4hHTZJ8AO8Dj8nrdhw==}
     engines: {node: ^18.19.0 || >=20.6.0}
+    deprecated: Use @opentelemetry/sdk-trace package
     peerDependencies:
       '@opentelemetry/api': '>=1.3.0 <1.10.0'
 
@@ -2440,6 +2268,12 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@oxlint/binding-android-arm-eabi@1.59.0':
+    resolution: {integrity: sha512-etYDw/UaEv936AQUd/CRMBVd+e+XuuU6wC+VzOv1STvsTyZenLChepLWqLtnyTTp4YMlM22ypzogDDwqYxv5cg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm]
+    os: [android]
+
   '@oxlint/binding-android-arm-eabi@1.79.0':
     resolution: {integrity: sha512-TebFaaMklO/RXzTv7PucaCq9l3X6D1gA+C8H6K4njtjFOV+zWE9MKLpulcJZN9bzytbUbQIY0mZuz12nQ5Kv4Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2450,6 +2284,12 @@ packages:
     resolution: {integrity: sha512-a3LB+C5Dsj5b/qtmG/mv5WrzuiXEpg1KF5nXWcEvaoN5TYAqkIvxPOwTPp3Jy/FoGpRo8zsTFhMElMXfeoOEzA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
+    os: [android]
+
+  '@oxlint/binding-android-arm64@1.59.0':
+    resolution: {integrity: sha512-TgLc7XVLKH2a4h8j3vn1MDjfK33i9MY60f/bKhRGWyVzbk5LCZ4X01VZG7iHrMmi5vYbAp8//Ponigx03CLsdw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
     os: [android]
 
   '@oxlint/binding-android-arm64@1.79.0':
@@ -2464,6 +2304,12 @@ packages:
     cpu: [arm64]
     os: [android]
 
+  '@oxlint/binding-darwin-arm64@1.59.0':
+    resolution: {integrity: sha512-DXyFPf5ZKldMLloRHx/B9fsxsiTQomaw7cmEW3YIJko2HgCh+GUhp9gGYwHrqlLJPsEe3dYj9JebjX92D3j3AA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [darwin]
+
   '@oxlint/binding-darwin-arm64@1.79.0':
     resolution: {integrity: sha512-BVC2nsMzqQzRDPc5RhixkZ+m1p7iH4bxRRvqkbwDXX0PlQKm1BPy8J8cRjnAFafOq2QzI+BfO3vE8w2GZ3CBag==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2474,6 +2320,12 @@ packages:
     resolution: {integrity: sha512-dsopxqtY5ZdyT9uLHyGt1SyiLop6hi7hWI3PKpePodkRQOkLaCm+OE4fR9CAz9qdfjiFO8531tX/QDyP/psjFg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
+    os: [darwin]
+
+  '@oxlint/binding-darwin-x64@1.59.0':
+    resolution: {integrity: sha512-LgvrsdgVLX1qWqIEmNsSmMXJhpAWdtUQ0M+oR0CySwi+9IHWyOGuIL8w8+u/kbZNMyZr4WUyYB5i0+D+AKgkLg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
     os: [darwin]
 
   '@oxlint/binding-darwin-x64@1.79.0':
@@ -2488,6 +2340,12 @@ packages:
     cpu: [x64]
     os: [darwin]
 
+  '@oxlint/binding-freebsd-x64@1.59.0':
+    resolution: {integrity: sha512-bOJhqX/ny4hrFuTPlyk8foSRx/vLRpxJh0jOOKN2NWW6FScXHPAA5rQbrwdQPcgGB5V8Ua51RS03fke8ssBcug==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [freebsd]
+
   '@oxlint/binding-freebsd-x64@1.79.0':
     resolution: {integrity: sha512-qDMm0dXZnoHyRqSL4N4xUq82T4sqK5cbKSjvd/dF/YbMUXc2R1wEPf+vmA5S0qUmi0nwXfNbjXBtZaIqzQLIMg==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2500,6 +2358,12 @@ packages:
     cpu: [x64]
     os: [freebsd]
 
+  '@oxlint/binding-linux-arm-gnueabihf@1.59.0':
+    resolution: {integrity: sha512-vVUXxYMF9trXCsz4m9H6U0IjehosVHxBzVgJUxly1uz4W1PdDyicaBnpC0KRXsHYretLVe+uS9pJy8iM57Kujw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm]
+    os: [linux]
+
   '@oxlint/binding-linux-arm-gnueabihf@1.79.0':
     resolution: {integrity: sha512-2od7s0nuKPzqyUZAWk9KkCyGg7eI9dwFPZg+20lB15fKFkVZ0c9ZFxqPfiBAyDTlTkh9stPI0t+JlPCqMbItVA==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2508,6 +2372,12 @@ packages:
 
   '@oxlint/binding-linux-arm-gnueabihf@1.82.0':
     resolution: {integrity: sha512-aWY2xtbZf1LneW9Qsv/n2Sp8gOu74JrlQzEtj4coHX2SHFrCfhmAumaU+sI/A5nr+yoTRTSmI/pL2s6ADlNSkw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm]
+    os: [linux]
+
+  '@oxlint/binding-linux-arm-musleabihf@1.59.0':
+    resolution: {integrity: sha512-TULQW8YBPGRWg5yZpFPL54HLOnJ3/HiX6VenDPi6YfxB/jlItwSMFh3/hCeSNbh+DAMaE1Py0j5MOaivHkI/9Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [linux]
@@ -2524,6 +2394,13 @@ packages:
     cpu: [arm]
     os: [linux]
 
+  '@oxlint/binding-linux-arm64-gnu@1.59.0':
+    resolution: {integrity: sha512-Gt54Y4eqSgYJ90xipm24xeyaPV854706o/kiT8oZvUt3VDY7qqxdqyGqchMaujd87ib+/MXvnl9WkK8Cc1BExg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
   '@oxlint/binding-linux-arm64-gnu@1.79.0':
     resolution: {integrity: sha512-lu158FR4nGqGeRS3BQvtG85wRgU/Fy4MD5Cxp1hzJXizGiLo6u2742wJSCDKh8cFcZntvX7fcxlq4mMmfryH1g==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2537,6 +2414,13 @@ packages:
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
+
+  '@oxlint/binding-linux-arm64-musl@1.59.0':
+    resolution: {integrity: sha512-3CtsKp7NFB3OfqQzbuAecrY7GIZeiv7AD+xutU4tefVQzlfmTI7/ygWLrvkzsDEjTlMq41rYHxgsn6Yh8tybmA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
 
   '@oxlint/binding-linux-arm64-musl@1.79.0':
     resolution: {integrity: sha512-mbpKQeE2aflTjddaHK7MP8KP/OFbUM++lt5M635ENM8IyIdK0jm2t9pb+2v9mVVIvhF6TqA4l7F79Pll1mi+uw==}
@@ -2552,6 +2436,13 @@ packages:
     os: [linux]
     libc: [musl]
 
+  '@oxlint/binding-linux-ppc64-gnu@1.59.0':
+    resolution: {integrity: sha512-K0diOpT3ncDmOfl9I1HuvpEsAuTxkts0VYwIv/w6Xiy9CdwyPBVX88Ga9l8VlGgMrwBMnSY4xIvVlVY/fkQk7Q==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [ppc64]
+    os: [linux]
+    libc: [glibc]
+
   '@oxlint/binding-linux-ppc64-gnu@1.79.0':
     resolution: {integrity: sha512-WpGNua7gaxaHnpSDeog2ji8IDHn/QLPl9LPzwkR/FvVv58vT5BcXjRXnU+wbu3N75cpeha8CdC7ho/U2OIsB4g==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2563,6 +2454,13 @@ packages:
     resolution: {integrity: sha512-D94em/BwknNTn4vqxjHh5wb2oL566eFhArabqKIr0cNZMHOJuiraFp1A8tXpH05bbE5tqwEfLXTI0MWEGtn3Dw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ppc64]
+    os: [linux]
+    libc: [glibc]
+
+  '@oxlint/binding-linux-riscv64-gnu@1.59.0':
+    resolution: {integrity: sha512-xAU7+QDU6kTJJ7mJLOGgo7oOjtAtkKyFZ0Yjdb5cEo3DiCCPFLvyr08rWiQh6evZ7RiUTf+o65NY/bqttzJiQQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [riscv64]
     os: [linux]
     libc: [glibc]
 
@@ -2580,6 +2478,13 @@ packages:
     os: [linux]
     libc: [glibc]
 
+  '@oxlint/binding-linux-riscv64-musl@1.59.0':
+    resolution: {integrity: sha512-KUmZmKlTTyauOnvUNVxK7G40sSSx0+w5l1UhaGsC6KPpOYHenx2oqJTnabmpLJicok7IC+3Y6fXAUOMyexaeJQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [riscv64]
+    os: [linux]
+    libc: [musl]
+
   '@oxlint/binding-linux-riscv64-musl@1.79.0':
     resolution: {integrity: sha512-qhQvUIrngXivA2A9pQ+xPCychztn/5qUv7yS3gDwXv3w7Rag+eTeeXWmRyx+t7XsW5x6LuY/8AsTq36UgFIblg==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2594,6 +2499,13 @@ packages:
     os: [linux]
     libc: [musl]
 
+  '@oxlint/binding-linux-s390x-gnu@1.59.0':
+    resolution: {integrity: sha512-4usRxC8gS0PGdkHnRmwJt/4zrQNZyk6vL0trCxwZSsAKM+OxhB8nKiR+mhjdBbl8lbMh2gc3bZpNN/ik8c4c2A==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [s390x]
+    os: [linux]
+    libc: [glibc]
+
   '@oxlint/binding-linux-s390x-gnu@1.79.0':
     resolution: {integrity: sha512-sv6AaVgU/eE6u+6WFiQVDcPPwTxP6IJMSB9k701W2r/r6Tx465e8vPvVyRxquNH4Vy6KwRNu90mVbxXJN8+5gg==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2605,6 +2517,13 @@ packages:
     resolution: {integrity: sha512-IE8NJNLlHr0CaXyGJPGVn0eTkUyoj1I2UfA8x7I4PSOYKsQ/6btVC7Pywrj5onk0cMH25r6Z38SoN3AvE5Zuog==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [s390x]
+    os: [linux]
+    libc: [glibc]
+
+  '@oxlint/binding-linux-x64-gnu@1.59.0':
+    resolution: {integrity: sha512-s/rNE2gDmbwAOOP493xk2X7M8LZfI1LJFSSW1+yanz3vuQCFPiHkx4GY+O1HuLUDtkzGlhtMrIcxxzyYLv308w==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
     os: [linux]
     libc: [glibc]
 
@@ -2622,6 +2541,13 @@ packages:
     os: [linux]
     libc: [glibc]
 
+  '@oxlint/binding-linux-x64-musl@1.59.0':
+    resolution: {integrity: sha512-+yYj1udJa2UvvIUmEm0IcKgc0UlPMgz0nsSTvkPL2y6n0uU5LgIHSwVu4AHhrve6j9BpVSoRksnz8c9QcvITJA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
   '@oxlint/binding-linux-x64-musl@1.79.0':
     resolution: {integrity: sha512-3DtZR2raqObnh7wXZoFYFd0Fw7skBvcb3f7A+/lkEiDuh8hrE6vv9b/62Qxao1a9/OeHLw/FcXlXzgsW9wTRFg==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2636,6 +2562,12 @@ packages:
     os: [linux]
     libc: [musl]
 
+  '@oxlint/binding-openharmony-arm64@1.59.0':
+    resolution: {integrity: sha512-bUplUb48LYsB3hHlQXP2ZMOenpieWoOyppLAnnAhuPag3MGPnt+7caxE3w/Vl9wpQsTA3gzLntQi9rxWrs7Xqg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [openharmony]
+
   '@oxlint/binding-openharmony-arm64@1.79.0':
     resolution: {integrity: sha512-Oatt4GuA1WJkqzk2ozx4HrWROOi7opV3AKDw/U8qDIqeTqzsjn5K2x3REJMNjU3/KU/Bkq96Zi3CknaiDTaC/Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2647,6 +2579,12 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [openharmony]
+
+  '@oxlint/binding-win32-arm64-msvc@1.59.0':
+    resolution: {integrity: sha512-/HLsLuz42rWl7h7ePdmMTpHm2HIDmPtcEMYgm5BBEHiEiuNOrzMaUpd2z7UnNni5LGN9obJy2YoAYBLXQwazrA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [win32]
 
   '@oxlint/binding-win32-arm64-msvc@1.79.0':
     resolution: {integrity: sha512-NAgZr9Qp8nIA9rpo0JEvwiabTF/2UVqBNnupBG9X4kxXcQoScJUTi+qHhvabb9s/thgj5wQ4XcIaJvb+ZMgoKw==}
@@ -2660,6 +2598,12 @@ packages:
     cpu: [arm64]
     os: [win32]
 
+  '@oxlint/binding-win32-ia32-msvc@1.59.0':
+    resolution: {integrity: sha512-rUPy+JnanpPwV/aJCPnxAD1fW50+XPI0VkWr7f0vEbqcdsS8NpB24Rw6RsS7SdpFv8Dw+8ugCwao5nCFbqOUSg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [ia32]
+    os: [win32]
+
   '@oxlint/binding-win32-ia32-msvc@1.79.0':
     resolution: {integrity: sha512-+KyXjIvcpaXmWW/j9NNY5yWjrIVxaX18VyIheQy3jwc2GSYgpCr7MGI/HxIGQ/shAL5IWEKbhsqoMpAO5Stiog==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2670,6 +2614,12 @@ packages:
     resolution: {integrity: sha512-TUSCLaKB2yktpFAJ/r3HAUYsaV/3DT7JS4iNKyoh3a9YNwD0UG7Ezh4D8m23654vQcU6P/RQrCAjRPKe4peP/A==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ia32]
+    os: [win32]
+
+  '@oxlint/binding-win32-x64-msvc@1.59.0':
+    resolution: {integrity: sha512-xkE7puteDS/vUyRngLXW0t8WgdWoS/tfxXjhP/P7SMqPDx+hs44SpssO3h3qmTqECYEuXBUPzcAw5257Ka+ofA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
     os: [win32]
 
   '@oxlint/binding-win32-x64-msvc@1.79.0':
@@ -3569,57 +3519,67 @@ packages:
     resolution: {integrity: sha512-aRCTw0EZC4bVosmw//0OMYP5tGWFE0Cu5yUBFkUbhXx/iBzvORcJ2xPNlOp/vtCCo9Ys4vp8b0DigJV6uOVb2g==}
     cpu: [x64]
     os: [darwin]
+    deprecated: yuku-codegen is pure JavaScript since 0.14
 
   '@yuku-codegen/binding-freebsd-x64@0.5.48':
     resolution: {integrity: sha512-CA0AQAEApDkbw51PdLWMtKPJ41/7rvXsS3SJs+phG7fHJI+MuFzWuLbkucZfZoEOiDscmcsfYIdgL8BsfuyKKQ==}
     cpu: [x64]
     os: [freebsd]
+    deprecated: yuku-codegen is pure JavaScript since 0.14
 
   '@yuku-codegen/binding-linux-arm-gnu@0.5.48':
     resolution: {integrity: sha512-DuSQlk8bH4gpmW3/00P0NLagAcMv8jOxjT40cQmxKRkktr+SUOALCfkT89tdDq3qtY95NR2GXOZ7AjNh7KKqCw==}
     cpu: [arm]
     os: [linux]
     libc: [glibc]
+    deprecated: yuku-codegen is pure JavaScript since 0.14
 
   '@yuku-codegen/binding-linux-arm-musl@0.5.48':
     resolution: {integrity: sha512-bxj4Ee+wlaJcWJwft2ReJXWw5sfl1qavDz6+dlRdU1xfTEtjPSNiAWhiCHnJR0R4Ygd57DnzSQmAVGvFv6RcGw==}
     cpu: [arm]
     os: [linux]
     libc: [musl]
+    deprecated: yuku-codegen is pure JavaScript since 0.14
 
   '@yuku-codegen/binding-linux-arm64-gnu@0.5.48':
     resolution: {integrity: sha512-mk5JVWh+0JOe5ue8k17kbYX8uGBoKt3ZqoCyxNh4nYAAcX7+X1tFUiU7jbjctu4vHeejCBFSTdQ021+V31cUCQ==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
+    deprecated: yuku-codegen is pure JavaScript since 0.14
 
   '@yuku-codegen/binding-linux-arm64-musl@0.5.48':
     resolution: {integrity: sha512-4q3vkrNghbllyxOm2KesFLxCPKHF7r3JyQ7BWZccY1j2Y05yKoIFhoWCqIuQ2W/dpte9RI0+OVfwyxnrKg6fkA==}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
+    deprecated: yuku-codegen is pure JavaScript since 0.14
 
   '@yuku-codegen/binding-linux-x64-gnu@0.5.48':
     resolution: {integrity: sha512-csd4M1EVrGaohM8acM6gq1zpUA/Rwe2ulUMBKUcwQXm/k6n7cq1A++qdew78SOVb4do3JH1WE+WFwoGQAcWc1w==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
+    deprecated: yuku-codegen is pure JavaScript since 0.14
 
   '@yuku-codegen/binding-linux-x64-musl@0.5.48':
     resolution: {integrity: sha512-KcDuEOT+GFoVKdvAWOv1v9iYjwnmvMZlO+j1Rw+5PYdeFLGWGzv/DD11y4SAAdwXIFcil4T0hibeIaF82WStMg==}
     cpu: [x64]
     os: [linux]
     libc: [musl]
+    deprecated: yuku-codegen is pure JavaScript since 0.14
 
   '@yuku-codegen/binding-win32-arm64@0.5.48':
     resolution: {integrity: sha512-HI8qNrI8dWM5BuqIMKsqornRvTNFrE6sm5zToIJ9YIa9zt5+29P7fJ7Nr39EVf6dAWSb6q7JSpScJnRsQ+FgZA==}
     cpu: [arm64]
     os: [win32]
+    deprecated: yuku-codegen is pure JavaScript since 0.14
 
   '@yuku-codegen/binding-win32-x64@0.5.48':
     resolution: {integrity: sha512-X5YWJLO6EfBZpeBqO0AYESnUizbpFDWArcvVD61w0PEWQ3CaFRLnbQXs+kpM4ZZfGMfIE22zfA08QSY67q7TNQ==}
     cpu: [x64]
     os: [win32]
+    deprecated: yuku-codegen is pure JavaScript since 0.14
 
   '@yuku-parser/binding-darwin-arm64@0.5.48':
     resolution: {integrity: sha512-If8mb7HH3vqghJ2NNZ8SuHfhsnjVzOxJpB8xcNOXS5WjYrs2mUhHIh5KOIvK13hDOzh0htGeGK3A6MsiEqE7HQ==}
@@ -3630,57 +3590,67 @@ packages:
     resolution: {integrity: sha512-EimvPXfspzxf1K11eB6tCW5oiQEXB8g84T2wP1TwzQagdDKo33bkmmVF0B32vTIpXnk/Ifu5IB61izZ1MylljA==}
     cpu: [x64]
     os: [darwin]
+    deprecated: yuku-parser runs on yuku-core since 0.14
 
   '@yuku-parser/binding-freebsd-x64@0.5.48':
     resolution: {integrity: sha512-0GcUMrumLHheThY9r5Tp46gaZYzn0irWPS1Zba6WY+vVQfhUtzGiWgXxI6tuXX0N32kEaaEVRpkKctvo6Kx3aQ==}
     cpu: [x64]
     os: [freebsd]
+    deprecated: yuku-parser runs on yuku-core since 0.14
 
   '@yuku-parser/binding-linux-arm-gnu@0.5.48':
     resolution: {integrity: sha512-8S5T5wjCC73dmmpQeZ49aYsSunIUM3D4Fc6rdK96c+Ayg/p3FmeSPF3xuLZHejcTmqJIIvnbfPlUF+rB6DITjQ==}
     cpu: [arm]
     os: [linux]
     libc: [glibc]
+    deprecated: yuku-parser runs on yuku-core since 0.14
 
   '@yuku-parser/binding-linux-arm-musl@0.5.48':
     resolution: {integrity: sha512-tTmbxvnUHcK2/crS9547vk2SMmsajH1yqJ8ltXhIuHJgqR1v+d9n9KT+kSayo/5CS76LegeYxhMFjEivBH2hFA==}
     cpu: [arm]
     os: [linux]
     libc: [musl]
+    deprecated: yuku-parser runs on yuku-core since 0.14
 
   '@yuku-parser/binding-linux-arm64-gnu@0.5.48':
     resolution: {integrity: sha512-KGYCBMqI2zfwyhgq5tpPVNe7jpUeYTBm8DhjdS+zqWNumde/PEC170QE5RHxcOAlsirIDeIUk0jqx+r/axoFSw==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
+    deprecated: yuku-parser runs on yuku-core since 0.14
 
   '@yuku-parser/binding-linux-arm64-musl@0.5.48':
     resolution: {integrity: sha512-2wTSMsCSXLTc2lZUjMAuU5X4cje55u205WJqfV5NWNF6j9pW/tXyxr15dJeekj8ziLqBXzIsj4DbRh4sY/WcjA==}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
+    deprecated: yuku-parser runs on yuku-core since 0.14
 
   '@yuku-parser/binding-linux-x64-gnu@0.5.48':
     resolution: {integrity: sha512-d/6v9UnGglVu1WC2JQyv/5aWSi5fXZeGSlidCfmHp4+N65N1GDKUnFtys5MK5eAPeAjTgSHGGtOc/yCcKTlv3A==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
+    deprecated: yuku-parser runs on yuku-core since 0.14
 
   '@yuku-parser/binding-linux-x64-musl@0.5.48':
     resolution: {integrity: sha512-gX19gw6u4ApPy7SYMPKfFlEkrtj6WlORvrTKK3sBQqjyV+8+mUAkQgxXNjHw4RnOiAmVYg7TOlZcg8d+Qqod9A==}
     cpu: [x64]
     os: [linux]
     libc: [musl]
+    deprecated: yuku-parser runs on yuku-core since 0.14
 
   '@yuku-parser/binding-win32-arm64@0.5.48':
     resolution: {integrity: sha512-w6cQQLbqj3Jcom5Q7ifm103NUOQ9d+Cb4VU5lkrZDjMnwVJ9Hzzg1vCQR7miJuF44vhCXldbme5UryE3giEKlA==}
     cpu: [arm64]
     os: [win32]
+    deprecated: yuku-parser runs on yuku-core since 0.14
 
   '@yuku-parser/binding-win32-x64@0.5.48':
     resolution: {integrity: sha512-4gO0HmG7fzFxrw1rs0dUdnnaY9YgennjETqDWrTSp7x9fmTUOAoN4VsMfP7YyliQeG1WJJHc55O+rOhmsLppow==}
     cpu: [x64]
     os: [win32]
+    deprecated: yuku-parser runs on yuku-core since 0.14
 
   '@yuku-toolchain/types@0.5.43':
     resolution: {integrity: sha512-kSpvPntnXw5+lYjO71ffBEnQ5ycQ74KGIYknh0TS4xeyCuBkOqxyJumxZkMhLBBUCLjDAbx2+Icnr3Zh4ftjpQ==}
@@ -3784,76 +3754,6 @@ packages:
 
   better-all@0.0.7:
     resolution: {integrity: sha512-xgdUMWb88Qhz6RtC/PY/7QtR61K/JabCcbKhNYYuXC/IoY3c/bgYdIjVxyTHXR41KP8JQeP+6dg4zH4KOpwJzw==}
-
-  better-auth@1.6.2:
-    resolution: {integrity: sha512-5nqDAIj5xexmnk+GjjdrBknJCabi1mlvsVWJbxs4usHreao4vNdxIxINWDzCyDF9iDR1ildRZdXWSiYPAvTHhA==}
-    peerDependencies:
-      '@lynx-js/react': '*'
-      '@prisma/client': ^5.0.0 || ^6.0.0 || ^7.0.0
-      '@sveltejs/kit': ^2.0.0
-      '@tanstack/react-start': ^1.0.0
-      '@tanstack/solid-start': ^1.0.0
-      better-sqlite3: ^12.0.0
-      drizzle-kit: '>=0.31.4'
-      drizzle-orm: '>=0.41.0'
-      mongodb: ^6.0.0 || ^7.0.0
-      mysql2: ^3.0.0
-      next: ^14.0.0 || ^15.0.0 || ^16.0.0
-      pg: ^8.0.0
-      prisma: ^5.0.0 || ^6.0.0 || ^7.0.0
-      react: ^18.0.0 || ^19.0.0
-      react-dom: ^18.0.0 || ^19.0.0
-      solid-js: ^1.0.0
-      svelte: ^4.0.0 || ^5.0.0
-      vitest: ^2.0.0 || ^3.0.0 || ^4.0.0
-      vue: ^3.0.0
-    peerDependenciesMeta:
-      '@lynx-js/react':
-        optional: true
-      '@prisma/client':
-        optional: true
-      '@sveltejs/kit':
-        optional: true
-      '@tanstack/react-start':
-        optional: true
-      '@tanstack/solid-start':
-        optional: true
-      better-sqlite3:
-        optional: true
-      drizzle-kit:
-        optional: true
-      drizzle-orm:
-        optional: true
-      mongodb:
-        optional: true
-      mysql2:
-        optional: true
-      next:
-        optional: true
-      pg:
-        optional: true
-      prisma:
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
-      solid-js:
-        optional: true
-      svelte:
-        optional: true
-      vitest:
-        optional: true
-      vue:
-        optional: true
-
-  better-call@1.3.5:
-    resolution: {integrity: sha512-kOFJkBP7utAQLEYrobZm3vkTH8mXq5GNgvjc5/XEST1ilVHaxXUXfeDeFlqoETMtyqS4+3/h4ONX2i++ebZrvA==}
-    peerDependencies:
-      zod: ^4.0.0
-    peerDependenciesMeta:
-      zod:
-        optional: true
 
   better-sqlite3@12.8.0:
     resolution: {integrity: sha512-RxD2Vd96sQDjQr20kdP+F+dK/1OUNiVOl200vKBZY8u0vTwysfolF6Hq+3ZK2+h8My9YvZhHsF+RSGZW2VYrPQ==}
@@ -4691,9 +4591,6 @@ packages:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
 
-  jose@6.2.2:
-    resolution: {integrity: sha512-d7kPDd34KO/YnzaDOlikGpOurfF0ByC2sEV4cANCtdqLlTfBlw2p14O/5d/zv40gJPbIQxfES3nSx1/oYNyuZQ==}
-
   joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
@@ -4962,10 +4859,6 @@ packages:
   long@5.3.2:
     resolution: {integrity: sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA==}
 
-  lru-cache@11.3.5:
-    resolution: {integrity: sha512-NxVFwLAnrd9i7KUBxC4DrUhmgjzOs+1Qm50D3oF1/oL+r1NpZ4gA7xvG0/zJ8evR7zIKn4vLf7qTNduWFtCrRw==}
-    engines: {node: 20 || >=22}
-
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
@@ -5082,10 +4975,6 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nanostores@1.2.0:
-    resolution: {integrity: sha512-F0wCzbsH80G7XXo0Jd9/AVQC7ouWY6idUCTnMwW5t/Rv9W8qmO6endavDwg7TNp5GbugwSukFMVZqzPSrSMndg==}
-    engines: {node: ^20.0.0 || >=22.0.0}
-
   napi-build-utils@2.0.0:
     resolution: {integrity: sha512-GEbrYkbfF7MoNaoh2iGG84Mnf/WZfB0GdGEsM8wz7Expx/LlWf5U8t9nvJKXSp3qr5IsEbK04cBGhol/KwOsWA==}
 
@@ -5189,6 +5078,16 @@ packages:
   oxlint-tsgolint@7.0.2001:
     resolution: {integrity: sha512-KjK/XLcXr1DSyonKhsuFqJRiuKqcyG9j3LJ8nkOsrLzGvodBPqzHOKauy10asLMDI0sUpvb+1sxlzff3udZvfg==}
     hasBin: true
+
+  oxlint@1.59.0:
+    resolution: {integrity: sha512-0xBLeGGjP4vD9pygRo8iuOkOzEU1MqOnfiOl7KYezL/QvWL8NUg6n03zXc7ZVqltiOpUxBk2zgHI3PnRIEdAvw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+    peerDependencies:
+      oxlint-tsgolint: '>=0.18.0'
+    peerDependenciesMeta:
+      oxlint-tsgolint:
+        optional: true
 
   oxlint@1.79.0:
     resolution: {integrity: sha512-hVJ9hq9m2unPS+Of4eJJgCPdIeCC+3DHEUX3tkmrPJr3OK2hz7PhXwgC+ZP71ZcYu8cCDEtQrqLxWNvxBppBVg==}
@@ -5445,9 +5344,6 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
-  rou3@0.7.12:
-    resolution: {integrity: sha512-iFE4hLDuloSWcD7mjdCDhx2bKcIsYbtOTpfH5MHHLSKMOUyjqQXTeZVa289uuwEGEKFoE/BAPbhaU4B774nceg==}
-
   run-applescript@7.1.0:
     resolution: {integrity: sha512-DPe5pVFaAsinSaV6QjQ6gdiedWDcRCbUuiQfQa2wmWV7+xC9bGulGI8+TdRmoFkAPaBXk8CrAbnlY2ISniJ47Q==}
     engines: {node: '>=18'}
@@ -5481,9 +5377,6 @@ packages:
     resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
     engines: {node: '>=10'}
     hasBin: true
-
-  set-cookie-parser@3.1.0:
-    resolution: {integrity: sha512-kjnC1DXBHcxaOaOXBHBeRtltsDG2nUiUni+jP92M9gYdW12rsmx92UsfpH7o5tDRs7I1ZZPSQJQGv3UaRfCiuw==}
 
   sharp@0.34.5:
     resolution: {integrity: sha512-Ou9I5Ft9WNcCbXrU9cMgPBcCK8LiwLqcbywW3t4oDV37n1pzpuNLsYiAV8eODnjbtQlSDwZ2cUEeQz4E54Hltg==}
@@ -6452,60 +6345,6 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0)':
-    dependencies:
-      '@better-auth/utils': 0.4.0
-      '@better-fetch/fetch': 1.1.21
-      '@opentelemetry/api': 1.9.1
-      '@opentelemetry/semantic-conventions': 1.40.0
-      '@standard-schema/spec': 1.1.0
-      better-call: 1.3.5(zod@4.5.4)
-      jose: 6.2.2
-      kysely: 0.28.15
-      nanostores: 1.2.0
-      zod: 4.5.4
-
-  '@better-auth/drizzle-adapter@1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)(drizzle-orm@1.0.0-beta.20(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(@types/better-sqlite3@7.6.13)(@types/mssql@9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(better-sqlite3@12.8.0)(mssql@11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(zod@4.5.4))':
-    dependencies:
-      '@better-auth/core': 1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0)
-      '@better-auth/utils': 0.4.0
-    optionalDependencies:
-      drizzle-orm: 1.0.0-beta.20(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(@types/better-sqlite3@7.6.13)(@types/mssql@9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(better-sqlite3@12.8.0)(mssql@11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(zod@4.5.4)
-
-  '@better-auth/kysely-adapter@1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)(kysely@0.28.15)':
-    dependencies:
-      '@better-auth/core': 1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0)
-      '@better-auth/utils': 0.4.0
-    optionalDependencies:
-      kysely: 0.28.15
-
-  '@better-auth/memory-adapter@1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)':
-    dependencies:
-      '@better-auth/core': 1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0)
-      '@better-auth/utils': 0.4.0
-
-  '@better-auth/mongo-adapter@1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)':
-    dependencies:
-      '@better-auth/core': 1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0)
-      '@better-auth/utils': 0.4.0
-
-  '@better-auth/prisma-adapter@1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)':
-    dependencies:
-      '@better-auth/core': 1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0)
-      '@better-auth/utils': 0.4.0
-
-  '@better-auth/telemetry@1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)':
-    dependencies:
-      '@better-auth/core': 1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0)
-      '@better-auth/utils': 0.4.0
-      '@better-fetch/fetch': 1.1.21
-
-  '@better-auth/utils@0.4.0':
-    dependencies:
-      '@noble/hashes': 2.0.1
-
-  '@better-fetch/fetch@1.1.21': {}
-
   '@blazediff/core@1.9.1': {}
 
   '@bufbuild/protobuf@2.11.0': {}
@@ -6525,19 +6364,6 @@ snapshots:
       unenv: 2.0.0-rc.24
     optionalDependencies:
       workerd: 1.20260908.1
-
-  '@cloudflare/vite-plugin@1.54.6(@voidzero-dev/vite-plus-core@0.3.0(@types/node@24.12.2)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))(wrangler@4.130.0)':
-    dependencies:
-      '@cloudflare/unenv-preset': 2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260908.1)
-      miniflare: 5.20260908.0-alpha
-      unenv: 2.0.0-rc.24
-      vite: '@voidzero-dev/vite-plus-core@0.3.0(@types/node@24.12.2)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3)'
-      workerd: 1.20260908.1
-      wrangler: 4.130.0
-      ws: 8.21.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   '@cloudflare/workerd-darwin-64@1.20260409.1':
     optional: true
@@ -7010,7 +6836,7 @@ snapshots:
       nice-grpc-common: 2.0.2
       protobufjs: 7.5.4
       qs: 6.15.1
-      semver: 7.7.4
+      semver: 7.8.5
       yaml: 2.8.3
       zod: 3.25.76
       zod-to-json-schema: 3.25.2(zod@3.25.76)
@@ -7025,6 +6851,10 @@ snapshots:
     transitivePeerDependencies:
       - debug
       - supports-color
+
+  '@hono/node-server@2.1.5(hono@4.12.14)':
+    dependencies:
+      hono: 4.12.14
 
   '@hono/zod-validator@0.9.1(hono@4.12.14)(zod@4.5.4)':
     dependencies:
@@ -7436,18 +7266,7 @@ snapshots:
       '@tybys/wasm-util': 0.10.1
     optional: true
 
-  '@napi-rs/wasm-runtime@1.1.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)':
-    dependencies:
-      '@emnapi/core': 1.9.2
-      '@emnapi/runtime': 1.9.2
-      '@tybys/wasm-util': 0.10.1
-    optional: true
-
   '@neon-rs/load@0.0.4': {}
-
-  '@noble/ciphers@2.1.1': {}
-
-  '@noble/hashes@2.0.1': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -7466,7 +7285,8 @@ snapshots:
       '@opentelemetry/api': 1.9.1
     optional: true
 
-  '@opentelemetry/api@1.9.1': {}
+  '@opentelemetry/api@1.9.1':
+    optional: true
 
   '@opentelemetry/core@2.6.1(@opentelemetry/api@1.9.1)':
     dependencies:
@@ -7555,7 +7375,8 @@ snapshots:
       '@opentelemetry/semantic-conventions': 1.40.0
     optional: true
 
-  '@opentelemetry/semantic-conventions@1.40.0': {}
+  '@opentelemetry/semantic-conventions@1.40.0':
+    optional: true
 
   '@oxc-minify/binding-android-arm-eabi@0.124.0':
     optional: true
@@ -7605,9 +7426,9 @@ snapshots:
   '@oxc-minify/binding-openharmony-arm64@0.124.0':
     optional: true
 
-  '@oxc-minify/binding-wasm32-wasi@0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)':
+  '@oxc-minify/binding-wasm32-wasi@0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)':
     dependencies:
-      '@napi-rs/wasm-runtime': 1.1.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
+      '@napi-rs/wasm-runtime': 1.1.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -7704,10 +7525,16 @@ snapshots:
   '@oxlint-tsgolint/win32-x64@7.0.2001':
     optional: true
 
+  '@oxlint/binding-android-arm-eabi@1.59.0':
+    optional: true
+
   '@oxlint/binding-android-arm-eabi@1.79.0':
     optional: true
 
   '@oxlint/binding-android-arm-eabi@1.82.0':
+    optional: true
+
+  '@oxlint/binding-android-arm64@1.59.0':
     optional: true
 
   '@oxlint/binding-android-arm64@1.79.0':
@@ -7716,10 +7543,16 @@ snapshots:
   '@oxlint/binding-android-arm64@1.82.0':
     optional: true
 
+  '@oxlint/binding-darwin-arm64@1.59.0':
+    optional: true
+
   '@oxlint/binding-darwin-arm64@1.79.0':
     optional: true
 
   '@oxlint/binding-darwin-arm64@1.82.0':
+    optional: true
+
+  '@oxlint/binding-darwin-x64@1.59.0':
     optional: true
 
   '@oxlint/binding-darwin-x64@1.79.0':
@@ -7728,10 +7561,16 @@ snapshots:
   '@oxlint/binding-darwin-x64@1.82.0':
     optional: true
 
+  '@oxlint/binding-freebsd-x64@1.59.0':
+    optional: true
+
   '@oxlint/binding-freebsd-x64@1.79.0':
     optional: true
 
   '@oxlint/binding-freebsd-x64@1.82.0':
+    optional: true
+
+  '@oxlint/binding-linux-arm-gnueabihf@1.59.0':
     optional: true
 
   '@oxlint/binding-linux-arm-gnueabihf@1.79.0':
@@ -7740,10 +7579,16 @@ snapshots:
   '@oxlint/binding-linux-arm-gnueabihf@1.82.0':
     optional: true
 
+  '@oxlint/binding-linux-arm-musleabihf@1.59.0':
+    optional: true
+
   '@oxlint/binding-linux-arm-musleabihf@1.79.0':
     optional: true
 
   '@oxlint/binding-linux-arm-musleabihf@1.82.0':
+    optional: true
+
+  '@oxlint/binding-linux-arm64-gnu@1.59.0':
     optional: true
 
   '@oxlint/binding-linux-arm64-gnu@1.79.0':
@@ -7752,10 +7597,16 @@ snapshots:
   '@oxlint/binding-linux-arm64-gnu@1.82.0':
     optional: true
 
+  '@oxlint/binding-linux-arm64-musl@1.59.0':
+    optional: true
+
   '@oxlint/binding-linux-arm64-musl@1.79.0':
     optional: true
 
   '@oxlint/binding-linux-arm64-musl@1.82.0':
+    optional: true
+
+  '@oxlint/binding-linux-ppc64-gnu@1.59.0':
     optional: true
 
   '@oxlint/binding-linux-ppc64-gnu@1.79.0':
@@ -7764,10 +7615,16 @@ snapshots:
   '@oxlint/binding-linux-ppc64-gnu@1.82.0':
     optional: true
 
+  '@oxlint/binding-linux-riscv64-gnu@1.59.0':
+    optional: true
+
   '@oxlint/binding-linux-riscv64-gnu@1.79.0':
     optional: true
 
   '@oxlint/binding-linux-riscv64-gnu@1.82.0':
+    optional: true
+
+  '@oxlint/binding-linux-riscv64-musl@1.59.0':
     optional: true
 
   '@oxlint/binding-linux-riscv64-musl@1.79.0':
@@ -7776,10 +7633,16 @@ snapshots:
   '@oxlint/binding-linux-riscv64-musl@1.82.0':
     optional: true
 
+  '@oxlint/binding-linux-s390x-gnu@1.59.0':
+    optional: true
+
   '@oxlint/binding-linux-s390x-gnu@1.79.0':
     optional: true
 
   '@oxlint/binding-linux-s390x-gnu@1.82.0':
+    optional: true
+
+  '@oxlint/binding-linux-x64-gnu@1.59.0':
     optional: true
 
   '@oxlint/binding-linux-x64-gnu@1.79.0':
@@ -7788,10 +7651,16 @@ snapshots:
   '@oxlint/binding-linux-x64-gnu@1.82.0':
     optional: true
 
+  '@oxlint/binding-linux-x64-musl@1.59.0':
+    optional: true
+
   '@oxlint/binding-linux-x64-musl@1.79.0':
     optional: true
 
   '@oxlint/binding-linux-x64-musl@1.82.0':
+    optional: true
+
+  '@oxlint/binding-openharmony-arm64@1.59.0':
     optional: true
 
   '@oxlint/binding-openharmony-arm64@1.79.0':
@@ -7800,16 +7669,25 @@ snapshots:
   '@oxlint/binding-openharmony-arm64@1.82.0':
     optional: true
 
+  '@oxlint/binding-win32-arm64-msvc@1.59.0':
+    optional: true
+
   '@oxlint/binding-win32-arm64-msvc@1.79.0':
     optional: true
 
   '@oxlint/binding-win32-arm64-msvc@1.82.0':
     optional: true
 
+  '@oxlint/binding-win32-ia32-msvc@1.59.0':
+    optional: true
+
   '@oxlint/binding-win32-ia32-msvc@1.79.0':
     optional: true
 
   '@oxlint/binding-win32-ia32-msvc@1.82.0':
+    optional: true
+
+  '@oxlint/binding-win32-x64-msvc@1.59.0':
     optional: true
 
   '@oxlint/binding-win32-x64-msvc@1.79.0':
@@ -8148,6 +8026,7 @@ snapshots:
   '@types/better-sqlite3@7.6.13':
     dependencies:
       '@types/node': 25.6.0
+    optional: true
 
   '@types/chai@5.2.3':
     dependencies:
@@ -8862,52 +8741,16 @@ snapshots:
 
   better-all@0.0.7: {}
 
-  better-auth@1.6.2(@opentelemetry/api@1.9.1)(better-sqlite3@12.8.0)(drizzle-kit@1.0.0-beta.20)(drizzle-orm@1.0.0-beta.20(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(@types/better-sqlite3@7.6.13)(@types/mssql@9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(better-sqlite3@12.8.0)(mssql@11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(zod@4.5.4))(vitest@4.1.11)(vue@3.5.32(typescript@5.9.3)):
-    dependencies:
-      '@better-auth/core': 1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0)
-      '@better-auth/drizzle-adapter': 1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)(drizzle-orm@1.0.0-beta.20(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(@types/better-sqlite3@7.6.13)(@types/mssql@9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(better-sqlite3@12.8.0)(mssql@11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(zod@4.5.4))
-      '@better-auth/kysely-adapter': 1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)(kysely@0.28.15)
-      '@better-auth/memory-adapter': 1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)
-      '@better-auth/mongo-adapter': 1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)
-      '@better-auth/prisma-adapter': 1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)
-      '@better-auth/telemetry': 1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.5.4))(jose@6.2.2)(kysely@0.28.15)(nanostores@1.2.0))(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)
-      '@better-auth/utils': 0.4.0
-      '@better-fetch/fetch': 1.1.21
-      '@noble/ciphers': 2.1.1
-      '@noble/hashes': 2.0.1
-      better-call: 1.3.5(zod@4.5.4)
-      defu: 6.1.7
-      jose: 6.2.2
-      kysely: 0.28.15
-      nanostores: 1.2.0
-      zod: 4.5.4
-    optionalDependencies:
-      better-sqlite3: 12.8.0
-      drizzle-kit: 1.0.0-beta.20
-      drizzle-orm: 1.0.0-beta.20(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(@types/better-sqlite3@7.6.13)(@types/mssql@9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(better-sqlite3@12.8.0)(mssql@11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(zod@4.5.4)
-      vitest: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/browser-preview@4.1.11)(@voidzero-dev/vite-plus-core@0.3.0(@types/node@24.12.2)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))
-      vue: 3.5.32(typescript@5.9.3)
-    transitivePeerDependencies:
-      - '@cloudflare/workers-types'
-      - '@opentelemetry/api'
-
-  better-call@1.3.5(zod@4.5.4):
-    dependencies:
-      '@better-auth/utils': 0.4.0
-      '@better-fetch/fetch': 1.1.21
-      rou3: 0.7.12
-      set-cookie-parser: 3.1.0
-    optionalDependencies:
-      zod: 4.5.4
-
   better-sqlite3@12.8.0:
     dependencies:
       bindings: 1.5.0
       prebuild-install: 7.1.3
+    optional: true
 
   bindings@1.5.0:
     dependencies:
       file-uri-to-path: 1.0.0
+    optional: true
 
   bintrees@1.0.2:
     optional: true
@@ -8919,6 +8762,7 @@ snapshots:
       buffer: 5.7.1
       inherits: 2.0.4
       readable-stream: 3.6.2
+    optional: true
 
   bl@6.1.6:
     dependencies:
@@ -8958,6 +8802,7 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
+    optional: true
 
   buffer@6.0.3:
     dependencies:
@@ -8997,7 +8842,8 @@ snapshots:
 
   character-entities-legacy@3.0.0: {}
 
-  chownr@1.1.4: {}
+  chownr@1.1.4:
+    optional: true
 
   cjs-module-lexer@2.2.0:
     optional: true
@@ -9078,10 +8924,12 @@ snapshots:
   decompress-response@6.0.0:
     dependencies:
       mimic-response: 3.1.0
+    optional: true
 
   dedent@1.5.1: {}
 
-  deep-extend@0.6.0: {}
+  deep-extend@0.6.0:
+    optional: true
 
   deep-is@0.1.4: {}
 
@@ -9119,17 +8967,6 @@ snapshots:
       esbuild: 0.25.12
       get-tsconfig: 4.13.7
       jiti: 2.6.1
-
-  drizzle-orm@1.0.0-beta.20(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(@types/better-sqlite3@7.6.13)(@types/mssql@9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(better-sqlite3@12.8.0)(mssql@11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(zod@3.25.76):
-    dependencies:
-      '@types/mssql': 9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2)
-      mssql: 11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2)
-    optionalDependencies:
-      '@libsql/client': 0.17.2
-      '@opentelemetry/api': 1.9.1
-      '@types/better-sqlite3': 7.6.13
-      better-sqlite3: 12.8.0
-      zod: 3.25.76
 
   drizzle-orm@1.0.0-beta.20(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(@types/better-sqlite3@7.6.13)(@types/mssql@9.1.11(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(better-sqlite3@12.8.0)(mssql@11.0.1(@azure/core-client@1.10.1(supports-color@10.2.2))(supports-color@10.2.2))(zod@4.5.4):
     dependencies:
@@ -9314,10 +9151,10 @@ snapshots:
     dependencies:
       eslint: 9.39.4(jiti@2.6.1)(supports-color@10.2.2)
 
-  eslint-plugin-oxlint@1.59.0(oxlint@1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.0(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@voidzero-dev/vite-plus-core@0.3.0(@types/node@24.12.2)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))):
+  eslint-plugin-oxlint@1.59.0(oxlint@1.59.0(oxlint-tsgolint@7.0.2001)):
     dependencies:
       jsonc-parser: 3.3.1
-      oxlint: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.0(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@voidzero-dev/vite-plus-core@0.3.0(@types/node@24.12.2)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))
+      oxlint: 1.59.0(oxlint-tsgolint@7.0.2001)
 
   eslint-plugin-prettier@5.5.5(eslint-config-prettier@10.1.8(eslint@9.39.4(jiti@2.6.1)(supports-color@10.2.2)))(eslint@9.39.4(jiti@2.6.1)(supports-color@10.2.2))(prettier@3.8.2):
     dependencies:
@@ -9436,7 +9273,8 @@ snapshots:
 
   events@3.3.0: {}
 
-  expand-template@2.0.3: {}
+  expand-template@2.0.3:
+    optional: true
 
   expect-type@1.4.0: {}
 
@@ -9477,7 +9315,8 @@ snapshots:
     dependencies:
       flat-cache: 4.0.1
 
-  file-uri-to-path@1.0.0: {}
+  file-uri-to-path@1.0.0:
+    optional: true
 
   fill-range@7.1.1:
     dependencies:
@@ -9517,7 +9356,8 @@ snapshots:
     dependencies:
       fetch-blob: 3.2.0
 
-  fs-constants@1.0.0: {}
+  fs-constants@1.0.0:
+    optional: true
 
   fsevents@2.3.3:
     optional: true
@@ -9550,7 +9390,8 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
-  github-from-package@0.0.0: {}
+  github-from-package@0.0.0:
+    optional: true
 
   glob-parent@5.1.2:
     dependencies:
@@ -9663,7 +9504,8 @@ snapshots:
 
   inherits@2.0.4: {}
 
-  ini@1.3.8: {}
+  ini@1.3.8:
+    optional: true
 
   is-docker@3.0.0: {}
 
@@ -9692,8 +9534,6 @@ snapshots:
   isexe@3.1.5: {}
 
   jiti@2.6.1: {}
-
-  jose@6.2.2: {}
 
   joycon@3.1.1: {}
 
@@ -9909,8 +9749,6 @@ snapshots:
 
   long@5.3.2: {}
 
-  lru-cache@11.3.5: {}
-
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
@@ -9973,7 +9811,8 @@ snapshots:
     dependencies:
       mime-db: 1.52.0
 
-  mimic-response@3.1.0: {}
+  mimic-response@3.1.0:
+    optional: true
 
   miniflare@4.20260409.0:
     dependencies:
@@ -10013,7 +9852,8 @@ snapshots:
 
   mitt@3.0.1: {}
 
-  mkdirp-classic@0.5.3: {}
+  mkdirp-classic@0.5.3:
+    optional: true
 
   module-details-from-path@1.0.4:
     optional: true
@@ -10038,9 +9878,8 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  nanostores@1.2.0: {}
-
-  napi-build-utils@2.0.0: {}
+  napi-build-utils@2.0.0:
+    optional: true
 
   native-duplexpair@1.0.0: {}
 
@@ -10059,6 +9898,7 @@ snapshots:
   node-abi@3.89.0:
     dependencies:
       semver: 7.8.5
+    optional: true
 
   node-domexception@1.0.0: {}
 
@@ -10127,7 +9967,7 @@ snapshots:
       type-check: 0.4.0
       word-wrap: 1.2.5
 
-  oxc-minify@0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2):
+  oxc-minify@0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3):
     optionalDependencies:
       '@oxc-minify/binding-android-arm-eabi': 0.124.0
       '@oxc-minify/binding-android-arm64': 0.124.0
@@ -10145,7 +9985,7 @@ snapshots:
       '@oxc-minify/binding-linux-x64-gnu': 0.124.0
       '@oxc-minify/binding-linux-x64-musl': 0.124.0
       '@oxc-minify/binding-openharmony-arm64': 0.124.0
-      '@oxc-minify/binding-wasm32-wasi': 0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
+      '@oxc-minify/binding-wasm32-wasi': 0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)
       '@oxc-minify/binding-win32-arm64-msvc': 0.124.0
       '@oxc-minify/binding-win32-ia32-msvc': 0.124.0
       '@oxc-minify/binding-win32-x64-msvc': 0.124.0
@@ -10212,6 +10052,29 @@ snapshots:
       '@oxlint-tsgolint/win32-arm64': 7.0.2001
       '@oxlint-tsgolint/win32-x64': 7.0.2001
 
+  oxlint@1.59.0(oxlint-tsgolint@7.0.2001):
+    optionalDependencies:
+      '@oxlint/binding-android-arm-eabi': 1.59.0
+      '@oxlint/binding-android-arm64': 1.59.0
+      '@oxlint/binding-darwin-arm64': 1.59.0
+      '@oxlint/binding-darwin-x64': 1.59.0
+      '@oxlint/binding-freebsd-x64': 1.59.0
+      '@oxlint/binding-linux-arm-gnueabihf': 1.59.0
+      '@oxlint/binding-linux-arm-musleabihf': 1.59.0
+      '@oxlint/binding-linux-arm64-gnu': 1.59.0
+      '@oxlint/binding-linux-arm64-musl': 1.59.0
+      '@oxlint/binding-linux-ppc64-gnu': 1.59.0
+      '@oxlint/binding-linux-riscv64-gnu': 1.59.0
+      '@oxlint/binding-linux-riscv64-musl': 1.59.0
+      '@oxlint/binding-linux-s390x-gnu': 1.59.0
+      '@oxlint/binding-linux-x64-gnu': 1.59.0
+      '@oxlint/binding-linux-x64-musl': 1.59.0
+      '@oxlint/binding-openharmony-arm64': 1.59.0
+      '@oxlint/binding-win32-arm64-msvc': 1.59.0
+      '@oxlint/binding-win32-ia32-msvc': 1.59.0
+      '@oxlint/binding-win32-x64-msvc': 1.59.0
+      oxlint-tsgolint: 7.0.2001
+
   oxlint@1.79.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.0(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@voidzero-dev/vite-plus-core@0.3.0(@types/node@24.12.2)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3)):
     optionalDependencies:
       '@oxlint/binding-android-arm-eabi': 1.79.0
@@ -10259,30 +10122,6 @@ snapshots:
       '@oxlint/binding-win32-x64-msvc': 1.79.0
       oxlint-tsgolint: 7.0.2001
       vite-plus: 0.3.0(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@voidzero-dev/vite-plus-core@0.3.0(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3)
-
-  oxlint@1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.0(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@voidzero-dev/vite-plus-core@0.3.0(@types/node@24.12.2)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3)):
-    optionalDependencies:
-      '@oxlint/binding-android-arm-eabi': 1.82.0
-      '@oxlint/binding-android-arm64': 1.82.0
-      '@oxlint/binding-darwin-arm64': 1.82.0
-      '@oxlint/binding-darwin-x64': 1.82.0
-      '@oxlint/binding-freebsd-x64': 1.82.0
-      '@oxlint/binding-linux-arm-gnueabihf': 1.82.0
-      '@oxlint/binding-linux-arm-musleabihf': 1.82.0
-      '@oxlint/binding-linux-arm64-gnu': 1.82.0
-      '@oxlint/binding-linux-arm64-musl': 1.82.0
-      '@oxlint/binding-linux-ppc64-gnu': 1.82.0
-      '@oxlint/binding-linux-riscv64-gnu': 1.82.0
-      '@oxlint/binding-linux-riscv64-musl': 1.82.0
-      '@oxlint/binding-linux-s390x-gnu': 1.82.0
-      '@oxlint/binding-linux-x64-gnu': 1.82.0
-      '@oxlint/binding-linux-x64-musl': 1.82.0
-      '@oxlint/binding-openharmony-arm64': 1.82.0
-      '@oxlint/binding-win32-arm64-msvc': 1.82.0
-      '@oxlint/binding-win32-ia32-msvc': 1.82.0
-      '@oxlint/binding-win32-x64-msvc': 1.82.0
-      oxlint-tsgolint: 7.0.2001
-      vite-plus: 0.3.0(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@voidzero-dev/vite-plus-core@0.3.0(@types/node@24.12.2)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3)
 
   oxlint@1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.0(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@voidzero-dev/vite-plus-core@0.3.0(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3))(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3)):
     optionalDependencies:
@@ -10419,6 +10258,7 @@ snapshots:
       simple-get: 4.0.1
       tar-fs: 2.1.4
       tunnel-agent: 0.6.0
+    optional: true
 
   prelude-ls@1.2.1: {}
 
@@ -10486,6 +10326,7 @@ snapshots:
       ini: 1.3.8
       minimist: 1.2.8
       strip-json-comments: 2.0.1
+    optional: true
 
   react-is@17.0.2: {}
 
@@ -10499,6 +10340,7 @@ snapshots:
       inherits: 2.0.4
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
+    optional: true
 
   readable-stream@4.7.0:
     dependencies:
@@ -10583,8 +10425,6 @@ snapshots:
       - '@emnapi/runtime'
     optional: true
 
-  rou3@0.7.12: {}
-
   run-applescript@7.1.0: {}
 
   run-parallel@1.2.0:
@@ -10605,13 +10445,11 @@ snapshots:
 
   semver@7.8.5: {}
 
-  set-cookie-parser@3.1.0: {}
-
   sharp@0.34.5:
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
-      semver: 7.7.4
+      semver: 7.8.5
     optionalDependencies:
       '@img/sharp-darwin-arm64': 0.34.5
       '@img/sharp-darwin-x64': 0.34.5
@@ -10719,13 +10557,15 @@ snapshots:
 
   siginfo@2.0.0: {}
 
-  simple-concat@1.0.1: {}
+  simple-concat@1.0.1:
+    optional: true
 
   simple-get@4.0.1:
     dependencies:
       decompress-response: 6.0.0
       once: 1.4.0
       simple-concat: 1.0.1
+    optional: true
 
   sirv@3.0.2:
     dependencies:
@@ -10775,7 +10615,8 @@ snapshots:
     dependencies:
       ansi-regex: 5.0.1
 
-  strip-json-comments@2.0.1: {}
+  strip-json-comments@2.0.1:
+    optional: true
 
   strip-json-comments@3.1.1: {}
 
@@ -10813,6 +10654,7 @@ snapshots:
       mkdirp-classic: 0.5.3
       pump: 3.0.4
       tar-stream: 2.2.0
+    optional: true
 
   tar-stream@2.2.0:
     dependencies:
@@ -10821,6 +10663,7 @@ snapshots:
       fs-constants: 1.0.0
       inherits: 2.0.4
       readable-stream: 3.6.2
+    optional: true
 
   tarn@3.0.2: {}
 
@@ -10912,6 +10755,7 @@ snapshots:
   tunnel-agent@0.6.0:
     dependencies:
       safe-buffer: 5.2.1
+    optional: true
 
   tw-animate-css@1.4.0: {}
 
@@ -11194,7 +11038,7 @@ snapshots:
       - vite
       - yaml
 
-  vitepress@2.0.0-alpha.17(@types/node@25.6.0)(axios@1.15.0(debug@4.4.3(supports-color@10.2.2)))(esbuild@0.28.1)(jiti@2.6.1)(oxc-minify@0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2))(postcss@8.5.9)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3):
+  vitepress@2.0.0-alpha.17(@types/node@25.6.0)(axios@1.15.0(debug@4.4.3(supports-color@10.2.2)))(esbuild@0.28.1)(jiti@2.6.1)(oxc-minify@0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3))(postcss@8.5.9)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3):
     dependencies:
       '@docsearch/css': 4.6.2
       '@docsearch/js': 4.6.2
@@ -11216,7 +11060,7 @@ snapshots:
       vite: '@voidzero-dev/vite-plus-core@0.3.0(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.21.0)(typescript@5.9.3)(unrun@0.2.34(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)(synckit@0.11.12))(yaml@2.8.3)'
       vue: 3.5.32(typescript@5.9.3)
     optionalDependencies:
-      oxc-minify: 0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
+      oxc-minify: 0.124.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.11.3)
       postcss: 8.5.9
     transitivePeerDependencies:
       - '@arethetypeswrong/core'

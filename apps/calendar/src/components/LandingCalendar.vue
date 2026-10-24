@@ -1,202 +1,151 @@
 <script setup lang="ts">
-const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+// Static preview. Colors mirror the calendars configured in Schedule.vue.
+const kinds = {
+  lecture:
+    "border-[#2563EB] bg-[#DBEAFE] text-[#1E3A8A] dark:border-[#93C5FD] dark:bg-[#1E3A5F] dark:text-[#EFF6FF]",
+  practice:
+    "border-[#F44336] bg-[#FFCDD2] text-[#B71C1C] dark:border-[#EF9A9A] dark:bg-[#4A2020] dark:text-[#FFEBEE]",
+  deadline:
+    "border-[#4CAF50] bg-[#C8E6C9] text-[#1B5E20] dark:border-[#A5D6A7] dark:bg-[#1C3A28] dark:text-[#E8F5E9]",
+};
+
+const days = [
+  { name: "Mon", date: 19 },
+  { name: "Tue", date: 20 },
+  { name: "Wed", date: 21 },
+  { name: "Thu", date: 22 },
+  { name: "Fri", date: 23 },
+];
+
+const hours = [9, 10, 11, 12, 13, 14];
+
+const classes = [
+  {
+    day: 1,
+    from: 9,
+    to: 11,
+    time: "09:00",
+    title: "Algorithms",
+    detail: "C1.2.248",
+    kind: "lecture",
+  },
+  {
+    day: 2,
+    from: 11,
+    to: 12,
+    time: "11:00",
+    title: "Calculus",
+    detail: "C1.3.361",
+    kind: "practice",
+  },
+  {
+    day: 3,
+    from: 9,
+    to: 11,
+    time: "09:00",
+    title: "Algorithms",
+    detail: "Online",
+    kind: "lecture",
+  },
+  {
+    day: 3,
+    from: 13,
+    to: 15,
+    time: "13:00",
+    title: "Databases",
+    detail: "C1.1.239",
+    kind: "practice",
+  },
+  {
+    day: 4,
+    from: 10,
+    to: 12,
+    time: "10:00",
+    title: "English",
+    detail: "C1.3.255",
+    kind: "practice",
+  },
+  {
+    day: 5,
+    from: 12,
+    to: 14,
+    time: "12:00",
+    title: "Databases",
+    detail: "Main hall",
+    kind: "lecture",
+  },
+] as const;
 </script>
 
 <template>
-  <figure class="calendar-scene" aria-label="Illustrative week with classes and a Moodle deadline">
-    <div class="calendar-paper" aria-hidden="true">
-      <div class="calendar-heading"><span>Your week</span><span>All in one place</span></div>
-      <div class="calendar-week">
-        <div v-for="(day, index) in weekdays" :key="day" class="calendar-day">
-          <span>{{ day }}</span
-          ><strong>{{ 14 + index }}</strong>
+  <figure
+    class="m-0 overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm"
+    aria-label="Example week with classes from My DU and a Moodle deadline"
+  >
+    <div aria-hidden="true">
+      <div class="flex items-baseline justify-between border-b px-4 py-3">
+        <span class="text-sm font-medium">October 19–23</span>
+        <span class="text-xs text-muted-foreground">Week 8</span>
+      </div>
+
+      <div
+        class="grid grid-cols-[2rem_repeat(5,minmax(0,1fr))] text-xs sm:grid-cols-[2.75rem_repeat(5,minmax(0,1fr))]"
+      >
+        <div />
+        <div v-for="day in days" :key="day.name" class="truncate border-l px-1.5 py-2 sm:px-2">
+          <span class="text-muted-foreground">{{ day.name }}</span>
+          <span class="ml-1 font-medium">{{ day.date }}</span>
+        </div>
+
+        <div />
+        <div v-for="day in days" :key="day.name" class="min-h-8 border-l px-1 pb-1">
+          <div
+            v-if="day.date === 22"
+            :class="kinds.deadline"
+            class="truncate rounded-sm border-l-2 px-1.5 py-1 text-[11px] font-medium"
+          >
+            <span class="max-sm:hidden">23:59 · </span>Lab 4 due
+          </div>
         </div>
       </div>
-      <div class="calendar-grid">
-        <div class="calendar-event event-one">
-          <span>09:00</span>Algorithms<small>Lecture</small>
-        </div>
-        <div class="calendar-event event-two">
-          <span>11:00</span>Calculus<small>Practice</small>
-        </div>
-        <div class="calendar-event event-three">
-          <span>09:00</span>Algorithms<small>Lecture</small>
-        </div>
-        <div class="calendar-event event-four">
-          <span>14:00</span>English<small>Practice</small>
-        </div>
-        <div class="calendar-event event-deadline">
-          <span>23:59 · Moodle</span>Assignment due<small>Algorithms</small>
+
+      <div
+        class="grid grid-cols-[2rem_repeat(5,minmax(0,1fr))] border-t sm:grid-cols-[2.75rem_repeat(5,minmax(0,1fr))]"
+        :style="{ gridTemplateRows: `repeat(${hours.length}, 3rem)` }"
+      >
+        <template v-for="(hour, row) in hours" :key="hour">
+          <div
+            class="pr-1.5 pt-1 text-right text-[10px] text-muted-foreground tabular-nums sm:text-[11px]"
+            :style="{ gridRow: row + 1, gridColumn: 1 }"
+          >
+            {{ String(hour).padStart(2, "0") }}:00
+          </div>
+          <div
+            v-for="(day, column) in days"
+            :key="day.name"
+            class="border-l"
+            :class="row > 0 && 'border-t'"
+            :style="{ gridRow: row + 1, gridColumn: `${column + 2} / span 1` }"
+          />
+        </template>
+
+        <div
+          v-for="lesson in classes"
+          :key="`${lesson.day}-${lesson.from}`"
+          :class="kinds[lesson.kind]"
+          class="z-10 m-0.5 flex flex-col gap-0.5 overflow-hidden rounded-sm border-l-2 px-1.5 py-1 text-[11px] leading-tight"
+          :style="{
+            gridColumn: `${lesson.day + 1} / span 1`,
+            gridRow: `${lesson.from - hours[0]! + 1} / ${lesson.to - hours[0]! + 1}`,
+          }"
+        >
+          <span class="tabular-nums opacity-80">{{ lesson.time }}</span>
+          <span class="truncate font-medium">{{ lesson.title }}</span>
+          <span v-if="lesson.to - lesson.from > 1" class="truncate opacity-80">{{
+            lesson.detail
+          }}</span>
         </div>
       </div>
     </div>
   </figure>
 </template>
-
-<style scoped>
-.calendar-scene {
-  width: 100%;
-  margin: 0;
-}
-.calendar-paper {
-  width: 100%;
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  background: var(--background);
-  box-shadow:
-    0 0 64px 8px #8b7be526,
-    0 16px 48px #00000008;
-  overflow: hidden;
-}
-:global(.dark) .calendar-paper {
-  box-shadow:
-    0 0 80px 12px #8b7be538,
-    0 0 24px #8b7be512;
-}
-.calendar-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 14px 20px;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.035em;
-}
-.calendar-heading span:last-child {
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0;
-  color: var(--muted-foreground);
-}
-.calendar-week {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  border: 1px solid var(--border);
-  border-radius: 7px 7px 0 0;
-}
-.calendar-day {
-  display: grid;
-  gap: 6px;
-  padding: 12px 16px;
-  border-right: 1px solid var(--border);
-  font-size: 12px;
-  color: var(--muted-foreground);
-}
-.calendar-day:last-child {
-  border: 0;
-}
-.calendar-day strong {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--foreground);
-}
-.calendar-grid {
-  position: relative;
-  height: 200px;
-  border: 1px solid var(--border);
-  border-top: 0;
-  border-radius: 0 0 7px 7px;
-  background-image:
-    linear-gradient(to right, var(--border) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
-  background-size:
-    20% 100%,
-    100% 50px;
-  background-position: -1px -1px;
-}
-.calendar-event {
-  position: absolute;
-  display: grid;
-  gap: 3px;
-  width: calc(20% - 12px);
-  padding: 9px 10px;
-  border: 1px solid #a7dfcb;
-  border-radius: 6px;
-  background: #d7f3e8;
-  color: #16583f;
-  font-size: 12px;
-  font-weight: 600;
-}
-.calendar-event span,
-.calendar-event small {
-  font-size: 10px;
-  font-weight: 400;
-}
-.event-one {
-  left: 6px;
-  top: 0;
-}
-.event-two {
-  left: calc(20% + 6px);
-  top: 66px;
-  background: #dceeff;
-  border-color: #b0d6f5;
-  color: #24567e;
-}
-.event-three {
-  left: calc(40% + 6px);
-  top: 0;
-}
-.event-four {
-  left: calc(60% + 6px);
-  top: 114px;
-  background: #fff4d6;
-  border-color: #ead6a1;
-  color: #715520;
-}
-.event-deadline {
-  left: calc(80% + 6px);
-  top: 66px;
-  background: #eee3ff;
-  border-color: #d5bbee;
-  color: #62418b;
-}
-@media (max-width: 600px) {
-  .calendar-paper {
-    padding: 8px;
-    border-radius: 14px;
-  }
-  .calendar-heading {
-    padding: 8px 6px 16px;
-    font-size: 16px;
-  }
-  .calendar-heading span:last-child {
-    font-size: 12px;
-  }
-  .calendar-day {
-    padding: 10px 6px;
-    font-size: 10px;
-  }
-  .calendar-day strong {
-    font-size: 18px;
-  }
-  .calendar-event {
-    width: calc(20% - 4px);
-    padding: 7px 3px;
-    font-size: clamp(8px, 2.2vw, 12px);
-    overflow-wrap: anywhere;
-  }
-  .calendar-event span,
-  .calendar-event small {
-    font-size: clamp(7px, 1.8vw, 10px);
-  }
-  .event-one {
-    left: 2px;
-  }
-  .event-two {
-    left: calc(20% + 2px);
-  }
-  .event-three {
-    left: calc(40% + 2px);
-  }
-  .event-four {
-    left: calc(60% + 2px);
-  }
-  .event-deadline {
-    left: calc(80% + 2px);
-  }
-}
-</style>

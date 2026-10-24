@@ -1,14 +1,12 @@
 import { config } from "../config";
 import { logger } from "../library/logger";
-import { createShortCache } from "../library/short-cache";
 import { createBot } from "./bot";
 import { BOT_COMMANDS } from "./commands";
 
 const log = logger.child().withContext({ module: "bot", operation: "startup" });
 
 async function main() {
-  const shortCache = createShortCache();
-  const bot = createBot(config.telegram.token, shortCache);
+  const bot = createBot(config.telegram.token);
 
   await bot.api.setMyCommands(BOT_COMMANDS);
   log.withMetadata({ commandCount: BOT_COMMANDS.length }).info("bot commands configured");
