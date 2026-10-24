@@ -2,8 +2,7 @@ import { all } from "better-all";
 import { Composer, InlineKeyboard } from "grammy";
 import type { Context } from "../context";
 import { config } from "../../config";
-import * as myDuRepository from "../../db/repositories/my-du";
-import * as usersRepository from "../../db/repositories/users";
+import { database } from "../../db";
 import type { UserWithSchedule } from "../../db/repositories/users";
 import { approveTelegramLogin } from "../../library/auth";
 import { UserFacingError } from "../../library/errors";
@@ -133,7 +132,7 @@ async function getTodayClasses(user: UserWithSchedule) {
     return null;
   }
 
-  const items = toWeeklySchedule(await myDuRepository.findSchedule(user.id), new Date());
+  const items = toWeeklySchedule(await database.myDu.findSchedule(user.id), new Date());
   const filters = normalizeScheduleFilters(user.scheduleFilters);
   const filtered = applyScheduleFilters(items, filters, user.excludedCourses);
   const merged = filters.combineAdjacentPairs ? mergeAdjacentScheduleItems(filtered) : filtered;
@@ -210,7 +209,7 @@ feature.command("start", async (ctx, next) => {
 
 feature.command("start", async (ctx) => {
   resetPrompts(ctx);
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (user) {
     await ctx.reply(await buildMenuMessage(user), {
@@ -235,7 +234,7 @@ feature.command("update", async (ctx) => {
 
 feature.callbackQuery(menuCallback.filter(), async (ctx) => {
   resetPrompts(ctx);
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     await ctx.answerCallbackQuery(m.not_registered_short());
@@ -292,7 +291,7 @@ feature.callbackQuery(updateCalendarCallback.filter(), async (ctx) => {
 feature.on("message:text", async (ctx, next) => {
   if (!ctx.session.awaitingMoodleCalendarUrl) return next();
 
-  const { id: userId } = await usersRepository.upsertByTelegramId(ctx.from.id);
+  const { id: userId } = await database.users.upsertByTelegramId(ctx.from.id);
 
   try {
     await connectMoodle(userId, ctx.message.text.trim());
@@ -304,7 +303,7 @@ feature.on("message:text", async (ctx, next) => {
   }
 
   ctx.session.awaitingMoodleCalendarUrl = false;
-  const user = await usersRepository.findById(userId);
+  const user = await database.users.findById(userId);
   await ctx.reply(`${m.calendar_url_saved()}\n\n${await buildMenuMessage(user!)}`, {
     parse_mode: "HTML",
     reply_markup: buildMenuKeyboard(),

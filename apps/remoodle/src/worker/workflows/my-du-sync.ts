@@ -1,4 +1,4 @@
-import * as myDuRepository from "../../db/repositories/my-du";
+import { database } from "../../db";
 import { SYNC_INTERVAL, syncSchedule } from "../../library/my-du/service";
 import { hatchet } from "../hatchet-client";
 
@@ -26,7 +26,7 @@ myDuSync.task({
   name: "dispatch-my-du-syncs",
   executionTimeout: "1m",
   fn: async (_, ctx) => {
-    const due = await myDuRepository.listSyncDue(new Date(Date.now() - SYNC_INTERVAL));
+    const due = await database.myDu.listSyncDue(new Date(Date.now() - SYNC_INTERVAL));
 
     if (due.length > 0) {
       await ctx.bulkRunNoWaitChildren(

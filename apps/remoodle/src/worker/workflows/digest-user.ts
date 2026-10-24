@@ -1,5 +1,4 @@
-import * as myDuRepository from "../../db/repositories/my-du";
-import * as sentNotificationsRepository from "../../db/repositories/sent-notifications";
+import { database } from "../../db";
 import { getAlmatyDateParts, normalizeDigestWeekdays } from "../../library/schedule/digest";
 import {
   applyScheduleFilters,
@@ -76,11 +75,11 @@ export const digestUser = hatchet.task<Input>({
 
     const eventId = `digest:${dateParts.dateKey}`;
 
-    if (await sentNotificationsRepository.has(input.userId, eventId)) {
+    if (await database.sentNotifications.has(input.userId, eventId)) {
       return;
     }
 
-    const allItems = await myDuRepository.findSchedule(input.userId);
+    const allItems = await database.myDu.findSchedule(input.userId);
     const filters = normalizeScheduleFilters(input.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS);
     const filteredItems = applyScheduleFilters(allItems, filters, input.excludedCourses);
 
@@ -92,7 +91,7 @@ export const digestUser = hatchet.task<Input>({
     const todaySchedule = getScheduleForDay(weeklySchedule, getDayName(now));
 
     if (todaySchedule.length === 0) {
-      await sentNotificationsRepository.record(input.userId, [{ eventId, triggeredAt: now }]);
+      await database.sentNotifications.record(input.userId, [{ eventId, triggeredAt: now }]);
 
       await ctx.logger.info("skipped empty digest", {
         telegramId: input.telegramId,
@@ -110,7 +109,7 @@ export const digestUser = hatchet.task<Input>({
 
     await telegramSendMessage.run({ chatId: input.telegramId, message, replyMarkup });
 
-    await sentNotificationsRepository.record(input.userId, [{ eventId, triggeredAt: now }]);
+    await database.sentNotifications.record(input.userId, [{ eventId, triggeredAt: now }]);
 
     await ctx.logger.info("sent digest", {
       telegramId: input.telegramId,

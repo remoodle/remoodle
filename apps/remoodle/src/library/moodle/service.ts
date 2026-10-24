@@ -1,4 +1,4 @@
-import * as usersRepository from "../../db/repositories/users";
+import { database } from "../../db";
 import type { MoodleEvent } from "./events";
 import { moodleToDeadlineEvents } from "./deadlines";
 import { UserFacingError } from "../errors";
@@ -48,13 +48,13 @@ export async function connectMoodle(userId: number, input: string) {
     );
   }
 
-  await usersRepository.update(userId, { moodleCalendarUrl: url });
+  await database.users.update(userId, { moodleCalendarUrl: url });
 
   return { connected: true, events, fetchedAt: Date.now() };
 }
 
 export async function disconnectMoodle(userId: number) {
-  await usersRepository.update(userId, { moodleCalendarUrl: null });
+  await database.users.update(userId, { moodleCalendarUrl: null });
 }
 
 export async function fetchDeadlineEvents(moodleCalendarUrl: string) {

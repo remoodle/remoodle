@@ -1,4 +1,4 @@
-import * as sentNotificationsRepository from "../../db/repositories/sent-notifications";
+import { database } from "../../db";
 import { hatchet } from "../hatchet-client";
 import { telegramSendMessage } from "./telegram-send-message";
 
@@ -20,7 +20,7 @@ export const deadlineNotifyUser = hatchet.task<Input>({
   fn: async (input, ctx) => {
     await telegramSendMessage.run({ chatId: input.chatId, message: input.message });
 
-    await sentNotificationsRepository.record(
+    await database.sentNotifications.record(
       input.userId,
       input.reminders.map((reminder) => ({
         eventId: reminder.eventId,

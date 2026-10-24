@@ -1,4 +1,4 @@
-import * as calendarEventsRepository from "../../db/repositories/calendar-events";
+import { database } from "../../db";
 import { fetchDeadlineEvents } from "../../library/moodle/service";
 import { hatchet } from "../hatchet-client";
 import { deadlineCheckUser } from "./deadline-check-user";
@@ -16,7 +16,7 @@ export const calendarFetchUser = hatchet.task<Input>({
   fn: async (input, ctx) => {
     try {
       const events = await fetchDeadlineEvents(input.moodleCalendarUrl);
-      await calendarEventsRepository.replaceForUser(input.userId, events);
+      await database.calendarEvents.replaceForUser(input.userId, events);
 
       await ctx.logger.info("fetched and stored calendar events", {
         userId: input.userId,

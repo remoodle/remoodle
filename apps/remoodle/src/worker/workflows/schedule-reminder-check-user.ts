@@ -1,5 +1,4 @@
-import * as myDuRepository from "../../db/repositories/my-du";
-import * as sentNotificationsRepository from "../../db/repositories/sent-notifications";
+import { database } from "../../db";
 import { m } from "../../library/i18n/messages.js";
 import { durationToMs } from "../../library/dates";
 import {
@@ -75,7 +74,7 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
     const nowMs = now.getTime();
     const windowEndMs = nowMs + offsetMs;
 
-    const allItems = await myDuRepository.findSchedule(input.userId);
+    const allItems = await database.myDu.findSchedule(input.userId);
     const filters = normalizeScheduleFilters(input.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS);
     const filteredItems = applyScheduleFilters(allItems, filters, input.excludedCourses);
 
@@ -102,7 +101,7 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
 
     // Check which ones we already sent
     const existingIds = new Set(
-      (await sentNotificationsRepository.listByUserId(input.userId))
+      (await database.sentNotifications.listByUserId(input.userId))
         .filter((r) => r.eventId.startsWith("sched:"))
         .map((r) => r.eventId),
     );
@@ -153,7 +152,7 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
 
     await telegramSendMessage.run({ chatId: input.telegramId, message, replyMarkup });
 
-    await sentNotificationsRepository.record(
+    await database.sentNotifications.record(
       input.userId,
       toSend.map((u) => ({ eventId: u.eventId, triggeredAt: new Date() })),
     );

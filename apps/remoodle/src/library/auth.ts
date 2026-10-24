@@ -1,5 +1,4 @@
-import * as sessionsRepository from "../db/repositories/sessions";
-import * as usersRepository from "../db/repositories/users";
+import { database } from "../db";
 import { hashToken, randomToken } from "./crypto";
 import { botStartUrl, START_PAYLOADS } from "./bot-links";
 
@@ -22,7 +21,7 @@ export async function startTelegramLogin() {
   const pollSecret = randomToken();
   const expiresAt = new Date(Date.now() + LOGIN_TTL);
 
-  await sessionsRepository.createLoginRequest(code, hashToken(pollSecret), expiresAt);
+  await database.sessions.createLoginRequest(code, hashToken(pollSecret), expiresAt);
 
   return {
     pollSecret,
@@ -32,36 +31,36 @@ export async function startTelegramLogin() {
 }
 
 export async function approveTelegramLogin(code: string, profile: TelegramProfile) {
-  const user = await usersRepository.upsertByTelegramId(profile.id, {
+  const user = await database.users.upsertByTelegramId(profile.id, {
     name: [profile.first_name, profile.last_name].filter(Boolean).join(" "),
     username: profile.username ?? null,
   });
 
-  return sessionsRepository.approveLoginRequest(code, user.id);
+  return database.sessions.approveLoginRequest(code, user.id);
 }
 
 export async function pollTelegramLogin(pollSecret: string) {
-  const request = await sessionsRepository.findLoginRequestBySecret(hashToken(pollSecret));
+  const request = await database.sessions.findLoginRequestBySecret(hashToken(pollSecret));
 
   if (!request) return { status: "expired" as const };
 
   if (!request.userId) return { status: "pending" as const };
 
-  const userId = await sessionsRepository.consumeLoginRequest(request.code);
+  const userId = await database.sessions.consumeLoginRequest(request.code);
 
   if (!userId) return { status: "expired" as const };
 
   const token = randomToken();
   const expiresAt = new Date(Date.now() + SESSION_TTL);
-  await sessionsRepository.createSession(hashToken(token), userId, expiresAt);
+  await database.sessions.createSession(hashToken(token), userId, expiresAt);
 
   return { status: "approved" as const, token, expiresAt };
 }
 
 export function findSessionUser(token: string) {
-  return sessionsRepository.findSessionUser(hashToken(token));
+  return database.sessions.findSessionUser(hashToken(token));
 }
 
 export function endSession(token: string) {
-  return sessionsRepository.deleteSession(hashToken(token));
+  return database.sessions.deleteSession(hashToken(token));
 }
