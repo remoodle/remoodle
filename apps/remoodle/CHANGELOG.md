@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/remoodle/heresy/compare/remoodle-v1.0.0...remoodle-v1.0.1) (2026-10-24)
+
+
+### Code Refactoring
+
+* **remoodle:** bind repositories to an injected connection behind one database object ([#586](https://github.com/remoodle/heresy/issues/586)) ([38ec268](https://github.com/remoodle/heresy/commit/38ec2681082badb423e6f20ae8e7d9c9fb86b12a))
+* **remoodle:** fold shared/ into library/ and split schedule by concern ([#584](https://github.com/remoodle/heresy/issues/584)) ([b14dcf3](https://github.com/remoodle/heresy/commit/b14dcf32d54d9e77a28267be0205428ce5c87e8a))
+
 ## [1.0.0](https://github.com/remoodle/heresy/compare/remoodle-v0.22.0...remoodle-v1.0.0) (2026-10-24)
 
 
