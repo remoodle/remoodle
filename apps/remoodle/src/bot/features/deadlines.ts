@@ -1,6 +1,6 @@
 import { Composer } from "grammy";
 import type { Context } from "../context";
-import * as usersRepository from "../../db/repositories/users";
+import { database } from "../../db";
 import { fetchDeadlineEvents } from "../../library/moodle/service";
 import { buildDeadlinesMessage } from "../../library/deadline-reminders";
 import { m } from "../../library/i18n/messages.js";
@@ -33,7 +33,7 @@ feature.command(["deadlines", "d", "ds"], async (ctx) => {
     return;
   }
 
-  const user = await usersRepository.findByTelegramId(telegramId);
+  const user = await database.users.findByTelegramId(telegramId);
 
   if (!user) {
     await ctx.reply(m.not_registered_use_start());
@@ -66,7 +66,7 @@ feature.command(["deadlines", "d", "ds"], async (ctx) => {
 });
 
 feature.chatType("private").callbackQuery(deadlinesCallback.filter(), async (ctx) => {
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     await ctx.answerCallbackQuery(m.not_registered_short());

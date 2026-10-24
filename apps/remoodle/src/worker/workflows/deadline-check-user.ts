@@ -1,6 +1,4 @@
-import * as calendarEventsRepository from "../../db/repositories/calendar-events";
-import * as sentNotificationsRepository from "../../db/repositories/sent-notifications";
-import * as usersRepository from "../../db/repositories/users";
+import { database } from "../../db";
 import { buildReminderMessage, trackDeadlineReminders } from "../../library/deadline-reminders";
 import { hatchet } from "../hatchet-client";
 import { deadlineNotifyUser } from "./deadline-notify-user";
@@ -19,13 +17,13 @@ export const deadlineCheckUser = hatchet.task<Input>({
       return;
     }
 
-    const userRow = await usersRepository.findById(input.userId);
+    const userRow = await database.users.findById(input.userId);
 
     if (!userRow?.deadlinesEnabled) {
       return;
     }
 
-    let events = await calendarEventsRepository.listByUserId(input.userId);
+    let events = await database.calendarEvents.listByUserId(input.userId);
 
     // Filter out excluded courses
     const excluded = userRow.excludedCourses;
@@ -40,7 +38,7 @@ export const deadlineCheckUser = hatchet.task<Input>({
       return;
     }
 
-    const existing = await sentNotificationsRepository.listByUserId(input.userId);
+    const existing = await database.sentNotifications.listByUserId(input.userId);
     const pending = trackDeadlineReminders(input.thresholds, events, existing);
 
     if (pending.length === 0) {

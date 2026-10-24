@@ -2,8 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 import { config } from "../../config";
-import * as icalTokensRepository from "../../db/repositories/ical-tokens";
-import * as myDuRepository from "../../db/repositories/my-du";
+import { database } from "../../db";
 import { randomToken } from "../../library/crypto";
 import {
   generateCalendarEventsIcal,
@@ -26,14 +25,14 @@ function subscriptionUrl(token: string) {
 
 // Public feed for calendar apps; the unguessable token is the only credential.
 export const icalFeed = new Hono<AppEnv>().get("/:token", async (c) => {
-  const row = await icalTokensRepository.findByToken(c.req.param("token"));
+  const row = await database.icalTokens.findByToken(c.req.param("token"));
 
   if (!row) throw new HTTPException(404, { message: "Token not found" });
 
   const { filters } = row;
 
   const events = scheduleToCalendarEvents(
-    filterSchedule(await myDuRepository.findSchedule(row.userId), filters),
+    filterSchedule(await database.myDu.findSchedule(row.userId), filters),
   );
 
   const ical = generateCalendarEventsIcal(
@@ -51,21 +50,21 @@ export const icalFeed = new Hono<AppEnv>().get("/:token", async (c) => {
 export const icalToken = new Hono<SessionEnv>()
   .use(privateResponse, requireSession)
   .get("/", async (c) => {
-    const row = await icalTokensRepository.findByUserId(c.var.user.id);
+    const row = await database.icalTokens.findByUserId(c.var.user.id);
 
     return c.json(row ? { url: subscriptionUrl(row.token), filters: row.filters } : null, 200);
   })
   .post("/", filtersBody, async (c) => {
     const { filters } = c.req.valid("json");
     const token = randomToken();
-    await icalTokensRepository.upsert(c.var.user.id, token, filters);
+    await database.icalTokens.upsert(c.var.user.id, token, filters);
 
     return c.json({ url: subscriptionUrl(token), filters }, 200);
   })
   .patch("/", filtersBody, async (c) => {
     const { filters } = c.req.valid("json");
 
-    if (!(await icalTokensRepository.updateFilters(c.var.user.id, filters))) {
+    if (!(await database.icalTokens.updateFilters(c.var.user.id, filters))) {
       throw new HTTPException(404, { message: "Generate a subscription link first." });
     }
 

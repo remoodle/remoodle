@@ -1,7 +1,6 @@
 import { Composer, InlineKeyboard } from "grammy";
 import type { Context } from "../context";
-import * as myDuRepository from "../../db/repositories/my-du";
-import * as usersRepository from "../../db/repositories/users";
+import { database } from "../../db";
 import { UserFacingError } from "../../library/errors";
 import { m } from "../../library/i18n/messages.js";
 import {
@@ -115,7 +114,7 @@ function isTerm(value: number): value is MyDuTerm {
 
 // Opening My DU from setup is how many users register, so the account is created here.
 async function findUserId(ctx: Context & { from: { id: number } }) {
-  const { id } = await usersRepository.upsertByTelegramId(ctx.from.id);
+  const { id } = await database.users.upsertByTelegramId(ctx.from.id);
 
   return id;
 }
@@ -191,7 +190,7 @@ feature.callbackQuery(myDuTermCallback.filter(), async (ctx) => {
 // Reconnecting keeps the saved period; a failed attempt retries with the period being set up.
 feature.callbackQuery(myDuSignInCallback.filter(), async (ctx) => {
   const setup = ctx.session.myDuSetup;
-  const connection = await myDuRepository.findConnection(await findUserId(ctx));
+  const connection = await database.myDu.findConnection(await findUserId(ctx));
 
   const period =
     setup?.step === "link"
@@ -265,7 +264,7 @@ feature.on("message:text", async (ctx, next) => {
     }
 
     const period = { term: setup.term, firstWeekStart };
-    const connection = await myDuRepository.findConnection(userId);
+    const connection = await database.myDu.findConnection(userId);
 
     if (!connection?.credentials) {
       await sendSignIn(ctx, period);

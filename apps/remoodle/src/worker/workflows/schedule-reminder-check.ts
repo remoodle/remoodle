@@ -1,4 +1,4 @@
-import * as usersRepository from "../../db/repositories/users";
+import { database } from "../../db";
 import { hatchet } from "../hatchet-client";
 import { digestUser } from "./digest-user";
 import { scheduleReminderCheckUser } from "./schedule-reminder-check-user";
@@ -21,8 +21,8 @@ scheduleReminderCheck.task({
   name: "check-schedule-reminders",
   executionTimeout: "1m",
   fn: async (_, ctx) => {
-    const eligibleUsers = await usersRepository.listScheduleRecipients();
-    const digestUsers = await usersRepository.listDigestRecipients();
+    const eligibleUsers = await database.users.listScheduleRecipients();
+    const digestUsers = await database.users.listDigestRecipients();
 
     if (eligibleUsers.length === 0 && digestUsers.length === 0) {
       await ctx.logger.info("no users with schedule notifications enabled");

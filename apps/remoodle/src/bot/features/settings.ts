@@ -1,7 +1,7 @@
 import { Composer, InlineKeyboard } from "grammy";
 import type { Context } from "../context";
 import { config } from "../../config";
-import * as usersRepository from "../../db/repositories/users";
+import { database } from "../../db";
 import type { UserWithSchedule } from "../../db/repositories/users";
 import { durationToMs, formatDuration } from "../../library/dates";
 import { AVAILABLE_THRESHOLDS } from "../../library/deadline-reminders";
@@ -62,7 +62,7 @@ async function show(ctx: Context, mode: "edit" | "reply", { text, keyboard }: Sc
 }
 
 async function findUser(ctx: UserContext) {
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     await ctx.answerCallbackQuery(m.not_registered_short());
@@ -174,7 +174,7 @@ function settingsScreen(user: UserWithSchedule): Screen {
 
 feature.command("settings", async (ctx) => {
   resetPrompts(ctx);
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     await ctx.reply(m.not_registered());
@@ -202,7 +202,7 @@ feature.callbackQuery(toggleScheduleMergeCallback.filter(), async (ctx) => {
 
   const filters = normalizeScheduleFilters(user.scheduleFilters);
   filters.combineAdjacentPairs = !filters.combineAdjacentPairs;
-  await usersRepository.update(user.id, { scheduleFilters: filters });
+  await database.users.update(user.id, { scheduleFilters: filters });
 
   await show(ctx, "edit", settingsScreen({ ...user, scheduleFilters: filters }));
   await ctx.answerCallbackQuery();
@@ -215,7 +215,7 @@ feature.callbackQuery(toggleLearnCallback.filter(), async (ctx) => {
 
   const filters = normalizeScheduleFilters(user.scheduleFilters);
   filters.eventTypes = { ...filters.eventTypes, learn: !filters.eventTypes.learn };
-  await usersRepository.update(user.id, { scheduleFilters: filters });
+  await database.users.update(user.id, { scheduleFilters: filters });
 
   await show(ctx, "edit", settingsScreen({ ...user, scheduleFilters: filters }));
   await ctx.answerCallbackQuery();
@@ -267,7 +267,7 @@ feature.callbackQuery(toggleDeadlinesCallback.filter(), async (ctx) => {
   if (!user) return;
 
   const deadlinesEnabled = !user.deadlinesEnabled;
-  await usersRepository.update(user.id, { deadlinesEnabled });
+  await database.users.update(user.id, { deadlinesEnabled });
 
   await show(ctx, "edit", deadlineRemindersScreen({ ...user, deadlinesEnabled }));
   await ctx.answerCallbackQuery();
@@ -294,7 +294,7 @@ feature.callbackQuery(toggleThresholdCallback.filter(), async (ctx) => {
     ? user.thresholds.filter((t) => t !== threshold)
     : [...user.thresholds, threshold].sort((a, b) => durationToMs(a) - durationToMs(b));
 
-  await usersRepository.update(user.id, { thresholds });
+  await database.users.update(user.id, { thresholds });
 
   await show(ctx, "edit", deadlineRemindersScreen({ ...user, thresholds }));
   await ctx.answerCallbackQuery();
@@ -363,7 +363,7 @@ feature.callbackQuery(setClassReminderCallback.filter(), async (ctx) => {
   if (!user) return;
 
   if (offset === "off") {
-    await usersRepository.update(user.id, { scheduleEnabled: false });
+    await database.users.update(user.id, { scheduleEnabled: false });
     await show(ctx, "edit", classRemindersScreen({ ...user, scheduleEnabled: false }));
     await ctx.answerCallbackQuery();
 
@@ -383,7 +383,7 @@ feature.callbackQuery(setClassReminderCallback.filter(), async (ctx) => {
   }
 
   const patch = { scheduleEnabled: true, scheduleReminderOffset: offset };
-  await usersRepository.update(user.id, patch);
+  await database.users.update(user.id, patch);
 
   await show(ctx, "edit", classRemindersScreen({ ...user, ...patch }));
   await ctx.answerCallbackQuery();
@@ -429,14 +429,14 @@ feature.on("message:text", async (ctx, next) => {
   }
 
   ctx.session.awaitingClassReminderMinutes = false;
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     return;
   }
 
   const patch = { scheduleEnabled: true, scheduleReminderOffset: `PT${minutes}M` };
-  await usersRepository.update(user.id, patch);
+  await database.users.update(user.id, patch);
 
   const screen = classRemindersScreen({ ...user, ...patch });
 
@@ -497,7 +497,7 @@ feature.callbackQuery(toggleDigestCallback.filter(), async (ctx) => {
   }
 
   const digestEnabled = !user.digestEnabled;
-  await usersRepository.update(user.id, { digestEnabled });
+  await database.users.update(user.id, { digestEnabled });
 
   await show(ctx, "edit", digestScreen({ ...user, digestEnabled }));
   await ctx.answerCallbackQuery();
@@ -515,7 +515,7 @@ feature.callbackQuery(toggleDigestWeekdayCallback.filter(), async (ctx) => {
     weekdays.includes(day) ? weekdays.filter((weekday) => weekday !== day) : [...weekdays, day],
   );
 
-  await usersRepository.update(user.id, { digestWeekdays });
+  await database.users.update(user.id, { digestWeekdays });
 
   await show(ctx, "edit", digestScreen({ ...user, digestWeekdays }));
   await ctx.answerCallbackQuery();
@@ -556,13 +556,13 @@ feature.on("message:text", async (ctx, next) => {
   }
 
   ctx.session.awaitingDigestTime = false;
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     return;
   }
 
-  await usersRepository.update(user.id, { digestTime });
+  await database.users.update(user.id, { digestTime });
 
   const screen = digestScreen({ ...user, digestTime });
   const text = `${m.digest_time_saved({ time: bold(digestTime) })}\n\n${screen.text}`;
@@ -629,7 +629,7 @@ feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
     return;
   }
 
-  await usersRepository.remove(user.id);
+  await database.users.remove(user.id);
   resetPrompts(ctx);
 
   await ctx.editMessageText(m.account_deleted());

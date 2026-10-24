@@ -1,7 +1,6 @@
 import { Composer, InlineKeyboard } from "grammy";
 import type { Context } from "../context";
-import * as myDuRepository from "../../db/repositories/my-du";
-import * as usersRepository from "../../db/repositories/users";
+import { database } from "../../db";
 import { m } from "../../library/i18n/messages.js";
 import { bold } from "../../library/telegram-html";
 import { settingLabel, shownHidden } from "../keyboards/labels";
@@ -23,7 +22,7 @@ export const composer = new Composer<Context>();
 const feature = composer.chatType("private");
 
 async function getUserCourses(userId: number): Promise<string[]> {
-  const items = await myDuRepository.findSchedule(userId);
+  const items = await database.myDu.findSchedule(userId);
   const names = items.map((i) => i.courseName).filter(Boolean);
 
   return Array.from(new Set(names)).sort();
@@ -78,7 +77,7 @@ function buildCourseMessage(course: string) {
 
 async function getCourseContext(ctx: Context) {
   if (!ctx.from) return null;
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user?.hasSchedule) return null;
   const courses = await getUserCourses(user.id);
@@ -105,7 +104,7 @@ feature.command("courses", async (ctx) => {
     return;
   }
 
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     await ctx.reply(m.not_registered());
@@ -141,7 +140,7 @@ feature.command("courses", async (ctx) => {
 });
 
 feature.callbackQuery(coursesCallback.filter(), async (ctx) => {
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     await ctx.answerCallbackQuery(m.not_registered_short());
@@ -179,7 +178,7 @@ feature.callbackQuery(coursesCallback.filter(), async (ctx) => {
 feature.callbackQuery(toggleCourseCallback.filter(), async (ctx) => {
   const { idx } = toggleCourseCallback.unpack(ctx.callbackQuery.data);
 
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     await ctx.answerCallbackQuery(m.not_registered_short());
@@ -217,7 +216,7 @@ feature.callbackQuery(toggleCourseCallback.filter(), async (ctx) => {
     ? user.excludedCourses.filter((c) => c !== course)
     : [...user.excludedCourses, course];
 
-  await usersRepository.update(user.id, { excludedCourses: updated });
+  await database.users.update(user.id, { excludedCourses: updated });
 
   const filters = normalizeScheduleFilters(user.scheduleFilters);
   await ctx.editMessageText(buildCourseMessage(course), {
@@ -276,7 +275,7 @@ feature.callbackQuery(toggleCourseScheduleFilterCallback.filter(), async (ctx) =
   const courseFilters = filters.courses?.[course] ?? { ...DEFAULT_COURSE_SCHEDULE_FILTERS };
   const updated = { ...courseFilters, [key]: !courseFilters[key] };
   filters.courses = { ...filters.courses, [course]: updated };
-  await usersRepository.update(context.user.id, { scheduleFilters: filters });
+  await database.users.update(context.user.id, { scheduleFilters: filters });
   await ctx.editMessageReplyMarkup({
     reply_markup: buildCourseKeyboard(
       index,

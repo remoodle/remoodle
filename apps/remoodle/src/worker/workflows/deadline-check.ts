@@ -1,4 +1,4 @@
-import * as usersRepository from "../../db/repositories/users";
+import { database } from "../../db";
 import { hatchet } from "../hatchet-client";
 import { calendarFetchUser } from "./calendar-fetch-user";
 
@@ -19,7 +19,7 @@ deadlineCheck.task({
   name: "check-deadlines",
   executionTimeout: "1m",
   fn: async (_, ctx) => {
-    const allUsers = await usersRepository.listDeadlineRecipients();
+    const allUsers = await database.users.listDeadlineRecipients();
 
     const childTasks = allUsers.map((user) => ({
       workflow: calendarFetchUser.name,

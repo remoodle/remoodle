@@ -2,8 +2,7 @@ import { Composer, InputFile, InlineKeyboard } from "grammy";
 import type { Context } from "../context";
 import { config } from "../../config";
 import { m } from "../../library/i18n/messages.js";
-import * as myDuRepository from "../../db/repositories/my-du";
-import * as usersRepository from "../../db/repositories/users";
+import { database } from "../../db";
 import {
   applyScheduleFilters,
   DEFAULT_SCHEDULE_FILTERS,
@@ -44,7 +43,7 @@ async function fetchScheduleMessage(
   scheduleFilters: typeof DEFAULT_SCHEDULE_FILTERS,
   view: ScheduleView,
 ): Promise<{ message: string; rooms: string[]; hasThisWeek: boolean }> {
-  const rawItems = await myDuRepository.findSchedule(userId);
+  const rawItems = await database.myDu.findSchedule(userId);
   const now = new Date();
   const items = toWeeklySchedule(rawItems, now, view === "next_week" ? 1 : 0);
   const filters = normalizeScheduleFilters(scheduleFilters);
@@ -119,7 +118,7 @@ async function replyWithScheduleView(ctx: Context, view: ScheduleView) {
     return;
   }
 
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     await ctx.reply(m.not_registered());
@@ -165,7 +164,7 @@ feature.command("schedule", async (ctx) => {
 });
 
 feature.callbackQuery(scheduleCallback.filter(), async (ctx) => {
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     await ctx.answerCallbackQuery(m.not_registered_short());
@@ -216,7 +215,7 @@ feature.callbackQuery(scheduleViewCallback.filter(), async (ctx) => {
     return;
   }
 
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await database.users.findByTelegramId(ctx.from.id);
 
   if (!user) {
     await ctx.answerCallbackQuery(m.not_registered_short());

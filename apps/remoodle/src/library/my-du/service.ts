@@ -1,5 +1,5 @@
 import { z } from "zod";
-import * as myDuRepository from "../../db/repositories/my-du";
+import { database } from "../../db";
 import type { ScheduleItem } from "../../library/schedule/items";
 import { config } from "../../config";
 import { decryptSecret, encryptSecret } from "../crypto";
@@ -87,7 +87,7 @@ function toSettings({ term, firstWeekStart }: MyDuPeriod) {
 export async function startLogin(userId: number) {
   const state = crypto.randomUUID();
   const expiresAt = new Date(Date.now() + LOGIN_TTL);
-  await myDuRepository.saveLoginRequest(userId, state, expiresAt);
+  await database.myDu.saveLoginRequest(userId, state, expiresAt);
 
   const url = new URL(
     "https://login.microsoftonline.com/158f15f3-83e0-4906-824c-69bdc50d9d61/oauth2/v2.0/authorize",
@@ -106,7 +106,7 @@ export async function startLogin(userId: number) {
 }
 
 export async function completeLogin(userId: number, callbackUrl: string, period: MyDuPeriod) {
-  const pending = await myDuRepository.findLoginRequest(userId);
+  const pending = await database.myDu.findLoginRequest(userId);
 
   if (!pending || pending.expiresAt < new Date()) {
     throw new UserFacingError("Your connection request expired. Start sign-in again.");
@@ -132,11 +132,11 @@ export async function completeLogin(userId: number, callbackUrl: string, period:
     );
   }
 
-  if (!(await myDuRepository.consumeLoginRequest(userId, pending.state))) {
+  if (!(await database.myDu.consumeLoginRequest(userId, pending.state))) {
     throw new UserFacingError("This connection request has already been used.");
   }
 
-  await myDuRepository.replaceConnection(
+  await database.myDu.replaceConnection(
     userId,
     encryptCredentials(credentials, userId),
     toSettings(period),
@@ -148,19 +148,19 @@ export async function completeLogin(userId: number, callbackUrl: string, period:
 
 // Switching periods keeps the credentials; classes from the previous period are dropped.
 export async function changePeriod(userId: number, period: MyDuPeriod) {
-  const row = await myDuRepository.findConnection(userId);
+  const row = await database.myDu.findConnection(userId);
 
   // Without a working login the old classes would be cleared with nothing to replace them.
   if (!row?.credentials) throw new UserFacingError("Reconnect My DU to change the period.");
 
-  await myDuRepository.updateSettings(userId, toSettings(period));
+  await database.myDu.updateSettings(userId, toSettings(period));
   await syncSchedule(userId);
 
   return readSchedule(userId);
 }
 
 export async function readSchedule(userId: number) {
-  const row = await myDuRepository.findConnection(userId);
+  const row = await database.myDu.findConnection(userId);
 
   return {
     connection: row
@@ -178,7 +178,7 @@ export async function readSchedule(userId: number) {
 }
 
 export async function requestSync(userId: number) {
-  const row = await myDuRepository.findConnection(userId);
+  const row = await database.myDu.findConnection(userId);
 
   if (!row?.credentials) throw new UserFacingError("Connect My DU first.");
 
@@ -192,10 +192,10 @@ export async function requestSync(userId: number) {
 export async function syncSchedule(userId: number) {
   const now = Date.now();
   const leaseUntil = now + SYNC_LEASE;
-  const row = await myDuRepository.acquireSyncLease(userId, now, leaseUntil);
+  const row = await database.myDu.acquireSyncLease(userId, now, leaseUntil);
 
   if (!row?.credentials) {
-    if (row) await myDuRepository.releaseSyncLease(userId, leaseUntil);
+    if (row) await database.myDu.releaseSyncLease(userId, leaseUntil);
 
     return;
   }
@@ -204,8 +204,8 @@ export async function syncSchedule(userId: number) {
     const get = createMyDuClient(
       decryptCredentials(row.credentials, userId),
       (rotated) =>
-        myDuRepository.updateCredentials(userId, leaseUntil, encryptCredentials(rotated, userId)),
-      () => myDuRepository.updateCredentials(userId, leaseUntil, null),
+        database.myDu.updateCredentials(userId, leaseUntil, encryptCredentials(rotated, userId)),
+      () => database.myDu.updateCredentials(userId, leaseUntil, null),
     );
 
     const setting = parseMyDuResponse(
@@ -231,7 +231,7 @@ export async function syncSchedule(userId: number) {
       events.push(...normalizeWeek(data, row, week));
     }
 
-    await myDuRepository.saveSchedule(userId, leaseUntil, events);
+    await database.myDu.saveSchedule(userId, leaseUntil, events);
     log.withMetadata({ userId, eventCount: events.length }).info("my du sync complete");
   } catch (error) {
     log
@@ -252,12 +252,12 @@ export async function syncSchedule(userId: number) {
           ? error.message
           : "Could not update your My DU schedule.";
 
-    await myDuRepository.saveSyncError(userId, leaseUntil, message.slice(0, 250));
+    await database.myDu.saveSyncError(userId, leaseUntil, message.slice(0, 250));
   } finally {
-    await myDuRepository.releaseSyncLease(userId, leaseUntil);
+    await database.myDu.releaseSyncLease(userId, leaseUntil);
   }
 }
 
 export function disconnect(userId: number) {
-  return myDuRepository.disconnect(userId);
+  return database.myDu.disconnect(userId);
 }
