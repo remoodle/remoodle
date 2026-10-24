@@ -148,6 +148,11 @@ export async function completeLogin(userId: number, callbackUrl: string, period:
 
 // Switching periods keeps the credentials; classes from the previous period are dropped.
 export async function changePeriod(userId: number, period: MyDuPeriod) {
+  const row = await myDuRepository.findConnection(userId);
+
+  // Without a working login the old classes would be cleared with nothing to replace them.
+  if (!row?.credentials) throw new UserFacingError("Reconnect My DU to change the period.");
+
   await myDuRepository.updateSettings(userId, toSettings(period));
   await syncSchedule(userId);
 

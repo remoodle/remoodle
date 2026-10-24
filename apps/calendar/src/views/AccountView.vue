@@ -2,6 +2,8 @@
 import { Icon } from "@iconify/vue";
 import { ref } from "vue";
 import { RouterLink, useRouter } from "vue-router";
+import MoodleConnection from "@/components/MoodleConnection.vue";
+import MyDuConnection from "@/components/MyDuConnection.vue";
 import { Button } from "@/components/ui/button";
 import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 import { useSessionQuery, useSignOut } from "@/lib/api/session";
@@ -50,33 +52,11 @@ async function signOut() {
     <main class="mx-auto max-w-3xl px-5 py-8 sm:px-8 sm:py-12">
       <div class="mb-10 space-y-2">
         <h1 class="text-2xl font-semibold tracking-tight">Settings</h1>
-        <p class="text-sm text-muted-foreground">Appearance and account.</p>
+        <p class="text-sm text-muted-foreground">Manage your schedule connections and account.</p>
       </div>
       <div class="divide-y">
-        <section
-          v-if="session"
-          class="flex flex-wrap items-center justify-between gap-4 pb-8"
-          aria-labelledby="connections-heading"
-        >
-          <div class="space-y-1.5">
-            <h2 id="connections-heading" class="text-base font-semibold">Connections</h2>
-            <p class="text-sm text-muted-foreground">
-              My DU and Moodle are connected and synced in the ReMoodle bot.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <Button as-child variant="outline"
-              ><a :href="session.links.myDu" target="_blank" rel="noopener noreferrer"
-                >My DU</a
-              ></Button
-            >
-            <Button as-child variant="outline"
-              ><a :href="session.links.moodle" target="_blank" rel="noopener noreferrer"
-                >Moodle</a
-              ></Button
-            >
-          </div>
-        </section>
+        <MyDuConnection class="pb-8" />
+        <MoodleConnection class="py-8" />
         <section
           class="flex items-center justify-between gap-4 py-8"
           aria-labelledby="appearance-heading"

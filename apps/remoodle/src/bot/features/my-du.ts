@@ -196,7 +196,7 @@ feature.callbackQuery(myDuSignInCallback.filter(), async (ctx) => {
   const period =
     setup?.step === "link"
       ? setup.period
-      : connection && isTerm(connection.term)
+      : connection
         ? { term: connection.term, firstWeekStart: connection.firstWeekStart }
         : undefined;
 

@@ -49,6 +49,10 @@ export async function connectMoodle(userId: number, input: string) {
   await usersRepository.update(userId, { moodleCalendarUrl: url });
 }
 
+export async function disconnectMoodle(userId: number) {
+  await usersRepository.update(userId, { moodleCalendarUrl: null });
+}
+
 export async function fetchDeadlineEvents(moodleCalendarUrl: string) {
   return moodleToDeadlineEvents(await fetchMoodleFeed(moodleCalendarUrl));
 }
