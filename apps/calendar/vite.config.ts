@@ -1,13 +1,20 @@
 import { fileURLToPath, URL } from "node:url";
-
-import { defineConfig } from "vite-plus";
-import vue from "@vitejs/plugin-vue";
-import vueDevTools from "vite-plugin-vue-devtools";
+import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import viteReact from "@vitejs/plugin-react";
+import { defineConfig } from "vite-plus";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueDevTools(), tailwindcss()],
+  plugins: [
+    // Dev and build both run the server in workerd, the same runtime as production. Unit tests
+    // cover pure modules only and run in Node; the plugin rejects Vitest's SSR environment.
+    !process.env.VITEST && cloudflare({ viteEnvironment: { name: "ssr" } }),
+    tailwindcss(),
+    tanstackStart(),
+    // Must come after the Start plugin.
+    viteReact(),
+  ],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -15,8 +22,7 @@ export default defineConfig({
       "@remoodle": fileURLToPath(new URL("../remoodle/src", import.meta.url)),
     },
   },
-  server: {
-    // Keeps the session cookie first-party in development: the browser only sees :5173.
-    proxy: { "/api": "http://localhost:3000" },
+  test: {
+    include: ["src/**/*.test.ts"],
   },
 });

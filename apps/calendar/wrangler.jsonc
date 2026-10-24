@@ -1,16 +1,18 @@
 /**
- * Static SPA only. All data and auth live in the remoodle API (VITE_API_URL).
- * https://developers.cloudflare.com/workers/static-assets/
+ * TanStack Start on Workers: SSR for public pages, server functions as the only path to the
+ * remoodle API. https://tanstack.com/start/latest/docs/framework/react/guide/hosting
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "calendar",
   "compatibility_date": "2025-09-06",
-  "assets": {
-    "directory": "./dist",
-    "not_found_handling": "single-page-application",
-  },
+  // Also fills `process.env` from `vars`, so server code reads config the runtime-neutral way.
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
   "preview_urls": true,
-  // The old full-stack worker ran a per-minute cron; an empty list removes it on deploy.
-  "triggers": { "crons": [] },
+  "vars": {
+    // Server-to-server origin of the remoodle API. `.dev.vars` points it at the local API.
+    "API_URL": "https://api.remoodle.app",
+  },
+  "observability": { "enabled": true },
 }

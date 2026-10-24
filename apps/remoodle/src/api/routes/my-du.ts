@@ -11,12 +11,12 @@ import {
   startLogin,
 } from "../../library/my-du/service";
 import type { SessionEnv } from "../context";
-import { browserRequest, requireSession } from "../middleware/session";
+import { privateResponse, requireSession } from "../middleware/session";
 import { jsonBody } from "../validator";
 
 // The web counterpart of the bot's /mydu screen; both call the same service.
 export const myDu = new Hono<SessionEnv>()
-  .use(browserRequest, requireSession)
+  .use(privateResponse, requireSession)
   .get("/", async (c) => c.json(await readSchedule(c.var.user.id), 200))
   .post("/start", async (c) => c.json(await startLogin(c.var.user.id), 200))
   .post(

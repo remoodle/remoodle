@@ -1,0 +1,265 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/hanken-grotesk";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Tokens come from DESIGN.md; `/design-system` renders every one of them. */
+:root {
+  --background: #fbfaf7;
+  --foreground: #24282c;
+  --card: #ffffff;
+  --card-foreground: #24282c;
+  --popover: #ffffff;
+  --popover-foreground: #24282c;
+  --primary: #126bbf;
+  --primary-active: #0d579c;
+  --primary-foreground: #ffffff;
+  /* The dark "night" button. */
+  --secondary: #24282c;
+  --secondary-foreground: #fbfaf7;
+  /* Mist: feature cards, pill tabs, the app sidebar. */
+  --muted: #eef2f7;
+  --muted-foreground: #5b626a;
+  --accent: rgb(36 40 44 / 6%);
+  --accent-foreground: #24282c;
+  --destructive: #b3261e;
+  --border: #e5e2db;
+  --input: #e5e2db;
+  --ring: #126bbf;
+  --chart-1: #126bbf;
+  --chart-2: #0f7a8a;
+  --chart-3: #a8560b;
+  --chart-4: #23864f;
+  --chart-5: #4c48c9;
+  --radius: 0.75rem;
+  --sidebar: #eef2f7;
+  --sidebar-foreground: #24282c;
+  --sidebar-primary: #126bbf;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgb(36 40 44 / 6%);
+  --sidebar-accent-foreground: #24282c;
+  --sidebar-border: rgb(36 40 44 / 8%);
+  --sidebar-ring: #126bbf;
+  /* The selected sidebar row: a sheet of paper on the mist. */
+  --sidebar-selected: #ffffff;
+  --scribble: #c9d3df;
+
+  /* Event calendars: an ink for text and a soft fill behind it. */
+  --event-lecture: #126bbf;
+  --event-lecture-soft: #e2edf9;
+  --event-online: #0f7a8a;
+  --event-online-soft: #d9f1f3;
+  --event-practice: #a8560b;
+  --event-practice-soft: #fbe9d3;
+  --event-assignment: #23864f;
+  --event-assignment-soft: #d9f4e2;
+  --event-quiz: #4c48c9;
+  --event-quiz-soft: #e7e6fb;
+  --event-attendance: #5b626a;
+  --event-attendance-soft: #e9ebee;
+  --success: #23864f;
+}
+
+/* Night scheme, derived from the logo's slate. */
+.dark {
+  --background: #1b1e21;
+  --foreground: #eef0f2;
+  --card: #24282c;
+  --card-foreground: #eef0f2;
+  --popover: #2a2f34;
+  --popover-foreground: #eef0f2;
+  --primary: #2f86d9;
+  --primary-active: #4795e0;
+  --primary-foreground: #ffffff;
+  --secondary: #eef0f2;
+  --secondary-foreground: #1b1e21;
+  --muted: #24282c;
+  --muted-foreground: #a1a8b0;
+  --accent: rgb(255 255 255 / 7%);
+  --accent-foreground: #eef0f2;
+  --destructive: #f2867e;
+  --border: rgb(255 255 255 / 9%);
+  --input: rgb(255 255 255 / 12%);
+  --ring: #5ba3eb;
+  --sidebar: #24282c;
+  --sidebar-foreground: #eef0f2;
+  --sidebar-primary: #2f86d9;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgb(255 255 255 / 6%);
+  --sidebar-accent-foreground: #eef0f2;
+  --sidebar-border: rgb(255 255 255 / 8%);
+  --sidebar-ring: #5ba3eb;
+  --sidebar-selected: #30353b;
+  --scribble: #3d454e;
+
+  --event-lecture: #8cc0f2;
+  --event-lecture-soft: rgb(47 134 217 / 22%);
+  --event-online: #7dd3dd;
+  --event-online-soft: rgb(15 122 138 / 30%);
+  --event-practice: #f2b878;
+  --event-practice-soft: rgb(168 86 11 / 28%);
+  --event-assignment: #86d7a6;
+  --event-assignment-soft: rgb(35 134 79 / 28%);
+  --event-quiz: #b4b2f5;
+  --event-quiz-soft: rgb(76 72 201 / 30%);
+  --event-attendance: #b8bec5;
+  --event-attendance-soft: rgb(161 168 176 / 18%);
+  --success: #6fcf97;
+}
+
+@theme inline {
+  --font-sans: "Hanken Grotesk Variable", system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-active: var(--primary-active);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-scribble: var(--scribble);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-selected: var(--sidebar-selected);
+  --color-event-lecture: var(--event-lecture);
+  --color-event-lecture-soft: var(--event-lecture-soft);
+  --color-event-online: var(--event-online);
+  --color-event-online-soft: var(--event-online-soft);
+  --color-event-practice: var(--event-practice);
+  --color-event-practice-soft: var(--event-practice-soft);
+  --color-event-assignment: var(--event-assignment);
+  --color-event-assignment-soft: var(--event-assignment-soft);
+  --color-event-quiz: var(--event-quiz);
+  --color-event-quiz-soft: var(--event-quiz-soft);
+  --color-event-attendance: var(--event-attendance);
+  --color-event-attendance-soft: var(--event-attendance-soft);
+
+  /* DESIGN.md radius scale → the classes the rhea primitives use. Pills are `rounded-full`. */
+  --radius-sm: 4px; /* accents */
+  --radius-md: 6px; /* calendar events, checkboxes */
+  --radius-lg: 8px; /* kbd, small controls */
+  --radius-xl: 8px; /* menu and sidebar items, tooltips */
+  --radius-2xl: 10px; /* inputs, selects, menus, alerts */
+  --radius-3xl: 14px; /* popovers, empty states */
+  --radius-4xl: 16px; /* cards, dialogs */
+}
+
+/* Hairline-first: panes and overlays share one soft shadow; nothing else is raised. */
+@theme {
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 1px 2px rgb(36 40 44 / 6%);
+  --shadow-md: 0 1px 3px rgb(36 40 44 / 10%), 0 6px 18px rgb(36 40 44 / 7%);
+  --shadow-lg: 0 1px 3px rgb(36 40 44 / 10%), 0 6px 18px rgb(36 40 44 / 7%);
+  --ease-out-soft: cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+@utility type-display {
+  font-size: clamp(44px, 5vw + 16px, 72px);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+@utility type-headline {
+  font-size: clamp(32px, 2.5vw + 16px, 44px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+@utility type-title {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+@utility type-lead {
+  font-size: 19px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+@utility type-wordmark {
+  font-weight: 700;
+  letter-spacing: -0.06em;
+}
+
+/* Mist cards carry paper grain; a pseudo-element can't be expressed as classes on the owner. */
+@utility grain {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .14 0 0 0 0 .16 0 0 0 0 .17 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  @variant dark {
+    &::after {
+      opacity: 0.18;
+      mix-blend-mode: screen;
+    }
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) rotate(var(--tilt, 0deg));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(var(--tilt, 0deg));
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans antialiased;
+    font-feature-settings: "ss01";
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

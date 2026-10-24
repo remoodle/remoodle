@@ -1,8 +1,6 @@
 import { honoLogLayer } from "@loglayer/hono";
 import { Hono } from "hono";
-import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
-import { config } from "../config";
 import { UserFacingError } from "../library/errors";
 import { logger } from "../library/logger";
 import type { AppEnv } from "./context";
@@ -11,11 +9,10 @@ import { icalFeed, icalToken } from "./routes/ical";
 import { moodle } from "./routes/moodle";
 import { myDu } from "./routes/my-du";
 
-// The web calendar is the only browser client; the bot and worker use the same
-// services directly instead of calling this API over HTTP.
+// The web calendar's server is the only client and calls this API server-to-server with a bearer
+// token. The bot and worker use the same services directly instead of calling it over HTTP.
 const app = new Hono<AppEnv>()
   .use(honoLogLayer({ instance: logger.child().withContext({ module: "api" }) }))
-  .use("/api/*", cors({ origin: config.calendar.url, credentials: true }))
   .get("/health", (c) => c.json({ ok: true }, 200));
 
 const routes = app

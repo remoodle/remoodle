@@ -2,12 +2,12 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { connectMoodle, disconnectMoodle, readMoodle } from "../../library/moodle/service";
 import type { SessionEnv } from "../context";
-import { browserRequest, requireSession } from "../middleware/session";
+import { privateResponse, requireSession } from "../middleware/session";
 import { jsonBody } from "../validator";
 
 // The web counterpart of the bot's Moodle URL prompt; both call the same service.
 export const moodle = new Hono<SessionEnv>()
-  .use(browserRequest, requireSession)
+  .use(privateResponse, requireSession)
   .get("/", async (c) => c.json(await readMoodle(c.var.user.moodleCalendarUrl), 200))
   .put(
     "/",
