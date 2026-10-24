@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0](https://github.com/remoodle/heresy/compare/remoodle-v0.22.0...remoodle-v1.0.0) (2026-10-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **calendar:** the API no longer reads or sets the `remoodle_session` cookie. Deploy the calendar and API together; existing browser sessions must sign in again.
+
+### Features
+
+* **bot:** consistent texts, fewer emojis, and a flat settings list ([#581](https://github.com/remoodle/heresy/issues/581)) ([cad55c0](https://github.com/remoodle/heresy/commit/cad55c03cbeca0b777bc4d4562d7ff0c11d67921))
+* **calendar:** rewrite the web calendar on TanStack Start ([#583](https://github.com/remoodle/heresy/issues/583)) ([5f28eea](https://github.com/remoodle/heresy/commit/5f28eea3f57127370ce3e2d8bac2bae057d6f02d))
+
 ## [0.22.0](https://github.com/remoodle/heresy/compare/remoodle-v0.21.0...remoodle-v0.22.0) (2026-10-24)
 
 
