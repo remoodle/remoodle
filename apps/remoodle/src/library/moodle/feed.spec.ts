@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vite-plus/test";
 import { parseMoodleFeed, validateMoodleUrl } from "./feed";
-import { filterMoodle, moodleToIcalEvents } from "../../shared/moodle";
-import { generateCalendarEventsIcal } from "../../shared/ical";
+import { filterMoodle, moodleToIcalEvents } from "./events";
+import { generateCalendarEventsIcal } from "../../library/ical";
 
 const feed = (event: string, uid = "test") =>
   "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:" +

@@ -1,4 +1,5 @@
-import type { ScheduleItem } from "./schedule";
+// Browser-safe: the calendar app imports this module through its `@remoodle` alias.
+import type { ScheduleItem } from "./schedule/items";
 
 // Use Kazakhstan's fixed UTC+5 offset. Some browsers still ship timezone data
 // from before the 2024 change and resolve Asia/Almaty as UTC+6.

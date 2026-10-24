@@ -1,4 +1,4 @@
-import type { MoodleEvent } from "../../shared/moodle";
+import type { MoodleEvent } from "./events";
 
 export type DeadlineEvent = {
   uid: string;

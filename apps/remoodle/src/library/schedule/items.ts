@@ -1,4 +1,6 @@
+// Browser-safe: the calendar app imports this module through its `@remoodle` alias.
 import { z } from "zod";
+import type { MoodleFilters } from "../moodle/events";
 
 export type ScheduleItem = {
   id: string;
@@ -15,7 +17,7 @@ export type ScheduleItem = {
 
 export type ScheduleFilter = {
   classes?: boolean;
-  moodle?: import("./moodle").MoodleFilters;
+  moodle?: MoodleFilters;
   courses: Record<string, CourseScheduleFilter>;
   ical?: { combineAdjacentPairs?: boolean; startDate?: string; endDate?: string };
 };

@@ -10,15 +10,14 @@ import { UserFacingError } from "../../library/errors";
 import { connectMoodle, fetchDeadlineEvents } from "../../library/moodle/service";
 import { START_PAYLOADS } from "../../library/bot-links";
 import { bold } from "../../library/telegram-html";
+import { applyScheduleFilters, normalizeScheduleFilters } from "../../library/schedule/filters";
+import { buildClassBreakdown } from "../../library/schedule/messages";
 import {
-  applyScheduleFilters,
-  buildClassBreakdown,
   getDayName,
   getScheduleForDay,
   mergeAdjacentScheduleItems,
-  normalizeScheduleFilters,
   toWeeklySchedule,
-} from "../../library/schedule";
+} from "../../library/schedule/week";
 import { m } from "../../library/i18n/messages.js";
 import {
   aboutCallback,

@@ -1,6 +1,6 @@
 import { expect, test } from "vite-plus/test";
 import { moodleToDeadlineEvents } from "./deadlines";
-import type { MoodleEvent } from "../../shared/moodle";
+import type { MoodleEvent } from "./events";
 
 const deadline: MoodleEvent = {
   id: "moodle-232745@lms.astanait.edu.kz",

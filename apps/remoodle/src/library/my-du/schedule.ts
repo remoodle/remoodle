@@ -1,5 +1,5 @@
 import { Temporal } from "temporal-polyfill";
-import type { ScheduleItem } from "../../shared/schedule";
+import type { ScheduleItem } from "../../library/schedule/items";
 import { parseMyDuResponse, scheduleWeekSchema } from "./schemas";
 
 type ScheduleSettings = { studyYear: number; term: number; firstWeekStart: string };

@@ -1,5 +1,5 @@
 import { and, eq, isNotNull, isNull, lt, or } from "drizzle-orm";
-import type { ScheduleItem } from "../../shared/schedule";
+import type { ScheduleItem } from "../../library/schedule/items";
 import { db } from "../index";
 import { myDuConnections, myDuLoginRequests } from "../schema";
 

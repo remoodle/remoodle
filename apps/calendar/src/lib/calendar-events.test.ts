@@ -1,6 +1,6 @@
 import { Temporal } from "temporal-polyfill";
 import { describe, expect, test } from "vite-plus/test";
-import type { MoodleEvent } from "@remoodle/shared/moodle";
+import type { MoodleEvent } from "@remoodle/library/moodle/events";
 import { layoutDay } from "./calendar-dates";
 import { moodleEvents, scheduleEvents } from "./calendar-events";
 

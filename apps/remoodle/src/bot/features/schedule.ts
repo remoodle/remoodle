@@ -5,20 +5,24 @@ import { m } from "../../library/i18n/messages.js";
 import * as myDuRepository from "../../db/repositories/my-du";
 import * as usersRepository from "../../db/repositories/users";
 import {
+  applyScheduleFilters,
+  DEFAULT_SCHEDULE_FILTERS,
+  normalizeScheduleFilters,
+} from "../../library/schedule/filters";
+import {
   buildTodayScheduleMessage,
   buildWeeklyScheduleMessage,
   buildNextWeekScheduleMessage,
-  applyScheduleFilters,
-  DEFAULT_SCHEDULE_FILTERS,
+} from "../../library/schedule/messages";
+import {
   getScheduleForDay,
   getScheduleForDays,
   getDayName,
   getRemainingDaysOfWeek,
   hasRemainingClassesThisWeek,
   mergeAdjacentScheduleItems,
-  normalizeScheduleFilters,
   toWeeklySchedule,
-} from "../../library/schedule";
+} from "../../library/schedule/week";
 import { getUniqueRooms, sanitizeRoomFilename } from "../../library/rooms";
 import {
   scheduleCallback,
@@ -56,7 +60,7 @@ async function fetchScheduleMessage(
     view === "week"
       ? buildWeeklyScheduleMessage(merged, now)
       : view === "next_week"
-        ? buildNextWeekScheduleMessage(merged, now)
+        ? buildNextWeekScheduleMessage(merged)
         : buildTodayScheduleMessage(merged, now);
 
   const visibleItems =

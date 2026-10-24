@@ -8,9 +8,9 @@ import { AVAILABLE_THRESHOLDS } from "../../library/deadline-reminders";
 import {
   isValidDigestTime,
   normalizeDigestWeekdays,
-  normalizeScheduleFilters,
   DIGEST_WEEKDAYS,
-} from "../../library/schedule";
+} from "../../library/schedule/digest";
+import { normalizeScheduleFilters } from "../../library/schedule/filters";
 import { m } from "../../library/i18n/messages.js";
 import { bold, code } from "../../library/telegram-html";
 import {

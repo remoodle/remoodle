@@ -1,6 +1,7 @@
 import { integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import type { MyDuTerm } from "../library/my-du/schemas";
-import type { ScheduleFilter, ScheduleItem } from "../shared/schedule";
+import { DEFAULT_SCHEDULE_FILTERS, type ScheduleFilters } from "../library/schedule/filters";
+import type { ScheduleFilter, ScheduleItem } from "../library/schedule/items";
 
 export const users = sqliteTable("users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -20,21 +21,9 @@ export const users = sqliteTable("users", {
     .notNull()
     .default([]),
   scheduleFilters: text("schedule_filters", { mode: "json" })
-    .$type<{
-      eventTypes: { lecture: boolean; practice: boolean; learn: boolean };
-      eventFormats: { online: boolean; offline: boolean };
-      courses?: Record<
-        string,
-        { lecture: boolean; practice: boolean; online: boolean; offline: boolean }
-      >;
-      combineAdjacentPairs?: boolean;
-    }>()
+    .$type<ScheduleFilters>()
     .notNull()
-    .default({
-      eventTypes: { lecture: true, practice: true, learn: true },
-      eventFormats: { online: true, offline: true },
-      combineAdjacentPairs: true,
-    }),
+    .default(DEFAULT_SCHEDULE_FILTERS),
   scheduleReminderOffset: text("schedule_reminder_offset").notNull().default("PT30M"),
   digestEnabled: integer("digest_enabled", { mode: "boolean" }).notNull().default(false),
   digestTime: text("digest_time").notNull().default("08:00"),

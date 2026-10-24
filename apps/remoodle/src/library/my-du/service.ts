@@ -1,6 +1,6 @@
 import { z } from "zod";
 import * as myDuRepository from "../../db/repositories/my-du";
-import type { ScheduleItem } from "../../shared/schedule";
+import type { ScheduleItem } from "../../library/schedule/items";
 import { config } from "../../config";
 import { decryptSecret, encryptSecret } from "../crypto";
 import { UserFacingError } from "../errors";

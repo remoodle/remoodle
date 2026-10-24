@@ -1,7 +1,7 @@
 import ICAL from "ical.js";
 import { Temporal } from "temporal-polyfill";
-import type { MoodleEvent } from "../../shared/moodle";
-import { CALENDAR_TIME_ZONE } from "../../shared/ical";
+import type { MoodleEvent } from "./events";
+import { CALENDAR_TIME_ZONE } from "../../library/ical";
 
 export function validateMoodleUrl(input: string) {
   if (input.length > 4096) throw new Error("Paste a Moodle calendar URL.");
