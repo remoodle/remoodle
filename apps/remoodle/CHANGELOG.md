@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.21.0](https://github.com/remoodle/heresy/compare/remoodle-v0.20.0...remoodle-v0.21.0) (2026-10-24)
+
+
+### Features
+
+* move calendar backend into remoodle ([#576](https://github.com/remoodle/heresy/issues/576)) ([146e703](https://github.com/remoodle/heresy/commit/146e70322cbeb3e1e859a882e98e18466af941d7))
+* update bot calendar integration ([09e42df](https://github.com/remoodle/heresy/commit/09e42df004b88312cb29c597eaf967088c78b892))
+* update bot filters ([0141676](https://github.com/remoodle/heresy/commit/0141676408f0264eae7a585df61c84be52bdfab3))
+* update connection flow ([8122a5d](https://github.com/remoodle/heresy/commit/8122a5da9ea374d85f0b1962d58bac513002daee))
+* update logger ([8899de0](https://github.com/remoodle/heresy/commit/8899de06ed323d35a937e95b038315f5f72997e0))
+* update logging ([c35ae1b](https://github.com/remoodle/heresy/commit/c35ae1b8ba2651303ae997023ceafe33c8096309))
+
+
+### Bug Fixes
+
+* dont notify on empty events ([65bc252](https://github.com/remoodle/heresy/commit/65bc2527eb5b737c23a228360f7550d582f7a9df))
+* merge adjacent pairs in digest and reminders ([4e1dbeb](https://github.com/remoodle/heresy/commit/4e1dbeb0f71f5ea48184fa01b9226be5113c423d))
+
+
+### Miscellaneous Chores
+
+* install and use anti-slop ([fd423e5](https://github.com/remoodle/heresy/commit/fd423e53106e6d96e606a6abeefbe7dcde1d5b0c))
+
 ## [0.20.0](https://github.com/remoodle/heresy/compare/remoodle-v0.19.3...remoodle-v0.20.0) (2026-09-10)
 
 
