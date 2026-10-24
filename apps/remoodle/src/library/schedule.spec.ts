@@ -164,11 +164,7 @@ describe("weekly schedule views", () => {
   });
 
   test("this week message does not include earlier days", () => {
-    const message = buildWeeklyScheduleMessage(
-      weeklyItems,
-      new Date("2026-04-11T10:00:00+05:00"),
-      "CSE-2507M",
-    );
+    const message = buildWeeklyScheduleMessage(weeklyItems, new Date("2026-04-11T10:00:00+05:00"));
 
     expect(message).toContain("<b>This week</b>");
     expect(message).toContain("No more classes this week.");
@@ -181,7 +177,6 @@ describe("weekly schedule views", () => {
     const message = buildNextWeekScheduleMessage(
       weeklyItems,
       new Date("2026-04-11T10:00:00+05:00"),
-      "CSE-2507M",
     );
 
     expect(message).toContain("<b>Next week</b>");

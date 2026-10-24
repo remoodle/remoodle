@@ -27,6 +27,8 @@ export async function findById(id: number) {
   return user;
 }
 
+export type UserWithSchedule = NonNullable<Awaited<ReturnType<typeof findById>>>;
+
 export async function findByTelegramId(telegramId: number) {
   const [user] = await selectUsers().where(eq(users.telegramId, telegramId)).limit(1);
 

@@ -398,41 +398,7 @@ export function getScheduleForDay(
     .sort((a, b) => extractTime(a.start).localeCompare(extractTime(b.start)));
 }
 
-export function buildScheduleMessage(
-  items: CalendarScheduleItem[],
-  date: Date,
-  group: string,
-): string {
-  const dayName = getDayName(date);
-  const dayItems = getScheduleForDay(items, dayName);
-
-  const dateStr = date.toLocaleDateString("en-GB", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    timeZone: "Asia/Almaty",
-  });
-
-  const parts: string[] = [`${bold(m.schedule_header({ group }))}\n${dateStr}`, ""];
-
-  if (dayItems.length === 0) {
-    parts.push(m.no_classes());
-
-    return parts.join("\n");
-  }
-
-  for (const item of dayItems) {
-    parts.push(formatScheduleItem(item), "");
-  }
-
-  return parts.join("\n").trim();
-}
-
-export function buildTodayScheduleMessage(
-  items: CalendarScheduleItem[],
-  date: Date,
-  group: string,
-): string {
+export function buildTodayScheduleMessage(items: CalendarScheduleItem[], date: Date): string {
   const dayName = getDayName(date);
   const dayItems = getScheduleForDay(items, dayName);
 
@@ -444,10 +410,9 @@ export function buildTodayScheduleMessage(
   });
 
   const parts: string[] = [
-    bold(m.schedule_header({ group })),
+    bold(m.schedule_header()),
     "",
-    m.schedule_today_label({ date: dateStr }),
-    "",
+    bold(m.schedule_today_label({ date: dateStr })),
   ];
 
   if (dayItems.length === 0) {
@@ -463,11 +428,7 @@ export function buildTodayScheduleMessage(
   return parts.join("\n").trim();
 }
 
-export function buildWeeklyScheduleMessage(
-  items: CalendarScheduleItem[],
-  date: Date,
-  group: string,
-): string {
+export function buildWeeklyScheduleMessage(items: CalendarScheduleItem[], date: Date): string {
   const orderedDays = getRemainingDaysOfWeek(date);
 
   const sections: string[] = [];
@@ -488,7 +449,7 @@ export function buildWeeklyScheduleMessage(
     sections.push(lines.join("\n"));
   }
 
-  const header = `${bold(m.schedule_header({ group }))}\n\n${bold(m.schedule_this_week())}`;
+  const header = `${bold(m.schedule_header())}\n\n${bold(m.schedule_this_week())}`;
 
   if (sections.length === 0) {
     return `${header}\n${m.no_classes_this_week()}`;
@@ -497,11 +458,7 @@ export function buildWeeklyScheduleMessage(
   return `${header}\n${sections.join("\n\n")}`;
 }
 
-export function buildNextWeekScheduleMessage(
-  items: CalendarScheduleItem[],
-  _date: Date,
-  group: string,
-): string {
+export function buildNextWeekScheduleMessage(items: CalendarScheduleItem[], _date: Date): string {
   const sections: string[] = [];
 
   for (const dayName of WEEK_DAY_ORDER) {
@@ -520,7 +477,7 @@ export function buildNextWeekScheduleMessage(
     sections.push(lines.join("\n"));
   }
 
-  const header = `${bold(m.schedule_header({ group }))}\n\n${bold(m.schedule_next_week())}`;
+  const header = `${bold(m.schedule_header())}\n\n${bold(m.schedule_next_week())}`;
 
   if (sections.length === 0) {
     return `${header}\n${m.no_classes_next_week()}`;

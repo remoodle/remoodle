@@ -8,7 +8,14 @@ export const settingsCallback = createCallbackData("settings", {});
 
 export const deadlinesSettingsCallback = createCallbackData("deadlines_settings", {});
 
-export const scheduleSettingsCallback = createCallbackData("schedule_settings", {});
+export const classRemindersCallback = createCallbackData("class_reminders", {});
+
+// `offset` is an ISO duration, or "off" to disable class reminders.
+export const setClassReminderCallback = createCallbackData("set_class_reminder", {
+  offset: String,
+});
+
+export const customClassReminderCallback = createCallbackData("custom_class_reminder", {});
 
 export const digestSettingsCallback = createCallbackData("digest_settings", {});
 
@@ -17,8 +24,6 @@ export const toggleThresholdCallback = createCallbackData("toggle_threshold", {
 });
 
 export const toggleDeadlinesCallback = createCallbackData("toggle_deadlines", {});
-
-export const toggleScheduleCallback = createCallbackData("toggle_schedule", {});
 
 export const deadlinesCallback = createCallbackData("deadlines", {});
 
@@ -57,9 +62,7 @@ export const toggleCourseScheduleFilterCallback = createCallbackData("toggle_cou
   key: String,
 });
 
-export const toggleScheduleTypeCallback = createCallbackData("toggle_sched_type", { key: String });
-
-export const toggleScheduleFormatCallback = createCallbackData("toggle_sched_fmt", { key: String });
+export const toggleLearnCallback = createCallbackData("toggle_learn", {});
 
 export const toggleScheduleMergeCallback = createCallbackData("toggle_sched_merge", {});
 
@@ -70,8 +73,6 @@ export const setDigestTimeCallback = createCallbackData("set_digest_time", {});
 export const toggleDigestWeekdayCallback = createCallbackData("toggle_digest_day", {
   day: String,
 });
-
-export const disableDigestDaysCallback = createCallbackData("disable_digest_days", {});
 
 export const accountCallback = createCallbackData("account", {});
 
@@ -84,5 +85,3 @@ export const confirmDeleteAccountCallback = createCallbackData("confirm_delete_a
 export const roomPhotoCallback = createCallbackData("room_photo", { room: String });
 
 export const closeMessageCallback = createCallbackData("close_msg", {});
-
-export const setScheduleReminderCallback = createCallbackData("set_sched_reminder", {});

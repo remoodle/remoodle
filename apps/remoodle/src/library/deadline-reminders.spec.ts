@@ -1,10 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vite-plus/test";
 import type { DeadlineEvent } from "./moodle/deadlines";
-import {
-  buildReminderMessage,
-  buildThresholdsMessage,
-  trackDeadlineReminders,
-} from "./deadline-reminders";
+import { buildReminderMessage, trackDeadlineReminders } from "./deadline-reminders";
 
 beforeEach(() => {
   vi.stubEnv("TZ", "UTC");
@@ -73,7 +69,7 @@ describe("deadline reminders", () => {
     expect(reminders).toStrictEqual([]);
   });
 
-  test("formats grouped reminder messages", () => {
+  test("formats reminder messages in due order", () => {
     const events: DeadlineEvent[] = [
       {
         uid: "event-1",
@@ -102,27 +98,19 @@ describe("deadline reminders", () => {
     ];
 
     expect(buildReminderMessage(events, reminders)).toMatchInlineSnapshot(`
-      "🔔 Upcoming deadlines 🔔
+      "<b>🔔 Deadline reminder</b>
 
-      🗓 Research Methods and Tools
-        • Assignment 1: <b>11:00:00</b>, Wed, Apr 8, 2026, 23:00
-        • Assignment 2: <b>13:00:00</b>, Thu, Apr 9, 2026, 01:00
+      <b>Case Study Presentation</b>
+      Software Development Case Study
+      Wed, Apr 8, 13:30 · <b>1 hour, 30 min</b> left
 
-      🗓 Software Development Case Study
-        • Case Study Presentation: <b>01:30:00</b>, Wed, Apr 8, 2026, 13:30"
+      <b>Assignment 1</b>
+      Research Methods and Tools
+      Wed, Apr 8, 23:00 · <b>11 hours</b> left
+
+      <b>Assignment 2</b>
+      Research Methods and Tools
+      Thu, Apr 9, 01:00 · <b>13 hours</b> left"
     `);
-  });
-
-  test("formats thresholds in ascending order", () => {
-    expect(buildThresholdsMessage(["P1D", "PT30M", "PT6H"])).toMatchInlineSnapshot(`
-        "<b>Deadline reminder thresholds</b>
-
-        Active:
-          • 30 minutes
-          • 6 hours
-          • a day
-
-        Toggle thresholds below:"
-      `);
   });
 });

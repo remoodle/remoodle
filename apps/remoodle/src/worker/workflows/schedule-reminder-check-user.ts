@@ -138,10 +138,10 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
     const roomRows: { text: string; callback_data: string }[][] = [];
     const roomEntries = Array.from(seenRooms);
 
-    for (let i = 0; i < roomEntries.length; i += 3) {
+    for (let i = 0; i < roomEntries.length; i += 2) {
       roomRows.push(
-        roomEntries.slice(i, i + 3).map((code) => ({
-          text: `📍 ${code}`,
+        roomEntries.slice(i, i + 2).map((code) => ({
+          text: m.ui_room_map({ room: code }),
           callback_data: `room_photo:${code}`,
         })),
       );
