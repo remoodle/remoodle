@@ -13,6 +13,6 @@
   "devDependencies": {
     "oxc-minify": "catalog:",
     "vitepress": "catalog:",
-    "wrangler": "^4"
+    "wrangler": "catalog:"
   }
 }
