@@ -42,6 +42,14 @@ const term = shallowRef<MyDuPeriodInput["term"]>(1);
 
 const firstWeekStart = shallowRef("");
 
+// A new sign-in request makes any pasted address stale.
+watch(
+  () => props.signInUrl,
+  () => {
+    callbackUrl.value = "";
+  },
+);
+
 watch(open, (isOpen) => {
   callbackUrl.value = "";
 
@@ -60,8 +68,8 @@ function submit() {
     return;
   }
 
+  // Kept after submitting: if My DU was unreachable, the same link can be sent again.
   emit("connect", { ...period, callbackUrl: callbackUrl.value });
-  callbackUrl.value = "";
 }
 </script>
 

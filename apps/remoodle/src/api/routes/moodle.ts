@@ -15,12 +15,7 @@ export const moodle = new Hono<SessionEnv>()
       z.object({ url: z.string().trim().min(1).max(4096) }),
       "Paste your Moodle calendar URL.",
     ),
-    async (c) => {
-      const { url } = c.req.valid("json");
-      await connectMoodle(c.var.user.id, url);
-
-      return c.json(await readMoodle(url), 200);
-    },
+    async (c) => c.json(await connectMoodle(c.var.user.id, c.req.valid("json").url), 200),
   )
   .delete("/", async (c) => {
     await disconnectMoodle(c.var.user.id);
