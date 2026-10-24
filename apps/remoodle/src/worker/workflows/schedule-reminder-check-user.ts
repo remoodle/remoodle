@@ -4,11 +4,11 @@ import { m } from "../../library/i18n/messages.js";
 import { durationToMs } from "../../library/dates";
 import {
   applyScheduleFilters,
-  mergeAdjacentScheduleItems,
   normalizeScheduleFilters,
   DEFAULT_SCHEDULE_FILTERS,
   type ScheduleFilters,
-} from "../../library/schedule";
+} from "../../library/schedule/filters";
+import { mergeAdjacentScheduleItems } from "../../library/schedule/week";
 import { extractRoomCode } from "../../library/rooms";
 import { bold } from "../../library/telegram-html";
 import { hatchet } from "../hatchet-client";

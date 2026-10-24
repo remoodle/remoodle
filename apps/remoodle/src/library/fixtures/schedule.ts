@@ -1,0 +1,73 @@
+import type { ScheduleItem } from "../schedule/items";
+
+export const sampleItems: ScheduleItem[] = [
+  {
+    id: "1",
+    start: "Saturday 15:00",
+    end: "Saturday 15:50",
+    courseName: "Advanced Quality Assurance",
+    location: "C1.3.362",
+    isOnline: false,
+    teacher: "Teacher",
+    type: "practice",
+    lessonType: "",
+  },
+  {
+    id: "2",
+    start: "Saturday 16:00",
+    end: "Saturday 16:50",
+    courseName: "Advanced Quality Assurance",
+    location: "C1.3.362",
+    isOnline: false,
+    teacher: "Teacher",
+    type: "practice",
+    lessonType: "",
+  },
+  {
+    id: "3",
+    start: "Saturday 17:30",
+    end: "Saturday 18:20",
+    courseName: "Advanced Quality Assurance",
+    location: "C1.3.362",
+    isOnline: false,
+    teacher: "Teacher",
+    type: "practice",
+    lessonType: "",
+  },
+];
+
+export const weeklyItems: ScheduleItem[] = [
+  {
+    id: "m1",
+    start: "Monday 20:00",
+    end: "Monday 21:50",
+    courseName: "Software Development Case Study",
+    location: "C1.3.370",
+    isOnline: false,
+    teacher: "Teacher",
+    type: "lecture",
+    lessonType: "",
+  },
+  {
+    id: "f1",
+    start: "Friday 18:00",
+    end: "Friday 19:50",
+    courseName: "Software Development Case Study",
+    location: "C1.3.321",
+    isOnline: false,
+    teacher: "Teacher",
+    type: "practice",
+    lessonType: "",
+  },
+  {
+    id: "s1",
+    start: "Saturday 15:00",
+    end: "Saturday 16:50",
+    courseName: "Advanced Quality Assurance",
+    location: "C1.3.362",
+    isOnline: false,
+    teacher: "Teacher",
+    type: "practice",
+    lessonType: "",
+  },
+];

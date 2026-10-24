@@ -16,7 +16,7 @@ import {
   DEFAULT_COURSE_SCHEDULE_FILTERS,
   normalizeScheduleFilters,
   type CourseScheduleFilters,
-} from "../../library/schedule";
+} from "../../library/schedule/filters";
 
 export const composer = new Composer<Context>();
 

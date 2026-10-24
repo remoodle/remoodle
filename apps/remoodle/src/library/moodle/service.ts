@@ -1,5 +1,5 @@
 import * as usersRepository from "../../db/repositories/users";
-import type { MoodleEvent } from "../../shared/moodle";
+import type { MoodleEvent } from "./events";
 import { moodleToDeadlineEvents } from "./deadlines";
 import { UserFacingError } from "../errors";
 import { fetchMoodleFeed, validateMoodleUrl } from "./feed";

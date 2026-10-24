@@ -1,3 +1,5 @@
+// Browser-safe: the calendar app imports this module through its `@remoodle` alias.
+
 export type MoodleEvent = {
   id: string;
   title: string;

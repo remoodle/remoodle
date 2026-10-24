@@ -9,8 +9,8 @@ import {
   generateCalendarEventsIcal,
   mergeAdjacentCalendarEvents,
   scheduleToCalendarEvents,
-} from "../../shared/ical";
-import { filterSchedule, scheduleFilterSchema } from "../../shared/schedule";
+} from "../../library/ical";
+import { filterSchedule, scheduleFilterSchema } from "../../library/schedule/items";
 import type { AppEnv, SessionEnv } from "../context";
 import { privateResponse, requireSession } from "../middleware/session";
 import { jsonBody } from "../validator";

@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import type { ScheduleFilter } from "../../shared/schedule";
+import type { ScheduleFilter } from "../../library/schedule/items";
 import { db } from "../index";
 import { icalTokens } from "../schema";
 

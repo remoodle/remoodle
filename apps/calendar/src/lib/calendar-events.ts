@@ -1,6 +1,6 @@
 import { Temporal } from "temporal-polyfill";
-import type { MoodleEvent } from "@remoodle/shared/moodle";
-import type { ScheduleItem } from "@remoodle/shared/schedule";
+import type { MoodleEvent } from "@remoodle/library/moodle/events";
+import type { ScheduleItem } from "@remoodle/library/schedule/items";
 
 export type EventKind = "lecture" | "online" | "practice" | "assignment" | "quiz" | "attendance";
 

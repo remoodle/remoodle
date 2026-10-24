@@ -1,3 +1,4 @@
+// Browser-safe: the calendar app imports this module through its `@remoodle` alias.
 import { Temporal } from "temporal-polyfill";
 import { z } from "zod";
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vite-plus/test";
-import { defaultCourseFilter, defaultFilters, filterSchedule, type ScheduleItem } from "./schedule";
+import { defaultCourseFilter, defaultFilters, filterSchedule, type ScheduleItem } from "./items";
 
 const lecture: ScheduleItem = {
   id: "lecture",

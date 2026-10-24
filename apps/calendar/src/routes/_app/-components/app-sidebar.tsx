@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, useSearch } from "@tanstack/react-route
 import { Temporal } from "temporal-polyfill";
 import { cn } from "cn";
 import { CalendarDaysIcon, CheckIcon, ChevronRightIcon, Settings2Icon } from "lucide-react";
-import { defaultCourseFilter, type CourseScheduleFilter } from "@remoodle/shared/schedule";
+import { defaultCourseFilter, type CourseScheduleFilter } from "@remoodle/library/schedule/items";
 import { BrandMark } from "@/components/brand-mark";
 import { Calendar } from "@/components/ui/calendar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
