@@ -24,6 +24,7 @@ RUN apk add --no-cache tzdata \
 COPY --from=builder /app ./
 
 ENV NODE_ENV=production
+# One image, three processes: bot, worker, api (listens on API_PORT, default 3000).
 ENV SERVICE_NAME=bot
 
 CMD ["sh", "-c", "pnpm start:${SERVICE_NAME}"]

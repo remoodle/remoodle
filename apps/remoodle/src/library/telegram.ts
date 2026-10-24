@@ -1,6 +1,13 @@
 import { config } from "../config";
 import { m } from "./i18n/messages.js";
 
+// `/start` payloads. The web calendar sends users to the bot for everything it cannot do itself.
+export const START_PAYLOADS = { myDu: "my_du", moodle: "moodle", loginPrefix: "login_" } as const;
+
+export function botStartUrl(payload: string) {
+  return `${config.telegram.url}?start=${payload}`;
+}
+
 type InlineKeyboardButton = { text: string; callback_data: string };
 
 type InlineKeyboard = { inline_keyboard: InlineKeyboardButton[][] };

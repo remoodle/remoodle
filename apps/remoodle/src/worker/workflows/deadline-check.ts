@@ -1,6 +1,4 @@
-import { and, eq, isNotNull, or } from "drizzle-orm";
-import { db } from "../../db";
-import { users } from "../../db/schema";
+import * as usersRepository from "../../db/repositories/users";
 import { hatchet } from "../hatchet-client";
 import { calendarFetchUser } from "./calendar-fetch-user";
 
@@ -21,23 +19,14 @@ deadlineCheck.task({
   name: "check-deadlines",
   executionTimeout: "1m",
   fn: async (_, ctx) => {
-    const allUsers = await db
-      .select()
-      .from(users)
-      .where(
-        and(
-          eq(users.deadlinesEnabled, true),
-          or(isNotNull(users.calendarUserId), isNotNull(users.moodleCalendarUrl)),
-        ),
-      );
+    const allUsers = await usersRepository.listDeadlineRecipients();
 
     const childTasks = allUsers.map((user) => ({
       workflow: calendarFetchUser.name,
       input: {
         userId: user.id,
         telegramId: user.telegramId,
-        calendarUserId: user.calendarUserId,
-        moodleCalendarUrl: user.moodleCalendarUrl,
+        moodleCalendarUrl: user.moodleCalendarUrl!,
         thresholds: user.thresholds,
       },
       options: {

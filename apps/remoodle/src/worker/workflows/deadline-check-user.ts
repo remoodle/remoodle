@@ -1,7 +1,6 @@
-import { eq } from "drizzle-orm";
-import { db } from "../../db";
-import { calendarEvents, sentNotifications, users } from "../../db/schema";
-import { type CalendarEvent } from "../../library/calendar";
+import * as calendarEventsRepository from "../../db/repositories/calendar-events";
+import * as sentNotificationsRepository from "../../db/repositories/sent-notifications";
+import * as usersRepository from "../../db/repositories/users";
 import { buildReminderMessage, trackDeadlineReminders } from "../../library/deadline-reminders";
 import { hatchet } from "../hatchet-client";
 import { deadlineNotifyUser } from "./deadline-notify-user";
@@ -20,28 +19,13 @@ export const deadlineCheckUser = hatchet.task<Input>({
       return;
     }
 
-    // Load user settings for this check
-    const [userRow] = await db
-      .select({ deadlinesEnabled: users.deadlinesEnabled, excludedCourses: users.excludedCourses })
-      .from(users)
-      .where(eq(users.id, input.userId))
-      .limit(1);
+    const userRow = await usersRepository.findById(input.userId);
 
     if (!userRow?.deadlinesEnabled) {
       return;
     }
 
-    const rows = await db
-      .select()
-      .from(calendarEvents)
-      .where(eq(calendarEvents.userId, input.userId));
-
-    let events: CalendarEvent[] = rows.map((row) => ({
-      uid: row.eventId,
-      summary: row.summary,
-      timestampMs: row.timestampMs,
-      courseName: row.categories ?? undefined,
-    }));
+    let events = await calendarEventsRepository.listByUserId(input.userId);
 
     // Filter out excluded courses
     const excluded = userRow.excludedCourses;
@@ -56,17 +40,8 @@ export const deadlineCheckUser = hatchet.task<Input>({
       return;
     }
 
-    const existing = await db
-      .select({ eventId: sentNotifications.eventId, triggeredAt: sentNotifications.triggeredAt })
-      .from(sentNotifications)
-      .where(eq(sentNotifications.userId, input.userId));
-
-    const existingMapped = existing.map((row) => ({
-      eventId: row.eventId,
-      triggeredAt: new Date(row.triggeredAt),
-    }));
-
-    const pending = trackDeadlineReminders(input.thresholds, events, existingMapped);
+    const existing = await sentNotificationsRepository.listByUserId(input.userId);
+    const pending = trackDeadlineReminders(input.thresholds, events, existing);
 
     if (pending.length === 0) {
       return;

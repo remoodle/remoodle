@@ -18,7 +18,7 @@ export function buildMenuKeyboard() {
     .text(m.ui_about(), aboutCallback.pack({}))
     .row()
     .webApp(m.ui_map(), config.aitumap.url)
-    .url(m.ui_calendar(), config.calendar.accountUrl);
+    .url(m.ui_calendar(), config.calendar.url);
 }
 
 export function buildBackToMenuKeyboard() {

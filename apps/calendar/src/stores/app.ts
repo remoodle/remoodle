@@ -2,7 +2,7 @@ import { useColorMode, useStorage } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { computed } from "vue";
 import { getStorageKey } from "@/lib/helpers";
-import { defaultFilters, type ScheduleFilter } from "../../shared/schedule";
+import { defaultFilters, type ScheduleFilter } from "@remoodle/shared/schedule";
 
 export const useAppStore = defineStore("app", () => {
   const { store: storedTheme, system: systemTheme } = useColorMode({

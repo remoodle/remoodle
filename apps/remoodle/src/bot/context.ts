@@ -1,14 +1,13 @@
 import type { HydrateFlavor } from "@grammyjs/hydrate";
 import type { Context as GrammyContext, SessionFlavor } from "grammy";
-import type { ShortCache } from "../library/short-cache";
+import type { MyDuPeriod, MyDuTerm } from "../library/my-du/schemas";
 
 export type SessionData = {
-  awaitingRemoodleToken?: boolean;
   awaitingMoodleCalendarUrl?: boolean;
   awaitingScheduleReminderMinutes?: boolean;
   awaitingDigestTime?: boolean;
+  // My DU setup asks for the period first: the sign-in code in the pasted link expires within minutes.
+  myDuSetup?: { step: "week_start"; term: MyDuTerm } | { step: "link"; period: MyDuPeriod };
 };
 
-export type Context = HydrateFlavor<
-  GrammyContext & SessionFlavor<SessionData> & { shortCache: ShortCache }
->;
+export type Context = HydrateFlavor<GrammyContext & SessionFlavor<SessionData>>;

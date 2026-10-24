@@ -1,7 +1,7 @@
 import type { CalendarEvent } from "@schedule-x/calendar";
 import { Temporal } from "temporal-polyfill";
-import type { MoodleEvent } from "../../shared/moodle";
-import { CALENDAR_TIME_ZONE } from "../../shared/ical";
+import type { MoodleEvent } from "@remoodle/shared/moodle";
+import { CALENDAR_TIME_ZONE } from "@remoodle/shared/ical";
 
 function scheduleSafeId(value: string) {
   return (

@@ -19,19 +19,21 @@ import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 
 const props = defineProps<{
   name?: string | null;
-  email?: string | null;
+  username?: string | null;
 }>();
 
 const emit = defineEmits<{
   signOut: [];
 }>();
 
-const displayName = computed(() => props.name || props.email || "Account");
+const displayName = computed(() => props.name || props.username || "Account");
+
+const handle = computed(() => (props.username ? `@${props.username}` : "Telegram"));
 
 const initials = computed(
   () =>
     displayName.value
-      .split(/[\s@._-]+/)
+      .split(/[\s._-]+/)
       .filter(Boolean)
       .slice(0, 2)
       .map((part) => part[0]?.toUpperCase() ?? "")
@@ -57,7 +59,7 @@ const initials = computed(
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-medium">{{ displayName }}</span>
               <span class="truncate text-xs text-muted-foreground">
-                {{ props.email }}
+                {{ handle }}
               </span>
             </div>
 
@@ -81,7 +83,7 @@ const initials = computed(
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-medium">{{ displayName }}</span>
                 <span class="truncate text-xs text-muted-foreground">
-                  {{ props.email }}
+                  {{ handle }}
                 </span>
               </div>
             </div>

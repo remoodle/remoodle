@@ -1,8 +1,6 @@
-import { eq } from "drizzle-orm";
-import { db } from "../../db";
+import * as myDuRepository from "../../db/repositories/my-du";
+import * as sentNotificationsRepository from "../../db/repositories/sent-notifications";
 import { m } from "../../library/i18n/messages.js";
-import { sentNotifications } from "../../db/schema";
-import { fetchUserSchedule } from "../../library/calendar-api";
 import { durationToMs } from "../../library/dates";
 import {
   applyScheduleFilters,
@@ -19,7 +17,6 @@ import { telegramSendMessage } from "./telegram-send-message";
 type Input = {
   userId: number;
   telegramId: number;
-  calendarUserId: string;
   excludedCourses: string[];
   scheduleFilters: ScheduleFilters | null;
   scheduleReminderOffset: string;
@@ -78,7 +75,7 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
     const nowMs = now.getTime();
     const windowEndMs = nowMs + offsetMs;
 
-    const allItems = await fetchUserSchedule(input.calendarUserId);
+    const allItems = await myDuRepository.findSchedule(input.userId);
     const filters = normalizeScheduleFilters(input.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS);
     const filteredItems = applyScheduleFilters(allItems, filters, input.excludedCourses);
 
@@ -105,12 +102,7 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
 
     // Check which ones we already sent
     const existingIds = new Set(
-      (
-        await db
-          .select({ eventId: sentNotifications.eventId })
-          .from(sentNotifications)
-          .where(eq(sentNotifications.userId, input.userId))
-      )
+      (await sentNotificationsRepository.listByUserId(input.userId))
         .filter((r) => r.eventId.startsWith("sched:"))
         .map((r) => r.eventId),
     );
@@ -161,16 +153,10 @@ export const scheduleReminderCheckUser = hatchet.task<Input>({
 
     await telegramSendMessage.run({ chatId: input.telegramId, message, replyMarkup });
 
-    await db
-      .insert(sentNotifications)
-      .values(
-        toSend.map((u) => ({
-          userId: input.userId,
-          eventId: u.eventId,
-          triggeredAt: new Date(),
-        })),
-      )
-      .onConflictDoNothing();
+    await sentNotificationsRepository.record(
+      input.userId,
+      toSend.map((u) => ({ eventId: u.eventId, triggeredAt: new Date() })),
+    );
 
     await ctx.logger.info("sent schedule reminders", {
       telegramId: input.telegramId,

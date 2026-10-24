@@ -1,19 +1,23 @@
-import { useQuery, useQueryClient } from "@tanstack/vue-query";
-import { authClient } from "@/lib/auth-client";
+import { queryOptions, useQuery, useQueryClient } from "@tanstack/vue-query";
+import { client, parseResponse } from "./client";
 
-export const SESSION_QUERY_KEY = ["session"];
+export const sessionQuery = queryOptions({
+  queryKey: ["session"],
+  queryFn: () => parseResponse(client.api.auth.session.$get()),
+  staleTime: 5 * 60_000,
+});
 
-export const useSessionQuery = () =>
-  useQuery({
-    queryKey: SESSION_QUERY_KEY,
-    queryFn: () => authClient.getSession(),
-  });
+export const useSessionQuery = () => useQuery(sessionQuery);
 
-export const useClearSession = () => {
+export const useSignOut = () => {
   const queryClient = useQueryClient();
 
-  return () => {
+  return async () => {
+    await parseResponse(client.api.auth.logout.$post());
+    const session = queryClient.getQueryData(sessionQuery.queryKey);
+    // Personal data must not survive sign-out in the in-memory cache either.
     queryClient.clear();
-    queryClient.setQueryData(SESSION_QUERY_KEY, null);
+
+    if (session) queryClient.setQueryData(sessionQuery.queryKey, { ...session, user: null });
   };
 };

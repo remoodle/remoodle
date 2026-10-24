@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vite-plus/test";
-import type { CalendarEvent } from "./calendar";
+import type { DeadlineEvent } from "./moodle/deadlines";
 import {
   buildReminderMessage,
   buildThresholdsMessage,
@@ -13,7 +13,7 @@ beforeEach(() => {
 
 describe("deadline reminders", () => {
   test("tracks reminders once the next threshold is reached", () => {
-    const events: CalendarEvent[] = [
+    const events: DeadlineEvent[] = [
       {
         uid: "event-1",
         summary: "Assignment 1 is due",
@@ -39,7 +39,7 @@ describe("deadline reminders", () => {
   });
 
   test("does not create reminders before any threshold starts", () => {
-    const events: CalendarEvent[] = [
+    const events: DeadlineEvent[] = [
       {
         uid: "event-1",
         summary: "Assignment 1 is due",
@@ -54,7 +54,7 @@ describe("deadline reminders", () => {
   });
 
   test("does not recreate reminders already sent for the active threshold window", () => {
-    const events: CalendarEvent[] = [
+    const events: DeadlineEvent[] = [
       {
         uid: "event-1",
         summary: "Assignment 1 is due",
@@ -74,7 +74,7 @@ describe("deadline reminders", () => {
   });
 
   test("formats grouped reminder messages", () => {
-    const events: CalendarEvent[] = [
+    const events: DeadlineEvent[] = [
       {
         uid: "event-1",
         summary: "Assignment 1 is due",

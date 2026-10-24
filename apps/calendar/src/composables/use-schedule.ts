@@ -4,10 +4,10 @@ import { computed } from "vue";
 import { useMyDuSchedule } from "@/lib/api/my-du";
 import { useMoodleSchedule } from "@/lib/api/moodle";
 import { moodleToCalendarEvents } from "@/lib/moodle-calendar";
-import { filterMoodle } from "../../shared/moodle";
-import type { ScheduleFilter } from "@/lib/types";
-import { filterSchedule } from "../../shared/schedule";
-import { CALENDAR_TIME_ZONE, scheduleToCalendarEvents } from "../../shared/ical";
+import { filterMoodle } from "@remoodle/shared/moodle";
+import type { ScheduleFilter } from "@remoodle/shared/schedule";
+import { filterSchedule } from "@remoodle/shared/schedule";
+import { CALENDAR_TIME_ZONE, scheduleToCalendarEvents } from "@remoodle/shared/ical";
 
 export function useSchedule(filters: () => ScheduleFilter) {
   const query = useMyDuSchedule();

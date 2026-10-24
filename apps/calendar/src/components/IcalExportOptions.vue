@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import IcalSubscription from "@/components/IcalSubscription.vue";
 import { useIcalExport } from "@/composables/use-ical-export";
 import { createScheduleIcal } from "@/lib/schedule-ical";
-import type { ScheduleFilter } from "../../shared/schedule";
+import type { ScheduleFilter } from "@remoodle/shared/schedule";
 
 const props = defineProps<{ filters: ScheduleFilter | undefined; events: CalendarEvent[] }>();
 
@@ -125,7 +125,7 @@ function getICalFile() {
     </label>
 
     <IcalSubscription
-      v-if="session?.data"
+      v-if="session?.user"
       :url="tokenData?.url"
       :token-pending="tokenPending"
       :busy="busy"

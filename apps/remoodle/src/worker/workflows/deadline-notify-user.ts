@@ -1,5 +1,4 @@
-import { db } from "../../db";
-import { sentNotifications } from "../../db/schema";
+import * as sentNotificationsRepository from "../../db/repositories/sent-notifications";
 import { hatchet } from "../hatchet-client";
 import { telegramSendMessage } from "./telegram-send-message";
 
@@ -21,16 +20,13 @@ export const deadlineNotifyUser = hatchet.task<Input>({
   fn: async (input, ctx) => {
     await telegramSendMessage.run({ chatId: input.chatId, message: input.message });
 
-    await db
-      .insert(sentNotifications)
-      .values(
-        input.reminders.map((reminder) => ({
-          userId: input.userId,
-          ...reminder,
-          triggeredAt: new Date(reminder.triggeredAt),
-        })),
-      )
-      .onConflictDoNothing();
+    await sentNotificationsRepository.record(
+      input.userId,
+      input.reminders.map((reminder) => ({
+        eventId: reminder.eventId,
+        triggeredAt: new Date(reminder.triggeredAt),
+      })),
+    );
 
     await ctx.logger.info("notified user of deadlines", {
       chatId: input.chatId,

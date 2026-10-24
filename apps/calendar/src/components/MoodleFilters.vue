@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Checkbox } from "@/components/ui/checkbox";
-import { moodleKinds, defaultMoodleFilters, type MoodleFilters } from "../../shared/moodle";
+import { moodleKinds, defaultMoodleFilters, type MoodleFilters } from "@remoodle/shared/moodle";
 
 const props = defineProps<{ modelValue: MoodleFilters | undefined }>();
 

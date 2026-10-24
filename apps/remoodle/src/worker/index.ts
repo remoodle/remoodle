@@ -6,6 +6,7 @@ import { deadlineCheck } from "./workflows/deadline-check";
 import { deadlineCheckUser } from "./workflows/deadline-check-user";
 import { deadlineNotifyUser } from "./workflows/deadline-notify-user";
 import { digestUser } from "./workflows/digest-user";
+import { myDuSync, myDuSyncUser } from "./workflows/my-du-sync";
 import { scheduleReminderCheck } from "./workflows/schedule-reminder-check";
 import { scheduleReminderCheckUser } from "./workflows/schedule-reminder-check-user";
 import { TELEGRAM_RATE_LIMIT_KEY, telegramSendMessage } from "./workflows/telegram-send-message";
@@ -29,6 +30,8 @@ async function main() {
       deadlineNotifyUser,
       scheduleReminderCheck,
       digestUser,
+      myDuSync,
+      myDuSyncUser,
       scheduleReminderCheckUser,
       telegramSendMessage,
     ],

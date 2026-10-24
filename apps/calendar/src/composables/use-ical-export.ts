@@ -2,7 +2,7 @@ import { shallowRef, computed, watch } from "vue";
 import { type DateValue, getLocalTimeZone, parseDate, today } from "@internationalized/date";
 import { useIcalTokenQuery, useUpsertIcalToken, useUpdateIcalFilters } from "@/lib/api/ical";
 import { useSessionQuery } from "@/lib/api/session";
-import type { ScheduleFilter } from "../../shared/schedule";
+import type { ScheduleFilter } from "@remoodle/shared/schedule";
 
 export function useIcalExport(filters: () => ScheduleFilter | undefined) {
   const startValue = shallowRef<DateValue>(today(getLocalTimeZone()));

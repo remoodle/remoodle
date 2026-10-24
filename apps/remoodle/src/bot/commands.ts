@@ -9,5 +9,6 @@ export const BOT_COMMANDS: BotCommand[] = [
   { command: "today", description: m.command_show_today_schedule() },
   { command: "schedule", description: m.command_show_next_week_schedule() },
   { command: "settings", description: m.command_open_settings() },
+  { command: "mydu", description: m.command_my_du() },
   { command: "update", description: m.command_update_calendar_url() },
 ];

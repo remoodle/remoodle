@@ -1,3 +1,4 @@
-import { defineConfig } from "vite-plus";
+import { mergeConfig } from "vite-plus";
+import viteConfig from "./vite.config";
 
-export default defineConfig({ test: { include: ["server/**/*.spec.ts", "shared/**/*.spec.ts"] } });
+export default mergeConfig(viteConfig, { test: { include: ["src/**/*.spec.ts"] } });

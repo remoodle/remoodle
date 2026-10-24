@@ -1,7 +1,5 @@
-import { toWeeklySchedule } from "../../library/calendar-api";
-import { and, eq } from "drizzle-orm";
-import { db } from "../../db";
-import { sentNotifications } from "../../db/schema";
+import * as myDuRepository from "../../db/repositories/my-du";
+import * as sentNotificationsRepository from "../../db/repositories/sent-notifications";
 import {
   applyScheduleFilters,
   buildTodayScheduleMessage,
@@ -12,9 +10,9 @@ import {
   mergeAdjacentScheduleItems,
   normalizeDigestWeekdays,
   normalizeScheduleFilters,
+  toWeeklySchedule,
   type ScheduleFilters,
 } from "../../library/schedule";
-import { fetchUserSchedule } from "../../library/calendar-api";
 import { m } from "../../library/i18n/messages.js";
 import { hatchet } from "../hatchet-client";
 import { telegramSendMessage } from "./telegram-send-message";
@@ -24,7 +22,6 @@ const CRON_WINDOW_MINUTES = 10;
 type Input = {
   userId: number;
   telegramId: number;
-  calendarUserId: string;
   excludedCourses: string[];
   scheduleFilters: ScheduleFilters | null;
   digestTime: string;
@@ -78,19 +75,11 @@ export const digestUser = hatchet.task<Input>({
 
     const eventId = `digest:${dateParts.dateKey}`;
 
-    const existing = await db
-      .select({ eventId: sentNotifications.eventId })
-      .from(sentNotifications)
-      .where(
-        and(eq(sentNotifications.userId, input.userId), eq(sentNotifications.eventId, eventId)),
-      )
-      .limit(1);
-
-    if (existing.length > 0) {
+    if (await sentNotificationsRepository.has(input.userId, eventId)) {
       return;
     }
 
-    const allItems = await fetchUserSchedule(input.calendarUserId);
+    const allItems = await myDuRepository.findSchedule(input.userId);
     const filters = normalizeScheduleFilters(input.scheduleFilters ?? DEFAULT_SCHEDULE_FILTERS);
     const filteredItems = applyScheduleFilters(allItems, filters, input.excludedCourses);
 
@@ -102,10 +91,7 @@ export const digestUser = hatchet.task<Input>({
     const todaySchedule = getScheduleForDay(weeklySchedule, getDayName(now));
 
     if (todaySchedule.length === 0) {
-      await db
-        .insert(sentNotifications)
-        .values({ userId: input.userId, eventId, triggeredAt: now })
-        .onConflictDoNothing();
+      await sentNotificationsRepository.record(input.userId, [{ eventId, triggeredAt: now }]);
 
       await ctx.logger.info("skipped empty digest", {
         telegramId: input.telegramId,
@@ -123,14 +109,7 @@ export const digestUser = hatchet.task<Input>({
 
     await telegramSendMessage.run({ chatId: input.telegramId, message, replyMarkup });
 
-    await db
-      .insert(sentNotifications)
-      .values({
-        userId: input.userId,
-        eventId,
-        triggeredAt: now,
-      })
-      .onConflictDoNothing();
+    await sentNotificationsRepository.record(input.userId, [{ eventId, triggeredAt: now }]);
 
     await ctx.logger.info("sent digest", {
       telegramId: input.telegramId,

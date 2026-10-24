@@ -28,7 +28,21 @@ export const scheduleViewCallback = createCallbackData("schedule_view", { view: 
 
 export const updateCalendarCallback = createCallbackData("update_calendar", { from: String });
 
-export const connectCalendarCallback = createCallbackData("connect_calendar", { from: String });
+export const myDuCallback = createCallbackData("my_du", {});
+
+export const myDuPeriodCallback = createCallbackData("my_du_period", {});
+
+export const myDuTermCallback = createCallbackData("my_du_term", { term: Number });
+
+export const myDuSignInCallback = createCallbackData("my_du_sign_in", {});
+
+export const myDuSyncCallback = createCallbackData("my_du_sync", {});
+
+export const myDuDisconnectCallback = createCallbackData("my_du_disconnect", {
+  confirmed: String,
+});
+
+export const loginCallback = createCallbackData("login", { code: String, confirmed: String });
 
 export const coursesCallback = createCallbackData("courses", {});
 
