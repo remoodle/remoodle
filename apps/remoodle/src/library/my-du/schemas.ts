@@ -41,6 +41,26 @@ export function parseFirstWeekStart(input: string) {
   }
 }
 
+// The web API's version of what the bot asks step by step.
+export const myDuPeriodSchema = z.object({
+  term: z.literal(MY_DU_TERMS),
+  firstWeekStart: z.string().transform((value, context) => {
+    const monday = parseFirstWeekStart(value);
+
+    if (!monday) {
+      context.addIssue({ code: "custom", message: "Teaching week 1 must start on a Monday" });
+
+      return z.NEVER;
+    }
+
+    return monday;
+  }),
+});
+
+export const myDuConnectSchema = myDuPeriodSchema.extend({
+  callbackUrl: z.string().trim().min(1).max(20_000),
+});
+
 // My DU names academic years after the calendar year they start in. Every period of a
 // year starts between late August and the following summer, so August is the boundary.
 export function studyYearOf(firstWeekStart: string) {

@@ -1,4 +1,5 @@
 import { integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
+import type { MyDuTerm } from "../library/my-du/schemas";
 import type { ScheduleFilter, ScheduleItem } from "../shared/schedule";
 
 export const users = sqliteTable("users", {
@@ -118,7 +119,7 @@ export const myDuConnections = sqliteTable("my_du_connections", {
   // AES-GCM encrypted My DU tokens; null after disconnect or when My DU rejects the refresh.
   credentials: text("credentials"),
   studyYear: integer("study_year").notNull(),
-  term: integer("term").notNull(),
+  term: integer("term").$type<MyDuTerm>().notNull(),
   firstWeekStart: text("first_week_start").notNull(),
   events: text("events", { mode: "json" }).$type<ScheduleItem[]>().notNull().default([]),
   lastSyncedAt: integer("last_synced_at", { mode: "timestamp_ms" }),

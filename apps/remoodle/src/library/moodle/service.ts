@@ -37,8 +37,10 @@ export async function connectMoodle(userId: number, input: string) {
     throw new UserFacingError("Use the calendar export URL from AITU Moodle.", { cause: error });
   }
 
+  let events: MoodleEvent[];
+
   try {
-    await fetchMoodleFeed(url);
+    events = await fetchMoodleFeed(url);
   } catch (error) {
     throw new UserFacingError(
       "Could not open this Moodle calendar. Generate a new calendar URL in Moodle.",
@@ -47,6 +49,12 @@ export async function connectMoodle(userId: number, input: string) {
   }
 
   await usersRepository.update(userId, { moodleCalendarUrl: url });
+
+  return { connected: true, events, fetchedAt: Date.now() };
+}
+
+export async function disconnectMoodle(userId: number) {
+  await usersRepository.update(userId, { moodleCalendarUrl: null });
 }
 
 export async function fetchDeadlineEvents(moodleCalendarUrl: string) {
