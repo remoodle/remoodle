@@ -18,7 +18,7 @@ import {
   requestSync,
   startLogin,
 } from "../../library/my-du/service";
-import { START_PAYLOADS } from "../../library/telegram";
+import { START_PAYLOADS } from "../../library/bot-links";
 import { bold, italic } from "../../library/telegram-html";
 import {
   myDuCallback,

@@ -1,7 +1,7 @@
 import * as sessionsRepository from "../db/repositories/sessions";
 import * as usersRepository from "../db/repositories/users";
 import { hashToken, randomToken } from "./crypto";
-import { botStartUrl, START_PAYLOADS } from "./telegram";
+import { botStartUrl, START_PAYLOADS } from "./bot-links";
 
 const LOGIN_TTL = 10 * 60_000;
 

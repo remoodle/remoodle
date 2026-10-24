@@ -7,7 +7,7 @@ import {
   pollTelegramLogin,
   startTelegramLogin,
 } from "../../library/auth";
-import { botStartUrl, START_PAYLOADS } from "../../library/telegram";
+import { botStartUrl, START_PAYLOADS } from "../../library/bot-links";
 import type { AppEnv } from "../context";
 import {
   browserRequest,

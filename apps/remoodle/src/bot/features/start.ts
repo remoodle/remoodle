@@ -8,7 +8,7 @@ import type { User } from "../../db/repositories/users";
 import { approveTelegramLogin } from "../../library/auth";
 import { UserFacingError } from "../../library/errors";
 import { connectMoodle, fetchDeadlineEvents } from "../../library/moodle/service";
-import { START_PAYLOADS } from "../../library/telegram";
+import { START_PAYLOADS } from "../../library/bot-links";
 import { bold, link } from "../../library/telegram-html";
 import {
   applyScheduleFilters,

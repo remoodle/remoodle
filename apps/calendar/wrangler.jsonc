@@ -11,4 +11,6 @@
     "not_found_handling": "single-page-application",
   },
   "preview_urls": true,
+  // The old full-stack worker ran a per-minute cron; an empty list removes it on deploy.
+  "triggers": { "crons": [] },
 }
