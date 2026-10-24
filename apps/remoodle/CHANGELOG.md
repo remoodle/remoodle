@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.0](https://github.com/remoodle/heresy/compare/remoodle-v0.21.0...remoodle-v0.22.0) (2026-10-24)
+
+
+### Features
+
+* connect my du and moodle from the web calendar ([#577](https://github.com/remoodle/heresy/issues/577)) ([2f43167](https://github.com/remoodle/heresy/commit/2f431672bcdb4794761f12ddb65917170f047d50))
+
 ## [0.21.0](https://github.com/remoodle/heresy/compare/remoodle-v0.20.0...remoodle-v0.21.0) (2026-10-24)
 
 
