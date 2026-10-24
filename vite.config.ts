@@ -30,6 +30,7 @@ export default defineConfig({
       "**/db/migrations**",
       "CHANGELOG.md",
       "worker-configuration.d.ts",
+      "**/routeTree.gen.ts",
     ],
   },
   lint: {
@@ -53,6 +54,7 @@ export default defineConfig({
       ".roo/**",
       ".windsurf/**",
       "tools/oxlint/anti-slop/**",
+      "**/routeTree.gen.ts",
     ],
     jsPlugins: [{ name: "anti-slop", specifier: "./tools/oxlint/anti-slop/index.ts" }],
     rules: {

@@ -81,8 +81,7 @@ export function parseMoodleFeed(text: string): MoodleEvent[] {
         ? "assignment"
         : "other";
 
-    // Preserve source identity for bot reminder history. The display adapter
-    // encodes this ID for Schedule-X's CSS selectors.
+    // Preserve source identity for bot reminder history.
     const id = "moodle-" + event.uid;
     result.set(id, {
       id,

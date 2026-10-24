@@ -4,13 +4,14 @@ packages:
 
 injectWorkspacePackages: true
 
+minimumReleaseAge: 0
+
 allowBuilds:
   "@hatchet-dev/typescript-sdk": true
   better-sqlite3: true
   esbuild: true
   protobufjs: true
   sharp: false
-  vue-demi: false
   workerd: false
 
 catalog:
@@ -21,17 +22,6 @@ catalog:
   "@loglayer/hono": ^2.4.0
   "@loglayer/transport-pino": ^3.3.0
   "@oxlint/plugins": 1.82.0
-  "@schedule-x/calendar": ^4.5.0
-  "@schedule-x/calendar-controls": ^4.5.0
-  "@schedule-x/current-time": ^4.5.0
-  "@schedule-x/date-picker": 4.2.0
-  "@schedule-x/event-modal": ^4.5.0
-  "@schedule-x/event-recurrence": ^4.5.0
-  "@schedule-x/events-service": ^4.5.0
-  "@schedule-x/ical": ^4.5.0
-  "@schedule-x/theme-default": ^4.5.0
-  "@schedule-x/theme-shadcn": ^4.5.0
-  "@schedule-x/vue": ^4.1.0
   "@types/node": ^24.12.2
   better-all: ^0.0.7
   dayjs: ^1.11.19
@@ -54,9 +44,12 @@ catalog:
   vite: npm:@voidzero-dev/vite-plus-core@0.3.0
   vite-plus: 0.3.0
   vitepress: 2.0.0-alpha.17
-  wrangler: ^4.127.1
+  wrangler: ^4.152.0
   zod: ^4.5.4
   "@hono/node-server": ^2.1.5
+  sonner: ^2.0.8
+  react-day-picker: ^10.0.2
+  date-fns: ^4.4.0
 
 catalogMode: prefer
 

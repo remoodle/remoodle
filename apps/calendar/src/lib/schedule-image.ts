@@ -1,181 +1,123 @@
-import type { CalendarEvent } from "@schedule-x/calendar";
-import { Temporal } from "temporal-polyfill";
-import { CALENDAR_TIME_ZONE } from "@remoodle/shared/ical";
+import type { Temporal } from "temporal-polyfill";
+import { eventsOn, formatDay, formatTime, weekDays } from "./calendar-dates";
+import type { CalendarEvent } from "./calendar-events";
+import { eventKindVariables } from "./event-kinds";
 
-function dateTime(value: CalendarEvent["start"]) {
-  return value instanceof Temporal.ZonedDateTime
-    ? value.withTimeZone(CALENDAR_TIME_ZONE).toPlainDateTime().toString()
-    : value.toString();
+const WIDTH = 1680;
+
+const COLUMN = 224;
+
+const FONT = '"Hanken Grotesk Variable", system-ui, sans-serif';
+
+export function imageDays(events: CalendarEvent[], week: Temporal.PlainDate) {
+  return weekDays(week).map((date) => ({ date, events: eventsOn(events, date) }));
 }
 
-function eventLocation(event: CalendarEvent) {
-  return String(event.location ?? "");
+function timeText(event: CalendarEvent) {
+  if (event.deadline) return `Due ${event.deadline}`;
+
+  return event.dateRow ? "All day" : `${formatTime(event.start)} – ${formatTime(event.end)}`;
 }
 
-export function scheduleImageDays(events: CalendarEvent[], week: Temporal.PlainDate) {
-  return Array.from({ length: 7 }, (_, index) => {
-    const date = week.add({ days: index });
-    const key = date.toString();
-
-    return {
-      date,
-      events: events
-        .filter((event) => {
-          const start = dateTime(event.start).slice(0, 10);
-          const end = dateTime(event.end).slice(0, 10);
-
-          // Schedule-X uses inclusive end dates for date-row events.
-          const endsAtMidnight =
-            !(event.end instanceof Temporal.PlainDate) &&
-            dateTime(event.end).slice(11, 16) === "00:00" &&
-            end > start;
-
-          return start <= key && (endsAtMidnight ? end > key : end >= key);
-        })
-        .sort((a, b) => dateTime(a.start).localeCompare(dateTime(b.start))),
-    };
-  });
-}
-
+/**
+ * Draws one week as a shareable PNG at 2x. Colours are read from the page's CSS variables, so
+ * the image follows the active theme and DESIGN.md tokens without a second palette.
+ */
 export function drawScheduleImage(
   canvas: HTMLCanvasElement,
   events: CalendarEvent[],
   week: Temporal.PlainDate,
-  dark: boolean,
 ) {
   const context = canvas.getContext("2d");
 
-  if (!context) {
-    throw new Error("Image export is unavailable in this browser.");
-  }
+  if (!context) throw new Error("Image export is unavailable in this browser.");
 
-  const days = scheduleImageDays(events, week);
-  const width = 1680;
-  const column = 224;
-  const foreground = dark ? "#fafafa" : "#18181b";
-  const muted = dark ? "#a1a1aa" : "#71717a";
-  const line = dark ? "#303033" : "#e4e4e7";
-  const font = "Arial, sans-serif";
+  const styles = getComputedStyle(document.documentElement);
+  const token = (name: string) => styles.getPropertyValue(name).trim();
+  const days = imageDays(events, week);
 
-  function wrap(text: string, size: number) {
-    context!.font = `${size === 18 ? 600 : 400} ${size}px ${font}`;
+  const wrap = (text: string, size: number, weight: number) => {
+    context.font = `${weight} ${size}px ${FONT}`;
     const lines: string[] = [];
-    let current = "";
+    let line = "";
 
     for (const word of text.trim().split(/\s+/)) {
-      const candidate = current ? `${current} ${word}` : word;
+      const candidate = line ? `${line} ${word}` : word;
 
-      if (current && context!.measureText(candidate).width > column - 44) {
-        lines.push(current);
-        current = "";
-      }
-
-      // Break only words that cannot fit on a line by themselves.
-      for (const character of (current ? " " : "") + word) {
-        if (context!.measureText(current + character).width > column - 44) {
-          lines.push(current);
-          current = "";
-        }
-
-        current += character;
+      if (line && context.measureText(candidate).width > COLUMN - 44) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = candidate;
       }
     }
 
-    if (current) {
-      lines.push(current.trim());
-    }
+    if (line) lines.push(line);
 
     return lines;
-  }
+  };
 
   const layouts = days.map((day) =>
     day.events.map((event) => ({
       event,
-      title: wrap(event.title || "Untitled event", 18),
-      location: wrap(eventLocation(event), 14),
+      title: wrap(event.title, 18, 600),
+      location: event.location ? wrap(event.location, 14, 400) : [],
     })),
   );
 
-  const height = Math.max(
-    670,
-    194 +
-      Math.max(
-        ...layouts.map((items) =>
-          items.reduce(
-            (sum, item) => sum + 78 + item.title.length * 24 + item.location.length * 20,
-            0,
-          ),
-        ),
-      ),
-  );
+  const columnHeight = (items: (typeof layouts)[number]) =>
+    items.reduce((sum, item) => sum + 78 + item.title.length * 24 + item.location.length * 20, 0);
 
-  // Render at 2x for crisp text when shared or printed.
-  canvas.width = width * 2;
+  const height = Math.max(670, 194 + Math.max(...layouts.map(columnHeight)));
+
+  canvas.width = WIDTH * 2;
   canvas.height = height * 2;
   context.scale(2, 2);
-  context.fillStyle = dark ? "#18181b" : "#ffffff";
-  context.fillRect(0, 0, width, height);
+  context.fillStyle = token("--background");
+  context.fillRect(0, 0, WIDTH, height);
 
-  function text(
-    value: string,
-    x: number,
-    y: number,
-    size: number,
-    color = foreground,
-    weight = 400,
-  ) {
-    context!.font = `${weight} ${size}px ${font}`;
-    context!.fillStyle = color;
-    context!.fillText(value, x, y);
-  }
+  const text = (value: string, x: number, y: number, size: number, color: string, weight = 400) => {
+    context.font = `${weight} ${size}px ${FONT}`;
+    context.fillStyle = color;
+    context.fillText(value, x, y);
+  };
 
-  const format = (date: Temporal.PlainDate) =>
-    date.toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  const foreground = token("--foreground");
+  const muted = token("--muted-foreground");
+  const range = `${formatDay(week, { day: "numeric", month: "short" })} – ${formatDay(week.add({ days: 6 }), { day: "numeric", month: "short", year: "numeric" })}`;
 
-  text(`${format(week)} – ${format(week.add({ days: 6 }))}`, 56, 56, 18, muted);
+  text(range, 56, 56, 18, muted);
+
   days.forEach((day, index) => {
-    const x = 56 + index * column;
-    context.fillStyle = line;
-    context.fillRect(x, 86, column, 1);
-
-    if (index) {
-      context.fillRect(x - 8, 104, 1, height - 160);
-    }
-
-    text(day.date.toLocaleString("en-GB", { weekday: "short" }), x + 8, 124, 16, muted);
-    text(String(day.date.day), x + 8, 157, 26, foreground, 600);
+    const x = 56 + index * COLUMN;
     let y = 180;
 
-    if (!day.events.length) {
-      text("No events", x + 8, y + 24, 15, muted);
-    }
+    context.fillStyle = token("--border");
+    context.fillRect(x, 86, COLUMN, 1);
+
+    if (index) context.fillRect(x - 8, 104, 1, height - 160);
+
+    text(formatDay(day.date, { weekday: "short" }), x + 8, 124, 16, muted);
+    text(String(day.date.day), x + 8, 157, 26, foreground, 600);
+
+    if (!day.events.length) text("No events", x + 8, y + 24, 15, muted);
 
     for (const item of layouts[index]!) {
-      const h = 66 + item.title.length * 24 + item.location.length * 20;
-      const color = item.event.calendarId === "offline" ? "#ef9a9a" : "#93b8ed";
-      context.fillStyle = dark ? "#242427" : "#f4f4f5";
+      const ink = token(eventKindVariables[item.event.kind]);
+      const boxHeight = 66 + item.title.length * 24 + item.location.length * 20;
+
+      context.fillStyle = token(`${eventKindVariables[item.event.kind]}-soft`);
       context.beginPath();
-      context.roundRect(x + 2, y, column - 16, h, 8);
+      context.roundRect(x + 2, y, COLUMN - 16, boxHeight, 6);
       context.fill();
-      context.fillStyle = color;
-      context.fillRect(x + 2, y + 12, 3, h - 24);
-      const start = dateTime(item.event.start);
-      const end = dateTime(item.event.end);
-
-      const time =
-        item.event.start instanceof Temporal.PlainDate
-          ? "All day"
-          : `${start.slice(11, 16)} – ${end.slice(11, 16)}`;
-
-      text(time, x + 16, y + 28, 14, muted);
-      item.title.forEach((value, row) =>
-        text(value, x + 16, y + 56 + row * 24, 18, foreground, 600),
+      text(timeText(item.event), x + 14, y + 28, 14, ink);
+      item.title.forEach((line, row) => text(line, x + 14, y + 56 + row * 24, 18, ink, 600));
+      item.location.forEach((line, row) =>
+        text(line, x + 14, y + 66 + item.title.length * 24 + row * 20, 14, ink),
       );
-      item.location.forEach((value, row) =>
-        text(value, x + 16, y + 66 + item.title.length * 24 + row * 20, 14, muted),
-      );
-      y += h + 12;
+      y += boxHeight + 12;
     }
   });
+
   text("calendar.remoodle.app", 56, height - 26, 14, muted);
 }

@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export type ScheduleItem = {
   id: string;
   // Local date and time in Asia/Almaty, never an indefinitely repeating weekday.
@@ -25,6 +27,27 @@ export type CourseScheduleFilter = {
   online: boolean;
   offline: boolean;
 };
+
+const courseFilterSchema = z.object({
+  enabled: z.boolean(),
+  lecture: z.boolean(),
+  practice: z.boolean(),
+  online: z.boolean(),
+  offline: z.boolean(),
+}) satisfies z.ZodType<CourseScheduleFilter>;
+
+// What an iCal subscription stores. Moodle filters stay in the browser; the feed only has classes.
+export const scheduleFilterSchema = z.object({
+  classes: z.boolean().optional(),
+  courses: z.record(z.string(), courseFilterSchema),
+  ical: z
+    .object({
+      combineAdjacentPairs: z.boolean().optional(),
+      startDate: z.iso.date().optional(),
+      endDate: z.iso.date().optional(),
+    })
+    .optional(),
+}) satisfies z.ZodType<ScheduleFilter>;
 
 export function defaultCourseFilter(): CourseScheduleFilter {
   return { enabled: true, lecture: true, practice: true, online: true, offline: true };

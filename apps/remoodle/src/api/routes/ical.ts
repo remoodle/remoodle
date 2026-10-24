@@ -10,32 +10,15 @@ import {
   mergeAdjacentCalendarEvents,
   scheduleToCalendarEvents,
 } from "../../shared/ical";
-import { filterSchedule, type ScheduleFilter } from "../../shared/schedule";
+import { filterSchedule, scheduleFilterSchema } from "../../shared/schedule";
 import type { AppEnv, SessionEnv } from "../context";
-import { browserRequest, requireSession } from "../middleware/session";
+import { privateResponse, requireSession } from "../middleware/session";
 import { jsonBody } from "../validator";
 
-const courseFilterSchema = z.object({
-  enabled: z.boolean(),
-  lecture: z.boolean(),
-  practice: z.boolean(),
-  online: z.boolean(),
-  offline: z.boolean(),
-});
-
-const filtersSchema = z.object({
-  classes: z.boolean().optional(),
-  courses: z.record(z.string(), courseFilterSchema),
-  ical: z
-    .object({
-      combineAdjacentPairs: z.boolean().optional(),
-      startDate: z.iso.date().optional(),
-      endDate: z.iso.date().optional(),
-    })
-    .optional(),
-}) satisfies z.ZodType<ScheduleFilter>;
-
-const filtersBody = jsonBody(z.object({ filters: filtersSchema }), "Invalid calendar filters");
+const filtersBody = jsonBody(
+  z.object({ filters: scheduleFilterSchema }),
+  "Invalid calendar filters",
+);
 
 function subscriptionUrl(token: string) {
   return `${config.api.url}/api/ical/${token}`;
@@ -66,7 +49,7 @@ export const icalFeed = new Hono<AppEnv>().get("/:token", async (c) => {
 });
 
 export const icalToken = new Hono<SessionEnv>()
-  .use(browserRequest, requireSession)
+  .use(privateResponse, requireSession)
   .get("/", async (c) => {
     const row = await icalTokensRepository.findByUserId(c.var.user.id);
 

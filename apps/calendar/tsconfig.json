@@ -1,15 +1,21 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
-    }
-  ],
+  "include": ["src", "vite.config.ts"],
   "compilerOptions": {
-    "baseUrl": ".",
+    "target": "ES2023",
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    // ES2023 types are needed by the remoodle API modules reached through `AppType`.
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "node"],
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/*": ["./src/*"],
       "@remoodle/*": ["../remoodle/src/*"]

@@ -14,9 +14,9 @@
     ]
   },
   "sortTailwindcss": {
-    "stylesheet": "./src/assets/main.css"
+    "stylesheet": "./src/styles.css"
   },
-  "printWidth": 80,
+  "printWidth": 100,
   "sortPackageJson": false,
-  "ignorePatterns": ["CHANGELOG.md"]
+  "ignorePatterns": ["CHANGELOG.md", "src/routeTree.gen.ts"]
 }

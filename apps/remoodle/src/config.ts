@@ -16,8 +16,8 @@ export const env = cleanEnv(process.env, {
   TELEGRAM_BOT_USERNAME: str({ default: "feathermoodbot" }),
   API_PORT: num({ default: 3000 }),
   // Public origin of the API, used in iCal subscription links.
-  API_URL: str({ default: "http://localhost:5173" }),
-  // The web calendar origin: allowed by CORS and required on cookie-authenticated writes.
+  API_URL: str({ default: "http://localhost:3000" }),
+  // Public origin of the web calendar, linked from the bot.
   CALENDAR_URL: str({ default: "http://localhost:5173" }),
   // Encrypts stored My DU tokens. Changing it disconnects every My DU connection.
   ENCRYPTION_KEY: str(),
