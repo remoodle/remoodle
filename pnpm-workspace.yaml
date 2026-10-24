@@ -4,6 +4,8 @@ packages:
 
 injectWorkspacePackages: true
 
+minimumReleaseAge: 0
+
 allowBuilds:
   "@hatchet-dev/typescript-sdk": true
   better-sqlite3: true
