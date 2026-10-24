@@ -2,792 +2,544 @@ import { Composer, InlineKeyboard } from "grammy";
 import type { Context } from "../context";
 import { config } from "../../config";
 import * as usersRepository from "../../db/repositories/users";
-import { durationToMs, humanizeDuration } from "../../library/dates";
-import { AVAILABLE_THRESHOLDS, buildThresholdsMessage } from "../../library/deadline-reminders";
+import type { UserWithSchedule } from "../../db/repositories/users";
+import { durationToMs, formatDuration } from "../../library/dates";
+import { AVAILABLE_THRESHOLDS } from "../../library/deadline-reminders";
 import {
   isValidDigestTime,
   normalizeDigestWeekdays,
   normalizeScheduleFilters,
   DIGEST_WEEKDAYS,
-  type ScheduleFilters,
 } from "../../library/schedule";
 import { m } from "../../library/i18n/messages.js";
-import { bold, code, italic } from "../../library/telegram-html";
+import { bold, code } from "../../library/telegram-html";
 import {
   settingsCallback,
   deadlinesSettingsCallback,
-  scheduleSettingsCallback,
+  classRemindersCallback,
+  setClassReminderCallback,
+  customClassReminderCallback,
   digestSettingsCallback,
   toggleThresholdCallback,
   toggleDeadlinesCallback,
-  toggleScheduleCallback,
-  toggleScheduleTypeCallback,
-  toggleScheduleFormatCallback,
+  toggleLearnCallback,
   toggleScheduleMergeCallback,
   toggleDigestCallback,
   setDigestTimeCallback,
   toggleDigestWeekdayCallback,
-  disableDigestDaysCallback,
   updateCalendarCallback,
   menuCallback,
   accountCallback,
   deleteAccountCallback,
   confirmDeleteAccountCallback,
   coursesCallback,
-  setScheduleReminderCallback,
   myDuCallback,
 } from "../callback-data";
+import { choiceLabel, onOff, settingLabel, shownHidden } from "../keyboards/labels";
 
 export const composer = new Composer<Context>();
 
 const feature = composer.chatType("private");
 
-function checkboxLabel(enabled: boolean, label: string) {
-  return `${enabled ? "✅" : "☐"} ${label}`;
+const CLASS_REMINDER_OFFSETS = ["PT5M", "PT10M", "PT15M", "PT30M", "PT1H"] as const;
+
+const MAX_CLASS_REMINDER_MINUTES = 240;
+
+const WORKWEEK = [1, 2, 3, 4, 5];
+
+type Screen = { text: string; keyboard: InlineKeyboard };
+
+type UserContext = Context & { from: { id: number } };
+
+async function show(ctx: Context, mode: "edit" | "reply", { text, keyboard }: Screen) {
+  const options = { parse_mode: "HTML" as const, reply_markup: keyboard };
+
+  if (mode === "edit") {
+    await ctx.editMessageText(text, options);
+  } else {
+    await ctx.reply(text, options);
+  }
 }
 
-function notificationsLabel(enabled: boolean) {
-  return m.ui_notifications({ status: enabled ? m.ui_status_on() : m.ui_status_muted_off() });
+async function findUser(ctx: UserContext) {
+  const user = await usersRepository.findByTelegramId(ctx.from.id);
+
+  if (!user) {
+    await ctx.answerCallbackQuery(m.not_registered_short());
+  }
+
+  return user;
+}
+
+function resetPrompts(ctx: Context) {
+  ctx.session.awaitingMoodleCalendarUrl = false;
+  ctx.session.awaitingClassReminderMinutes = false;
+  ctx.session.awaitingDigestTime = false;
+  ctx.session.myDuSetup = undefined;
 }
 
 // ─── Settings root ───────────────────────────────────────────────────────────
+// Every setting is one row showing its current value. Binary settings toggle in
+// place; the rest open a screen with their options.
 
-function buildSettingsKeyboard() {
-  return new InlineKeyboard()
-    .text(m.menu_button_deadlines(), deadlinesSettingsCallback.pack({}))
-    .text(m.menu_button_schedule(), scheduleSettingsCallback.pack({}))
+function deadlineRemindersValue(user: UserWithSchedule) {
+  if (!user.moodleCalendarUrl || !user.deadlinesEnabled || user.thresholds.length === 0) {
+    return m.ui_off();
+  }
+
+  return [...user.thresholds]
+    .sort((a, b) => durationToMs(a) - durationToMs(b))
+    .map((threshold) => formatDuration(threshold, "short"))
+    .join(", ");
+}
+
+function classRemindersValue(user: UserWithSchedule) {
+  if (!user.hasSchedule || !user.scheduleEnabled) {
+    return m.ui_off();
+  }
+
+  return m.class_reminders_before({ duration: formatDuration(user.scheduleReminderOffset) });
+}
+
+function digestDaysLabel(weekdays: number[]) {
+  if (weekdays.length === DIGEST_WEEKDAYS.length) {
+    return m.digest_every_day();
+  }
+
+  if (weekdays.length === WORKWEEK.length && WORKWEEK.every((day) => weekdays.includes(day))) {
+    return m.digest_weekdays();
+  }
+
+  return m.digest_day_count({ count: weekdays.length });
+}
+
+function digestValue(user: UserWithSchedule) {
+  const weekdays = normalizeDigestWeekdays(user.digestWeekdays);
+
+  if (!user.hasSchedule || !user.digestEnabled || weekdays.length === 0) {
+    return m.ui_off();
+  }
+
+  return m.digest_value({ time: user.digestTime, days: digestDaysLabel(weekdays) });
+}
+
+function connectionValue(connected: boolean) {
+  return connected ? m.ui_connected() : m.ui_not_connected();
+}
+
+function settingsScreen(user: UserWithSchedule): Screen {
+  const filters = normalizeScheduleFilters(user.scheduleFilters);
+
+  const keyboard = new InlineKeyboard()
+    .text(
+      settingLabel(m.settings_deadline_reminders(), deadlineRemindersValue(user)),
+      deadlinesSettingsCallback.pack({}),
+    )
     .row()
-    .text(m.settings_button_courses(), coursesCallback.pack({}))
+    .text(
+      settingLabel(m.settings_class_reminders(), classRemindersValue(user)),
+      classRemindersCallback.pack({}),
+    )
+    .row()
+    .text(settingLabel(m.settings_digest(), digestValue(user)), digestSettingsCallback.pack({}))
+    .row()
+    .text(
+      settingLabel(m.settings_merge_pairs(), onOff(!!filters.combineAdjacentPairs)),
+      toggleScheduleMergeCallback.pack({}),
+    )
+    .row()
+    .text(
+      settingLabel(m.settings_learn_classes(), shownHidden(filters.eventTypes.learn)),
+      toggleLearnCallback.pack({}),
+    )
+    .row()
+    .text(m.settings_courses(), coursesCallback.pack({}))
+    .row()
+    .text(
+      settingLabel(m.settings_moodle(), connectionValue(!!user.moodleCalendarUrl)),
+      updateCalendarCallback.pack({ from: "settings" }),
+    )
+    .row()
+    .text(
+      settingLabel(m.settings_my_du(), connectionValue(user.hasSchedule)),
+      myDuCallback.pack({}),
+    )
+    .row()
     .text(m.account_header(), accountCallback.pack({}))
     .row()
-    .text(m.settings_button_digest(), digestSettingsCallback.pack({}))
-    .row()
     .text(m.ui_back(), menuCallback.pack({}));
-}
 
-function buildAccountKeyboard() {
-  return new InlineKeyboard()
-    .text(m.account_button_delete(), deleteAccountCallback.pack({}))
-    .row()
-    .text(m.ui_back(), settingsCallback.pack({}));
-}
-
-function buildDeleteAccountKeyboard() {
-  return new InlineKeyboard()
-    .text(
-      m.account_button_confirm_delete(),
-      confirmDeleteAccountCallback.pack({ confirmed: "yes" }),
-    )
-    .text(m.ui_cancel(), confirmDeleteAccountCallback.pack({ confirmed: "no" }));
-}
-
-function buildAccountMessage(user: {
-  id: number;
-  telegramId: number;
-  hasSchedule: boolean;
-  moodleCalendarUrl: string | null;
-}): string {
-  return [
-    bold(m.account_header()),
-    "",
-    m.account_user_id({ id: code(user.id) }),
-    m.account_telegram_id({ telegramId: code(user.telegramId) }),
-    "",
-    user.hasSchedule ? m.account_group() : m.account_no_group(),
-    user.moodleCalendarUrl ? m.account_moodle_managed_locally() : m.account_moodle_not_set(),
-  ].join("\n");
+  return { text: bold(m.settings_header()), keyboard };
 }
 
 feature.command("settings", async (ctx) => {
-  if (!ctx.from?.id) {
-    return;
-  }
+  resetPrompts(ctx);
+  const user = await usersRepository.findByTelegramId(ctx.from.id);
 
-  if (!(await usersRepository.findByTelegramId(ctx.from.id))) {
+  if (!user) {
     await ctx.reply(m.not_registered());
 
     return;
   }
 
-  await ctx.reply(m.settings_header(), {
-    parse_mode: "HTML",
-    reply_markup: buildSettingsKeyboard(),
-  });
+  await show(ctx, "reply", settingsScreen(user));
 });
 
 feature.callbackQuery(settingsCallback.filter(), async (ctx) => {
-  ctx.session.awaitingMoodleCalendarUrl = false;
-  await ctx.editMessageText(m.settings_header(), {
-    parse_mode: "HTML",
-    reply_markup: buildSettingsKeyboard(),
-  });
+  resetPrompts(ctx);
+  const user = await findUser(ctx);
+
+  if (!user) return;
+
+  await show(ctx, "edit", settingsScreen(user));
   await ctx.answerCallbackQuery();
 });
 
-feature.callbackQuery(accountCallback.filter(), async (ctx) => {
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+feature.callbackQuery(toggleScheduleMergeCallback.filter(), async (ctx) => {
+  const user = await findUser(ctx);
 
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
+  if (!user) return;
 
-    return;
-  }
+  const filters = normalizeScheduleFilters(user.scheduleFilters);
+  filters.combineAdjacentPairs = !filters.combineAdjacentPairs;
+  await usersRepository.update(user.id, { scheduleFilters: filters });
 
-  await ctx.editMessageText(buildAccountMessage(user), {
-    parse_mode: "HTML",
-    reply_markup: buildAccountKeyboard(),
-  });
+  await show(ctx, "edit", settingsScreen({ ...user, scheduleFilters: filters }));
   await ctx.answerCallbackQuery();
 });
 
-feature.callbackQuery(deleteAccountCallback.filter(), async (ctx) => {
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+feature.callbackQuery(toggleLearnCallback.filter(), async (ctx) => {
+  const user = await findUser(ctx);
 
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
+  if (!user) return;
 
-    return;
-  }
+  const filters = normalizeScheduleFilters(user.scheduleFilters);
+  filters.eventTypes = { ...filters.eventTypes, learn: !filters.eventTypes.learn };
+  await usersRepository.update(user.id, { scheduleFilters: filters });
 
-  await ctx.editMessageText(
-    [bold(m.delete_account_header()), "", m.delete_account_body()].join("\n"),
-    {
-      parse_mode: "HTML",
-      reply_markup: buildDeleteAccountKeyboard(),
-    },
+  await show(ctx, "edit", settingsScreen({ ...user, scheduleFilters: filters }));
+  await ctx.answerCallbackQuery();
+});
+
+// ─── Deadline reminders ──────────────────────────────────────────────────────
+
+function deadlineRemindersScreen(user: UserWithSchedule): Screen {
+  const keyboard = new InlineKeyboard().text(
+    settingLabel(m.deadline_reminders_toggle(), onOff(user.deadlinesEnabled)),
+    toggleDeadlinesCallback.pack({}),
   );
-  await ctx.answerCallbackQuery();
-});
-
-feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
-  const { confirmed } = confirmDeleteAccountCallback.unpack(ctx.callbackQuery.data);
-
-  if (confirmed !== "yes" && confirmed !== "no") {
-    await ctx.answerCallbackQuery();
-
-    return;
-  }
-
-  if (confirmed === "no") {
-    const user = await usersRepository.findByTelegramId(ctx.from.id);
-
-    if (!user) {
-      await ctx.answerCallbackQuery(m.not_registered_short());
-
-      return;
-    }
-
-    await ctx.editMessageText(buildAccountMessage(user), {
-      parse_mode: "HTML",
-      reply_markup: buildAccountKeyboard(),
-    });
-    await ctx.answerCallbackQuery();
-
-    return;
-  }
-
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
-
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
-
-    return;
-  }
-
-  await usersRepository.remove(user.id);
-
-  ctx.session.awaitingMoodleCalendarUrl = false;
-
-  await ctx.editMessageText(m.account_deleted());
-  await ctx.answerCallbackQuery({ text: m.account_deleted() });
-});
-
-// ─── Deadlines settings ───────────────────────────────────────────────────────
-
-function buildDeadlinesKeyboard(activeThresholds: string[], deadlinesEnabled: boolean) {
-  const keyboard = new InlineKeyboard();
-
-  keyboard.row().text(notificationsLabel(deadlinesEnabled), toggleDeadlinesCallback.pack({}));
 
   for (let i = 0; i < AVAILABLE_THRESHOLDS.length; i += 2) {
-    const row = AVAILABLE_THRESHOLDS.slice(i, i + 2);
-    const keyboardRow = keyboard.row();
+    const row = keyboard.row();
 
-    for (const threshold of row) {
-      const isActive = activeThresholds.includes(threshold);
-      keyboardRow.text(
-        `${isActive ? "✅" : "☐"} ${humanizeDuration(threshold)}`,
+    for (const threshold of AVAILABLE_THRESHOLDS.slice(i, i + 2)) {
+      row.text(
+        choiceLabel(user.thresholds.includes(threshold), formatDuration(threshold)),
         toggleThresholdCallback.pack({ threshold }),
       );
     }
   }
 
-  keyboard
-    .row()
-    .text(
-      m.settings_button_update_calendar_url(),
-      updateCalendarCallback.pack({ from: "deadlines_settings" }),
-    )
-    .row()
-    .text(m.ui_back(), settingsCallback.pack({}));
+  keyboard.row().text(m.ui_back(), settingsCallback.pack({}));
 
-  return keyboard;
-}
+  const text = [
+    bold(m.settings_deadline_reminders()),
+    "",
+    m.deadline_reminders_body({ max: config.reminders.maxThresholds }),
+  ].join("\n");
 
-function buildDeadlinesMessage(thresholds: string[], deadlinesEnabled: boolean): string {
-  const parts = [bold(m.deadlines_settings_header()), "", buildThresholdsMessage(thresholds)];
-
-  if (!deadlinesEnabled) {
-    parts.push("", m.deadlines_disabled_warning());
-  }
-
-  return parts.join("\n");
+  return { text, keyboard };
 }
 
 feature.callbackQuery(deadlinesSettingsCallback.filter(), async (ctx) => {
-  ctx.session.awaitingMoodleCalendarUrl = false;
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  resetPrompts(ctx);
+  const user = await findUser(ctx);
 
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
+  if (!user) return;
 
-    return;
-  }
-
-  await ctx.editMessageText(buildDeadlinesMessage(user.thresholds, user.deadlinesEnabled), {
-    parse_mode: "HTML",
-    reply_markup: buildDeadlinesKeyboard(user.thresholds, user.deadlinesEnabled),
-  });
+  await show(ctx, "edit", deadlineRemindersScreen(user));
   await ctx.answerCallbackQuery();
 });
 
 feature.callbackQuery(toggleDeadlinesCallback.filter(), async (ctx) => {
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await findUser(ctx);
 
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
+  if (!user) return;
 
-    return;
-  }
+  const deadlinesEnabled = !user.deadlinesEnabled;
+  await usersRepository.update(user.id, { deadlinesEnabled });
 
-  const updated = !user.deadlinesEnabled;
-  await usersRepository.update(user.id, { deadlinesEnabled: updated });
-  await ctx.editMessageText(buildDeadlinesMessage(user.thresholds, updated), {
-    parse_mode: "HTML",
-    reply_markup: buildDeadlinesKeyboard(user.thresholds, updated),
-  });
+  await show(ctx, "edit", deadlineRemindersScreen({ ...user, deadlinesEnabled }));
   await ctx.answerCallbackQuery();
 });
 
 feature.callbackQuery(toggleThresholdCallback.filter(), async (ctx) => {
   const { threshold } = toggleThresholdCallback.unpack(ctx.callbackQuery.data);
+  const user = await findUser(ctx);
 
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  if (!user) return;
 
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
+  const isActive = user.thresholds.includes(threshold);
+
+  if (!isActive && user.thresholds.length >= config.reminders.maxThresholds) {
+    await ctx.answerCallbackQuery({
+      text: m.max_thresholds({ max: config.reminders.maxThresholds }),
+      show_alert: true,
+    });
 
     return;
   }
 
-  const isActive = user.thresholds.includes(threshold);
+  const thresholds = isActive
+    ? user.thresholds.filter((t) => t !== threshold)
+    : [...user.thresholds, threshold].sort((a, b) => durationToMs(a) - durationToMs(b));
 
-  let updated: string[];
+  await usersRepository.update(user.id, { thresholds });
 
-  if (isActive) {
-    updated = user.thresholds.filter((t) => t !== threshold);
-  } else {
-    if (user.thresholds.length >= config.reminders.maxThresholds) {
-      await ctx.answerCallbackQuery({
-        text: m.max_thresholds({ max: config.reminders.maxThresholds }),
-        show_alert: true,
-      });
+  await show(ctx, "edit", deadlineRemindersScreen({ ...user, thresholds }));
+  await ctx.answerCallbackQuery();
+});
 
-      return;
-    }
+// ─── Class reminders ─────────────────────────────────────────────────────────
 
-    updated = [...user.thresholds, threshold].sort((a, b) => durationToMs(a) - durationToMs(b));
+function classRemindersScreen(user: UserWithSchedule): Screen {
+  const enabled = user.hasSchedule && user.scheduleEnabled;
+  const currentMs = durationToMs(user.scheduleReminderOffset);
+  const isCustom = enabled && !CLASS_REMINDER_OFFSETS.some((o) => durationToMs(o) === currentMs);
+
+  const keyboard = new InlineKeyboard().text(
+    choiceLabel(!enabled, m.class_reminders_off()),
+    setClassReminderCallback.pack({ offset: "off" }),
+  );
+
+  for (const offset of CLASS_REMINDER_OFFSETS) {
+    keyboard
+      .row()
+      .text(
+        choiceLabel(
+          enabled && durationToMs(offset) === currentMs,
+          m.class_reminders_before({ duration: formatDuration(offset) }),
+        ),
+        setClassReminderCallback.pack({ offset }),
+      );
   }
 
-  await usersRepository.update(user.id, { thresholds: updated });
+  // A custom offset is shown with its value, so the selected marker always lands on a row.
+  keyboard
+    .row()
+    .text(
+      isCustom
+        ? choiceLabel(
+            true,
+            m.class_reminders_custom_value({
+              duration: formatDuration(user.scheduleReminderOffset),
+            }),
+          )
+        : m.class_reminders_custom(),
+      customClassReminderCallback.pack({}),
+    )
+    .row()
+    .text(m.ui_back(), settingsCallback.pack({}));
 
-  await ctx.editMessageText(buildDeadlinesMessage(updated, user.deadlinesEnabled), {
+  const text = [bold(m.settings_class_reminders()), "", m.class_reminders_body()].join("\n");
+
+  return { text, keyboard };
+}
+
+feature.callbackQuery(classRemindersCallback.filter(), async (ctx) => {
+  resetPrompts(ctx);
+  const user = await findUser(ctx);
+
+  if (!user) return;
+
+  await show(ctx, "edit", classRemindersScreen(user));
+  await ctx.answerCallbackQuery();
+});
+
+feature.callbackQuery(setClassReminderCallback.filter(), async (ctx) => {
+  const { offset } = setClassReminderCallback.unpack(ctx.callbackQuery.data);
+  const user = await findUser(ctx);
+
+  if (!user) return;
+
+  if (offset === "off") {
+    await usersRepository.update(user.id, { scheduleEnabled: false });
+    await show(ctx, "edit", classRemindersScreen({ ...user, scheduleEnabled: false }));
+    await ctx.answerCallbackQuery();
+
+    return;
+  }
+
+  if (!CLASS_REMINDER_OFFSETS.some((option) => option === offset)) {
+    await ctx.answerCallbackQuery();
+
+    return;
+  }
+
+  if (!user.hasSchedule) {
+    await ctx.answerCallbackQuery({ text: m.no_group_for_schedule(), show_alert: true });
+
+    return;
+  }
+
+  const patch = { scheduleEnabled: true, scheduleReminderOffset: offset };
+  await usersRepository.update(user.id, patch);
+
+  await show(ctx, "edit", classRemindersScreen({ ...user, ...patch }));
+  await ctx.answerCallbackQuery();
+});
+
+feature.callbackQuery(customClassReminderCallback.filter(), async (ctx) => {
+  const user = await findUser(ctx);
+
+  if (!user) return;
+
+  if (!user.hasSchedule) {
+    await ctx.answerCallbackQuery({ text: m.no_group_for_schedule(), show_alert: true });
+
+    return;
+  }
+
+  resetPrompts(ctx);
+  ctx.session.awaitingClassReminderMinutes = true;
+
+  const text = [bold(m.class_reminders_custom_header()), "", m.class_reminders_custom_body()].join(
+    "\n",
+  );
+
+  await ctx.editMessageText(text, {
     parse_mode: "HTML",
-    reply_markup: buildDeadlinesKeyboard(updated, user.deadlinesEnabled),
+    reply_markup: new InlineKeyboard().text(m.ui_cancel(), classRemindersCallback.pack({})),
   });
   await ctx.answerCallbackQuery();
 });
 
-// ─── Schedule settings ────────────────────────────────────────────────────────
-
-function buildScheduleSettingsKeyboard(
-  scheduleEnabled: boolean,
-  hasSchedule: boolean,
-  filters: ScheduleFilters,
-  reminderOffset: string,
-) {
-  const keyboard = new InlineKeyboard();
-
-  keyboard.row().text(notificationsLabel(scheduleEnabled), toggleScheduleCallback.pack({}));
-
-  const { eventTypes } = filters;
-
-  keyboard
-    .row()
-    .text(
-      checkboxLabel(eventTypes.learn, m.ui_learn()),
-      toggleScheduleTypeCallback.pack({ key: "learn" }),
-    );
-
-  keyboard
-    .row()
-    .text(
-      checkboxLabel(!!filters.combineAdjacentPairs, m.ui_combine_adjacent_pairs()),
-      toggleScheduleMergeCallback.pack({}),
-    );
-
-  keyboard.row().text(
-    m.schedule_button_remind_before({
-      minutes: Math.round(durationToMs(reminderOffset) / 60000),
-    }),
-    setScheduleReminderCallback.pack({}),
-  );
-
-  keyboard
-    .row()
-    .text(hasSchedule ? m.my_du_button_manage() : m.my_du_button_connect(), myDuCallback.pack({}));
-
-  keyboard.row().text(m.ui_back(), settingsCallback.pack({}));
-
-  return keyboard;
-}
-
-function buildScheduleSettingsMessage(
-  scheduleEnabled: boolean,
-  hasSchedule: boolean,
-  filters: ScheduleFilters,
-): string {
-  const lines = [
-    bold(m.schedule_settings_header()),
-    "",
-    hasSchedule ? m.schedule_group({ group: "My DU" }) : m.schedule_no_group(),
-    m.schedule_merge_label({
-      status: filters.combineAdjacentPairs ? m.ui_status_on() : m.ui_status_off(),
-    }),
-    "",
-    m.schedule_configure_hint(),
-  ];
-
-  if (!hasSchedule) {
-    lines.push("", italic(m.schedule_no_group_hint()));
+feature.on("message:text", async (ctx, next) => {
+  if (!ctx.session.awaitingClassReminderMinutes) {
+    return next();
   }
 
-  return lines.join("\n");
-}
+  const raw = ctx.message.text.trim();
+  const minutes = Number(raw);
 
-function buildDigestSettingsKeyboard(
-  hasSchedule: boolean,
-  digestEnabled: boolean,
-  digestTime: string,
-  digestWeekdays: number[],
-) {
-  const keyboard = new InlineKeyboard();
+  if (!/^\d+$/.test(raw) || minutes < 1 || minutes > MAX_CLASS_REMINDER_MINUTES) {
+    await ctx.reply(m.class_reminders_custom_invalid());
 
-  keyboard
-    .text(
-      m.digest_status({
-        status: digestEnabled ? m.ui_status_on() : m.ui_status_muted_off(),
-      }),
-      toggleDigestCallback.pack({}),
-    )
+    return;
+  }
+
+  ctx.session.awaitingClassReminderMinutes = false;
+  const user = await usersRepository.findByTelegramId(ctx.from.id);
+
+  if (!user) {
+    return;
+  }
+
+  const patch = { scheduleEnabled: true, scheduleReminderOffset: `PT${minutes}M` };
+  await usersRepository.update(user.id, patch);
+
+  const screen = classRemindersScreen({ ...user, ...patch });
+
+  const saved = m.class_reminders_saved({
+    duration: bold(formatDuration(patch.scheduleReminderOffset)),
+  });
+
+  await show(ctx, "reply", { ...screen, text: `${saved}\n\n${screen.text}` });
+});
+
+// ─── Daily digest ────────────────────────────────────────────────────────────
+
+function digestScreen(user: UserWithSchedule): Screen {
+  const weekdays = new Set(normalizeDigestWeekdays(user.digestWeekdays));
+
+  const keyboard = new InlineKeyboard()
+    .text(settingLabel(m.digest_toggle(), onOff(user.digestEnabled)), toggleDigestCallback.pack({}))
     .row()
-    .text(m.digest_time({ time: digestTime }), setDigestTimeCallback.pack({}));
-
-  const activeWeekdays = new Set(digestWeekdays);
+    .text(settingLabel(m.digest_time_label(), user.digestTime), setDigestTimeCallback.pack({}));
 
   for (let i = 0; i < DIGEST_WEEKDAYS.length; i += 2) {
     const row = keyboard.row();
 
     for (const day of DIGEST_WEEKDAYS.slice(i, i + 2)) {
       row.text(
-        checkboxLabel(activeWeekdays.has(day.value), day.shortLabel),
+        choiceLabel(weekdays.has(day.value), day.shortLabel),
         toggleDigestWeekdayCallback.pack({ day: String(day.value) }),
       );
     }
   }
 
-  keyboard.row().text(m.digest_disable_all(), disableDigestDaysCallback.pack({}));
-
-  if (!hasSchedule) {
-    keyboard.row().text(m.my_du_button_connect(), myDuCallback.pack({}));
-  }
-
   keyboard.row().text(m.ui_back(), settingsCallback.pack({}));
 
-  return keyboard;
+  const text = [bold(m.settings_digest()), "", m.digest_body()].join("\n");
+
+  return { text, keyboard };
 }
-
-function buildDigestSettingsMessage(
-  hasSchedule: boolean,
-  digestEnabled: boolean,
-  digestWeekdays: number[],
-): string {
-  const lines = [
-    bold(m.digest_settings_header()),
-    "",
-    hasSchedule ? m.schedule_group({ group: "My DU" }) : m.schedule_no_group(),
-    m.digest_settings_body(),
-  ];
-
-  if (!hasSchedule) {
-    lines.push("", italic(m.schedule_no_group_hint()));
-  }
-
-  if (!digestEnabled) {
-    lines.push("", italic(m.digest_warning_disabled()));
-  } else if (digestWeekdays.length === 0) {
-    lines.push("", italic(m.digest_warning_no_days()));
-  }
-
-  return lines.join("\n");
-}
-
-feature.callbackQuery(scheduleSettingsCallback.filter(), async (ctx) => {
-  ctx.session.awaitingScheduleReminderMinutes = false;
-  ctx.session.myDuSetup = undefined;
-  ctx.session.awaitingDigestTime = false;
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
-
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
-
-    return;
-  }
-
-  const filters = normalizeScheduleFilters(user.scheduleFilters);
-  await ctx.editMessageText(
-    buildScheduleSettingsMessage(user.scheduleEnabled, user.hasSchedule, filters),
-    {
-      parse_mode: "HTML",
-      reply_markup: buildScheduleSettingsKeyboard(
-        user.scheduleEnabled,
-        user.hasSchedule,
-        filters,
-        user.scheduleReminderOffset,
-      ),
-    },
-  );
-  await ctx.answerCallbackQuery();
-});
-
-feature.callbackQuery(toggleScheduleCallback.filter(), async (ctx) => {
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
-
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
-
-    return;
-  }
-
-  if (!user.hasSchedule && !user.scheduleEnabled) {
-    await ctx.answerCallbackQuery({
-      text: m.no_group_for_schedule(),
-      show_alert: true,
-    });
-
-    return;
-  }
-
-  const updated = !user.scheduleEnabled;
-  await usersRepository.update(user.id, { scheduleEnabled: updated });
-
-  const filters = normalizeScheduleFilters(user.scheduleFilters);
-  await ctx.editMessageText(buildScheduleSettingsMessage(updated, user.hasSchedule, filters), {
-    parse_mode: "HTML",
-    reply_markup: buildScheduleSettingsKeyboard(
-      updated,
-      user.hasSchedule,
-      filters,
-      user.scheduleReminderOffset,
-    ),
-  });
-  await ctx.answerCallbackQuery();
-});
 
 feature.callbackQuery(digestSettingsCallback.filter(), async (ctx) => {
-  ctx.session.awaitingScheduleReminderMinutes = false;
-  ctx.session.awaitingDigestTime = false;
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  resetPrompts(ctx);
+  const user = await findUser(ctx);
 
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
+  if (!user) return;
 
-    return;
-  }
-
-  const weekdays = normalizeDigestWeekdays(user.digestWeekdays);
-  await ctx.editMessageText(
-    buildDigestSettingsMessage(user.hasSchedule, user.digestEnabled, weekdays),
-    {
-      parse_mode: "HTML",
-      reply_markup: buildDigestSettingsKeyboard(
-        user.hasSchedule,
-        user.digestEnabled,
-        user.digestTime,
-        weekdays,
-      ),
-    },
-  );
+  await show(ctx, "edit", digestScreen(user));
   await ctx.answerCallbackQuery();
 });
 
 feature.callbackQuery(toggleDigestCallback.filter(), async (ctx) => {
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  const user = await findUser(ctx);
 
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
-
-    return;
-  }
+  if (!user) return;
 
   if (!user.hasSchedule && !user.digestEnabled) {
-    await ctx.answerCallbackQuery({
-      text: m.no_group_for_schedule(),
-      show_alert: true,
-    });
+    await ctx.answerCallbackQuery({ text: m.no_group_for_schedule(), show_alert: true });
 
     return;
   }
 
-  const updated = !user.digestEnabled;
-  await usersRepository.update(user.id, { digestEnabled: updated });
+  const digestEnabled = !user.digestEnabled;
+  await usersRepository.update(user.id, { digestEnabled });
 
-  const weekdays = normalizeDigestWeekdays(user.digestWeekdays);
-  await ctx.editMessageText(buildDigestSettingsMessage(user.hasSchedule, updated, weekdays), {
-    parse_mode: "HTML",
-    reply_markup: buildDigestSettingsKeyboard(user.hasSchedule, updated, user.digestTime, weekdays),
-  });
+  await show(ctx, "edit", digestScreen({ ...user, digestEnabled }));
   await ctx.answerCallbackQuery();
 });
 
 feature.callbackQuery(toggleDigestWeekdayCallback.filter(), async (ctx) => {
-  const { day } = toggleDigestWeekdayCallback.unpack(ctx.callbackQuery.data);
+  const day = Number(toggleDigestWeekdayCallback.unpack(ctx.callbackQuery.data).day);
+  const user = await findUser(ctx);
 
-  const dayValue = Number(day);
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
-
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
-
-    return;
-  }
+  if (!user) return;
 
   const weekdays = normalizeDigestWeekdays(user.digestWeekdays);
 
-  const updated = weekdays.includes(dayValue)
-    ? weekdays.filter((weekday) => weekday !== dayValue)
-    : [...weekdays, dayValue];
-
-  const normalizedUpdated = normalizeDigestWeekdays(updated);
-  await usersRepository.update(user.id, { digestWeekdays: normalizedUpdated });
-
-  await ctx.editMessageText(
-    buildDigestSettingsMessage(user.hasSchedule, user.digestEnabled, normalizedUpdated),
-    {
-      parse_mode: "HTML",
-      reply_markup: buildDigestSettingsKeyboard(
-        user.hasSchedule,
-        user.digestEnabled,
-        user.digestTime,
-        normalizedUpdated,
-      ),
-    },
+  const digestWeekdays = normalizeDigestWeekdays(
+    weekdays.includes(day) ? weekdays.filter((weekday) => weekday !== day) : [...weekdays, day],
   );
+
+  await usersRepository.update(user.id, { digestWeekdays });
+
+  await show(ctx, "edit", digestScreen({ ...user, digestWeekdays }));
   await ctx.answerCallbackQuery();
 });
 
-feature.callbackQuery(disableDigestDaysCallback.filter(), async (ctx) => {
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+feature.callbackQuery(setDigestTimeCallback.filter(), async (ctx) => {
+  const user = await findUser(ctx);
 
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
+  if (!user) return;
 
-    return;
-  }
+  resetPrompts(ctx);
+  ctx.session.awaitingDigestTime = true;
 
-  const weekdays: number[] = [];
+  const text = [
+    bold(m.digest_time_header()),
+    "",
+    m.digest_time_body({ time: bold(user.digestTime) }),
+  ].join("\n");
 
-  await usersRepository.update(user.id, { digestWeekdays: weekdays });
-
-  await ctx.editMessageText(
-    buildDigestSettingsMessage(user.hasSchedule, user.digestEnabled, weekdays),
-    {
-      parse_mode: "HTML",
-      reply_markup: buildDigestSettingsKeyboard(
-        user.hasSchedule,
-        user.digestEnabled,
-        user.digestTime,
-        weekdays,
-      ),
-    },
-  );
+  await ctx.editMessageText(text, {
+    parse_mode: "HTML",
+    reply_markup: new InlineKeyboard().text(m.ui_cancel(), digestSettingsCallback.pack({})),
+  });
   await ctx.answerCallbackQuery();
-});
-
-feature.callbackQuery(toggleScheduleTypeCallback.filter(), async (ctx) => {
-  const { key } = toggleScheduleTypeCallback.unpack(ctx.callbackQuery.data);
-
-  if (key !== "lecture" && key !== "practice" && key !== "learn") {
-    await ctx.answerCallbackQuery();
-
-    return;
-  }
-
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
-
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
-
-    return;
-  }
-
-  const filters = normalizeScheduleFilters(user.scheduleFilters);
-  filters.eventTypes = {
-    ...filters.eventTypes,
-    [key]: !filters.eventTypes[key],
-  };
-
-  await usersRepository.update(user.id, { scheduleFilters: filters });
-
-  await ctx.editMessageText(
-    buildScheduleSettingsMessage(user.scheduleEnabled, user.hasSchedule, filters),
-    {
-      parse_mode: "HTML",
-      reply_markup: buildScheduleSettingsKeyboard(
-        user.scheduleEnabled,
-        user.hasSchedule,
-        filters,
-        user.scheduleReminderOffset,
-      ),
-    },
-  );
-  await ctx.answerCallbackQuery();
-});
-
-feature.callbackQuery(toggleScheduleFormatCallback.filter(), async (ctx) => {
-  const { key } = toggleScheduleFormatCallback.unpack(ctx.callbackQuery.data);
-
-  if (key !== "online" && key !== "offline") {
-    await ctx.answerCallbackQuery();
-
-    return;
-  }
-
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
-
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
-
-    return;
-  }
-
-  const filters = normalizeScheduleFilters(user.scheduleFilters);
-  filters.eventFormats = {
-    ...filters.eventFormats,
-    [key]: !filters.eventFormats[key],
-  };
-
-  await usersRepository.update(user.id, { scheduleFilters: filters });
-
-  await ctx.editMessageText(
-    buildScheduleSettingsMessage(user.scheduleEnabled, user.hasSchedule, filters),
-    {
-      parse_mode: "HTML",
-      reply_markup: buildScheduleSettingsKeyboard(
-        user.scheduleEnabled,
-        user.hasSchedule,
-        filters,
-        user.scheduleReminderOffset,
-      ),
-    },
-  );
-  await ctx.answerCallbackQuery();
-});
-
-feature.callbackQuery(toggleScheduleMergeCallback.filter(), async (ctx) => {
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
-
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
-
-    return;
-  }
-
-  const filters = normalizeScheduleFilters(user.scheduleFilters);
-  filters.combineAdjacentPairs = !filters.combineAdjacentPairs;
-
-  await usersRepository.update(user.id, { scheduleFilters: filters });
-
-  await ctx.editMessageText(
-    buildScheduleSettingsMessage(user.scheduleEnabled, user.hasSchedule, filters),
-    {
-      parse_mode: "HTML",
-      reply_markup: buildScheduleSettingsKeyboard(
-        user.scheduleEnabled,
-        user.hasSchedule,
-        filters,
-        user.scheduleReminderOffset,
-      ),
-    },
-  );
-  await ctx.answerCallbackQuery();
-});
-
-// ─── Schedule reminder offset ─────────────────────────────────────────────────
-
-feature.on("message:text", async (ctx, next) => {
-  if (!ctx.session.awaitingScheduleReminderMinutes) {
-    return next();
-  }
-
-  const raw = ctx.message.text.trim();
-  const mins = parseInt(raw, 10);
-
-  if (!Number.isInteger(mins) || mins < 1 || mins > 240) {
-    await ctx.reply(m.reminder_minutes_invalid());
-
-    return;
-  }
-
-  const offset = `PT${mins}M`;
-  ctx.session.awaitingScheduleReminderMinutes = false;
-
-  const existing = await usersRepository.findByTelegramId(ctx.from.id);
-
-  if (!existing) {
-    return;
-  }
-
-  await usersRepository.update(existing.id, { scheduleReminderOffset: offset });
-  const user = { ...existing, scheduleReminderOffset: offset };
-  const filters = normalizeScheduleFilters(user.scheduleFilters);
-
-  await ctx.reply(
-    `${m.schedule_reminder_saved({ minutes: bold(`${mins} minutes`) })}\n\n${buildScheduleSettingsMessage(
-      user.scheduleEnabled,
-      user.hasSchedule,
-      filters,
-    )}`,
-    {
-      parse_mode: "HTML",
-      reply_markup: buildScheduleSettingsKeyboard(
-        user.scheduleEnabled,
-        user.hasSchedule,
-        filters,
-        offset,
-      ),
-    },
-  );
 });
 
 feature.on("message:text", async (ctx, next) => {
@@ -795,115 +547,93 @@ feature.on("message:text", async (ctx, next) => {
     return next();
   }
 
-  const time = ctx.message.text.trim();
+  const digestTime = ctx.message.text.trim();
 
-  if (!isValidDigestTime(time)) {
+  if (!isValidDigestTime(digestTime)) {
     await ctx.reply(m.digest_time_invalid());
 
     return;
   }
 
   ctx.session.awaitingDigestTime = false;
+  const user = await usersRepository.findByTelegramId(ctx.from.id);
 
-  const existing = await usersRepository.findByTelegramId(ctx.from.id);
-
-  if (!existing) {
+  if (!user) {
     return;
   }
 
-  await usersRepository.update(existing.id, { digestTime: time });
-  const user = { ...existing, digestTime: time };
-  const weekdays = normalizeDigestWeekdays(user.digestWeekdays);
+  await usersRepository.update(user.id, { digestTime });
 
-  await ctx.reply(
-    `${m.digest_time_saved({ time: bold(time) })}\n\n${buildDigestSettingsMessage(
-      user.hasSchedule,
-      user.digestEnabled,
-      weekdays,
-    )}`,
+  const screen = digestScreen({ ...user, digestTime });
+  const text = `${m.digest_time_saved({ time: bold(digestTime) })}\n\n${screen.text}`;
+  await show(ctx, "reply", { ...screen, text });
+});
+
+// ─── Account ─────────────────────────────────────────────────────────────────
+
+function accountScreen(user: UserWithSchedule): Screen {
+  const text = [
+    bold(m.account_header()),
+    "",
+    m.account_user_id({ id: code(user.id) }),
+    m.account_telegram_id({ telegramId: code(user.telegramId) }),
+  ].join("\n");
+
+  const keyboard = new InlineKeyboard()
+    .text(m.account_button_delete(), deleteAccountCallback.pack({}))
+    .row()
+    .text(m.ui_back(), settingsCallback.pack({}));
+
+  return { text, keyboard };
+}
+
+feature.callbackQuery(accountCallback.filter(), async (ctx) => {
+  const user = await findUser(ctx);
+
+  if (!user) return;
+
+  await show(ctx, "edit", accountScreen(user));
+  await ctx.answerCallbackQuery();
+});
+
+feature.callbackQuery(deleteAccountCallback.filter(), async (ctx) => {
+  const user = await findUser(ctx);
+
+  if (!user) return;
+
+  await ctx.editMessageText(
+    [bold(m.delete_account_header()), "", m.delete_account_body()].join("\n"),
     {
       parse_mode: "HTML",
-      reply_markup: buildDigestSettingsKeyboard(
-        user.hasSchedule,
-        user.digestEnabled,
-        time,
-        weekdays,
-      ),
+      reply_markup: new InlineKeyboard()
+        .text(
+          m.account_button_confirm_delete(),
+          confirmDeleteAccountCallback.pack({ confirmed: "yes" }),
+        )
+        .text(m.ui_cancel(), accountCallback.pack({})),
     },
   );
+  await ctx.answerCallbackQuery();
 });
 
-feature.callbackQuery(setScheduleReminderCallback.filter(), async (ctx) => {
-  ctx.session.awaitingScheduleReminderMinutes = true;
-  ctx.session.awaitingDigestTime = false;
-  ctx.session.myDuSetup = undefined;
+feature.callbackQuery(confirmDeleteAccountCallback.filter(), async (ctx) => {
+  const { confirmed } = confirmDeleteAccountCallback.unpack(ctx.callbackQuery.data);
+  const user = await findUser(ctx);
 
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
+  if (!user) return;
 
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
+  if (confirmed !== "yes") {
+    await show(ctx, "edit", accountScreen(user));
+    await ctx.answerCallbackQuery();
 
     return;
   }
 
-  const current = user.scheduleReminderOffset;
-  const currentMins = Math.round(durationToMs(current) / 60000);
+  await usersRepository.remove(user.id);
+  resetPrompts(ctx);
 
-  const reminderMsg = [
-    bold(m.schedule_reminder_settings_header()),
-    "",
-    m.schedule_reminder_settings_body({ minutes: bold(`${currentMins} minutes`) }),
-  ].join("\n");
-
-  try {
-    await ctx.editMessageText(reminderMsg, {
-      parse_mode: "HTML",
-      reply_markup: new InlineKeyboard().text(m.ui_cancel(), scheduleSettingsCallback.pack({})),
-    });
-  } catch {
-    await ctx.reply(reminderMsg, {
-      parse_mode: "HTML",
-      reply_markup: new InlineKeyboard().text(m.ui_cancel(), scheduleSettingsCallback.pack({})),
-    });
-  }
-
-  await ctx.answerCallbackQuery();
-});
-
-feature.callbackQuery(setDigestTimeCallback.filter(), async (ctx) => {
-  ctx.session.awaitingDigestTime = true;
-  ctx.session.awaitingScheduleReminderMinutes = false;
-  ctx.session.myDuSetup = undefined;
-
-  const user = await usersRepository.findByTelegramId(ctx.from.id);
-
-  if (!user) {
-    await ctx.answerCallbackQuery(m.not_registered_short());
-
-    return;
-  }
-
-  const current = user.digestTime;
-
-  const reminderMsg = [
-    bold(m.digest_time_header()),
-    "",
-    m.digest_time_body({ time: bold(current) }),
-  ].join("\n");
-
-  try {
-    await ctx.editMessageText(reminderMsg, {
-      parse_mode: "HTML",
-      reply_markup: new InlineKeyboard().text(m.ui_cancel(), scheduleSettingsCallback.pack({})),
-    });
-  } catch {
-    await ctx.reply(reminderMsg, {
-      parse_mode: "HTML",
-      reply_markup: new InlineKeyboard().text(m.ui_cancel(), scheduleSettingsCallback.pack({})),
-    });
-  }
-
-  await ctx.answerCallbackQuery();
+  await ctx.editMessageText(m.account_deleted());
+  await ctx.answerCallbackQuery({ text: m.account_deleted() });
 });
 
 export { composer as settingsFeature };

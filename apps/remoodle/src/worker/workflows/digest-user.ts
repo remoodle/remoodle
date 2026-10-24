@@ -101,7 +101,7 @@ export const digestUser = hatchet.task<Input>({
       return;
     }
 
-    const message = buildTodayScheduleMessage(weeklySchedule, now, "My DU");
+    const message = buildTodayScheduleMessage(weeklySchedule, now);
 
     const replyMarkup = {
       inline_keyboard: [[{ text: m.ui_close(), callback_data: "remove_message" }]],

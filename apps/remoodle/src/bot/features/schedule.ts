@@ -54,10 +54,10 @@ async function fetchScheduleMessage(
 
   const message =
     view === "week"
-      ? buildWeeklyScheduleMessage(merged, now, "My DU")
+      ? buildWeeklyScheduleMessage(merged, now)
       : view === "next_week"
-        ? buildNextWeekScheduleMessage(merged, now, "My DU")
-        : buildTodayScheduleMessage(merged, now, "My DU");
+        ? buildNextWeekScheduleMessage(merged, now)
+        : buildTodayScheduleMessage(merged, now);
 
   const visibleItems =
     view === "today"
@@ -96,12 +96,11 @@ function buildScheduleKeyboard(view: ScheduleView, rooms: string[], hasThisWeek:
   }
 
   if (rooms.length > 0) {
-    for (let i = 0; i < rooms.length; i += 3) {
-      const rowRooms = rooms.slice(i, i + 3);
+    for (let i = 0; i < rooms.length; i += 2) {
       keyboard.row();
 
-      for (const room of rowRooms) {
-        keyboard.text(m.ui_room_label({ room }), roomPhotoCallback.pack({ room }));
+      for (const room of rooms.slice(i, i + 2)) {
+        keyboard.text(m.ui_room_map({ room }), roomPhotoCallback.pack({ room }));
       }
     }
   }
@@ -272,7 +271,7 @@ feature.callbackQuery(roomPhotoCallback.filter(), async (ctx) => {
 
     const buffer = Buffer.from(await res.arrayBuffer());
     await ctx.replyWithPhoto(new InputFile(buffer, `${sanitizeRoomFilename(room)}.png`), {
-      caption: m.ui_room_label({ room }),
+      caption: room,
       reply_markup: closeKeyboard,
     });
   } catch {

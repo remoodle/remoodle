@@ -1,7 +1,7 @@
 import { m } from "./i18n/messages.js";
 import { bold } from "./telegram-html";
 import type { DeadlineEvent } from "./moodle/deadlines";
-import { durationToMs, getTimeLeft, formatDate, humanizeDuration } from "./dates";
+import { durationToMs, getTimeLeft, formatDate } from "./dates";
 
 export type PendingReminder = {
   eventId: string;
@@ -65,94 +65,45 @@ function getCourseLabel(event: Pick<DeadlineEvent, "courseName">): string {
   return event.courseName?.trim() || m.unknown_course();
 }
 
-function getDeadlineIcon(timestampMs: number, fireThresholdHours = 3): string {
-  const hoursLeft = (timestampMs - Date.now()) / (60 * 60 * 1000);
+function formatDeadlineItem(event: DeadlineEvent): string {
+  return m.deadline_item({
+    name: bold(getDeadlineName(event.summary)),
+    course: getCourseLabel(event),
+    date: formatDate(event.timestampMs),
+    timeLeft: bold(getTimeLeft(event.timestampMs)),
+  });
+}
 
-  return hoursLeft <= fireThresholdHours ? "🔥" : "📅";
+// Reminders and the deadline list share one item format so both read the same.
+function buildDeadlineList(header: string, events: DeadlineEvent[]): string {
+  const items = [...events].sort((a, b) => a.timestampMs - b.timestampMs).map(formatDeadlineItem);
+
+  return [header, ...items].join("\n\n");
 }
 
 export function buildReminderMessage(
   events: DeadlineEvent[],
   reminders: PendingReminder[],
 ): string {
-  const eventMap = new Map(events.map((e) => [e.uid, e]));
+  const remindedIds = new Set(reminders.map((reminder) => reminder.eventId));
 
-  type ReminderItem = {
-    uid: string;
-    summary: string;
-    timestampMs: number;
-  };
-
-  const remindersByCourse = new Map<string, ReminderItem[]>();
-
-  for (const reminder of reminders) {
-    const event = eventMap.get(reminder.eventId);
-
-    if (!event) {
-      continue;
-    }
-
-    const courseLabel = getCourseLabel(event);
-    const items = remindersByCourse.get(courseLabel) ?? [];
-    items.push({
-      uid: event.uid,
-      summary: event.summary,
-      timestampMs: event.timestampMs,
-    });
-    remindersByCourse.set(courseLabel, items);
-  }
-
-  const parts: string[] = [m.reminder_header(), ""];
-
-  for (const [courseLabel, courseReminders] of Array.from(remindersByCourse.entries())) {
-    parts.push(m.reminder_course_label({ course: courseLabel }));
-
-    for (const event of courseReminders.sort(
-      (a: ReminderItem, b: ReminderItem) => a.timestampMs - b.timestampMs,
-    )) {
-      parts.push(
-        m.reminder_deadline_item({
-          name: getDeadlineName(event.summary),
-          timeLeft: bold(getTimeLeft(event.timestampMs)),
-          date: formatDate(event.timestampMs),
-        }),
-      );
-    }
-
-    parts.push("");
-  }
-
-  return parts.join("\n").trim();
+  return buildDeadlineList(
+    bold(m.reminder_header()),
+    events.filter((event) => remindedIds.has(event.uid)),
+  );
 }
 
 export function buildDeadlinesMessage(events: DeadlineEvent[], daysLimit = 14): string {
   const nowMs = Date.now();
   const limitMs = nowMs + daysLimit * 24 * 60 * 60 * 1000;
-
-  const upcoming = events
-    .filter((e) => e.timestampMs > nowMs && e.timestampMs <= limitMs)
-    .sort((a, b) => a.timestampMs - b.timestampMs);
+  const upcoming = events.filter((e) => e.timestampMs > nowMs && e.timestampMs <= limitMs);
+  const header = bold(m.deadlines_upcoming_header());
 
   if (upcoming.length === 0) {
-    return m.no_upcoming_deadlines({ days: daysLimit });
+    return `${header}\n\n${m.no_upcoming_deadlines({ days: daysLimit })}`;
   }
 
-  const parts: string[] = [m.deadlines_upcoming_header(), ""];
-
-  for (const event of upcoming) {
-    parts.push(
-      m.deadline_item({
-        icon: getDeadlineIcon(event.timestampMs),
-        name: bold(getDeadlineName(event.summary)),
-        course: getCourseLabel(event),
-        date: formatDate(event.timestampMs),
-        timeLeft: bold(getTimeLeft(event.timestampMs)),
-      }),
-      "",
-    );
-  }
-
-  return parts.join("\n").trim();
+  return buildDeadlineList(header, upcoming);
 }
 
 export const AVAILABLE_THRESHOLDS = [
@@ -165,23 +116,3 @@ export const AVAILABLE_THRESHOLDS = [
   "P2D",
   "P1W",
 ] as const;
-
-export function buildThresholdsMessage(thresholds: string[]): string {
-  const parts: string[] = [bold(m.thresholds_header()), ""];
-
-  if (thresholds.length === 0) {
-    parts.push(m.no_thresholds_configured(), "");
-  } else {
-    parts.push(m.thresholds_active_header());
-    [...thresholds]
-      .sort((a, b) => durationToMs(a) - durationToMs(b))
-      .forEach((t) => {
-        parts.push(m.threshold_item({ duration: humanizeDuration(t) }));
-      });
-    parts.push("");
-  }
-
-  parts.push(m.thresholds_toggle_prompt());
-
-  return parts.join("\n");
-}

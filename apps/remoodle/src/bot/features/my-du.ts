@@ -27,7 +27,7 @@ import {
   myDuSignInCallback,
   myDuSyncCallback,
   myDuTermCallback,
-  scheduleSettingsCallback,
+  settingsCallback,
 } from "../callback-data";
 
 type Schedule = Awaited<ReturnType<typeof readSchedule>>;
@@ -87,7 +87,7 @@ function buildStatusKeyboard({ connection }: Schedule) {
       .text(m.my_du_button_change_period(), myDuPeriodCallback.pack({}));
   }
 
-  return keyboard.row().text(m.ui_back(), scheduleSettingsCallback.pack({}));
+  return keyboard.row().text(m.ui_back(), settingsCallback.pack({}));
 }
 
 function buildTermKeyboard() {
@@ -122,7 +122,7 @@ async function findUserId(ctx: Context & { from: { id: number } }) {
 
 function clearOtherPrompts(ctx: Context) {
   ctx.session.awaitingMoodleCalendarUrl = false;
-  ctx.session.awaitingScheduleReminderMinutes = false;
+  ctx.session.awaitingClassReminderMinutes = false;
   ctx.session.awaitingDigestTime = false;
 }
 

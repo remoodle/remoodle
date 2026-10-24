@@ -4,19 +4,18 @@ import type { Context } from "../context";
 import { config } from "../../config";
 import * as myDuRepository from "../../db/repositories/my-du";
 import * as usersRepository from "../../db/repositories/users";
-import type { User } from "../../db/repositories/users";
+import type { UserWithSchedule } from "../../db/repositories/users";
 import { approveTelegramLogin } from "../../library/auth";
 import { UserFacingError } from "../../library/errors";
 import { connectMoodle, fetchDeadlineEvents } from "../../library/moodle/service";
 import { START_PAYLOADS } from "../../library/bot-links";
-import { bold, link } from "../../library/telegram-html";
+import { bold } from "../../library/telegram-html";
 import {
   applyScheduleFilters,
   buildClassBreakdown,
   getDayName,
   getScheduleForDay,
   mergeAdjacentScheduleItems,
-  normalizeDigestWeekdays,
   normalizeScheduleFilters,
   toWeeklySchedule,
 } from "../../library/schedule";
@@ -26,39 +25,33 @@ import {
   menuCallback,
   updateCalendarCallback,
   setupCallback,
-  deadlinesSettingsCallback,
+  settingsCallback,
   loginCallback,
   myDuCallback,
 } from "../callback-data";
 import { buildMenuKeyboard } from "../keyboards/menu";
 
-type MenuUser = User & { hasSchedule: boolean };
+const menuDateFormat = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Almaty",
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+});
 
-async function buildMenuMessage(user: MenuUser): Promise<string> {
-  const parts: string[] = [m.menu_ready()];
+// The menu opens with today's date and what it holds, so it doubles as a daily glance.
+async function buildMenuMessage(user: UserWithSchedule): Promise<string> {
+  const header = bold(menuDateFormat.format(new Date()));
+
+  if (!user.hasSchedule && !user.moodleCalendarUrl) {
+    return `${header}\n${m.menu_get_started()}`;
+  }
 
   const summary = await buildMenuSummary(user);
 
-  if (summary) {
-    parts.push(summary);
-  } else if (!user.hasSchedule && !user.moodleCalendarUrl) {
-    parts.push(m.warn_add_calendar_url());
-  }
-
-  if (user.hasSchedule) {
-    const digestWeekdays = normalizeDigestWeekdays(user.digestWeekdays);
-
-    if (!user.digestEnabled) {
-      parts.push(m.warn_digest_disabled());
-    } else if (digestWeekdays.length === 0) {
-      parts.push(m.warn_digest_no_days());
-    }
-  }
-
-  return parts.join("\n\n");
+  return summary ? `${header}\n${summary}` : header;
 }
 
-async function buildMenuSummary(user: MenuUser): Promise<string | null> {
+async function buildMenuSummary(user: UserWithSchedule): Promise<string | null> {
   const { deadlinesCount, todayClasses } = await all({
     async deadlinesCount() {
       return getTodayDeadlinesCount(user);
@@ -93,7 +86,7 @@ async function buildMenuSummary(user: MenuUser): Promise<string | null> {
       return m.menu_no_deadlines_today();
     }
 
-    return m.menu_classes_today({ breakdown: m.deadline_count({ count: deadlinesCount }) });
+    return m.menu_today_breakdown({ breakdown: m.deadline_count({ count: deadlinesCount }) });
   }
 
   if (classesOnly) {
@@ -101,7 +94,7 @@ async function buildMenuSummary(user: MenuUser): Promise<string | null> {
       return m.menu_no_classes_today();
     }
 
-    return m.menu_classes_today({ breakdown: buildClassBreakdown(todayClasses) });
+    return m.menu_today_breakdown({ breakdown: buildClassBreakdown(todayClasses) });
   }
 
   return null;
@@ -116,7 +109,7 @@ function getAlmatyDateKey(value: number | Date) {
   }).format(value);
 }
 
-async function getTodayDeadlinesCount(user: MenuUser) {
+async function getTodayDeadlinesCount(user: UserWithSchedule) {
   if (!user.moodleCalendarUrl) {
     return null;
   }
@@ -136,7 +129,7 @@ async function getTodayDeadlinesCount(user: MenuUser) {
   }
 }
 
-async function getTodayClasses(user: MenuUser) {
+async function getTodayClasses(user: UserWithSchedule) {
   if (!user.hasSchedule) {
     return null;
   }
@@ -149,31 +142,27 @@ async function getTodayClasses(user: MenuUser) {
   return getScheduleForDay(merged, getDayName(new Date()));
 }
 
-function buildAboutMessage() {
-  return [
-    bold(m.about_header()),
-    "",
-    m.about_description(),
-    "",
-    m.about_calendar_link({ url: link(`${config.calendar.url}/`, config.calendar.host) }),
-    m.about_github_link({
-      url: link("https://github.com/remoodle/heresy", "github.com/remoodle/heresy"),
-    }),
-    m.about_docs_link({ url: link(`${config.docs.url}/`, config.docs.host) }),
-  ].join("\n");
+const GITHUB_URL = "https://github.com/remoodle/heresy";
+
+function buildAboutKeyboard() {
+  return new InlineKeyboard()
+    .url(m.about_button_docs(), `${config.docs.url}/`)
+    .url(m.about_button_github(), GITHUB_URL)
+    .row()
+    .text(m.ui_back(), menuCallback.pack({}));
 }
 
 function buildSetupKeyboard() {
   return new InlineKeyboard()
-    .text(m.setup_button_add_calendar_url(), updateCalendarCallback.pack({ from: "setup" }))
+    .text(m.setup_button_connect_moodle(), updateCalendarCallback.pack({ from: "setup" }))
     .row()
     .text(m.my_du_button_connect(), myDuCallback.pack({}));
 }
 
-function buildUpdateCalendarKeyboard(from: "setup" | "deadlines_settings") {
+function buildUpdateCalendarKeyboard(from: "setup" | "settings") {
   return new InlineKeyboard().text(
     m.ui_back(),
-    from === "deadlines_settings" ? deadlinesSettingsCallback.pack({}) : setupCallback.pack({}),
+    from === "settings" ? settingsCallback.pack({}) : setupCallback.pack({}),
   );
 }
 
@@ -226,6 +215,7 @@ feature.command("start", async (ctx) => {
 
   if (user) {
     await ctx.reply(await buildMenuMessage(user), {
+      parse_mode: "HTML",
       reply_markup: buildMenuKeyboard(),
     });
 
@@ -255,15 +245,16 @@ feature.callbackQuery(menuCallback.filter(), async (ctx) => {
   }
 
   await ctx.editMessageText(await buildMenuMessage(user), {
+    parse_mode: "HTML",
     reply_markup: buildMenuKeyboard(),
   });
   await ctx.answerCallbackQuery();
 });
 
 feature.callbackQuery(aboutCallback.filter(), async (ctx) => {
-  await ctx.editMessageText(buildAboutMessage(), {
+  await ctx.editMessageText(`${bold(m.about_header())}\n\n${m.about_body()}`, {
     parse_mode: "HTML",
-    reply_markup: new InlineKeyboard().text(m.ui_back(), menuCallback.pack({})),
+    reply_markup: buildAboutKeyboard(),
   });
   await ctx.answerCallbackQuery();
 });
@@ -280,7 +271,7 @@ feature.callbackQuery(setupCallback.filter(), async (ctx) => {
 feature.callbackQuery(updateCalendarCallback.filter(), async (ctx) => {
   const { from } = updateCalendarCallback.unpack(ctx.callbackQuery.data);
 
-  if (from !== "setup" && from !== "deadlines_settings") {
+  if (from !== "setup" && from !== "settings") {
     await ctx.answerCallbackQuery();
 
     return;
@@ -316,6 +307,7 @@ feature.on("message:text", async (ctx, next) => {
   ctx.session.awaitingMoodleCalendarUrl = false;
   const user = await usersRepository.findById(userId);
   await ctx.reply(`${m.calendar_url_saved()}\n\n${await buildMenuMessage(user!)}`, {
+    parse_mode: "HTML",
     reply_markup: buildMenuKeyboard(),
   });
 });

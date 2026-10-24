@@ -4,6 +4,7 @@ import * as myDuRepository from "../../db/repositories/my-du";
 import * as usersRepository from "../../db/repositories/users";
 import { m } from "../../library/i18n/messages.js";
 import { bold } from "../../library/telegram-html";
+import { settingLabel, shownHidden } from "../keyboards/labels";
 import {
   courseScheduleCallback,
   coursesCallback,
@@ -28,47 +29,51 @@ async function getUserCourses(userId: number): Promise<string[]> {
   return Array.from(new Set(names)).sort();
 }
 
+// Course names are long, so each course gets a full-width row that opens its own screen.
 function buildCoursesKeyboard(courses: string[], excluded: string[]) {
   const keyboard = new InlineKeyboard();
 
-  for (let i = 0; i < courses.length; i++) {
-    const course = courses[i]!;
-    const isExcluded = excluded.includes(course);
+  courses.forEach((course, i) => {
     keyboard
       .row()
-      .text(isExcluded ? "❌" : "✅", toggleCourseCallback.pack({ idx: String(i) }))
-      .text(course, courseScheduleCallback.pack({ idx: String(i) }));
-  }
+      .text(
+        excluded.includes(course) ? m.courses_hidden_item({ course }) : course,
+        courseScheduleCallback.pack({ idx: String(i) }),
+      );
+  });
 
   keyboard.row().text(m.ui_back(), settingsCallback.pack({}));
 
   return keyboard;
 }
 
-function buildCourseScheduleKeyboard(
+function buildCourseKeyboard(
   index: number,
+  shown: boolean,
   filters: CourseScheduleFilters,
 ): InlineKeyboard {
+  const idx = String(index);
+
+  const filterButton = (label: string, key: keyof CourseScheduleFilters) =>
+    [
+      settingLabel(label, shownHidden(filters[key])),
+      toggleCourseScheduleFilterCallback.pack({ idx, key }),
+    ] as const;
+
   return new InlineKeyboard()
-    .text(
-      `${filters.lecture ? "✅" : "☐"} ${m.class_type_lecture()}`,
-      toggleCourseScheduleFilterCallback.pack({ idx: String(index), key: "lecture" }),
-    )
-    .text(
-      `${filters.practice ? "✅" : "☐"} ${m.class_type_practice()}`,
-      toggleCourseScheduleFilterCallback.pack({ idx: String(index), key: "practice" }),
-    )
+    .text(settingLabel(m.course_toggle(), shownHidden(shown)), toggleCourseCallback.pack({ idx }))
     .row()
-    .text(
-      `${filters.online ? "✅" : "☐"} ${m.location_online()}`,
-      toggleCourseScheduleFilterCallback.pack({ idx: String(index), key: "online" }),
-    )
-    .text(
-      `${filters.offline ? "✅" : "☐"} ${m.ui_offline()}`,
-      toggleCourseScheduleFilterCallback.pack({ idx: String(index), key: "offline" }),
-    )
+    .text(...filterButton(m.course_lectures(), "lecture"))
+    .text(...filterButton(m.course_practices(), "practice"))
+    .row()
+    .text(...filterButton(m.course_online(), "online"))
+    .text(...filterButton(m.course_in_person(), "offline"))
     .row()
     .text(m.ui_back(), coursesCallback.pack({}));
+}
+
+function buildCourseMessage(course: string) {
+  return `${bold(course)}\n\n${m.course_body()}`;
 }
 
 async function getCourseContext(ctx: Context) {
@@ -81,14 +86,18 @@ async function getCourseContext(ctx: Context) {
   return { user, courses };
 }
 
+function withCoursesHeader(body: string) {
+  return `${bold(m.courses_header())}\n\n${body}`;
+}
+
 function buildCoursesMessage(courses: string[], excluded: string[]): string {
   if (courses.length === 0) {
-    return m.courses_no_courses();
+    return withCoursesHeader(m.courses_empty());
   }
 
   const active = courses.length - excluded.filter((e) => courses.includes(e)).length;
 
-  return m.courses_header({ active, total: courses.length });
+  return withCoursesHeader(m.courses_body({ active, total: courses.length }));
 }
 
 feature.command("courses", async (ctx) => {
@@ -105,7 +114,7 @@ feature.command("courses", async (ctx) => {
   }
 
   if (!user.hasSchedule) {
-    await ctx.reply(m.courses_no_group(), {
+    await ctx.reply(withCoursesHeader(m.courses_no_group()), {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard().text(m.ui_back(), settingsCallback.pack({})),
     });
@@ -118,7 +127,7 @@ feature.command("courses", async (ctx) => {
   try {
     courses = await getUserCourses(user.id);
   } catch {
-    await ctx.reply(m.courses_fetch_failed(), {
+    await ctx.reply(withCoursesHeader(m.courses_fetch_failed()), {
       parse_mode: "HTML",
     });
 
@@ -142,7 +151,7 @@ feature.callbackQuery(coursesCallback.filter(), async (ctx) => {
 
   if (!user.hasSchedule) {
     await ctx.answerCallbackQuery();
-    await ctx.editMessageText(m.courses_no_group(), {
+    await ctx.editMessageText(withCoursesHeader(m.courses_no_group()), {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard().text(m.ui_back(), settingsCallback.pack({})),
     });
@@ -210,9 +219,14 @@ feature.callbackQuery(toggleCourseCallback.filter(), async (ctx) => {
 
   await usersRepository.update(user.id, { excludedCourses: updated });
 
-  await ctx.editMessageText(buildCoursesMessage(courses, updated), {
+  const filters = normalizeScheduleFilters(user.scheduleFilters);
+  await ctx.editMessageText(buildCourseMessage(course), {
     parse_mode: "HTML",
-    reply_markup: buildCoursesKeyboard(courses, updated),
+    reply_markup: buildCourseKeyboard(
+      Number(idx),
+      !updated.includes(course),
+      filters.courses?.[course] ?? DEFAULT_COURSE_SCHEDULE_FILTERS,
+    ),
   });
   await ctx.answerCallbackQuery();
 });
@@ -230,10 +244,11 @@ feature.callbackQuery(courseScheduleCallback.filter(), async (ctx) => {
   }
 
   const filters = normalizeScheduleFilters(context.user.scheduleFilters);
-  await ctx.editMessageText(`${bold(course)}\n\n${m.courses_filter_hint()}`, {
+  await ctx.editMessageText(buildCourseMessage(course), {
     parse_mode: "HTML",
-    reply_markup: buildCourseScheduleKeyboard(
+    reply_markup: buildCourseKeyboard(
       index,
+      !context.user.excludedCourses.includes(course),
       filters.courses?.[course] ?? DEFAULT_COURSE_SCHEDULE_FILTERS,
     ),
   });
@@ -262,7 +277,13 @@ feature.callbackQuery(toggleCourseScheduleFilterCallback.filter(), async (ctx) =
   const updated = { ...courseFilters, [key]: !courseFilters[key] };
   filters.courses = { ...filters.courses, [course]: updated };
   await usersRepository.update(context.user.id, { scheduleFilters: filters });
-  await ctx.editMessageReplyMarkup({ reply_markup: buildCourseScheduleKeyboard(index, updated) });
+  await ctx.editMessageReplyMarkup({
+    reply_markup: buildCourseKeyboard(
+      index,
+      !context.user.excludedCourses.includes(course),
+      updated,
+    ),
+  });
   await ctx.answerCallbackQuery();
 });
 
